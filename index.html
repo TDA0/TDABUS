@@ -207,16 +207,23 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
+    flex-wrap:wrap;
     padding:13px 15px;
     background:none;
     cursor:pointer;
-    gap:8px;
+    gap:6px 8px;
   }
-  .category-head-left{ display:flex; align-items:center; gap:9px; min-width:0; }
+  .category-head-left{ display:flex; align-items:center; gap:9px; min-width:0; flex:1 1 100%; }
   .category-head-left h3{
     overflow:hidden;
     text-overflow:ellipsis;
-    white-space:nowrap;
+    white-space:normal;
+    word-break:break-word;
+    min-width:0;
+  }
+  .cat-thumb{
+    width:30px; height:30px; border-radius:8px; object-fit:cover; flex-shrink:0;
+    border:1px solid var(--line);
   }
   .cat-chev{
     color:var(--ink-faint);
@@ -228,6 +235,7 @@
   .cat-chev.open{ transform:rotate(180deg); }
   .category-head h3{ font-size:17px; font-weight:700; }
   .category-head .count{ font-size:13px; color:var(--ink-faint); font-weight:500; white-space:nowrap; }
+  .category-head-right{ display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:auto; }
   .category-body{ padding:2px 15px 14px; }
   .category-body.collapsed{ display:none; }
   .cat-section-label{
@@ -261,6 +269,11 @@
     gap:8px;
   }
   .product-row:last-child{ border-bottom:none; }
+  .product-row-left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .product-thumb{
+    width:38px; height:38px; border-radius:9px; object-fit:cover; flex-shrink:0;
+    border:1px solid var(--line);
+  }
   .product-name{ font-size:16px; font-weight:600; }
   .product-prices{ font-size:13.5px; color:var(--ink-soft); margin-top:2px; }
   .product-actions{ display:flex; gap:4px; flex-shrink:0; }
@@ -380,6 +393,8 @@
   }
   .pick-row:last-child{ border-bottom:none; }
   .pick-row:active{ background:var(--cedar-soft); }
+  .pick-row-left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .pick-thumb{ width:34px; height:34px; border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid var(--line); }
   .pick-name{ font-size:15.5px; font-weight:600; }
   .pick-price{ font-size:13px; color:var(--ink-soft); margin-top:1px; }
   .pick-plus{
@@ -423,6 +438,36 @@
     background:var(--cedar);
     border-color:var(--cedar);
   }
+
+  /* Filter panel — used in the invoice history modal search/filter controls */
+  .filter-panel{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    padding:12px;
+    margin-bottom:14px;
+  }
+  .filter-panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .filter-panel-head .field-label{ font-weight:700; color:var(--ink); text-transform:none; letter-spacing:0; }
+  .filter-group{ margin-bottom:12px; }
+  .filter-group:last-child{ margin-bottom:0; }
+  .filter-group-label{
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:7px;
+    letter-spacing:0.1px;
+  }
+  .chips-wrap{ display:flex; flex-wrap:wrap; gap:6px; }
+  .range-row{ display:flex; align-items:center; gap:8px; }
+  .range-row input{ flex:1; min-width:0; }
+  .range-sep{ color:var(--ink-faint); font-size:13px; flex-shrink:0; }
 
   .collapse-block{
     background:var(--paper-card);
@@ -566,9 +611,10 @@
     border-top:1px dashed var(--line-strong);
     margin-top:8px;
     padding-top:10px;
-    font-size:19px;
-    font-weight:700;
+    font-size:24px;
+    font-weight:800;
   }
+  .totals-row.grand b{ font-size:26px; }
   .totals-row.sub{ font-size:14px; color:var(--ink-soft); }
 
   .preview-box{
@@ -734,16 +780,38 @@
   .report-card .r-rev{ font-size:11px; color:var(--ink-faint); }
   .history-item{
     display:flex;
+    flex-wrap:wrap;
     justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid var(--line);
+    padding:12px 13px;
+    margin-bottom:8px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    background:var(--paper-card);
     font-size:13.5px;
+    transition:border-color .12s ease;
   }
-  .history-item .h-left{ color:var(--ink-soft); }
+  .history-item:last-child{ margin-bottom:0; }
+  .history-item .h-left{ color:var(--ink-soft); line-height:1.5; }
   .history-item .h-right{ text-align:right; }
   .history-item .h-right b{ color:var(--success); }
   .history-item{ align-items:center; }
-  .history-item .h-actions{ display:flex; gap:4px; flex-shrink:0; margin-left:8px; }
+  .history-item .h-actions{ display:flex; gap:4px; flex-wrap:wrap; flex-shrink:0; margin-left:8px; }
+  @media (max-width:479px){
+    .history-item .h-actions{ flex-basis:100%; justify-content:flex-end; margin-left:0; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line-strong); }
+  }
+  .sale-status-pill{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:999px;
+    margin-top:5px;
+  }
+  .sale-status-pill.paid{ background:var(--success-soft); color:var(--success); }
+  .sale-status-pill.partial{ background:var(--brass-soft); color:var(--brass); }
+  .sale-status-pill.unpaid{ background:#FDEDED; color:var(--burgundy); }
+  .sale-status-pill.credit{ background:var(--cedar-soft); color:var(--cedar); }
+  .sale-status-pill.tip{ background:var(--brass-soft); color:var(--brass); margin-left:5px; }
 
   /* Search block (Reports) */
   .search-block{
@@ -768,6 +836,116 @@
   .search-result.show{ display:block; }
   .search-result .sr-profit{ font-family:'Inter', sans-serif; font-size:23.5px; font-weight:800; letter-spacing:-0.02em; color:var(--success); }
   .search-result .sr-meta{ font-size:13px; color:var(--ink-soft); margin-top:2px; }
+
+  /* Month-over-month comparison (Reports) */
+  .compare-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:12px 0 4px;
+  }
+  .trend-pill{
+    flex:1;
+    min-width:150px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    background:var(--paper-card);
+    box-shadow:var(--shadow);
+    padding:9px 12px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .trend-pill b{ font-size:14px; color:var(--ink); }
+  .trend-pill .trend-up{ color:var(--success); font-weight:700; }
+  .trend-pill .trend-down{ color:var(--burgundy); font-weight:700; }
+  .trend-pill .trend-flat{ color:var(--ink-faint); font-weight:700; }
+
+  /* Top clients / products & debtors (Reports) */
+  .top-perf-col{ margin-top:14px; }
+  .top-perf-col:first-of-type{ margin-top:12px; }
+  .top-perf-label{ font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:8px; }
+  .top-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:8px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .top-row:last-child{ border-bottom:none; }
+  .top-row .top-rank{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--cedar-soft); color:var(--cedar-dark);
+    font-size:11px; font-weight:800; flex-shrink:0; margin-right:8px;
+  }
+  .top-row .top-name{ font-size:13.5px; font-weight:600; color:var(--ink); }
+  .top-row .top-sub{ font-size:11.5px; color:var(--ink-faint); }
+  .top-row .top-value{ font-size:13.5px; font-weight:800; color:var(--ink); white-space:nowrap; }
+  .debtor-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:7px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .debtor-row:last-child{ border-bottom:none; }
+  .debtor-row .top-name{ font-size:13.5px; font-weight:600; color:var(--ink); }
+  .debtor-row .top-value{ font-size:13.5px; font-weight:800; color:var(--burgundy); }
+
+  /* Profit calendar (Reports) */
+  .cal-nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .cal-nav-label{ font-size:16px; font-weight:800; letter-spacing:-0.01em; }
+  .cal-nav .icon-btn{
+    padding:5px 13px;
+    font-size:18px;
+    font-weight:700;
+    line-height:1;
+    border-radius:999px;
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    border-top:1px solid var(--line);
+    border-left:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    overflow:hidden;
+  }
+  .cal-cell{
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:8px 7px;
+    min-height:54px;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .cal-cell:hover{ background:var(--bg); }
+  .cal-cell.empty{ cursor:default; background:var(--bg); }
+  .cal-cell.empty:hover{ background:var(--bg); }
+  .cal-cell.today{ background:var(--cedar-soft); }
+  .cal-day-num{ font-size:13px; color:var(--ink-soft); font-weight:600; }
+  .cal-day-amt{ font-size:11.5px; font-weight:800; margin-top:4px; line-height:1.3; }
+  .cal-day-amt.pos{ color:var(--success); }
+  .cal-day-amt.neg{ color:var(--burgundy); }
+  .cal-total-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:12px;
+    padding-top:10px;
+    border-top:1px dashed var(--line-strong);
+    font-size:14.5px;
+  }
+  .cal-total-row b{ font-family:'Inter', sans-serif; font-size:18px; color:var(--cedar); letter-spacing:-0.01em; }
+  .cal-grid.year-grid{ grid-template-columns:repeat(3, 1fr); }
+  .cal-grid.year-grid .cal-cell{ min-height:64px; display:flex; flex-direction:column; justify-content:center; }
+  #calDayList .history-item:last-child{ border-bottom:none; }
 
   /* Modal */
   .modal-overlay{
@@ -884,11 +1062,20 @@
   .voucher-unit-head{ display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:700; color:var(--cedar-dark); margin-bottom:3px; }
   .voucher-unit-head .mini-btn{ padding:4px 9px; font-size:12.5px; }
   .voucher-unit-body{ font-size:14.5px; }
+  .voucher-unit-body .vf-emph-line{
+    display:inline-block; font-size:16.5px; font-weight:800; color:var(--ink);
+    background:var(--brass-soft); padding:3px 8px; border-radius:7px; margin:2px 0 3px;
+  }
 
-  .voucher-field-row{ display:flex; align-items:center; gap:6px; margin-bottom:8px; }
-  .voucher-field-row .vf-label{ flex:0 0 38%; }
-  .voucher-field-row .vf-value{ flex:1; }
-  .voucher-field-row .vf-remove{ flex-shrink:0; }
+  .voucher-field-row{ margin-bottom:12px; padding-bottom:10px; border-bottom:1px dashed var(--line-strong); }
+  .voucher-field-row:last-child{ border-bottom:none; margin-bottom:4px; padding-bottom:0; }
+  .vf-inputs-row{ display:flex; align-items:center; gap:6px; }
+  .vf-inputs-row .vf-label{ flex:0 0 38%; }
+  .vf-inputs-row .vf-value{ flex:1; }
+  .vf-value.vf-value-emph{ font-weight:800; font-size:17px; }
+  .vf-actions-row{ display:flex; gap:6px; margin-top:6px; }
+  .vf-actions-row button{ flex:1; }
+  .vf-emph-toggle.active{ background:var(--brass-soft); color:var(--brass); border-color:var(--brass); font-weight:700; }
   .voucher-fields-empty{ font-size:13px; color:var(--ink-soft); font-style:italic; margin-bottom:8px; }
   .voucher-quick-add{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
   .voucher-quick-add .chip{
@@ -911,6 +1098,16 @@
     background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;
   }
   .logo-preview img{ width:100%; height:100%; object-fit:contain; }
+  .modal-image-row{ display:flex; align-items:center; gap:12px; }
+  .modal-image-preview{
+    width:56px; height:56px; border-radius:10px; border:1.5px dashed var(--line-strong);
+    background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;
+  }
+  .modal-image-preview img{ width:100%; height:100%; object-fit:cover; }
+  .modal-image-placeholder{ font-size:22px; opacity:.45; }
+  .modal-image-controls{ display:flex; flex-direction:column; gap:6px; flex:1; min-width:0; }
+  .modal-image-controls input[type="file"]{ font-size:12.5px; padding:8px 10px; }
+  .modal-image-controls .mini-btn{ align-self:flex-start; }
   .paper-btns{ display:flex; gap:6px; }
   .paper-btns button{ flex:1; }
   .printer-status{ font-size:13.5px; font-weight:600; margin-top:8px; }
@@ -948,11 +1145,115 @@
     #printArea .pr-item-qty{ color:#666; font-weight:500; font-size:11.5px; }
     #printArea .pr-item-price{ font-size:12.5px; font-weight:700; white-space:nowrap; }
     #printArea .pr-item-sub{ font-size:11px; color:#666; margin-top:1px; }
+    #printArea .pr-items-table{ width:100%; border-collapse:collapse; margin:4px 0 2px; }
+    #printArea .pr-items-table th{ font-size:9.5px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#666; border-bottom:1.5px solid #111; padding:0 2px 4px; text-align:left; }
+    #printArea .pr-items-table td{ font-size:12px; padding:4px 2px; vertical-align:top; border-bottom:1px dashed #ccc; }
+    #printArea .pr-items-table tr:last-child td{ border-bottom:1px dashed #ccc; }
+    #printArea .pr-items-table .pr-col-qty{ text-align:center; white-space:nowrap; padding-right:10px; }
+    #printArea .pr-items-table .pr-col-price{ text-align:right; white-space:nowrap; padding-left:10px; }
+    #printArea .pr-items-table .pr-col-total{ text-align:right; white-space:nowrap; font-weight:700; }
+    #printArea .pr-items-table .pr-col-name{ font-weight:700; }
+    #printArea .pr-items-table tr.pr-item-subrow td{ padding:0 2px 6px; border-bottom:1px dashed #ccc; }
+    #printArea .pr-items-table tr.pr-item-subrow .pr-item-sub{ margin-top:2px; }
+    #printArea .pr-items-table tr.pr-item-subrow .pr-item-sub:first-child{ margin-top:0; }
     #printArea .pr-voucher{ font-size:11px; padding:5px 7px; margin:5px 0 2px; border-left:2px solid #111; background:#f4f4f4; border-radius:2px; }
-    #printArea .pr-grand{ font-size:15.5px; font-weight:800; padding:7px 0; border-top:1.5px solid #111; border-bottom:1.5px solid #111; margin:6px 0; }
-    #printArea .pr-footer{ font-size:11px; text-align:center; margin-top:10px; white-space:pre-wrap; color:#444; }
+    #printArea .pr-grand{ font-size:20px; font-weight:800; padding:9px 0; border-top:2px solid #111; border-bottom:2px solid #111; margin:8px 0; }
+    #printArea .pr-footer{ font-size:13.5px; font-weight:600; text-align:center; margin-top:10px; white-space:pre-wrap; color:#111; }
     #printArea .pr-thankyou{ font-size:13px; text-align:center; margin-top:12px; font-style:italic; font-weight:600; letter-spacing:0.2px; }
   }
+
+  /* Print preview modal — on-screen rendering of the exact receipt before printing */
+  .print-preview-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(23,22,31,0.55);
+    z-index:1100;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+  }
+  .print-preview-overlay.show{ display:flex; }
+  .print-preview-box{
+    background:var(--paper-card);
+    width:100%;
+    max-width:420px;
+    max-height:92vh;
+    border-radius:var(--radius);
+    box-shadow:0 20px 60px rgba(23,25,35,0.3);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .print-preview-header{
+    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex:none;
+  }
+  .print-preview-header h3{ font-size:16px; }
+  .print-preview-scroll{
+    overflow-y:auto;
+    padding:16px;
+    background:#e9e9ee;
+    flex:1;
+  }
+  .print-preview-paper{
+    background:#fff;
+    margin:0 auto;
+    padding:14px;
+    font-family:'Helvetica Neue', Arial, sans-serif;
+    color:#111;
+    line-height:1.45;
+    box-shadow:0 2px 10px rgba(0,0,0,0.12);
+    max-width:100%;
+  }
+  .print-preview-actions{
+    padding:12px 16px;
+    border-top:1px solid var(--line);
+    display:flex;
+    gap:8px;
+    flex:none;
+  }
+  .print-preview-actions .btn{ flex:1; }
+
+  /* Reuse the receipt's print styling so the preview matches the printout */
+  .print-preview-paper .pr-logo{ display:block; max-width:55%; max-height:64px; margin:0 auto 8px; object-fit:contain; }
+  .print-preview-paper .pr-center{ text-align:center; }
+  .print-preview-paper .pr-eyebrow{ font-size:9.5px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:#666; margin-bottom:3px; }
+  .print-preview-paper .pr-title{ font-size:19px; font-weight:800; letter-spacing:0.2px; margin-bottom:2px; }
+  .print-preview-paper .pr-sub{ font-size:12px; color:#333; margin-bottom:1px; }
+  .print-preview-paper .pr-meta{ font-size:11px; color:#555; margin-top:5px; letter-spacing:0.2px; }
+  .print-preview-paper .pr-hr{ border:none; border-top:1px dashed #aaa; margin:10px 0; }
+  .print-preview-paper .pr-hr.solid{ border-top:1.5px solid #111; }
+  .print-preview-paper .pr-section-label{ font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#777; margin:9px 0 5px; }
+  .print-preview-paper .pr-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; padding:2.5px 0; gap:10px; }
+  .print-preview-paper .pr-row > span:first-child{ color:#333; }
+  .print-preview-paper .pr-row > span:last-child, .print-preview-paper .pr-row > b:last-child{ text-align:right; white-space:nowrap; }
+  .print-preview-paper .pr-item{ margin:7px 0; }
+  .print-preview-paper .pr-item-top{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; font-weight:700; gap:10px; }
+  .print-preview-paper .pr-item-top .pr-item-title{ flex:1; }
+  .print-preview-paper .pr-item-qty{ color:#666; font-weight:500; font-size:11.5px; }
+  .print-preview-paper .pr-item-price{ font-size:12.5px; font-weight:700; white-space:nowrap; }
+  .print-preview-paper .pr-item-sub{ font-size:11px; color:#666; margin-top:1px; }
+  .print-preview-paper .pr-items-table{ width:100%; border-collapse:collapse; margin:4px 0 2px; }
+  .print-preview-paper .pr-items-table th{ font-size:9.5px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#666; border-bottom:1.5px solid #111; padding:0 2px 4px; text-align:left; }
+  .print-preview-paper .pr-items-table td{ font-size:12px; padding:4px 2px; vertical-align:top; border-bottom:1px dashed #ccc; }
+  .print-preview-paper .pr-items-table tr:last-child td{ border-bottom:1px dashed #ccc; }
+  .print-preview-paper .pr-items-table .pr-col-qty{ text-align:center; white-space:nowrap; padding-right:10px; }
+  .print-preview-paper .pr-items-table .pr-col-price{ text-align:right; white-space:nowrap; padding-left:10px; }
+  .print-preview-paper .pr-items-table .pr-col-total{ text-align:right; white-space:nowrap; font-weight:700; }
+  .print-preview-paper .pr-items-table .pr-col-name{ font-weight:700; }
+  .print-preview-paper .pr-items-table tr.pr-item-subrow td{ padding:0 2px 6px; border-bottom:1px dashed #ccc; }
+  .print-preview-paper .pr-items-table tr.pr-item-subrow .pr-item-sub{ margin-top:2px; }
+  .print-preview-paper .pr-items-table tr.pr-item-subrow .pr-item-sub:first-child{ margin-top:0; }
+  .print-preview-paper .pr-voucher{ font-size:11px; padding:5px 7px; margin:5px 0 2px; border-left:2px solid #111; background:#f4f4f4; border-radius:2px; }
+  .print-preview-paper .pr-grand{ font-size:20px; font-weight:800; padding:9px 0; border-top:2px solid #111; border-bottom:2px solid #111; margin:8px 0; }
+  .print-preview-paper .pr-footer{ font-size:13.5px; font-weight:600; text-align:center; margin-top:10px; white-space:pre-wrap; color:#111; }
+  .print-preview-paper .pr-thankyou{ font-size:13px; text-align:center; margin-top:12px; font-style:italic; font-weight:600; letter-spacing:0.2px; }
 </style>
 </head>
 <body>
@@ -1071,6 +1372,13 @@
           </select>
         </div>
       </div>
+      <div class="field-block" id="overpaymentModeBlock" style="margin-top:8px;">
+        <span class="field-label">💵 If they pay more than the total</span>
+        <div class="status-btns" id="overpaymentModeBtns">
+          <button type="button" class="btn small" data-mode="owe">📌 Rest = owed to them</button>
+          <button type="button" class="btn small ghost" data-mode="tip">💸 Rest = tip</button>
+        </div>
+      </div>
       <div class="totals-row sub"><span>Remaining balance after payment</span><b id="remainingBalance">$0.00</b></div>
       <div class="totals-row sub"><span>Rate used</span><span id="rateUsedLine">—</span></div>
     </div>
@@ -1090,6 +1398,16 @@
         <div class="field-block">
           <span class="field-label">📝 Customer name on receipt</span>
           <input type="text" id="customerName" placeholder="Customer name">
+        </div>
+
+        <div class="field-block">
+          <span class="field-label">🕒 Invoice date &amp; time</span>
+          <div class="search-mode-row" style="margin-bottom:0;">
+            <input type="date" id="invoiceDateInput" style="flex:1.3;">
+            <input type="time" id="invoiceTimeInput" step="1" style="flex:1;">
+            <button type="button" class="mini-btn" id="invoiceDateNowBtn">⏱️ Now</button>
+          </div>
+          <div class="settings-hint">Defaults to now — change this to log an old sale on its real date.</div>
         </div>
 
         <div class="client-box" id="clientBalanceBox" style="display:none;">
@@ -1205,8 +1523,62 @@
     </div>
     <div class="field-label">profit = selling price − cost price, on completed invoices. LBP figures use today's rate.</div>
 
+    <div class="compare-row" id="momCompareRow"></div>
+
+    <div class="search-block" id="calendarCard">
+      <h3>📅 Profit calendar</h3>
+      <div class="chips-wrap" id="calModeChips" style="margin-bottom:10px;">
+        <button type="button" class="cat-chip" data-calmode="day">Day</button>
+        <button type="button" class="cat-chip active" data-calmode="month">Month</button>
+        <button type="button" class="cat-chip" data-calmode="year">Year</button>
+        <button type="button" class="cat-chip" data-calmode="years">Years</button>
+      </div>
+      <div class="cal-nav">
+        <button type="button" class="icon-btn" id="calPrevBtn">‹</button>
+        <div class="cal-nav-label" id="calNavLabel">—</div>
+        <button type="button" class="icon-btn" id="calNextBtn">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div id="calDayList" style="display:none;"></div>
+      <div class="cal-total-row">
+        <span>Total:</span>
+        <b id="calTotalValue">$0.00</b>
+      </div>
+      <div class="field-label" style="margin-top:6px;" id="calHint">Tap a day to view it.</div>
+    </div>
+
+    <div class="search-block" id="outstandingCard">
+      <h3>👥 Outstanding balances</h3>
+      <div class="clients-summary" id="reportsClientsSummary"></div>
+      <div id="topDebtorsList"></div>
+    </div>
+
+    <div class="search-block" id="topPerformersCard">
+      <h3>🏆 Top clients &amp; products</h3>
+      <div class="chips-wrap" id="topPeriodChips">
+        <button type="button" class="cat-chip active" data-period="all">All time</button>
+        <button type="button" class="cat-chip" data-period="year">This year</button>
+        <button type="button" class="cat-chip" data-period="month">This month</button>
+      </div>
+      <div class="top-perf-col">
+        <div class="top-perf-label">👤 Top clients (by profit)</div>
+        <div id="topClientsList"></div>
+      </div>
+      <div class="top-perf-col">
+        <div class="top-perf-label">📦 Top products (by revenue)</div>
+        <div id="topProductsList"></div>
+        <div class="field-label" id="topProductsHint" style="display:none;">Only counts invoices made after this feature was added.</div>
+      </div>
+    </div>
+
     <div class="search-block">
-      <h3>🔍 Search profit by date</h3>
+      <h3>🔍 Client profit &amp; loss by day / month / year</h3>
+      <div class="search-mode-row">
+        <select id="searchClientFilter" style="flex:1.3;">
+          <option value="">All clients</option>
+          <option value="__walkin">Walk-in (no account)</option>
+        </select>
+      </div>
       <div class="search-mode-row">
         <select id="searchMode">
           <option value="day">Day</option>
@@ -1226,12 +1598,32 @@
       </div>
     </div>
 
-    <h3 style="font-size:13px; margin:16px 0 8px;">💰 Balance changes</h3>
-    <div id="balanceLogList"></div>
+    <div class="collapse-block" id="balanceLogBlock" style="margin-top:16px;">
+      <button type="button" class="collapse-toggle" id="balanceLogToggle">
+        <span>💰 <span id="balanceLogToggleLabel">Balance changes</span></span>
+        <span class="chev" id="balanceLogChev">▾</span>
+      </button>
+      <div class="collapse-body collapsed" id="balanceLogBody">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+          <button class="mini-btn" id="viewBalanceLogHistoryBtn">🔍 Search all balance changes</button>
+        </div>
+        <div id="balanceLogList"></div>
+      </div>
+    </div>
 
-    <h3 style="font-size:13px; margin:16px 0 8px;">🧾 Recent sales</h3>
-    <div id="salesHistory"></div>
-    <div class="empty-hint" id="noSalesHint" style="display:none;">No completed sales yet. Copy or share an invoice to log it here.</div>
+    <div class="collapse-block" id="salesHistoryBlock" style="margin-top:16px;">
+      <button type="button" class="collapse-toggle" id="salesHistoryToggle">
+        <span>🧾 <span id="salesHistoryToggleLabel">Old invoices</span></span>
+        <span class="chev" id="salesHistoryChev">▾</span>
+      </button>
+      <div class="collapse-body collapsed" id="salesHistoryBody">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+          <button class="mini-btn" id="viewInvoiceHistoryBtn">📜 Search all invoices</button>
+        </div>
+        <div id="salesHistory"></div>
+        <div class="empty-hint" id="noSalesHint" style="display:none;">No completed sales yet. Copy or share an invoice to log it here.</div>
+      </div>
+    </div>
   </section>
 
   <!-- SETTINGS TAB -->
@@ -1300,6 +1692,22 @@
 </div>
 
 <div id="printArea"></div>
+
+<div class="print-preview-overlay" id="printPreviewOverlay">
+  <div class="print-preview-box">
+    <div class="print-preview-header">
+      <h3>Print preview</h3>
+      <button type="button" class="icon-btn" id="printPreviewCloseBtn">✕</button>
+    </div>
+    <div class="print-preview-scroll">
+      <div class="print-preview-paper" id="printPreviewPaper"></div>
+    </div>
+    <div class="print-preview-actions">
+      <button type="button" class="btn ghost" id="printPreviewCancelBtn">Cancel</button>
+      <button type="button" class="btn" id="printPreviewPrintBtn">🖨️ Print</button>
+    </div>
+  </div>
+</div>
 </div>
 
 <script type="module">
@@ -1486,6 +1894,7 @@
     paymentMethods: [],
     invoiceLang: 'en',
     previewEdited: false,
+    overpaymentMode: 'owe', // 'owe' = extra received is a credit owed back; 'tip' = extra is kept as a tip
     invoiceSettings: {
       headerTitle: '',
       headerSubtitle: '',
@@ -1523,8 +1932,13 @@
       received: 'Received',
       remainingBalance: 'Remaining balance',
       creditOnAccount: 'Credit on account',
+      tipReceived: 'Tip',
       rate: 'Rate',
       note: 'note',
+      itemCol: 'Item',
+      qtyCol: 'Qty',
+      priceCol: 'Unit price',
+      totalCol: 'Total',
       paymentMethods: 'Payment methods',
       dateLocale: 'en-US',
       orWord: 'or',
@@ -1533,6 +1947,16 @@
       reminderToPay: 'to pay.',
       reminderQuestions: 'If you have any questions, feel free to message us anytime! 😊',
       reminderThanks: 'Thank you! 🙏',
+      partialHi: 'Hi',
+      partialBody: 'Payment received:',
+      partialRemaining: '💰 Remaining balance to pay:',
+      partialThanks: 'Thank you! 🙏 We appreciate your business. ❤️',
+      fullHi: 'Hi',
+      fullBody: 'Payment received in full:',
+      fullSettled: 'Your account is now fully settled. 🎉',
+      fullThanks: 'Thank you for your trust and business! 🙏\nWe truly appreciate it. ❤️',
+      fullOverCredit: 'You paid extra — we now owe you',
+      fullOverTip: 'Thank you so much for the generous tip of',
       voucherHeader: 'Details',
       thankYouPrint: 'Thank you for your business!'
     },
@@ -1549,8 +1973,13 @@
       received: 'المبلغ المستلم',
       remainingBalance: 'الرصيد المتبقي',
       creditOnAccount: 'رصيد دائن',
+      tipReceived: 'بقشيش',
       rate: 'سعر الصرف',
       note: 'ملاحظة',
+      itemCol: 'الصنف',
+      qtyCol: 'الكمية',
+      priceCol: 'سعر الوحدة',
+      totalCol: 'الإجمالي',
       paymentMethods: 'طرق الدفع',
       dateLocale: 'ar-LB',
       orWord: 'أو',
@@ -1559,6 +1988,16 @@
       reminderToPay: 'يرجى تسديده.',
       reminderQuestions: 'إذا كانت لديك أي استفسارات، لا تتردد في مراسلتنا في أي وقت! 😊',
       reminderThanks: 'شكراً لك! 🙏',
+      partialHi: 'مرحباً',
+      partialBody: 'تم استلام الدفعة:',
+      partialRemaining: '💰 المبلغ المتبقي للدفع:',
+      partialThanks: 'شكراً لك! 🙏 نُقدّر ثقتك وتعاملَك معنا. ❤️',
+      fullHi: 'مرحباً',
+      fullBody: 'تم استلام الدفعة بالكامل:',
+      fullSettled: '🎉 تم تسديد كامل المبلغ المستحق، ولا يوجد أي مبلغ متبقٍ عليك للدفع.',
+      fullThanks: 'شكراً لثقتك بنا وتعاملِك معنا! 🙏\nنقدّر ثقتك ودعمك لنا دائماً. ❤️',
+      fullOverCredit: 'لقد دفعت مبلغاً إضافياً — أصبحنا مدينين لك بـ',
+      fullOverTip: 'شكراً جزيلاً على البقشيش الكريم وقدره',
       voucherHeader: 'التفاصيل',
       thankYouPrint: 'شكراً لتعاملكم معنا!'
     }
@@ -1644,10 +2083,25 @@
   }
   function promptModal(title, fields){
     return new Promise((resolve) => {
+      const pendingImages = {};
       modalBox.innerHTML = `
         <h3>${escapeHtml(title)}</h3>
         <form id="modalForm">
           ${fields.map(f => {
+            if(f.type === 'image'){
+              const previewSrc = f.value || null;
+              return `
+              <div class="modal-field">
+                <span class="field-label">${escapeHtml(f.label)}</span>
+                <div class="modal-image-row">
+                  <div class="modal-image-preview" id="mf_${f.id}_preview">${previewSrc ? `<img src="${previewSrc}" alt="">` : '<span class="modal-image-placeholder">🖼️</span>'}</div>
+                  <div class="modal-image-controls">
+                    <input type="file" accept="image/*" id="mf_${f.id}_file">
+                    <button type="button" class="mini-btn danger" id="mf_${f.id}_remove" style="${previewSrc ? '' : 'display:none;'}">🗑️ Remove image</button>
+                  </div>
+                </div>
+              </div>`;
+            }
             if(f.type === 'money'){
               const cur = f.currency === 'LBP' ? 'LBP' : 'USD';
               const displayVal = f.value !== undefined && f.value !== null ? formatNumberString(String(f.value)) : '';
@@ -1696,6 +2150,30 @@
       modalOverlay.classList.add('show');
       fields.forEach(f => {
         if(f.type === 'money' || f.commas) attachThousandsFormatting(document.getElementById('mf_' + f.id));
+        if(f.type === 'image'){
+          const fileInput = document.getElementById('mf_' + f.id + '_file');
+          const removeBtn = document.getElementById('mf_' + f.id + '_remove');
+          const preview = document.getElementById('mf_' + f.id + '_preview');
+          fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if(!file) return;
+            if(file.size > 900 * 1024){ alertBanner('Image is too large — please use one under ~900KB.'); fileInput.value = ''; return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+              pendingImages[f.id] = reader.result;
+              preview.innerHTML = `<img src="${reader.result}" alt="">`;
+              removeBtn.style.display = '';
+            };
+            reader.onerror = () => alertBanner('Could not read that image.');
+            reader.readAsDataURL(file);
+          });
+          removeBtn.addEventListener('click', () => {
+            pendingImages[f.id] = null;
+            fileInput.value = '';
+            preview.innerHTML = '<span class="modal-image-placeholder">🖼️</span>';
+            removeBtn.style.display = 'none';
+          });
+        }
       });
       const form = $('#modalForm');
       $('#modalCancelBtn').addEventListener('click', () => { closeModal(); resolve(null); });
@@ -1703,7 +2181,9 @@
         e.preventDefault();
         const values = {};
         fields.forEach(f => {
-          if(f.type === 'money'){
+          if(f.type === 'image'){
+            values[f.id] = (f.id in pendingImages) ? pendingImages[f.id] : (f.value || null);
+          } else if(f.type === 'money'){
             const rawStr = $('#mf_' + f.id).value;
             const cur = $('#mf_' + f.id + '_cur').value;
             const raw = parseFormattedNumber(rawStr);
@@ -1946,6 +2426,19 @@
       : 'cash the business actually has on hand';
   }
 
+  // Applies a cash movement to the business balance (positive = cash in,
+  // negative = cash out) and refreshes the balance UI + log. Used whenever a
+  // client payment (full or partial) actually changes the cash on hand.
+  function applyBusinessBalanceDelta(delta, note){
+    if(!delta) return;
+    state.balance.value += delta;
+    state.balance.updatedAt = Date.now();
+    saveBalance();
+    logBalanceChange(delta, note);
+    renderBalance();
+    renderBalanceLog();
+  }
+
   function logBalanceChange(delta, note){
     state.balanceLog.unshift({ id: uid(), date: Date.now(), delta, note, resultingBalance: state.balance.value });
     state.balanceLog = state.balanceLog.slice(0, 50);
@@ -2001,28 +2494,32 @@
   function renderBalanceLog(){
     const el = $('#balanceLogList');
     if(!el) return;
+    const labelEl = $('#balanceLogToggleLabel');
+    if(labelEl) labelEl.textContent = 'Balance changes' + (state.balanceLog.length ? ' (' + state.balanceLog.length + ')' : '');
     if(state.balanceLog.length === 0){
       el.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No balance changes yet.</div>';
       return;
     }
     el.innerHTML = '';
-    state.balanceLog.slice(0, 15).forEach(entry => {
-      const d = new Date(entry.date);
-      const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
-      const row = document.createElement('div');
-      row.className = 'history-item';
-      const positive = entry.delta > 0;
-      row.innerHTML = `
-        <div class="h-left">${dateStr} · ${escapeHtml(entry.note)}</div>
-        <div class="h-right"><b style="color:${positive?'var(--cedar-dark)':'var(--burgundy)'}">${positive?'+':''}${fmtUsd(entry.delta)}</b></div>
-        <div class="h-actions">
-          <button class="mini-btn" data-action="edit">✏️ Edit</button>
-          <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
-        </div>`;
-      row.querySelector('[data-action="edit"]').addEventListener('click', () => editBalanceLogEntry(entry.id));
-      row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteBalanceLogEntry(entry.id));
-      el.appendChild(row);
-    });
+    state.balanceLog.slice(0, 15).forEach(entry => renderBalanceLogRow(el, entry));
+  }
+
+  function renderBalanceLogRow(container, entry){
+    const d = new Date(entry.date);
+    const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    const row = document.createElement('div');
+    row.className = 'history-item';
+    const positive = entry.delta > 0;
+    row.innerHTML = `
+      <div class="h-left">${dateStr} · ${escapeHtml(entry.note)}</div>
+      <div class="h-right"><b style="color:${positive?'var(--cedar-dark)':'var(--burgundy)'}">${positive?'+':''}${fmtUsd(entry.delta)}</b></div>
+      <div class="h-actions">
+        <button class="mini-btn" data-action="edit">✏️ Edit</button>
+        <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
+      </div>`;
+    row.querySelector('[data-action="edit"]').addEventListener('click', () => editBalanceLogEntry(entry.id));
+    row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteBalanceLogEntry(entry.id));
+    container.appendChild(row);
   }
 
   async function editBalanceLogEntry(id){
@@ -2167,11 +2664,12 @@
     head.innerHTML = `
       <div class="category-head-left">
         <span class="cat-chev${isCollapsed ? '' : ' open'}">▾</span>
+        ${cat.image ? `<img class="cat-thumb" src="${cat.image}" alt="">` : ''}
         <h3>${depth>0 ? '↳ ' : ''}${escapeHtml(cat.name)}</h3>
       </div>
-      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+      <div class="category-head-right">
         <span class="count">${countLabel}</span>
-        <button class="mini-btn" data-action="rename" type="button">✏️ Rename</button>
+        <button class="mini-btn" data-action="rename" type="button">✏️ Edit</button>
       </div>`;
     head.addEventListener('click', () => {
       if(catalogSearchQuery) return;
@@ -2196,9 +2694,12 @@
       row.className = 'product-row';
       const margin = p.priceUsd - (p.costUsd||0);
       row.innerHTML = `
-        <div>
-          <div class="product-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
-          <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) + (p.costMode === 'flat' ? ' (cost flat)' : '') : ''}</div>
+        <div class="product-row-left">
+          ${p.image ? `<img class="product-thumb" src="${p.image}" alt="">` : ''}
+          <div style="min-width:0;">
+            <div class="product-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
+            <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) + (p.costMode === 'flat' ? ' (cost flat)' : '') : ''}</div>
+          </div>
         </div>
         <div class="product-actions">
           <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
@@ -2319,7 +2820,7 @@
   function addCategory(name, parentId){
     name = (name || '').trim();
     if(!name) return;
-    state.categories.push({ id: uid(), name, parentId: parentId || null });
+    state.categories.push({ id: uid(), name, parentId: parentId || null, image: null });
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
@@ -2329,12 +2830,16 @@
     const cat = state.categories.find(c => c.id === catId);
     if(!cat) return;
     const result = await promptModalValidated(
-      'Rename category',
-      [{ id:'name', label:'Category name', value:cat.name }],
+      'Edit category',
+      [
+        { id:'name', label:'Category name', value:cat.name },
+        { id:'image', label:'🖼️ Category image (optional)', type:'image', value:cat.image || null }
+      ],
       (v) => !v.name.trim() ? 'Enter a category name.' : null
     );
     if(result === null) return;
     cat.name = result.name.trim();
+    cat.image = result.image || null;
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
@@ -2366,7 +2871,7 @@
       costUsd = costCurrency === 'LBP' ? costParsed / state.rate.value : costParsed;
     }
     costMode = costMode === 'flat' ? 'flat' : 'perUnit';
-    state.products.push({ id: uid(), name, nameAr, categoryId: catId, priceUsd, costUsd, costMode, type: isVoucher ? 'voucher' : 'product' });
+    state.products.push({ id: uid(), name, nameAr, categoryId: catId, priceUsd, costUsd, costMode, type: isVoucher ? 'voucher' : 'product', image: null });
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
@@ -2386,6 +2891,7 @@
       'Edit product',
       [
         { id:'name', label:'Product name', value:p.name },
+        { id:'image', label:'🖼️ Product image (optional)', type:'image', value:p.image || null },
         { id:'nameAr', label:'🇱🇧 Arabic name (optional, shown when Arabic is selected)', value:p.nameAr || '' },
         { id:'price', label:'Sell price', type:'money', value:p.priceUsd.toFixed(2) },
         { id:'cost', label:'Cost price (0 if unknown)', type:'money', value:(p.costUsd||0).toFixed(2) },
@@ -2408,6 +2914,7 @@
     );
     if(result === null) return;
     p.name = result.name.trim();
+    p.image = result.image || null;
     p.nameAr = result.nameAr.trim();
     p.priceUsd = parseFloat(result.price);
     p.costUsd = parseFloat(result.cost);
@@ -2512,6 +3019,9 @@
         </div>
         <div class="client-actions">
           ${owes ? '<button class="mini-btn" data-action="remind">🔔 Remind</button>' : ''}
+          ${owes ? '<button class="mini-btn" data-action="partial">💵 Partial payment</button>' : ''}
+          ${owes ? '<button class="mini-btn" data-action="fullpayCredit">🎉 Full payment (extra = owed)</button>' : ''}
+          ${owes ? '<button class="mini-btn" data-action="fullpayTip">💸 Full payment (extra = tip)</button>' : ''}
           ${c.balanceUsd !== 0 ? '<button class="mini-btn" data-action="settle">' + (owes ? '✅ Mark paid' : '✅ Settled') + '</button>' : ''}
           <button class="mini-btn" data-action="adjust">⚖️ Adjust</button>
           <button class="mini-btn" data-action="edit">✏️ Edit</button>
@@ -2519,6 +3029,9 @@
         </div>`;
       if(owes){
         card.querySelector('[data-action="remind"]').addEventListener('click', () => sendPaymentReminder(c.id));
+        card.querySelector('[data-action="partial"]').addEventListener('click', () => sendPartialPayment(c.id));
+        card.querySelector('[data-action="fullpayCredit"]').addEventListener('click', () => sendFullPayment(c.id, false));
+        card.querySelector('[data-action="fullpayTip"]').addEventListener('click', () => sendFullPayment(c.id, true));
       }
       if(c.balanceUsd !== 0){
         card.querySelector('[data-action="settle"]').addEventListener('click', () => markClientPaid(c.id));
@@ -2545,13 +3058,11 @@
     return lines.join('\n');
   }
 
-  async function sendPaymentReminder(clientId){
-    const c = state.clients.find(x => x.id === clientId);
-    if(!c) return;
-    const lang = await chooseLanguageModal('🌐 Send this reminder in which language?');
-    if(!lang) return;
-    const text = buildReminderText(c, lang);
-    const phoneDigits = c.phone ? c.phone.replace(/[^0-9]/g, '') : '';
+  // Shared sender used by the reminder / partial-payment / full-payment
+  // messages: opens WhatsApp with the text prefilled if a phone number is on
+  // file, otherwise copies the text to the clipboard as a fallback.
+  async function sendClientWhatsapp(client, text, fallbackMsg){
+    const phoneDigits = client.phone ? client.phone.replace(/[^0-9]/g, '') : '';
     if(phoneDigits){
       const url = 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(text);
       window.open(url, '_blank');
@@ -2566,8 +3077,124 @@
         document.execCommand('copy');
         document.body.removeChild(ta);
       }
-      alertBanner('No phone number on file — reminder copied, paste it wherever you like.');
+      alertBanner(fallbackMsg);
     }
+  }
+
+  async function sendPaymentReminder(clientId){
+    const c = state.clients.find(x => x.id === clientId);
+    if(!c) return;
+    const lang = await chooseLanguageModal('🌐 Send this reminder in which language?');
+    if(!lang) return;
+    const text = buildReminderText(c, lang);
+    await sendClientWhatsapp(c, text, 'No phone number on file — reminder copied, paste it wherever you like.');
+  }
+
+  function buildPartialPaymentText(client, paidUsd, remainingUsd, lang){
+    const t = I18N[lang] || I18N[state.invoiceLang] || I18N.en;
+    const paidLine = `${fmtUsd(paidUsd)} / ${fmtLbp(paidUsd * state.rate.value)}`;
+    const remainingLine = `${fmtUsd(remainingUsd)} / ${fmtLbp(remainingUsd * state.rate.value)}`;
+    const lines = [];
+    lines.push(`👋 ${t.partialHi} ${client.name},`);
+    lines.push('');
+    lines.push(`✅ ${t.partialBody} ${paidLine} 💵`);
+    lines.push(`${t.partialRemaining} ${remainingLine}`);
+    lines.push('');
+    lines.push(t.partialThanks);
+    return lines.join('\n');
+  }
+
+  function buildFullPaymentText(client, paidUsd, lang, extraUsd, tipMode){
+    const t = I18N[lang] || I18N[state.invoiceLang] || I18N.en;
+    const paidLine = `${fmtUsd(paidUsd)} / ${fmtLbp(paidUsd * state.rate.value)}`;
+    const lines = [];
+    lines.push(`👋 ${t.fullHi} ${client.name},`);
+    lines.push('');
+    lines.push(`✅ ${t.fullBody} ${paidLine} 💵`);
+    lines.push(t.fullSettled);
+    if(extraUsd > 0.004){
+      const extraLine = `${fmtUsd(extraUsd)} / ${fmtLbp(extraUsd * state.rate.value)}`;
+      lines.push(tipMode ? `🙏 ${t.fullOverTip} ${extraLine} 💛` : `📌 ${t.fullOverCredit} ${extraLine}`);
+    }
+    lines.push('');
+    lines.push(t.fullThanks);
+    return lines.join('\n');
+  }
+
+  // Records that the client paid part of what they owe, then sends a
+  // WhatsApp confirmation (chosen language) with the amount received and
+  // the balance that's left.
+  async function sendPartialPayment(clientId){
+    const c = state.clients.find(x => x.id === clientId);
+    if(!c || c.balanceUsd <= 0) return;
+    const result = await promptModalValidated(
+      'Partial payment — ' + c.name,
+      [{ id:'amount', label:'Amount received', type:'money', placeholder:'e.g. 20' }],
+      (v) => {
+        const val = parseFloat(v.amount);
+        if(isNaN(val) || val <= 0) return 'Enter a valid positive amount.';
+        if(val >= c.balanceUsd) return 'That covers the full balance — use "Paid in full" instead.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const paid = parseFloat(result.amount);
+    const lang = await chooseLanguageModal('🌐 Send this payment confirmation in which language?');
+    if(!lang) return;
+    c.balanceUsd -= paid;
+    saveClients();
+    applyBusinessBalanceDelta(paid, 'Partial payment — ' + c.name);
+    renderClientList();
+    renderClientSelect();
+    renderInvoiceIfNeeded();
+    const text = buildPartialPaymentText(c, paid, c.balanceUsd, lang);
+    await sendClientWhatsapp(c, text, 'Payment confirmation copied, paste it wherever you like.');
+  }
+
+  // Marks the client's balance as fully settled and sends a WhatsApp
+  // thank-you message (chosen language) confirming the full amount received.
+  // Lets the cashier enter the actual amount handed over, which may be more
+  // than what was owed (customers sometimes round up or overpay). tipMode
+  // decides what happens to that extra: false = it becomes a credit you now
+  // owe back to the client; true = it's kept as a tip and the client's
+  // balance is simply cleared to zero.
+  async function sendFullPayment(clientId, tipMode){
+    const c = state.clients.find(x => x.id === clientId);
+    if(!c || c.balanceUsd <= 0) return;
+    const owedUsd = c.balanceUsd;
+    const result = await promptModalValidated(
+      (tipMode ? 'Full payment + tip — ' : 'Full payment — ') + c.name,
+      [{ id:'amount', label:'Amount actually received', type:'money', value: owedUsd.toFixed(2), placeholder:'e.g. ' + owedUsd.toFixed(2) }],
+      (v) => {
+        const val = parseFloat(v.amount);
+        if(isNaN(val) || val <= 0) return 'Enter a valid positive amount.';
+        if(val < owedUsd - 0.004) return 'That doesn\'t cover the full balance — use "Partial payment" instead.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const paid = parseFloat(result.amount);
+    const extraUsd = Math.max(0, paid - owedUsd);
+    const confirmMsg = extraUsd > 0.004
+      ? (tipMode
+          ? `Mark ${c.name}'s balance as fully paid, keep the extra ${fmtUsd(extraUsd)} as a tip, and send a thank-you message?`
+          : `Mark ${c.name}'s balance as fully paid, record the extra ${fmtUsd(extraUsd)} as a credit you now owe them, and send a thank-you message?`)
+      : `Mark ${c.name}'s balance of ${fmtUsd(owedUsd)} as fully paid and send a thank-you message?`;
+    const ok = await confirmModal(confirmMsg);
+    if(!ok) return;
+    const lang = await chooseLanguageModal('🌐 Send this thank-you message in which language?');
+    if(!lang) return;
+    c.balanceUsd = tipMode ? 0 : -extraUsd;
+    saveClients();
+    const note = extraUsd > 0.004
+      ? (tipMode ? 'Full payment + tip — ' : 'Full payment (overpaid) — ') + c.name
+      : 'Full payment — ' + c.name;
+    applyBusinessBalanceDelta(paid, note);
+    renderClientList();
+    renderClientSelect();
+    renderInvoiceIfNeeded();
+    const text = buildFullPaymentText(c, paid, lang, extraUsd, tipMode);
+    await sendClientWhatsapp(c, text, 'Thank-you message copied, paste it wherever you like.');
   }
 
   function addClient(){
@@ -2624,8 +3251,10 @@
       : `Mark as settled — confirms you paid ${c.name} the ${fmtUsd(-c.balanceUsd)} you owed them?`;
     const ok = await confirmModal(msg);
     if(!ok) return;
+    const settledAmount = c.balanceUsd; // positive = they paid you, negative = you paid them
     c.balanceUsd = 0;
     saveClients();
+    applyBusinessBalanceDelta(settledAmount, (owes ? 'Balance paid — ' : 'Balance paid out — ') + c.name);
     renderClientList();
     renderClientSelect();
     renderInvoiceIfNeeded();
@@ -2726,9 +3355,12 @@
         const row = document.createElement('div');
         row.className = 'pick-row';
         row.innerHTML = `
-          <div>
-            <div class="pick-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
-            <div class="pick-price">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}</div>
+          <div class="pick-row-left">
+            ${p.image ? `<img class="pick-thumb" src="${p.image}" alt="">` : ''}
+            <div style="min-width:0;">
+              <div class="pick-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
+              <div class="pick-price">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}</div>
+            </div>
           </div>
           <div class="pick-plus">+</div>`;
         row.addEventListener('click', () => {
@@ -2839,15 +3471,25 @@
       } else {
         list.innerHTML = fields.map((f, i) => `
           <div class="voucher-field-row" data-idx="${i}">
-            <input type="text" class="vf-label" placeholder="Field name" value="${escapeHtml(f.label)}">
-            <input type="text" class="vf-value" placeholder="Value" value="${escapeHtml(f.value)}">
-            <button type="button" class="mini-btn danger vf-remove">Remove</button>
+            <div class="vf-inputs-row">
+              <input type="text" class="vf-label" placeholder="Field name" value="${escapeHtml(f.label)}">
+              <input type="text" class="vf-value${f.emph ? ' vf-value-emph' : ''}" placeholder="Value" value="${escapeHtml(f.value)}">
+            </div>
+            <div class="vf-actions-row">
+              <button type="button" class="mini-btn vf-emph-toggle${f.emph ? ' active' : ''}">${f.emph ? '⭐ Bold & larger' : '☆ Make bold & larger'}</button>
+              <button type="button" class="mini-btn danger vf-remove">Remove</button>
+            </div>
           </div>`).join('');
       }
       list.querySelectorAll('.voucher-field-row').forEach(row => {
         const idx = parseInt(row.dataset.idx, 10);
         row.querySelector('.vf-label').addEventListener('input', (e) => { fields[idx].label = e.target.value; });
-        row.querySelector('.vf-value').addEventListener('input', (e) => { fields[idx].value = e.target.value; });
+        const valueInput = row.querySelector('.vf-value');
+        valueInput.addEventListener('input', (e) => { fields[idx].value = e.target.value; });
+        row.querySelector('.vf-emph-toggle').addEventListener('click', () => {
+          fields[idx].emph = !fields[idx].emph;
+          renderFields();
+        });
         row.querySelector('.vf-remove').addEventListener('click', () => { fields.splice(idx, 1); renderFields(); });
       });
     }
@@ -2887,7 +3529,7 @@
       });
       document.getElementById('modalCancelBtn').addEventListener('click', () => { closeModal(); resolve(null); });
       document.getElementById('modalSaveBtn').addEventListener('click', () => {
-        const cleaned = fields.map(f => ({ label: f.label.trim(), value: f.value.trim() })).filter(f => f.label || f.value);
+        const cleaned = fields.map(f => ({ label: f.label.trim(), value: f.value.trim(), emph: !!f.emph })).filter(f => f.label || f.value);
         rememberVoucherFieldLabels(cleaned);
         closeModal();
         resolve(cleaned);
@@ -3052,11 +3694,41 @@
     return state.clients.find(c => c.id === id) || null;
   }
 
+  // ---------- Invoice date & time (editable, for backdating old sales) ----------
+  function dateTimeToInputValues(d){
+    const pad = (n) => String(n).padStart(2, '0');
+    return {
+      date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+      time: `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+    };
+  }
+  function setInvoiceDateTimeToNow(){
+    const v = dateTimeToInputValues(new Date());
+    $('#invoiceDateInput').value = v.date;
+    $('#invoiceTimeInput').value = v.time;
+  }
+  // Reads the editable date/time fields into a real Date, falling back to
+  // "now" if they're empty or invalid so a cleared field never breaks a sale.
+  function getInvoiceDateTime(){
+    const dateVal = $('#invoiceDateInput').value;
+    if(!dateVal) return new Date();
+    const [y, m, day] = dateVal.split('-').map(Number);
+    const timeVal = $('#invoiceTimeInput').value;
+    let h = 0, min = 0, sec = 0;
+    if(timeVal){
+      const parts = timeVal.split(':').map(Number);
+      h = parts[0] || 0; min = parts[1] || 0; sec = parts[2] || 0;
+    }
+    const d = new Date(y, (m || 1) - 1, day || 1, h, min, sec);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
+
   function computeInvoiceNumbers(){
     let subtotalUsd = 0;
     let originalSubtotalUsd = 0;
     let lineDiscountUsd = 0;
     let costTotalUsd = 0;
+    const items = [];
     state.lines.forEach(line => {
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
@@ -3065,7 +3737,11 @@
       originalSubtotalUsd += amt.original;
       lineDiscountUsd += amt.discountAmount;
       const unitCost = getLineUnitCost(p, line);
-      costTotalUsd += getLineCostMode(p, line) === 'flat' ? unitCost : unitCost * line.qty;
+      const lineCostUsd = getLineCostMode(p, line) === 'flat' ? unitCost : unitCost * line.qty;
+      costTotalUsd += lineCostUsd;
+      // Per-item snapshot for "top products" reporting — attributed at line-discount
+      // level (before the whole-invoice discount below, which isn't split per item).
+      items.push({ productId: p.id, name: p.name, qty: line.qty, revenueUsd: amt.total, costUsd: lineCostUsd, profitUsd: amt.total - lineCostUsd });
     });
 
     // Whole-invoice discount applies on top of the (already line-discounted) subtotal.
@@ -3088,7 +3764,7 @@
     const includeBalance = client && $('#includeBalanceChk').checked;
     const prevBalance = includeBalance ? client.balanceUsd : 0;
     const grandTotal = subtotalUsd + prevBalance;
-    return { subtotalUsd, originalSubtotalUsd, lineDiscountUsd, invoiceDiscountUsd, totalDiscountUsd, costTotalUsd, profitUsd: subtotalUsd - costTotalUsd, client, includeBalance, prevBalance, grandTotal };
+    return { subtotalUsd, originalSubtotalUsd, lineDiscountUsd, invoiceDiscountUsd, totalDiscountUsd, costTotalUsd, profitUsd: subtotalUsd - costTotalUsd, client, includeBalance, prevBalance, grandTotal, items };
   }
 
   // ---------- Payment methods (shown on invoice, e.g. Whish: 70817032) ----------
@@ -3264,7 +3940,7 @@
                 <span>${line.qty > 1 ? 'Unit ' + (i + 1) : 'Details'}</span>
                 <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${i}">✏️ edit</button>
               </div>
-              <div class="voucher-unit-body">${unitFields.length ? unitFields.map(f => `${escapeHtml(f.label || 'Detail')}: <b>${escapeHtml(f.value)}</b><br>`).join('') : `<span class="v-empty">No details entered yet.</span>`}</div>
+              <div class="voucher-unit-body">${unitFields.length ? unitFields.map(f => f.emph ? `<span class="vf-emph-line">${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}</span><br>` : `${escapeHtml(f.label || 'Detail')}: <b>${escapeHtml(f.value)}</b><br>`).join('') : `<span class="v-empty">No details entered yet.</span>`}</div>
             </div>
           `).join('')}
         </div>
@@ -3362,6 +4038,20 @@
     });
   }
 
+  function setOverpaymentMode(mode){
+    state.overpaymentMode = mode;
+    updateOverpaymentModeUI();
+    updateRemaining();
+    renderPreviewOnly();
+  }
+
+  function updateOverpaymentModeUI(){
+    $all('#overpaymentModeBtns button').forEach(b => {
+      if(b.dataset.mode === state.overpaymentMode) b.classList.remove('ghost');
+      else b.classList.add('ghost');
+    });
+  }
+
   function getAmountReceivedUsd(){
     const raw = parseFormattedNumber($('#amountReceived').value);
     if(isNaN(raw)) return NaN;
@@ -3373,7 +4063,8 @@
     const received = getAmountReceivedUsd();
     const receivedVal = isNaN(received) ? 0 : received;
     const remaining = nums.grandTotal - receivedVal;
-    $('#remainingBalance').innerHTML = (remaining > 0 ? 'owes <b>' + fmtUsd(remaining) + '</b> (' + fmtLbp(remaining * state.rate.value) + ')' : remaining < 0 ? 'credit <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')' : '<b>$0.00</b> (0 LBP)');
+    const isTip = remaining < 0 && state.overpaymentMode === 'tip';
+    $('#remainingBalance').innerHTML = (remaining > 0 ? 'owes <b>' + fmtUsd(remaining) + '</b> (' + fmtLbp(remaining * state.rate.value) + ')' : remaining < 0 ? (isTip ? 'tip <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')' : 'credit <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')') : '<b>$0.00</b> (0 LBP)');
   }
 
   function renderInvoiceIfNeeded(){
@@ -3387,9 +4078,9 @@
     const t = I18N[state.invoiceLang] || I18N.en;
     const s = state.invoiceSettings;
     const customer = $('#customerName').value.trim();
-    const now = new Date();
+    const now = getInvoiceDateTime();
     const dateStr = now.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
-    const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit' });
+    const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit', second:'2-digit' });
     const nums = computeInvoiceNumbers();
     let lines = [];
     lines.push(em('🧾') + (s.headerTitle || t.invoice));
@@ -3419,7 +4110,10 @@
           if(!unitFields.length) return;
           lines.push(`   ${em('🎟️')}${t.voucherHeader}${line.qty > 1 ? ' — Unit ' + (i + 1) : ''}`);
           unitFields.forEach(f => {
-            if(f.label || f.value) lines.push(`      ${f.label || 'Detail'}: ${f.value}`);
+            if(f.label || f.value){
+              const detailLine = `${f.label || 'Detail'}: ${f.value}`;
+              lines.push(`      ${f.emph ? '*' + detailLine + '*' : detailLine}`);
+            }
           });
         });
       }
@@ -3444,7 +4138,7 @@
       lines.push(`${em(statusEmoji)}${t.paymentStatus}: ${statusLabel}`);
       lines.push(`${em('💳')}${t.received}: ${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})`);
       if(remaining > 0.004) lines.push(`${em('⚠️')}${t.remainingBalance}: ${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})`);
-      else if(remaining < -0.004) lines.push(`${em('🟢')}${t.creditOnAccount}: ${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})`);
+      else if(remaining < -0.004) lines.push(state.overpaymentMode === 'tip' ? `${em('🙏')}${t.tipReceived}: ${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})` : `${em('🟢')}${t.creditOnAccount}: ${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})`);
     }
 
     lines.push('');
@@ -3478,11 +4172,26 @@
     const nums = computeInvoiceNumbers();
     const received = getAmountReceivedUsd();
     const receivedVal = isNaN(received) ? nums.grandTotal : received;
-    const newBalance = nums.grandTotal - receivedVal;
+    // Always start from the client's actual current balance (not nums.prevBalance,
+    // which is zeroed out when "Add this balance to the invoice total" is unchecked —
+    // that checkbox only controls what prints on the invoice, not real bookkeeping).
+    // This way, paying an invoice in full only clears what THIS invoice owes; any
+    // older unpaid balance stays on the books, and any unpaid remainder is added on.
+    const startingBalance = nums.client ? nums.client.balanceUsd : 0;
+    let newBalance = startingBalance + nums.subtotalUsd - receivedVal;
+    // If the customer paid more than they owed and the cashier chose "tip"
+    // mode, the extra is kept by the business instead of becoming a credit
+    // owed back to the client — so clamp the balance at 0 and record the
+    // extra separately as a tip.
+    let tipUsd = 0;
+    if(newBalance < -0.004 && state.overpaymentMode === 'tip'){
+      tipUsd = -newBalance;
+      newBalance = 0;
+    }
 
     const record = {
       id: uid(),
-      date: Date.now(),
+      date: getInvoiceDateTime().getTime(),
       customerName: $('#customerName').value.trim() || (nums.client ? nums.client.name : 'Walk-in'),
       clientId: nums.client ? nums.client.id : null,
       revenueUsd: nums.subtotalUsd,
@@ -3490,8 +4199,18 @@
       profitUsd: nums.profitUsd,
       prevBalanceApplied: nums.includeBalance ? nums.prevBalance : 0,
       amountReceived: receivedVal,
+      tipUsd,
       newBalance,
-      rateUsed: state.rate.value
+      rateUsed: state.rate.value,
+      // Per-product breakdown at the time of sale, used for "top products" reporting.
+      // Sales finalized before this update won't have this field.
+      items: nums.items,
+      // Full snapshot of the invoice as it looked when finalized, so it can be
+      // reprinted or re-sent later even if products/prices change afterward.
+      snapshotText: buildInvoiceText(),
+      snapshotHtml: buildPrintReceiptHtml(),
+      snapshotThermal: buildThermalReceiptSegments(),
+      snapshotPhone: (nums.client && nums.client.phone) ? nums.client.phone : ''
     };
     state.sales.push(record);
     saveSales();
@@ -3500,7 +4219,7 @@
       state.balance.value += receivedVal;
       state.balance.updatedAt = Date.now();
       saveBalance();
-      logBalanceChange(receivedVal, 'Sale received — ' + record.customerName);
+      logBalanceChange(receivedVal, (tipUsd > 0.004 ? 'Sale received (incl. ' + fmtUsd(tipUsd) + ' tip) — ' : 'Sale received — ') + record.customerName);
       renderBalance();
       renderBalanceLog();
     }
@@ -3563,12 +4282,15 @@
     state.invoiceDiscount = { mode: 'none', value: 0 };
     state.finalizedThisInvoice = false;
     state.paymentStatus = 'paid';
+    state.overpaymentMode = 'owe';
     state.previewEdited = false;
     $('#customerName').value = '';
     $('#clientSelect').value = '';
     $('#amountReceived').value = '';
     $('#amountReceived').dataset.userEdited = 'false';
     $('#amountReceivedCurrency').value = 'USD';
+    setInvoiceDateTimeToNow();
+    updateOverpaymentModeUI();
     renderInvoice();
   }
 
@@ -3579,13 +4301,16 @@
     const isToday = (d) => d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate();
     const isMonth = (d) => d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
     const isYear = (d) => d.getFullYear()===now.getFullYear();
+    const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const isPrevMonth = (d) => d.getFullYear()===prevMonthDate.getFullYear() && d.getMonth()===prevMonthDate.getMonth();
 
-    let pToday=0, rToday=0, pMonth=0, rMonth=0, pYear=0, rYear=0;
+    let pToday=0, rToday=0, pMonth=0, rMonth=0, pYear=0, rYear=0, pPrevMonth=0, rPrevMonth=0;
     state.sales.forEach(s => {
       const d = new Date(s.date);
       if(isToday(d)){ pToday += s.profitUsd; rToday += s.revenueUsd; }
       if(isMonth(d)){ pMonth += s.profitUsd; rMonth += s.revenueUsd; }
       if(isYear(d)){ pYear += s.profitUsd; rYear += s.revenueUsd; }
+      if(isPrevMonth(d)){ pPrevMonth += s.profitUsd; rPrevMonth += s.revenueUsd; }
     });
 
     $('#profitToday').textContent = fmtUsd(pToday);
@@ -3595,9 +4320,16 @@
     $('#profitYear').textContent = fmtUsd(pYear);
     $('#revYear').textContent = 'rev ' + fmtUsd(rYear);
 
+    renderMonthComparison(pMonth, rMonth, pPrevMonth, rPrevMonth);
+    renderReportsOutstanding();
+    renderTopPerformers();
+    renderSearchClientFilter();
+    renderCalendar();
+
     const historyEl = $('#salesHistory');
     const noSalesHint = $('#noSalesHint');
     const recent = [...state.sales].sort((a,b) => b.date - a.date).slice(0, 15);
+    $('#salesHistoryToggleLabel').textContent = 'Old invoices' + (state.sales.length ? ' (' + state.sales.length + ')' : '');
     if(recent.length === 0){
       historyEl.innerHTML = '';
       noSalesHint.style.display = 'block';
@@ -3608,22 +4340,898 @@
     recent.forEach(s => renderSaleRow(historyEl, s));
   }
 
+  // ---------- This month vs last month ----------
+  function trendHtml(current, previous, label){
+    let arrow, cls, pctText;
+    if(previous <= 0.004){
+      if(current <= 0.004){ arrow = '·'; cls = 'trend-flat'; pctText = 'no change'; }
+      else { arrow = '▲'; cls = 'trend-up'; pctText = 'new'; }
+    } else {
+      const pct = ((current - previous) / Math.abs(previous)) * 100;
+      if(Math.abs(pct) < 0.5){ arrow = '·'; cls = 'trend-flat'; pctText = '0%'; }
+      else { arrow = pct > 0 ? '▲' : '▼'; cls = pct > 0 ? 'trend-up' : 'trend-down'; pctText = (pct > 0 ? '+' : '') + pct.toFixed(0) + '%'; }
+    }
+    return `<div class="trend-pill">${label} vs last month<br><b>${fmtUsd(current)}</b> <span class="${cls}">${arrow} ${pctText}</span></div>`;
+  }
+  function renderMonthComparison(pMonth, rMonth, pPrevMonth, rPrevMonth){
+    const el = $('#momCompareRow');
+    if(!el) return;
+    el.innerHTML = trendHtml(pMonth, pPrevMonth, '💰 Profit') + trendHtml(rMonth, rPrevMonth, '📈 Revenue');
+  }
+
+  // ---------- Outstanding balances ----------
+  function renderReportsOutstanding(){
+    const summaryEl = $('#reportsClientsSummary');
+    const listEl = $('#topDebtorsList');
+    if(!summaryEl || !listEl) return;
+    if(state.clients.length === 0){
+      summaryEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No clients yet.</div>';
+      listEl.innerHTML = '';
+      return;
+    }
+    const owedTotal = state.clients.reduce((s, c) => s + (c.balanceUsd > 0 ? c.balanceUsd : 0), 0);
+    const creditTotal = state.clients.reduce((s, c) => s + (c.balanceUsd < 0 ? -c.balanceUsd : 0), 0);
+    summaryEl.innerHTML = `
+      <div class="client-stat"><div class="cs-label">Clients</div><div class="cs-value">${state.clients.length}</div></div>
+      <div class="client-stat owed"><div class="cs-label">They owe you</div><div class="cs-value">${fmtUsd(owedTotal)}</div></div>
+      <div class="client-stat credit"><div class="cs-label">You owe them</div><div class="cs-value">${fmtUsd(creditTotal)}</div></div>
+    `;
+    const debtors = state.clients.filter(c => c.balanceUsd > 0.004).sort((a, b) => b.balanceUsd - a.balanceUsd).slice(0, 5);
+    if(debtors.length === 0){
+      listEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No one currently owes you.</div>';
+      return;
+    }
+    listEl.innerHTML = '<div class="top-perf-label">🔝 Top debtors</div>' + debtors.map(c => `
+      <div class="debtor-row">
+        <span class="top-name">${escapeHtml(c.name)}</span>
+        <span class="top-value">${fmtUsd(c.balanceUsd)}</span>
+      </div>`).join('');
+  }
+
+  // ---------- Top clients & top products ----------
+  let topPerformersPeriod = 'all';
+  function salesInPeriod(period){
+    if(period === 'all') return state.sales;
+    const now = new Date();
+    return state.sales.filter(s => {
+      const d = new Date(s.date);
+      if(period === 'year') return d.getFullYear() === now.getFullYear();
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    });
+  }
+  function renderTopPerformers(){
+    const clientsEl = $('#topClientsList');
+    const productsEl = $('#topProductsList');
+    const hintEl = $('#topProductsHint');
+    if(!clientsEl || !productsEl) return;
+    const sales = salesInPeriod(topPerformersPeriod);
+
+    // Top clients — grouped by clientId; walk-ins (no clientId) are pooled together
+    // since they aren't the same person invoice to invoice.
+    const clientMap = new Map();
+    sales.forEach(s => {
+      const key = s.clientId || '__walkin';
+      const cur = clientMap.get(key) || { name: s.clientId ? s.customerName : 'Walk-in (no account)', revenue: 0, profit: 0, count: 0 };
+      cur.revenue += s.revenueUsd;
+      cur.profit += s.profitUsd;
+      cur.count += 1;
+      // Keep the most recent name on file for a linked client, in case it changed.
+      if(s.clientId){
+        const client = state.clients.find(c => c.id === s.clientId);
+        if(client) cur.name = client.name;
+      }
+      clientMap.set(key, cur);
+    });
+    const topClients = [...clientMap.values()].sort((a, b) => b.profit - a.profit).slice(0, 5);
+    if(topClients.length === 0){
+      clientsEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No sales in this period yet.</div>';
+    } else {
+      clientsEl.innerHTML = topClients.map((c, i) => `
+        <div class="top-row">
+          <span><span class="top-rank">${i+1}</span><span class="top-name">${escapeHtml(c.name)}</span><br><span class="top-sub" style="margin-left:28px;">${c.count} invoice${c.count===1?'':'s'} · rev ${fmtUsd(c.revenue)}</span></span>
+          <span class="top-value">${fmtUsd(c.profit)}</span>
+        </div>`).join('');
+    }
+
+    // Top products — only sales with an items snapshot count (added after this
+    // feature shipped); older sales only kept aggregate totals, not per-product data.
+    const productMap = new Map();
+    let anyItemized = false;
+    sales.forEach(s => {
+      if(!Array.isArray(s.items)) return;
+      anyItemized = true;
+      s.items.forEach(it => {
+        const cur = productMap.get(it.productId) || { name: it.name, qty: 0, revenue: 0, profit: 0 };
+        cur.qty += it.qty;
+        cur.revenue += it.revenueUsd;
+        cur.profit += it.profitUsd;
+        cur.name = it.name;
+        productMap.set(it.productId, cur);
+      });
+    });
+    const topProducts = [...productMap.values()].sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+    if(hintEl) hintEl.style.display = anyItemized ? 'none' : 'block';
+    if(topProducts.length === 0){
+      productsEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No itemized sales in this period yet.</div>';
+    } else {
+      productsEl.innerHTML = topProducts.map((p, i) => `
+        <div class="top-row">
+          <span><span class="top-rank">${i+1}</span><span class="top-name">${escapeHtml(p.name)}</span><br><span class="top-sub" style="margin-left:28px;">${p.qty} sold</span></span>
+          <span class="top-value">${fmtUsd(p.revenue)}</span>
+        </div>`).join('');
+    }
+  }
+  const topPeriodChipsEl = $('#topPeriodChips');
+  if(topPeriodChipsEl){
+    topPeriodChipsEl.querySelectorAll('.cat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        topPerformersPeriod = chip.dataset.period;
+        topPeriodChipsEl.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c === chip));
+        renderTopPerformers();
+      });
+    });
+  }
+
+  // ---------- Client filter for the profit-search block ----------
+  function renderSearchClientFilter(){
+    const sel = $('#searchClientFilter');
+    if(!sel) return;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">All clients</option><option value="__walkin">Walk-in (no account)</option>';
+    state.clients.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      sel.appendChild(opt);
+    });
+    if([...sel.options].some(o => o.value === current)) sel.value = current;
+  }
+
+  // ---------- Profit calendar ----------
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTH_NAMES_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const now0 = new Date();
+  let calViewMode = 'month'; // 'day' | 'month' | 'year' | 'years'
+  let calViewYear = now0.getFullYear();
+  let calViewMonth = now0.getMonth();
+  let calViewDay = now0.getDate();
+  let calYearsBlockStart = calViewYear - (calViewYear % 12);
+
+  function setCalMode(mode){
+    calViewMode = mode;
+    if(mode === 'day'){
+      // calViewDay may be left over from a different month (e.g. day 31
+      // selected, then the month was paged away) — clamp it so we don't
+      // hand a nonexistent date like Feb 31 to the Date constructor.
+      const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+      calViewDay = Math.min(Math.max(calViewDay, 1), daysInMonth);
+    } else if(mode === 'years'){
+      calYearsBlockStart = calViewYear - (calViewYear % 12);
+    }
+    $all('#calModeChips .cat-chip').forEach(c => c.classList.toggle('active', c.dataset.calmode === mode));
+    renderCalendar();
+  }
+
+  function renderCalendar(){
+    const gridEl = $('#calGrid');
+    const listEl = $('#calDayList');
+    const hintEl = $('#calHint');
+    if(!gridEl) return;
+    if(calViewMode === 'day'){
+      gridEl.style.display = 'none';
+      listEl.style.display = 'block';
+      if(hintEl) hintEl.style.display = 'none';
+      renderCalendarDay();
+    } else {
+      gridEl.style.display = 'grid';
+      listEl.style.display = 'none';
+      if(hintEl){
+        hintEl.style.display = 'block';
+        hintEl.textContent = calViewMode === 'years' ? 'Tap a year to view it.'
+          : calViewMode === 'year' ? 'Tap a month to view it.'
+          : 'Tap a day to view it.';
+      }
+      gridEl.classList.toggle('year-grid', calViewMode === 'year' || calViewMode === 'years');
+      if(calViewMode === 'years') renderCalendarYears();
+      else if(calViewMode === 'year') renderCalendarYear();
+      else renderCalendarMonth();
+    }
+  }
+
+  function renderCalendarMonth(){
+    const gridEl = $('#calGrid');
+    const labelEl = $('#calNavLabel');
+    const totalEl = $('#calTotalValue');
+    labelEl.textContent = MONTH_NAMES[calViewMonth] + ' ' + calViewYear;
+
+    const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+    const todayReal = new Date();
+    const isCurrentMonth = todayReal.getFullYear() === calViewYear && todayReal.getMonth() === calViewMonth;
+
+    // Sum profit per day-of-month for the viewed month.
+    const perDay = {};
+    state.sales.forEach(s => {
+      const d = new Date(s.date);
+      if(d.getFullYear() === calViewYear && d.getMonth() === calViewMonth){
+        perDay[d.getDate()] = (perDay[d.getDate()] || 0) + s.profitUsd;
+      }
+    });
+
+    gridEl.innerHTML = '';
+    let monthTotal = 0;
+    for(let day = 1; day <= daysInMonth; day++){
+      const amt = perDay[day];
+      if(amt !== undefined) monthTotal += amt;
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell' + (isCurrentMonth && day === todayReal.getDate() ? ' today' : '');
+      let html = `<div class="cal-day-num">${day}</div>`;
+      if(amt !== undefined && Math.abs(amt) > 0.004){
+        html += `<div class="cal-day-amt ${amt >= 0 ? 'pos' : 'neg'}">${amt >= 0 ? '' : '−'}${fmtUsd(Math.abs(amt))}</div>`;
+      }
+      cell.innerHTML = html;
+      cell.addEventListener('click', () => {
+        calViewDay = day;
+        setCalMode('day');
+      });
+      gridEl.appendChild(cell);
+    }
+    totalEl.textContent = fmtUsd(monthTotal);
+  }
+
+  function renderCalendarYear(){
+    const gridEl = $('#calGrid');
+    const labelEl = $('#calNavLabel');
+    const totalEl = $('#calTotalValue');
+    labelEl.textContent = String(calViewYear);
+
+    // Sum profit per month for the viewed year.
+    const perMonth = {};
+    state.sales.forEach(s => {
+      const d = new Date(s.date);
+      if(d.getFullYear() === calViewYear){
+        perMonth[d.getMonth()] = (perMonth[d.getMonth()] || 0) + s.profitUsd;
+      }
+    });
+
+    const todayReal = new Date();
+    gridEl.innerHTML = '';
+    let yearTotal = 0;
+    for(let m = 0; m <= 11; m++){
+      const amt = perMonth[m];
+      if(amt !== undefined) yearTotal += amt;
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell' + (todayReal.getFullYear() === calViewYear && todayReal.getMonth() === m ? ' today' : '');
+      let html = `<div class="cal-day-num">${MONTH_NAMES_SHORT[m]}</div>`;
+      if(amt !== undefined && Math.abs(amt) > 0.004){
+        html += `<div class="cal-day-amt ${amt >= 0 ? 'pos' : 'neg'}">${amt >= 0 ? '' : '−'}${fmtUsd(Math.abs(amt))}</div>`;
+      }
+      cell.innerHTML = html;
+      cell.addEventListener('click', () => {
+        calViewMonth = m;
+        setCalMode('month');
+      });
+      gridEl.appendChild(cell);
+    }
+    totalEl.textContent = fmtUsd(yearTotal);
+  }
+
+  function renderCalendarYears(){
+    const gridEl = $('#calGrid');
+    const labelEl = $('#calNavLabel');
+    const totalEl = $('#calTotalValue');
+    const startYear = calYearsBlockStart;
+    const endYear = startYear + 11;
+    labelEl.textContent = startYear + '–' + endYear;
+
+    // Sum profit per year across the visible block.
+    const perYear = {};
+    state.sales.forEach(s => {
+      const y = new Date(s.date).getFullYear();
+      if(y >= startYear && y <= endYear){
+        perYear[y] = (perYear[y] || 0) + s.profitUsd;
+      }
+    });
+
+    const todayReal = new Date();
+    gridEl.innerHTML = '';
+    let blockTotal = 0;
+    for(let y = startYear; y <= endYear; y++){
+      const amt = perYear[y];
+      if(amt !== undefined) blockTotal += amt;
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell' + (todayReal.getFullYear() === y ? ' today' : '');
+      let html = `<div class="cal-day-num">${y}</div>`;
+      if(amt !== undefined && Math.abs(amt) > 0.004){
+        html += `<div class="cal-day-amt ${amt >= 0 ? 'pos' : 'neg'}">${amt >= 0 ? '' : '−'}${fmtUsd(Math.abs(amt))}</div>`;
+      }
+      cell.innerHTML = html;
+      cell.addEventListener('click', () => {
+        calViewYear = y;
+        setCalMode('year');
+      });
+      gridEl.appendChild(cell);
+    }
+    totalEl.textContent = fmtUsd(blockTotal);
+  }
+
+  function renderCalendarDay(){
+    const labelEl = $('#calNavLabel');
+    const totalEl = $('#calTotalValue');
+    const listEl = $('#calDayList');
+    const dateObj = new Date(calViewYear, calViewMonth, calViewDay);
+    labelEl.textContent = dateObj.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+
+    let total = 0;
+    const sales = [];
+    state.sales.forEach(s => {
+      const d = new Date(s.date);
+      if(d.getFullYear() === calViewYear && d.getMonth() === calViewMonth && d.getDate() === calViewDay){
+        total += s.profitUsd;
+        sales.push(s);
+      }
+    });
+
+    listEl.innerHTML = '';
+    if(sales.length === 0){
+      listEl.innerHTML = '<div class="empty-hint">No completed sales this day.</div>';
+    } else {
+      sales
+        .slice()
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .forEach(s => renderSaleRow(listEl, s));
+    }
+    totalEl.textContent = fmtUsd(total);
+  }
+
+  $all('#calModeChips .cat-chip').forEach(chip => {
+    chip.addEventListener('click', () => setCalMode(chip.dataset.calmode));
+  });
+
+  $('#calPrevBtn').addEventListener('click', () => {
+    if(calViewMode === 'day'){
+      const d = new Date(calViewYear, calViewMonth, calViewDay - 1);
+      calViewYear = d.getFullYear(); calViewMonth = d.getMonth(); calViewDay = d.getDate();
+    } else if(calViewMode === 'year'){
+      calViewYear -= 1;
+    } else if(calViewMode === 'years'){
+      calYearsBlockStart -= 12;
+    } else {
+      calViewMonth -= 1;
+      if(calViewMonth < 0){ calViewMonth = 11; calViewYear -= 1; }
+    }
+    renderCalendar();
+  });
+  $('#calNextBtn').addEventListener('click', () => {
+    if(calViewMode === 'day'){
+      const d = new Date(calViewYear, calViewMonth, calViewDay + 1);
+      calViewYear = d.getFullYear(); calViewMonth = d.getMonth(); calViewDay = d.getDate();
+    } else if(calViewMode === 'year'){
+      calViewYear += 1;
+    } else if(calViewMode === 'years'){
+      calYearsBlockStart += 12;
+    } else {
+      calViewMonth += 1;
+      if(calViewMonth > 11){ calViewMonth = 0; calViewYear += 1; }
+    }
+    renderCalendar();
+  });
+
   function renderSaleRow(container, s){
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    const status = getSaleStatus(s);
     const row = document.createElement('div');
     row.className = 'history-item';
     row.innerHTML = `
-      <div class="h-left">${dateStr} · ${escapeHtml(s.customerName)}</div>
+      <div class="h-left">${dateStr} · ${escapeHtml(s.customerName)}<br><span class="sale-status-pill ${status}">${SALE_STATUS_LABEL[status]}</span>${s.tipUsd > 0.004 ? '<span class="sale-status-pill tip">💸 tip ' + fmtUsd(s.tipUsd) + '</span>' : ''}</div>
       <div class="h-right">rev ${fmtUsd(s.revenueUsd)}<br>profit <b>${fmtUsd(s.profitUsd)}</b></div>
       <div class="h-actions">
+        <button class="mini-btn" data-action="print">🖨️ Print</button>
+        <button class="mini-btn" data-action="whatsapp">💬 WhatsApp</button>
         <button class="mini-btn" data-action="edit">✏️ Edit</button>
         <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
       </div>`;
+    row.querySelector('[data-action="print"]').addEventListener('click', () => printOldInvoice(s.id));
+    row.querySelector('[data-action="whatsapp"]').addEventListener('click', () => whatsappOldInvoice(s.id));
     row.querySelector('[data-action="edit"]').addEventListener('click', () => editSale(s.id));
     row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteSale(s.id));
     container.appendChild(row);
   }
+
+  // ---------- Reprint / re-send an old invoice from history ----------
+  // Sales finalized after this update carry full snapshots (snapshotHtml /
+  // snapshotText / snapshotThermal) captured at the moment they were
+  // finalized, so reprinting reproduces the invoice exactly as it looked —
+  // even if products, prices, or the exchange rate have changed since.
+  // Older sales saved before snapshots existed don't have one, but most
+  // still have a per-item breakdown (the `items` field used for "top
+  // products" reporting), so we rebuild a proper itemized receipt from
+  // that. Only the very oldest sales (no `items` either) fall back to a
+  // totals-only summary.
+  function buildFallbackReceiptHtml(s){
+    const set = state.invoiceSettings;
+    const t = I18N[state.invoiceLang] || I18N.en;
+    const rate = s.rateUsed || state.rate.value;
+    const d = new Date(s.date);
+    const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    let html = '';
+    if(set.logo) html += `<img class="pr-logo" src="${set.logo}" alt="logo">`;
+    html += `<div class="pr-center">`;
+    html += `<div class="pr-eyebrow">Invoice</div>`;
+    html += `<div class="pr-title">${escapeHtml(set.headerTitle || 'Invoice')}</div>`;
+    if(set.headerSubtitle) html += `<div class="pr-sub">${escapeHtml(set.headerSubtitle)}</div>`;
+    if(set.address) html += `<div class="pr-sub">${escapeHtml(set.address)}</div>`;
+    if(set.phone) html += `<div class="pr-sub">${escapeHtml(set.phone)}</div>`;
+    html += `<div class="pr-meta">${dateStr}</div>`;
+    html += `</div><div class="pr-hr solid"></div>`;
+    html += `<div class="pr-row"><span>Customer</span><b>${escapeHtml(s.customerName)}</b></div><div class="pr-hr"></div>`;
+
+    if(s.items && s.items.length){
+      let tableRows = '';
+      s.items.forEach((it, i) => {
+        const unit = it.qty ? it.revenueUsd / it.qty : it.revenueUsd;
+        tableRows += `<tr><td class="pr-col-name">${i + 1}. ${escapeHtml(it.name)}</td><td class="pr-col-qty">×${it.qty}</td><td class="pr-col-price">${fmtUsd(unit)}</td><td class="pr-col-total">${fmtUsd(it.revenueUsd)}</td></tr>`;
+        tableRows += `<tr class="pr-item-subrow"><td colspan="4"><div class="pr-item-sub">${fmtLbp(it.revenueUsd * rate)}</div></td></tr>`;
+      });
+      html += `<table class="pr-items-table"><thead><tr><th class="pr-col-name">${t.itemCol}</th><th class="pr-col-qty">${t.qtyCol}</th><th class="pr-col-price">${t.priceCol}</th><th class="pr-col-total">${t.totalCol}</th></tr></thead><tbody>${tableRows}</tbody></table>`;
+    } else {
+      html += `<div class="pr-row"><span>Amount</span><span>${fmtUsd(s.revenueUsd)} (${fmtLbp(s.revenueUsd * rate)})</span></div>`;
+    }
+
+    html += `<div class="pr-hr"></div>`;
+    if(s.prevBalanceApplied) html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})</span></div>`;
+    const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
+    html += `<div class="pr-row pr-grand"><span>${t.totalDue}:</span><span>${fmtUsd(grandTotal)} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}</span></div>`;
+    html += `<div class="pr-row"><span>Payment status</span><b>${printStatusLabel(getSaleStatus(s), t)}</b></div>`;
+    html += `<div class="pr-row"><span>Amount received</span><span>${fmtUsd(s.amountReceived)}</span></div>`;
+    const remaining = s.newBalance || 0;
+    if(remaining > 0.004) html += `<div class="pr-row"><span>Remaining balance</span><span>${fmtUsd(remaining)}</span></div>`;
+    else if(remaining < -0.004) html += `<div class="pr-row"><span>Credit on account</span><span>${fmtUsd(-remaining)}</span></div>`;
+    if(s.tipUsd > 0.004) html += `<div class="pr-row"><span>Tip</span><span>${fmtUsd(s.tipUsd)}</span></div>`;
+    if(!s.items || !s.items.length) html += `<div class="pr-hr"></div><div class="pr-footer">Reconstructed summary — itemized details were not saved for this older invoice.</div>`;
+    if(set.footerNote) html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(set.footerNote)}</div>`;
+    return html;
+  }
+
+  function buildFallbackReceiptText(s){
+    const t = I18N[state.invoiceLang] || I18N.en;
+    const rate = s.rateUsed || state.rate.value;
+    const d = new Date(s.date);
+    const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    const lines = [];
+    lines.push('🧾 ' + (state.invoiceSettings.headerTitle || 'Invoice'));
+    lines.push('📅 ' + dateStr);
+    lines.push('👤 Customer: ' + s.customerName);
+    lines.push('');
+    if(s.items && s.items.length){
+      s.items.forEach((it, i) => {
+        lines.push(`${i + 1}) ${it.name} x${it.qty}`);
+        lines.push(`   ${fmtUsd(it.revenueUsd)}  (${fmtLbp(it.revenueUsd * rate)})`);
+      });
+      lines.push('');
+    }
+    if(s.prevBalanceApplied) lines.push(`📌 ${t.previousBalance}: ${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})`);
+    const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
+    lines.push(`*💰 ${t.totalDue}: ${fmtUsd(grandTotal)} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}*`);
+    lines.push(SALE_STATUS_LABEL[getSaleStatus(s)]);
+    lines.push('💳 Received: ' + fmtUsd(s.amountReceived));
+    const remaining = s.newBalance || 0;
+    if(remaining > 0.004) lines.push('⚠️ Remaining balance: ' + fmtUsd(remaining));
+    else if(remaining < -0.004) lines.push('🟢 Credit on account: ' + fmtUsd(-remaining));
+    if(s.tipUsd > 0.004) lines.push('🙏 Tip: ' + fmtUsd(s.tipUsd));
+    if(state.invoiceSettings.footerNote){
+      lines.push('');
+      lines.push(state.invoiceSettings.footerNote);
+    }
+    if(!s.items || !s.items.length){
+      lines.push('');
+      lines.push('(Reconstructed summary — itemized details were not saved for this older invoice.)');
+    }
+    return lines.join('\n');
+  }
+
+  // Plain-text/segments counterpart of buildFallbackReceiptHtml, for
+  // Bluetooth reprints of sales that predate the snapshotThermal field —
+  // same centered header, item columns (when available), and "$X USD or Y
+  // LBP" total as a live invoice would print today.
+  function buildThermalSegmentsFromSale(s){
+    const set = state.invoiceSettings;
+    const t = I18N[state.invoiceLang] || I18N.en;
+    const rate = s.rateUsed || state.rate.value;
+    const d = new Date(s.date);
+    const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', second:'2-digit' });
+    const W = set.paperWidth === '58' ? 32 : 48;
+
+    const segments = [];
+    const seg = (text, opts) => segments.push(Object.assign({ text: text, align:'left', bold:false }, opts || {}));
+    const hr = (ch) => (ch || '-').repeat(W);
+    const clip = (str, w) => { str = String(str); return str.length > w ? str.slice(0, w) : str; };
+    const twoCol = (left, right) => {
+      left = clip(left, W); right = String(right);
+      let space = W - left.length - right.length;
+      if(space < 1){ seg(left); seg(right, { align:'right' }); return; }
+      seg(left + ' '.repeat(space) + right);
+    };
+    const qtyW = 5;
+    const priceW = W >= 40 ? 10 : 7;
+    const totalW = W >= 40 ? 10 : 7;
+    const nameW = W - qtyW - 1 - priceW - totalW;
+    const colWidths = [nameW, qtyW, priceW, totalW];
+    const colAligns = ['l', 'c', 'r', 'r'];
+    const padCell = (str, w, align) => {
+      str = clip(str, w);
+      const gap = w - str.length;
+      if(align === 'r') return ' '.repeat(gap) + str;
+      if(align === 'c'){ const left = Math.floor(gap / 2); return ' '.repeat(left) + str + ' '.repeat(gap - left); }
+      return str + ' '.repeat(gap);
+    };
+    const tableRow = (cells, opts) => { const parts = cells.map((c, i) => padCell(c, colWidths[i], colAligns[i])); seg(parts[0] + parts[1] + ' ' + parts[2] + parts[3], opts); };
+
+    seg(t.invoice.replace(/\*/g, '').toUpperCase(), { align:'center' });
+    seg((set.headerTitle || 'Invoice').toUpperCase(), { align:'center', bold:true });
+    if(set.headerSubtitle) seg(set.headerSubtitle, { align:'center' });
+    if(set.address) seg(set.address, { align:'center' });
+    if(set.phone) seg(set.phone, { align:'center' });
+    seg(`${dateStr} - ${timeStr}`, { align:'center' });
+    seg(hr('='));
+    twoCol(t.customer, s.customerName);
+    seg(hr('-'));
+
+    if(s.items && s.items.length){
+      tableRow([t.itemCol, t.qtyCol, t.priceCol, t.totalCol], { bold:true });
+      seg(hr('-'));
+      s.items.forEach((it, i) => {
+        const unit = it.qty ? it.revenueUsd / it.qty : it.revenueUsd;
+        tableRow([`${i + 1}. ${it.name}`, `x${it.qty}`, fmtUsd(unit), fmtUsd(it.revenueUsd)]);
+        seg(fmtLbp(it.revenueUsd * rate));
+      });
+    } else {
+      twoCol('Amount', fmtUsd(s.revenueUsd));
+      seg(fmtLbp(s.revenueUsd * rate));
+    }
+
+    seg(hr('-'));
+    if(s.prevBalanceApplied) twoCol(t.previousBalance, `${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})`);
+    const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
+    seg(`${t.totalDue}: ${fmtUsd(grandTotal)} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}`, { bold:true });
+
+    seg(hr('-'));
+    twoCol('Payment status', printStatusLabel(getSaleStatus(s), t));
+    twoCol(t.received, fmtUsd(s.amountReceived));
+    const remaining = s.newBalance || 0;
+    if(remaining > 0.004) twoCol(t.remainingBalance, fmtUsd(remaining));
+    else if(remaining < -0.004) twoCol(t.creditOnAccount, fmtUsd(-remaining));
+    if(s.tipUsd > 0.004) twoCol(t.tipReceived, fmtUsd(s.tipUsd));
+
+    const activeMethods = state.paymentMethods.filter(m => m.enabled);
+    if(activeMethods.length){
+      seg(hr('='));
+      seg(t.paymentMethods.toUpperCase());
+      activeMethods.forEach(m => twoCol(m.label, m.value));
+    }
+
+    if(set.footerNote){
+      seg(hr('-'));
+      seg(set.footerNote, { align:'center' });
+    }
+
+    seg(hr('-'));
+    seg(s.items && s.items.length ? t.thankYouPrint : 'Reconstructed summary - itemized details were not saved for this older invoice.', { align:'center' });
+    return segments;
+  }
+
+  async function printOldInvoice(id){
+    const s = state.sales.find(x => x.id === id);
+    if(!s) return;
+    const html = s.snapshotHtml || buildFallbackReceiptHtml(s);
+    if(state.invoiceSettings.printerConnection === 'bluetooth' && btCharacteristic){
+      const segments = s.snapshotThermal || buildThermalSegmentsFromSale(s);
+      const ok = await printToBluetoothPrinter(segments);
+      if(ok) alertBanner('Sent to printer.');
+      return;
+    }
+    applyPrintPageStyle();
+    $('#printArea').innerHTML = html;
+    window.print();
+  }
+
+  function whatsappOldInvoice(id){
+    const s = state.sales.find(x => x.id === id);
+    if(!s) return;
+    const text = s.snapshotText || buildFallbackReceiptText(s);
+    let phoneDigits = (s.snapshotPhone || '').replace(/[^0-9]/g, '');
+    if(!phoneDigits && s.clientId){
+      const client = state.clients.find(c => c.id === s.clientId);
+      if(client && client.phone) phoneDigits = client.phone.replace(/[^0-9]/g, '');
+    }
+    const url = 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(text);
+    window.open(url, '_blank');
+  }
+
+  // ---------- Invoice history modal (shows every logged sale, not just the recent 15) ----------
+  // Derives a simple payment status label from the record's stored totals, since
+  // the live paymentStatus buttons on the invoice tab aren't persisted per sale.
+  function getSaleStatus(s){
+    const remaining = s.newBalance || 0;
+    if(remaining > 0.004) return (s.amountReceived > 0.004) ? 'partial' : 'unpaid';
+    if(remaining < -0.004) return 'credit';
+    return 'paid';
+  }
+  const SALE_STATUS_LABEL = { paid: '✅ Paid', partial: '🕓 Partial', unpaid: '❌ Unpaid', credit: '📌 Credit owed' };
+  // Plain, emoji-free version of the status label — used on anything that
+  // actually gets printed (paper receipt), where SALE_STATUS_LABEL's emoji
+  // is unwanted; the emoji version stays for in-app lists and WhatsApp text.
+  function printStatusLabel(status, t){
+    const map = { paid: t.paid, partial: t.partial, unpaid: t.notPaid, credit: t.creditOnAccount };
+    return map[status] || t.notPaid;
+  }
+
+  function openInvoiceHistoryModal(){
+    const clientOptions = state.clients.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+    const statusChips = [
+      { value:'', label:'All' },
+      { value:'paid', label:'✅ Paid' },
+      { value:'partial', label:'🕓 Partial' },
+      { value:'unpaid', label:'❌ Unpaid' },
+      { value:'credit', label:'📌 Credit owed' },
+      { value:'tip', label:'💸 Tip' }
+    ].map((c, i) => `<button type="button" class="cat-chip${i===0?' active':''}" data-status="${c.value}">${c.label}</button>`).join('');
+    modalBox.innerHTML = `
+      <h3>📜 Invoice history</h3>
+      <div class="modal-field">
+        <input type="text" id="historySearchInput" placeholder="🔍 Search name, date, amount, status...">
+      </div>
+
+      <div class="filter-panel">
+        <div class="filter-panel-head">
+          <span class="field-label">🎛️ Filters</span>
+          <button type="button" class="mini-btn" id="historyClearFiltersBtn">✖️ Clear</button>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">📅 Date range</span>
+          <div class="range-row">
+            <input type="date" id="historyFromDate">
+            <span class="range-sep">→</span>
+            <input type="date" id="historyToDate">
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">📊 Status</span>
+          <div class="chips-wrap" id="historyStatusChips">${statusChips}</div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">👤 Client</span>
+          <select id="historyClientFilter">
+            <option value="">All clients</option>
+            <option value="__walkin">Walk-in (no account)</option>
+            ${clientOptions}
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">💰 Total amount range</span>
+          <div class="range-row">
+            <input type="text" inputmode="decimal" id="historyMinAmount" placeholder="Min $">
+            <span class="range-sep">→</span>
+            <input type="text" inputmode="decimal" id="historyMaxAmount" placeholder="Max $">
+          </div>
+        </div>
+      </div>
+
+      <div id="historyModalCount" class="field-label" style="margin:0 0 10px;"></div>
+      <div id="historyModalList"></div>
+      <div class="empty-hint" id="historyModalEmpty" style="display:none;">No invoices found.</div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="historyModalCloseBtn">Close</button>
+      </div>`;
+    modalOverlay.classList.add('show');
+
+    const listEl = $('#historyModalList');
+    const emptyEl = $('#historyModalEmpty');
+    const countEl = $('#historyModalCount');
+    const searchInput = $('#historySearchInput');
+    const fromDateInput = $('#historyFromDate');
+    const toDateInput = $('#historyToDate');
+    const statusChipsEl = $('#historyStatusChips');
+    const clientSelect = $('#historyClientFilter');
+    const minAmountInput = $('#historyMinAmount');
+    const maxAmountInput = $('#historyMaxAmount');
+    let activeStatus = '';
+
+    // Builds one lowercase blob per sale (customer, date, every amount, status,
+    // and — if linked to a client — that client's name/phone) so a single search
+    // box can match on any of it, not just the customer name.
+    function searchBlob(s){
+      const d = new Date(s.date);
+      const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+      const client = s.clientId ? state.clients.find(c => c.id === s.clientId) : null;
+      const status = getSaleStatus(s);
+      const parts = [
+        s.customerName, dateStr,
+        fmtUsd(s.revenueUsd), fmtUsd(s.profitUsd), fmtUsd(s.amountReceived),
+        s.tipUsd > 0.004 ? fmtUsd(s.tipUsd) + ' tip' : '',
+        SALE_STATUS_LABEL[status],
+        client ? client.name : 'walk-in',
+        client && client.phone ? client.phone : ''
+      ];
+      return parts.join(' ').toLowerCase();
+    }
+
+    function renderList(){
+      const q = searchInput.value.trim().toLowerCase();
+      const fromTs = fromDateInput.value ? new Date(fromDateInput.value + 'T00:00:00').getTime() : null;
+      const toTs = toDateInput.value ? new Date(toDateInput.value + 'T23:59:59').getTime() : null;
+      const clientFilter = clientSelect.value;
+      const minAmount = parseFormattedNumber(minAmountInput.value);
+      const maxAmount = parseFormattedNumber(maxAmountInput.value);
+
+      let filtered = [...state.sales].sort((a, b) => b.date - a.date);
+      if(q) filtered = filtered.filter(s => searchBlob(s).includes(q));
+      if(fromTs !== null) filtered = filtered.filter(s => s.date >= fromTs);
+      if(toTs !== null) filtered = filtered.filter(s => s.date <= toTs);
+      if(activeStatus === 'tip') filtered = filtered.filter(s => s.tipUsd > 0.004);
+      else if(activeStatus) filtered = filtered.filter(s => getSaleStatus(s) === activeStatus);
+      if(clientFilter === '__walkin') filtered = filtered.filter(s => !s.clientId);
+      else if(clientFilter) filtered = filtered.filter(s => s.clientId === clientFilter);
+      if(!isNaN(minAmount)) filtered = filtered.filter(s => s.revenueUsd >= minAmount);
+      if(!isNaN(maxAmount)) filtered = filtered.filter(s => s.revenueUsd <= maxAmount);
+
+      listEl.innerHTML = '';
+      countEl.textContent = filtered.length + (filtered.length === 1 ? ' invoice' : ' invoices') + (state.sales.length !== filtered.length ? ' matching filters (of ' + state.sales.length + ' total)' : ' total');
+      if(filtered.length === 0){
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      filtered.forEach(s => renderSaleRow(listEl, s));
+    }
+    renderList();
+    [searchInput, fromDateInput, toDateInput, clientSelect, minAmountInput, maxAmountInput].forEach(el => {
+      el.addEventListener('input', renderList);
+      el.addEventListener('change', renderList);
+    });
+    statusChipsEl.querySelectorAll('.cat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeStatus = chip.dataset.status;
+        statusChipsEl.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c === chip));
+        renderList();
+      });
+    });
+    $('#historyClearFiltersBtn').addEventListener('click', () => {
+      searchInput.value = '';
+      fromDateInput.value = '';
+      toDateInput.value = '';
+      clientSelect.value = '';
+      minAmountInput.value = '';
+      maxAmountInput.value = '';
+      activeStatus = '';
+      statusChipsEl.querySelectorAll('.cat-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+      renderList();
+    });
+    $('#historyModalCloseBtn').addEventListener('click', closeModal);
+    setTimeout(() => searchInput.focus(), 30);
+  }
+  $('#viewInvoiceHistoryBtn').addEventListener('click', openInvoiceHistoryModal);
+
+  // ---------- Balance log history modal (shows every logged balance change, not just the recent 15) ----------
+  function openBalanceLogHistoryModal(){
+    const typeChips = [
+      { value:'', label:'All' },
+      { value:'add', label:'➕ Added' },
+      { value:'withdraw', label:'➖ Withdrawn' }
+    ].map((c, i) => `<button type="button" class="cat-chip${i===0?' active':''}" data-type="${c.value}">${c.label}</button>`).join('');
+    modalBox.innerHTML = `
+      <h3>💰 Balance change history</h3>
+      <div class="modal-field">
+        <input type="text" id="balanceHistorySearchInput" placeholder="🔍 Search note, date, amount...">
+      </div>
+
+      <div class="filter-panel">
+        <div class="filter-panel-head">
+          <span class="field-label">🎛️ Filters</span>
+          <button type="button" class="mini-btn" id="balanceHistoryClearFiltersBtn">✖️ Clear</button>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">📅 Date range</span>
+          <div class="range-row">
+            <input type="date" id="balanceHistoryFromDate">
+            <span class="range-sep">→</span>
+            <input type="date" id="balanceHistoryToDate">
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">📊 Type</span>
+          <div class="chips-wrap" id="balanceHistoryTypeChips">${typeChips}</div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">💰 Amount range</span>
+          <div class="range-row">
+            <input type="text" inputmode="decimal" id="balanceHistoryMinAmount" placeholder="Min $">
+            <span class="range-sep">→</span>
+            <input type="text" inputmode="decimal" id="balanceHistoryMaxAmount" placeholder="Max $">
+          </div>
+        </div>
+      </div>
+
+      <div id="balanceHistoryModalCount" class="field-label" style="margin:0 0 10px;"></div>
+      <div id="balanceHistoryModalList"></div>
+      <div class="empty-hint" id="balanceHistoryModalEmpty" style="display:none;">No balance changes found.</div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="balanceHistoryModalCloseBtn">Close</button>
+      </div>`;
+    modalOverlay.classList.add('show');
+
+    const listEl = $('#balanceHistoryModalList');
+    const emptyEl = $('#balanceHistoryModalEmpty');
+    const countEl = $('#balanceHistoryModalCount');
+    const searchInput = $('#balanceHistorySearchInput');
+    const fromDateInput = $('#balanceHistoryFromDate');
+    const toDateInput = $('#balanceHistoryToDate');
+    const typeChipsEl = $('#balanceHistoryTypeChips');
+    const minAmountInput = $('#balanceHistoryMinAmount');
+    const maxAmountInput = $('#balanceHistoryMaxAmount');
+    let activeType = '';
+
+    // Builds one lowercase blob per entry (note, date, amount) so a single
+    // search box can match on any of it, not just the note text.
+    function searchBlob(entry){
+      const d = new Date(entry.date);
+      const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+      const parts = [entry.note, dateStr, fmtUsd(Math.abs(entry.delta))];
+      return parts.join(' ').toLowerCase();
+    }
+
+    function renderList(){
+      const q = searchInput.value.trim().toLowerCase();
+      const fromTs = fromDateInput.value ? new Date(fromDateInput.value + 'T00:00:00').getTime() : null;
+      const toTs = toDateInput.value ? new Date(toDateInput.value + 'T23:59:59').getTime() : null;
+      const minAmount = parseFormattedNumber(minAmountInput.value);
+      const maxAmount = parseFormattedNumber(maxAmountInput.value);
+
+      let filtered = [...state.balanceLog].sort((a, b) => b.date - a.date);
+      if(q) filtered = filtered.filter(e => searchBlob(e).includes(q));
+      if(fromTs !== null) filtered = filtered.filter(e => e.date >= fromTs);
+      if(toTs !== null) filtered = filtered.filter(e => e.date <= toTs);
+      if(activeType === 'add') filtered = filtered.filter(e => e.delta > 0);
+      else if(activeType === 'withdraw') filtered = filtered.filter(e => e.delta < 0);
+      if(!isNaN(minAmount)) filtered = filtered.filter(e => Math.abs(e.delta) >= minAmount);
+      if(!isNaN(maxAmount)) filtered = filtered.filter(e => Math.abs(e.delta) <= maxAmount);
+
+      listEl.innerHTML = '';
+      countEl.textContent = filtered.length + (filtered.length === 1 ? ' change' : ' changes') + (state.balanceLog.length !== filtered.length ? ' matching filters (of ' + state.balanceLog.length + ' total)' : ' total');
+      if(filtered.length === 0){
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      filtered.forEach(entry => renderBalanceLogRow(listEl, entry));
+    }
+    renderList();
+    [searchInput, fromDateInput, toDateInput, minAmountInput, maxAmountInput].forEach(el => {
+      el.addEventListener('input', renderList);
+      el.addEventListener('change', renderList);
+    });
+    typeChipsEl.querySelectorAll('.cat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeType = chip.dataset.type;
+        typeChipsEl.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c === chip));
+        renderList();
+      });
+    });
+    $('#balanceHistoryClearFiltersBtn').addEventListener('click', () => {
+      searchInput.value = '';
+      fromDateInput.value = '';
+      toDateInput.value = '';
+      minAmountInput.value = '';
+      maxAmountInput.value = '';
+      activeType = '';
+      typeChipsEl.querySelectorAll('.cat-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+      renderList();
+    });
+    $('#balanceHistoryModalCloseBtn').addEventListener('click', closeModal);
+    setTimeout(() => searchInput.focus(), 30);
+  }
+  $('#viewBalanceLogHistoryBtn').addEventListener('click', openBalanceLogHistoryModal);
 
   function dateToInputValue(ts){
     const d = new Date(ts);
@@ -3668,6 +5276,14 @@
     s.profitUsd = s.revenueUsd - s.costUsd;
     s.amountReceived = parseFloat(result.received);
     s.newBalance = s.revenueUsd + (s.prevBalanceApplied||0) - s.amountReceived;
+
+    // The original snapshot (if any) was captured at finalize time and would
+    // now be out of sync with the edited totals above, and itemized line
+    // data isn't stored on the record to begin with — so rebuild the
+    // printable/WhatsApp snapshot from the updated summary numbers.
+    s.snapshotHtml = buildFallbackReceiptHtml(s);
+    s.snapshotText = buildFallbackReceiptText(s);
+    s.snapshotThermal = buildThermalSegmentsFromSale(s);
 
     // net effect on balance = (change in cash received) − (change in cost of goods)
     const netDelta = (s.amountReceived - oldAmountReceived) - (s.costUsd - oldCostUsd);
@@ -3745,12 +5361,20 @@
       label = String(val);
     }
 
-    const profit = matches.reduce((sum, s) => sum + s.profitUsd, 0);
-    const revenue = matches.reduce((sum, s) => sum + s.revenueUsd, 0);
+    const clientFilter = $('#searchClientFilter').value;
+    if(clientFilter === '__walkin') matches = matches.filter(s => !s.clientId);
+    else if(clientFilter) matches = matches.filter(s => s.clientId === clientFilter);
+    if(clientFilter){
+      const clientLabel = clientFilter === '__walkin' ? 'Walk-in (no account)' : (state.clients.find(c => c.id === clientFilter) || {}).name || '';
+      label += ' · ' + clientLabel;
+    }
+
+    const filteredProfit = matches.reduce((sum, s) => sum + s.profitUsd, 0);
+    const filteredRevenue = matches.reduce((sum, s) => sum + s.revenueUsd, 0);
 
     $('#searchResultLabel').textContent = label;
-    $('#searchResultProfit').textContent = fmtUsd(profit);
-    $('#searchResultMeta').textContent = `rev ${fmtUsd(revenue)} · ${matches.length} invoice${matches.length===1?'':'s'}`;
+    $('#searchResultProfit').textContent = fmtUsd(filteredProfit);
+    $('#searchResultMeta').textContent = `rev ${fmtUsd(filteredRevenue)} · ${matches.length} invoice${matches.length===1?'':'s'}`;
     const listEl = $('#searchResultList');
     listEl.innerHTML = '';
     [...matches].sort((a,b) => b.date - a.date).forEach(s => renderSaleRow(listEl, s));
@@ -3909,11 +5533,28 @@
 
   // Bluetooth thermal printers only understand raw ESC/POS commands, not
   // HTML/CSS — a plain <img> in the receipt markup (used for System print)
-  // never reaches them. This rasterizes the logo into a 1-bit bitmap and
-  // encodes it as an ESC/POS "GS v 0" image command so it actually prints.
-  async function logoToEscPosRaster(dataUrl, printerWidthPx){
+  // never reaches them. This rasterizes the logo into a 1-bit bitmap.
+  //
+  // NOTE: this used to encode the bitmap as a "GS v 0" raster command.
+  // Many cheap/generic Bluetooth thermal printers (common clone hardware)
+  // do NOT implement GS v 0 — they instead dump the raw command bytes to
+  // the paper as text, which prints as a block of garbled characters
+  // right where the logo should be. ESC * (bit-image mode) is a much
+  // older, near-universally supported command, so we build the logo
+  // with that instead.
+  // Mirrors the preview's logo sizing (#printArea .pr-logo: max-width:55%,
+  // max-height:64px) so the printed logo is the same relative size as the
+  // one shown in the print preview, not a full-paper-width rasterization.
+  async function logoToEscPosRaster(dataUrl, printerWidthPx, paperWidthMm){
     const img = await loadImageEl(dataUrl);
-    const targetW = Math.max(8, Math.min(printerWidthPx, 384) & ~7); // byte-aligned width
+    const dotsPerCssPx = (printerWidthPx / paperWidthMm) / 3.78; // printer dots per CSS px (96dpi reference, same as applyPreviewPaperWidth)
+    const widthCap = printerWidthPx * 0.55;
+    const heightCap = 64 * dotsPerCssPx;
+    const aspect = img.naturalWidth / img.naturalHeight;
+    let targetW = widthCap;
+    if(targetW / aspect > heightCap) targetW = heightCap * aspect; // height-constrained instead of width-constrained
+    targetW = Math.max(8, Math.round(targetW));
+    targetW = Math.max(8, Math.min(targetW, printerWidthPx) & ~7); // fits the paper, byte-aligned width
     const scale = targetW / img.naturalWidth;
     const targetH = Math.max(1, Math.round(img.naturalHeight * scale));
     const canvas = document.createElement('canvas');
@@ -3924,34 +5565,64 @@
     ctx.fillRect(0, 0, targetW, targetH);
     ctx.drawImage(img, 0, 0, targetW, targetH);
     const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
-    const bytesPerRow = targetW / 8;
-    const raster = new Uint8Array(bytesPerRow * targetH);
-    for(let y = 0; y < targetH; y++){
+
+    // 1-bit lookup: isDark(x,y) — true if that pixel should print as ink.
+    const isDark = (x, y) => {
+      if(x < 0 || x >= targetW || y < 0 || y >= targetH) return false;
+      const idx = (y * targetW + x) * 4;
+      const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2], a = imgData[idx + 3];
+      const lum = a === 0 ? 255 : (0.299 * r + 0.587 * g + 0.114 * b);
+      return lum < 160;
+    };
+
+    // ESC * m nL nH d1..dk — 24-dot double-density bit image, sent in
+    // horizontal bands of 24 pixel rows. Set line spacing to 24 dots so
+    // consecutive bands sit flush with no gap, then restore it after.
+    const bands = [];
+    bands.push(new Uint8Array([0x1B, 0x33, 24])); // ESC 3 24 — line spacing = 24 dots
+    const nL = targetW & 0xFF, nH = (targetW >> 8) & 0xFF;
+    for(let y0 = 0; y0 < targetH; y0 += 24){
+      const bandHeader = new Uint8Array([0x1B, 0x2A, 0x21, nL, nH]); // ESC * 33 (24-dot)
+      const bandData = new Uint8Array(targetW * 3);
       for(let x = 0; x < targetW; x++){
-        const idx = (y * targetW + x) * 4;
-        const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2], a = imgData[idx + 3];
-        const lum = a === 0 ? 255 : (0.299 * r + 0.587 * g + 0.114 * b);
-        if(lum < 160){
-          raster[y * bytesPerRow + (x >> 3)] |= (0x80 >> (x & 7));
+        let b0 = 0, b1 = 0, b2 = 0;
+        for(let bit = 0; bit < 8; bit++){
+          if(isDark(x, y0 + bit)) b0 |= (0x80 >> bit);
+          if(isDark(x, y0 + 8 + bit)) b1 |= (0x80 >> bit);
+          if(isDark(x, y0 + 16 + bit)) b2 |= (0x80 >> bit);
         }
+        bandData[x * 3] = b0;
+        bandData[x * 3 + 1] = b1;
+        bandData[x * 3 + 2] = b2;
       }
+      bands.push(bandHeader, bandData, new Uint8Array([0x0A])); // feed to next band
     }
-    const xL = bytesPerRow & 0xFF, xH = (bytesPerRow >> 8) & 0xFF;
-    const yL = targetH & 0xFF, yH = (targetH >> 8) & 0xFF;
-    const header = new Uint8Array([0x1D, 0x76, 0x30, 0x00, xL, xH, yL, yH]); // GS v 0, normal mode
-    const out = new Uint8Array(header.length + raster.length);
-    out.set(header, 0);
-    out.set(raster, header.length);
+    bands.push(new Uint8Array([0x1B, 0x32])); // ESC 2 — restore default line spacing
+
+    const totalLen = bands.reduce((sum, b) => sum + b.length, 0);
+    const out = new Uint8Array(totalLen);
+    let offset = 0;
+    for(const b of bands){ out.set(b, offset); offset += b.length; }
     return out;
   }
 
-  async function printToBluetoothPrinter(text){
+  // Takes the {text, align, bold} segments from buildThermalReceiptSegments()
+  // and prints each line with real ESC/POS alignment/bold, so the paper
+  // receipt's header, totals, and closing lines are centered/bold the same
+  // way the on-screen print preview shows them — not just a flat left block.
+  async function printToBluetoothPrinter(segments){
     if(!btCharacteristic) return false;
+    if(typeof segments === 'string'){
+      segments = segments.split('\n').map(text => ({ text: text, align:'left', bold:false }));
+    }
     try{
       const encoder = new TextEncoder();
       const ESC_INIT = new Uint8Array([0x1B, 0x40]); // ESC @
       const CENTER_ON = new Uint8Array([0x1B, 0x61, 0x01]); // ESC a 1 — center align
-      const CENTER_OFF = new Uint8Array([0x1B, 0x61, 0x00]); // ESC a 0 — left align
+      const RIGHT_ON = new Uint8Array([0x1B, 0x61, 0x02]); // ESC a 2 — right align
+      const LEFT_ALIGN = new Uint8Array([0x1B, 0x61, 0x00]); // ESC a 0 — left align
+      const BOLD_ON = new Uint8Array([0x1B, 0x45, 0x01]); // ESC E 1
+      const BOLD_OFF = new Uint8Array([0x1B, 0x45, 0x00]); // ESC E 0
       const FEED_CUT = new Uint8Array([0x0A, 0x0A, 0x0A, 0x0A, 0x1D, 0x56, 0x00]); // feed + cut
 
       await writeBytesToBluetoothPrinter(ESC_INIT);
@@ -3959,22 +5630,27 @@
       const s = state.invoiceSettings;
       if(s.logo){
         try{
-          const printerWidthPx = s.paperWidth === '58' ? 384 : 576;
-          const raster = await logoToEscPosRaster(s.logo, printerWidthPx);
+          const paperWidthMm = s.paperWidth === '58' ? 58 : 80;
+          const printerWidthPx = paperWidthMm === 58 ? 384 : 576;
+          const raster = await logoToEscPosRaster(s.logo, printerWidthPx, paperWidthMm);
           await writeBytesToBluetoothPrinter(CENTER_ON);
           await writeBytesToBluetoothPrinter(raster);
           await writeBytesToBluetoothPrinter(encoder.encode('\n'));
-          await writeBytesToBluetoothPrinter(CENTER_OFF);
+          await writeBytesToBluetoothPrinter(LEFT_ALIGN);
         }catch(e){
           console.error('Logo print failed, continuing with text only:', e);
         }
       }
 
-      const body = encoder.encode(text);
-      const payload = new Uint8Array(body.length + FEED_CUT.length);
-      payload.set(body, 0);
-      payload.set(FEED_CUT, body.length);
-      await writeBytesToBluetoothPrinter(payload);
+      for(const line of segments){
+        const cleanText = sanitizeForPrinter(line.text);
+        await writeBytesToBluetoothPrinter(line.align === 'center' ? CENTER_ON : line.align === 'right' ? RIGHT_ON : LEFT_ALIGN);
+        if(line.bold) await writeBytesToBluetoothPrinter(BOLD_ON);
+        await writeBytesToBluetoothPrinter(encoder.encode(cleanText + '\n'));
+        if(line.bold) await writeBytesToBluetoothPrinter(BOLD_OFF);
+      }
+      await writeBytesToBluetoothPrinter(LEFT_ALIGN);
+      await writeBytesToBluetoothPrinter(FEED_CUT);
       return true;
     }catch(e){
       alertBanner('Bluetooth print failed: ' + e.message + ' — try System print instead.');
@@ -3994,15 +5670,139 @@
       .replace(/[^\x00-\x7F\u0600-\u06FF\n]/g, '');
   }
 
+  // ---------- Plain-text receipt for the thermal (Bluetooth) printer ----------
+  // Mirrors buildPrintReceiptHtml()'s layout (same order, same sections,
+  // same "$X (Y LBP)" dual-currency style) so the paper receipt matches the
+  // on-screen print preview, instead of the WhatsApp-style text from
+  // buildInvoiceText(). Returns an array of {text, align, bold} segments —
+  // one per printed line — so printToBluetoothPrinter can apply real
+  // ESC/POS centering/bold rather than faking it with spaces alone.
+  function buildThermalReceiptSegments(){
+    const s = state.invoiceSettings;
+    const t = I18N[state.invoiceLang] || I18N.en;
+    const nums = computeInvoiceNumbers();
+    const customer = $('#customerName').value.trim();
+    const now = getInvoiceDateTime();
+    const dateStr = now.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit', second:'2-digit' });
+    const W = state.invoiceSettings.paperWidth === '58' ? 32 : 48;
+
+    const segments = [];
+    const seg = (text, opts) => segments.push(Object.assign({ text: text, align:'left', bold:false }, opts || {}));
+    const hr = (ch) => (ch || '-').repeat(W);
+    const clip = (str, w) => { str = String(str); return str.length > w ? str.slice(0, w) : str; };
+    const twoCol = (left, right) => {
+      left = clip(left, W); right = String(right);
+      let space = W - left.length - right.length;
+      if(space < 1){ seg(left); seg(right, { align:'right' }); return; }
+      seg(left + ' '.repeat(space) + right);
+    };
+
+    // Item table columns: ITEM | QTY | UNIT PRICE | TOTAL — same four
+    // columns as the preview's table, sized to fit the paper width.
+    const qtyW = 5;
+    const priceW = W >= 40 ? 10 : 7;
+    const totalW = W >= 40 ? 10 : 7;
+    const nameW = W - qtyW - 1 - priceW - totalW;
+    const colWidths = [nameW, qtyW, priceW, totalW];
+    const colAligns = ['l', 'c', 'r', 'r'];
+    const padCell = (str, w, align) => {
+      str = clip(str, w);
+      const gap = w - str.length;
+      if(align === 'r') return ' '.repeat(gap) + str;
+      if(align === 'c'){ const left = Math.floor(gap / 2); return ' '.repeat(left) + str + ' '.repeat(gap - left); }
+      return str + ' '.repeat(gap);
+    };
+    const tableRow = (cells, opts) => { const parts = cells.map((c, i) => padCell(c, colWidths[i], colAligns[i])); seg(parts[0] + parts[1] + ' ' + parts[2] + parts[3], opts); };
+
+    // ---- Header block (centered, like the preview's eyebrow/title/meta) ----
+    seg(t.invoice.replace(/\*/g, '').toUpperCase(), { align:'center' });
+    seg((s.headerTitle || 'Invoice').toUpperCase(), { align:'center', bold:true });
+    if(s.headerSubtitle) seg(s.headerSubtitle, { align:'center' });
+    if(s.address) seg(s.address, { align:'center' });
+    if(s.phone) seg(s.phone, { align:'center' });
+    seg(`${dateStr} - ${timeStr}`, { align:'center' });
+    seg(hr('='));
+    if(customer){
+      twoCol(t.customer, customer);
+      seg(hr('-'));
+    }
+
+    // ---- Items (ITEM / QTY / UNIT PRICE / TOTAL columns, like the table) ----
+    let lineNo = 0;
+    if(state.lines.length){
+      tableRow([t.itemCol, t.qtyCol, t.priceCol, t.totalCol], { bold:true });
+      seg(hr('-'));
+    }
+    state.lines.forEach(line => {
+      const p = state.products.find(x => x.id === line.productId);
+      if(!p) return;
+      lineNo++;
+      const amt = computeLineAmounts(p, line);
+      const lineTotal = amt.total;
+      tableRow([`${lineNo}. ${productDisplayName(p, state.invoiceLang)}`, `x${line.qty}`, fmtUsd(p.priceUsd), fmtUsd(lineTotal)]);
+      seg(fmtLbp(lineTotal * state.rate.value));
+      if(getLineDiscount(line)) seg(`  ${discountSummaryText(line)} (was ${fmtUsd(amt.original)})`);
+      if(line.note.trim()) seg(`  ${t.note}: ${line.note.trim()}`);
+      if(p.type === 'voucher' && line.voucher && line.voucher.length){
+        const units = ensureUnitVouchers(line);
+        units.forEach((unitFields, i) => {
+          if(!unitFields.length) return;
+          seg(`  ${t.voucherHeader}${line.qty > 1 ? ' - Unit ' + (i + 1) : ''}`);
+          unitFields.forEach(f => { if(f.label || f.value) seg(`    ${f.label || 'Detail'}: ${f.value}`, { bold: !!f.emph }); });
+        });
+      }
+    });
+
+    // ---- Totals ----
+    seg(hr('-'));
+    if(nums.totalDiscountUsd > 0.004){
+      twoCol('Discount total', `-${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})`);
+    }
+    if(nums.includeBalance && nums.prevBalance !== 0){
+      twoCol(t.previousBalance, `${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
+    }
+    seg(`${t.totalDue}: ${fmtUsd(nums.grandTotal)} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}`, { bold:true });
+
+    const received = getAmountReceivedUsd();
+    if(s.showPaymentStatus !== false && !isNaN(received)){
+      const remaining = nums.grandTotal - received;
+      const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
+      seg(hr('-'));
+      twoCol(t.paymentStatus, statusLabel);
+      twoCol(t.received, `${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})`);
+      if(remaining > 0.004) twoCol(t.remainingBalance, `${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})`);
+      else if(remaining < -0.004) twoCol(state.overpaymentMode === 'tip' ? t.tipReceived : t.creditOnAccount, `${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})`);
+    }
+
+    // ---- Payment methods ----
+    const activeMethods = state.paymentMethods.filter(m => m.enabled);
+    if(activeMethods.length){
+      seg(hr('='));
+      seg(t.paymentMethods.toUpperCase());
+      activeMethods.forEach(m => twoCol(m.label, m.value));
+    }
+
+    // ---- Footer / thank-you (mirrors the preview's two closing lines) ----
+    if(s.footerNote){
+      seg(hr('-'));
+      seg(s.footerNote, { align:'center' });
+    }
+    seg(hr('-'));
+    seg(t.thankYouPrint, { align:'center' });
+
+    return segments;
+  }
+
   // ---------- Print (system dialog or direct Bluetooth) ----------
   function buildPrintReceiptHtml(){
     const s = state.invoiceSettings;
     const t = I18N[state.invoiceLang] || I18N.en;
     const nums = computeInvoiceNumbers();
     const customer = $('#customerName').value.trim();
-    const now = new Date();
+    const now = getInvoiceDateTime();
     const dateStr = now.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
-    const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit' });
+    const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit', second:'2-digit' });
 
     let html = '';
     if(s.logo) html += `<img class="pr-logo" src="${s.logo}" alt="logo">`;
@@ -4017,35 +5817,46 @@
     if(customer) html += `<div class="pr-row"><span>${t.customer}</span><b>${escapeHtml(customer)}</b></div><div class="pr-hr"></div>`;
 
     let lineNo = 0;
+    let tableRows = '';
     state.lines.forEach(line => {
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
       lineNo++;
       const amt = computeLineAmounts(p, line);
       const lineTotal = amt.total;
-      html += `<div class="pr-item">`;
-      html += `<div class="pr-item-top"><span class="pr-item-title">${lineNo}. ${escapeHtml(productDisplayName(p, state.invoiceLang))} <span class="pr-item-qty">×${line.qty}</span></span><span class="pr-item-price">${fmtUsd(lineTotal)}</span></div>`;
-      html += `<div class="pr-item-sub">${fmtLbp(lineTotal * state.rate.value)}</div>`;
-      if(getLineDiscount(line)) html += `<div class="pr-item-sub">🏷️ ${escapeHtml(discountSummaryText(line))} (was ${fmtUsd(amt.original)})</div>`;
-      if(line.note.trim()) html += `<div class="pr-item-sub">${t.note}: ${escapeHtml(line.note.trim())}</div>`;
+      tableRows += `<tr>`;
+      tableRows += `<td class="pr-col-name">${lineNo}. ${escapeHtml(productDisplayName(p, state.invoiceLang))}</td>`;
+      tableRows += `<td class="pr-col-qty">×${line.qty}</td>`;
+      tableRows += `<td class="pr-col-price">${fmtUsd(p.priceUsd)}</td>`;
+      tableRows += `<td class="pr-col-total">${fmtUsd(lineTotal)}</td>`;
+      tableRows += `</tr>`;
+      const subLines = [`${fmtLbp(lineTotal * state.rate.value)}`];
+      if(getLineDiscount(line)) subLines.push(`${escapeHtml(discountSummaryText(line))} (was ${fmtUsd(amt.original)})`);
+      if(line.note.trim()) subLines.push(`${t.note}: ${escapeHtml(line.note.trim())}`);
+      tableRows += `<tr class="pr-item-subrow"><td colspan="4">${subLines.map(x => `<div class="pr-item-sub">${x}</div>`).join('')}</td></tr>`;
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
         const units = ensureUnitVouchers(line);
         units.forEach((unitFields, i) => {
-          const vh = unitFields.filter(f => f.label || f.value).map(f => `${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}`).join('<br>');
-          if(vh) html += `<div class="pr-voucher"><b>${t.voucherHeader}${line.qty > 1 ? ' — Unit ' + (i + 1) : ''}</b><br>${vh}</div>`;
+          const vh = unitFields.filter(f => f.label || f.value).map(f => {
+            const line = `${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}`;
+            return f.emph ? `<span style="font-weight:800; font-size:13px;">${line}</span>` : line;
+          }).join('<br>');
+          if(vh) tableRows += `<tr class="pr-item-subrow"><td colspan="4"><div class="pr-voucher"><b>${t.voucherHeader}${line.qty > 1 ? ' — Unit ' + (i + 1) : ''}</b><br>${vh}</div></td></tr>`;
         });
       }
-      html += `</div>`;
     });
+    if(lineNo > 0){
+      html += `<table class="pr-items-table"><thead><tr><th class="pr-col-name">${t.itemCol}</th><th class="pr-col-qty">${t.qtyCol}</th><th class="pr-col-price">${t.priceCol}</th><th class="pr-col-total">${t.totalCol}</th></tr></thead><tbody>${tableRows}</tbody></table>`;
+    }
 
     html += `<div class="pr-hr"></div>`;
     if(nums.totalDiscountUsd > 0.004){
-      html += `<div class="pr-row"><span>🏷️ Discount total</span><span>−${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})</span></div>`;
+      html += `<div class="pr-row"><span>Discount total</span><span>−${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})</span></div>`;
     }
     if(nums.includeBalance && nums.prevBalance !== 0){
       html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})</span></div>`;
     }
-    html += `<div class="pr-row pr-grand"><span>${t.totalDue}</span><span>${fmtUsd(nums.grandTotal)} (${fmtLbp(nums.grandTotal * state.rate.value)})</span></div>`;
+    html += `<div class="pr-row pr-grand"><span>${t.totalDue}:</span><span>${fmtUsd(nums.grandTotal)} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}</span></div>`;
 
     const received = getAmountReceivedUsd();
     if(s.showPaymentStatus !== false && !isNaN(received)){
@@ -4055,7 +5866,7 @@
       html += `<div class="pr-row"><span>${t.paymentStatus}</span><span>${statusLabel}</span></div>`;
       html += `<div class="pr-row"><span>${t.received}</span><span>${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})</span></div>`;
       if(remaining > 0.004) html += `<div class="pr-row"><span>${t.remainingBalance}</span><span>${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})</span></div>`;
-      else if(remaining < -0.004) html += `<div class="pr-row"><span>${t.creditOnAccount}</span><span>${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})</span></div>`;
+      else if(remaining < -0.004) html += `<div class="pr-row"><span>${state.overpaymentMode === 'tip' ? t.tipReceived : t.creditOnAccount}</span><span>${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})</span></div>`;
     }
 
     const activeMethods = state.paymentMethods.filter(m => m.enabled);
@@ -4086,16 +5897,55 @@
     styleTag.textContent = `@page{ size:${width} auto; margin:3mm; } #printArea{ max-width:${width}; padding:0 1mm; }`;
   }
 
+  // ---------- Print preview modal ----------
+  const printPreviewOverlay = $('#printPreviewOverlay');
+  function closePrintPreview(){
+    printPreviewOverlay.classList.remove('show');
+    $('#printPreviewPaper').innerHTML = '';
+  }
+  printPreviewOverlay.addEventListener('click', (e) => { if(e.target === printPreviewOverlay) closePrintPreview(); });
+
+  function applyPreviewPaperWidth(){
+    const mm = state.invoiceSettings.paperWidth === '58' ? 58 : 80;
+    $('#printPreviewPaper').style.width = Math.round(mm * 3.78) + 'px';
+  }
+
+  // Shows the exact receipt HTML on screen and resolves true if the user
+  // taps Print, or false if they cancel/close without printing.
+  function showPrintPreview(html){
+    return new Promise((resolve) => {
+      $('#printPreviewPaper').innerHTML = html;
+      applyPreviewPaperWidth();
+      printPreviewOverlay.classList.add('show');
+      const closeBtn = $('#printPreviewCloseBtn');
+      const cancelBtn = $('#printPreviewCancelBtn');
+      const printBtn = $('#printPreviewPrintBtn');
+      const cleanup = () => {
+        closeBtn.removeEventListener('click', onCancel);
+        cancelBtn.removeEventListener('click', onCancel);
+        printBtn.removeEventListener('click', onPrint);
+      };
+      const onCancel = () => { cleanup(); closePrintPreview(); resolve(false); };
+      const onPrint = () => { cleanup(); closePrintPreview(); resolve(true); };
+      closeBtn.addEventListener('click', onCancel);
+      cancelBtn.addEventListener('click', onCancel);
+      printBtn.addEventListener('click', onPrint);
+    });
+  }
+
   async function printInvoice(){
     if(state.lines.length === 0){ alertBanner('Add items to the invoice first.'); return; }
+    const receiptHtml = buildPrintReceiptHtml();
+    const confirmed = await showPrintPreview(receiptHtml);
+    if(!confirmed) return;
     if(state.invoiceSettings.printerConnection === 'bluetooth' && btCharacteristic){
-      const printerText = sanitizeForPrinter(buildInvoiceText(false));
-      const ok = await printToBluetoothPrinter(printerText);
+      const segments = buildThermalReceiptSegments();
+      const ok = await printToBluetoothPrinter(segments);
       if(ok){ alertBanner('Sent to printer.'); finalizeSaleIfNeeded(); }
       return;
     }
     applyPrintPageStyle();
-    $('#printArea').innerHTML = buildPrintReceiptHtml();
+    $('#printArea').innerHTML = receiptHtml;
     window.print();
     finalizeSaleIfNeeded();
   }
@@ -4130,6 +5980,10 @@
   $('#productSearch').addEventListener('input', renderCatalogPicker);
   $('#catalogSearch').addEventListener('input', renderCategories);
   $('#customerName').addEventListener('input', renderPreviewOnly);
+  $('#invoiceDateInput').addEventListener('change', renderPreviewOnly);
+  $('#invoiceTimeInput').addEventListener('change', renderPreviewOnly);
+  $('#invoiceDateNowBtn').addEventListener('click', () => { setInvoiceDateTimeToNow(); renderPreviewOnly(); });
+  setInvoiceDateTimeToNow();
   $('#copyBtn').addEventListener('click', copyInvoice);
   $('#whatsappBtn').addEventListener('click', openWhatsapp);
   $('#resetBtn').addEventListener('click', resetInvoice);
@@ -4162,6 +6016,15 @@
     $('#customerDetailsBody').classList.toggle('collapsed');
     $('#customerDetailsChev').classList.toggle('open');
   });
+  $('#balanceLogToggle').addEventListener('click', () => {
+    $('#balanceLogBody').classList.toggle('collapsed');
+    $('#balanceLogChev').classList.toggle('open');
+  });
+
+  $('#salesHistoryToggle').addEventListener('click', () => {
+    $('#salesHistoryBody').classList.toggle('collapsed');
+    $('#salesHistoryChev').classList.toggle('open');
+  });
   $('#amountReceived').addEventListener('input', (e) => {
     e.target.dataset.userEdited = 'true';
     updateRemaining();
@@ -4186,6 +6049,10 @@
   $all('#paymentStatusBtns button').forEach(btn => {
     btn.addEventListener('click', () => setPaymentStatus(btn.dataset.status));
   });
+  $all('#overpaymentModeBtns button').forEach(btn => {
+    btn.addEventListener('click', () => setOverpaymentMode(btn.dataset.mode));
+  });
+  updateOverpaymentModeUI();
   $('#searchMode').addEventListener('change', updateSearchInputsVisibility);
   $('#searchReportsBtn').addEventListener('click', runReportSearch);
   updateSearchInputsVisibility();
