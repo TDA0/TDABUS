@@ -1017,7 +1017,7 @@
   // ---- PUT YOUR DEPLOYED WORKER URL HERE ----
   // This is the URL you get after `wrangler deploy`, e.g.
   // "https://invoice-ledger-api.yoursubdomain.workers.dev"
-  const API_BASE = "https://invoice-ledger-api.tdabus.workers.dev/";
+  const API_BASE = "https://invoice-ledger-api.tdabus.workers.dev";
   // --------------------------------------------
 
   const TOKEN_KEY = 'ledger_auth_token';
@@ -1115,6 +1115,7 @@
     const pass = document.getElementById('loginPassword').value;
     try{
       const data = await apiFetch('/api/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
+      if(!data || !data.token) throw new Error('Server did not return a login token — the /api/login route on your Worker may be missing or misconfigured.');
       authToken = data.token;
       guestMode = false;
       localStorage.setItem(TOKEN_KEY, authToken);
@@ -1132,6 +1133,7 @@
     const pass = document.getElementById('loginPassword').value;
     try{
       const data = await apiFetch('/api/signup', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
+      if(!data || !data.token) throw new Error('Server did not return a signup token — the /api/signup route on your Worker may be missing or misconfigured.');
       authToken = data.token;
       guestMode = false;
       localStorage.setItem(TOKEN_KEY, authToken);
