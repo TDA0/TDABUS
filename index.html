@@ -167,11 +167,47 @@
     padding:13px 15px;
     background:none;
     cursor:pointer;
+    gap:8px;
   }
+  .category-head-left{ display:flex; align-items:center; gap:9px; min-width:0; }
+  .category-head-left h3{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .cat-chev{
+    color:var(--ink-faint);
+    font-size:12px;
+    flex-shrink:0;
+    transition:transform .15s ease;
+    display:inline-block;
+  }
+  .cat-chev.open{ transform:rotate(180deg); }
   .category-head h3{ font-size:17px; font-weight:700; }
-  .category-head .count{ font-size:13px; color:var(--ink-faint); font-weight:500; }
+  .category-head .count{ font-size:13px; color:var(--ink-faint); font-weight:500; white-space:nowrap; }
   .category-body{ padding:2px 15px 14px; }
   .category-body.collapsed{ display:none; }
+  .cat-section-label{
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    margin:10px 0 4px;
+  }
+  .add-product-toggle{
+    background:var(--cedar-soft);
+    color:var(--cedar);
+    border:none;
+    border-radius:var(--radius-sm);
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    font-weight:700;
+    padding:9px 12px;
+    width:100%;
+    cursor:pointer;
+    margin-top:8px;
+  }
 
   .product-row{
     display:flex;
@@ -314,6 +350,67 @@
     font-weight:700;
     flex-shrink:0;
   }
+  .pick-row.just-added{ background:var(--success-soft); }
+
+  .cat-chips{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    padding:2px 2px 10px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .cat-chips::-webkit-scrollbar{ display:none; }
+  .cat-chip{
+    flex-shrink:0;
+    font-family:'Inter', sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    background:var(--paper-card);
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    padding:8px 14px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .12s ease, color .12s ease, border-color .12s ease;
+  }
+  .cat-chip.active{
+    color:#fff;
+    background:var(--cedar);
+    border-color:var(--cedar);
+  }
+
+  .collapse-block{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .collapse-toggle{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:none;
+    border:none;
+    font-family:'Inter', sans-serif;
+    font-size:14.5px;
+    font-weight:700;
+    color:var(--ink);
+    padding:13px 15px;
+    cursor:pointer;
+  }
+  .collapse-toggle .chev{
+    color:var(--ink-faint);
+    font-size:13px;
+    transition:transform .15s ease;
+  }
+  .collapse-toggle .chev.open{ transform:rotate(180deg); }
+  .collapse-body{ padding:0 15px 14px; }
+  .collapse-body.collapsed{ display:none; }
 
   .line-item{
     border:1px solid var(--line);
@@ -774,61 +871,20 @@
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="catalog">Catalog</button>
-    <button class="tab" data-tab="invoice">Invoice</button>
+    <button class="tab active" data-tab="invoice">Invoice</button>
+    <button class="tab" data-tab="catalog">Catalog</button>
     <button class="tab" data-tab="clients">Clients</button>
     <button class="tab" data-tab="reports">Reports</button>
     <button class="tab" data-tab="settings">Settings</button>
   </div>
 
-  <!-- CATALOG TAB -->
-  <section class="section active" id="tab-catalog">
-    <div id="categoryList"></div>
-
-    <div class="add-category">
-      <input type="text" id="newCategoryName" placeholder="New category name">
-      <button class="btn" id="addCategoryBtn">Add</button>
-    </div>
-  </section>
-
   <!-- INVOICE TAB -->
-  <section class="section" id="tab-invoice">
-    <div class="field-block">
-      <span class="field-label">Client</span>
-      <select id="clientSelect">
-        <option value="">Walk-in (no account)</option>
-      </select>
-    </div>
-    <div class="field-block">
-      <span class="field-label">Customer name on receipt</span>
-      <input type="text" id="customerName" placeholder="Customer name">
-    </div>
-
-    <div class="client-box" id="clientBalanceBox" style="display:none;">
-      <div class="balance-line">
-        <span id="clientPrevBalanceLabel">Balance owed before this sale</span>
-        <b id="clientPrevBalance">$0.00</b>
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="includeBalanceChk" checked>
-        <label for="includeBalanceChk" id="includeBalanceChkLabel">Add this balance to the invoice total</label>
-      </div>
-    </div>
-
-    <div class="field-block" id="paymentMethodsBlock">
-      <span class="field-label">Payment methods (shown on invoice)</span>
-      <div id="paymentMethodsList"></div>
-      <div class="add-row" style="border-top:none; padding-top:0;">
-        <input type="text" id="newPmLabel" placeholder="e.g. Whish">
-        <input type="text" id="newPmValue" placeholder="e.g. 70817032">
-        <button class="btn small" id="addPmBtn">Add payment method</button>
-      </div>
-    </div>
-
+  <section class="section active" id="tab-invoice">
     <div class="search-box">
       <span class="field-label">Add products</span>
       <input type="text" id="productSearch" placeholder="Search catalog...">
     </div>
+    <div class="cat-chips" id="catChips"></div>
     <div class="catalog-picker" id="catalogPicker"></div>
 
     <div id="lineItems"></div>
@@ -848,6 +904,10 @@
           <button type="button" class="btn small ghost" data-status="partial">Partial</button>
           <button type="button" class="btn small ghost" data-status="unpaid">Not paid</button>
         </div>
+        <div class="checkbox-row" style="margin-top:8px;">
+          <input type="checkbox" id="showPaymentStatusChk" checked>
+          <label for="showPaymentStatusChk">Show payment status on invoice</label>
+        </div>
       </div>
       <div class="field-block" style="margin-top:8px;">
         <span class="field-label">Amount received now</span>
@@ -861,6 +921,46 @@
       </div>
       <div class="totals-row sub"><span>Remaining balance after payment</span><b id="remainingBalance">$0.00</b></div>
       <div class="totals-row sub"><span>Rate used</span><span id="rateUsedLine">—</span></div>
+    </div>
+
+    <div class="collapse-block" id="customerDetailsBlock" style="display:none;">
+      <button type="button" class="collapse-toggle" id="customerDetailsToggle">
+        <span>Customer &amp; payment details</span>
+        <span class="chev" id="customerDetailsChev">▾</span>
+      </button>
+      <div class="collapse-body collapsed" id="customerDetailsBody">
+        <div class="field-block">
+          <span class="field-label">Client</span>
+          <select id="clientSelect">
+            <option value="">Walk-in (no account)</option>
+          </select>
+        </div>
+        <div class="field-block">
+          <span class="field-label">Customer name on receipt</span>
+          <input type="text" id="customerName" placeholder="Customer name">
+        </div>
+
+        <div class="client-box" id="clientBalanceBox" style="display:none;">
+          <div class="balance-line">
+            <span id="clientPrevBalanceLabel">Balance owed before this sale</span>
+            <b id="clientPrevBalance">$0.00</b>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="includeBalanceChk" checked>
+            <label for="includeBalanceChk" id="includeBalanceChkLabel">Add this balance to the invoice total</label>
+          </div>
+        </div>
+
+        <div class="field-block" id="paymentMethodsBlock">
+          <span class="field-label">Payment methods (shown on invoice)</span>
+          <div id="paymentMethodsList"></div>
+          <div class="add-row" style="border-top:none; padding-top:0;">
+            <input type="text" id="newPmLabel" placeholder="e.g. Whish">
+            <input type="text" id="newPmValue" placeholder="e.g. 70817032">
+            <button class="btn small" id="addPmBtn">Add payment method</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="field-block" id="previewBlock" style="display:none;">
@@ -887,6 +987,20 @@
         <button class="btn ghost full" id="resetBtn">Start new invoice</button>
       </div>
       <div class="copied-msg" id="copiedMsg"></div>
+    </div>
+  </section>
+
+  <!-- CATALOG TAB -->
+  <section class="section" id="tab-catalog">
+    <div class="search-box">
+      <span class="field-label">Search catalog</span>
+      <input type="text" id="catalogSearch" placeholder="Search categories or products...">
+    </div>
+    <div id="categoryList"></div>
+
+    <div class="add-category">
+      <input type="text" id="newCategoryName" placeholder="New category name">
+      <button class="btn" id="addCategoryBtn">Add</button>
     </div>
   </section>
 
@@ -1203,6 +1317,7 @@
     sales: [],
     balance: { value: 0, updatedAt: null },
     balanceLog: [],
+    customVoucherFields: [],
     finalizedThisInvoice: false,
     paymentMethods: [],
     invoiceLang: 'en',
@@ -1215,7 +1330,8 @@
       footerNote: '',
       logo: null,
       paperWidth: '80',
-      printerConnection: 'system'
+      printerConnection: 'system',
+      showPaymentStatus: true
     }
   };
 
@@ -1224,6 +1340,10 @@
   // the remembered label shown in the Settings tab.
   let btDevice = null;
   let btCharacteristic = null;
+
+  // Which category chip is selected on the Sale tab's product picker (POS-style
+  // filter). null means "All". Purely a UI filter, not persisted.
+  let activeCatalogCategory = null;
 
   const I18N = {
     en: {
@@ -1508,6 +1628,10 @@
       if(bl && bl.value){ state.balanceLog = JSON.parse(bl.value); }
     }catch(e){ loadError = e; }
     try{
+      const cvf = await window.storage.get('customVoucherFields');
+      if(cvf && cvf.value){ state.customVoucherFields = JSON.parse(cvf.value); }
+    }catch(e){ loadError = e; }
+    try{
       const inv = await window.storage.get('invoiceSettings');
       if(inv && inv.value){
         const parsed = JSON.parse(inv.value);
@@ -1558,6 +1682,10 @@
   async function saveBalanceLog(){
     try{ await window.storage.set('balanceLog', JSON.stringify(state.balanceLog)); }
     catch(e){ console.error(e); alertBanner('Could not save balance log: ' + e.message); }
+  }
+  async function saveCustomVoucherFields(){
+    try{ await window.storage.set('customVoucherFields', JSON.stringify(state.customVoucherFields)); }
+    catch(e){ console.error(e); alertBanner('Could not save remembered fields: ' + e.message); }
   }
   async function saveInvoiceSettings(){
     try{ await window.storage.set('invoiceSettings', JSON.stringify({ paymentMethods: state.paymentMethods, lang: state.invoiceLang, invoiceSettings: state.invoiceSettings })); }
@@ -1767,6 +1895,8 @@
 
   // ---------- Catalog ----------
   const collapsedState = {};
+  const addFormOpenState = {};
+  let catalogSearchQuery = '';
 
   function childCategories(parentId){
     return state.categories.filter(c => (c.parentId || null) === (parentId || null));
@@ -1797,39 +1927,77 @@
     return names.join(' › ');
   }
 
+  // True if this category's own name matches the search, one of its own
+  // products matches, or any descendant category does (recursively) — used
+  // to decide whether a category stays visible while searching.
+  function categoryOrDescendantsMatch(cat, query){
+    if(cat.name.toLowerCase().includes(query)) return true;
+    if(state.products.some(p => p.categoryId === cat.id && p.name.toLowerCase().includes(query))) return true;
+    return childCategories(cat.id).some(sub => categoryOrDescendantsMatch(sub, query));
+  }
+
   function renderCategories(){
     const list = $('#categoryList');
+    const query = ($('#catalogSearch').value || '').trim().toLowerCase();
+    catalogSearchQuery = query;
     if(state.categories.length === 0){
       list.innerHTML = '<div class="empty-hint">No categories yet. Add one below to start building your catalog.</div>';
       return;
     }
+    const topCats = childCategories(null).filter(cat => !query || categoryOrDescendantsMatch(cat, query));
+    if(topCats.length === 0){
+      list.innerHTML = '<div class="empty-hint">No categories or products match your search.</div>';
+      return;
+    }
     list.innerHTML = '';
-    childCategories(null).forEach(cat => list.appendChild(buildCategoryNode(cat, 0)));
+    topCats.forEach(cat => list.appendChild(buildCategoryNode(cat, 0, query)));
   }
 
-  function buildCategoryNode(cat, depth){
-    const products = state.products.filter(p => p.categoryId === cat.id);
-    const subcats = childCategories(cat.id);
+  function buildCategoryNode(cat, depth, query){
+    query = query || '';
+    const catNameMatches = query && cat.name.toLowerCase().includes(query);
+    const products = state.products.filter(p => p.categoryId === cat.id && (!query || catNameMatches || p.name.toLowerCase().includes(query)));
+    const subcats = childCategories(cat.id).filter(sub => !query || catNameMatches || categoryOrDescendantsMatch(sub, query));
 
     const wrap = document.createElement('div');
     wrap.className = 'category';
     if(depth > 0) wrap.style.marginLeft = (depth * 14) + 'px';
+
+    // Searching auto-expands anything that matched, so results are visible
+    // without an extra tap; otherwise categories stay collapsed by default
+    // until the person opens them, to keep the overview short and scannable.
+    const isCollapsed = query ? false : (collapsedState[cat.id] === undefined ? true : collapsedState[cat.id]);
 
     const head = document.createElement('div');
     head.className = 'category-head';
     let countLabel = `${products.length} item${products.length===1?'':'s'}`;
     if(subcats.length) countLabel += ` · ${subcats.length} subcat${subcats.length===1?'':'s'}`;
     head.innerHTML = `
-      <h3>${depth>0 ? '↳ ' : ''}${escapeHtml(cat.name)}</h3>
-      <div style="display:flex; align-items:center; gap:8px;">
+      <div class="category-head-left">
+        <span class="cat-chev${isCollapsed ? '' : ' open'}">▾</span>
+        <h3>${depth>0 ? '↳ ' : ''}${escapeHtml(cat.name)}</h3>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
         <span class="count">${countLabel}</span>
         <button class="mini-btn" data-action="rename" type="button">Rename</button>
       </div>`;
-    head.addEventListener('click', () => { collapsedState[cat.id] = !collapsedState[cat.id]; renderCategories(); });
+    head.addEventListener('click', () => {
+      if(catalogSearchQuery) return;
+      const currentlyCollapsed = collapsedState[cat.id] === undefined ? true : collapsedState[cat.id];
+      collapsedState[cat.id] = !currentlyCollapsed;
+      renderCategories();
+    });
     head.querySelector('[data-action="rename"]').addEventListener('click', (e) => { e.stopPropagation(); editCategory(cat.id); });
 
     const body = document.createElement('div');
-    body.className = 'category-body' + (collapsedState[cat.id] ? ' collapsed' : '');
+    body.className = 'category-body' + (isCollapsed ? ' collapsed' : '');
+
+    if(products.length){
+      const label = document.createElement('div');
+      label.className = 'cat-section-label';
+      label.textContent = 'Products';
+      body.appendChild(label);
+    }
 
     products.forEach(p => {
       const row = document.createElement('div');
@@ -1848,51 +2016,75 @@
       row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
       body.appendChild(row);
     });
+    if(!products.length && !query){
+      const emptyHint = document.createElement('div');
+      emptyHint.className = 'product-prices';
+      emptyHint.style.padding = '4px 0 2px';
+      emptyHint.textContent = 'No products in this category yet.';
+      body.appendChild(emptyHint);
+    }
 
     // Add a product directly inside this category (works at any depth).
-    const addRow = document.createElement('div');
-    addRow.className = 'add-row';
-    addRow.innerHTML = `
-      <input type="text" placeholder="Product name" class="new-prod-name">
-      <div class="add-row-inline">
-        <input type="text" inputmode="decimal" placeholder="Sell price" class="new-prod-price" style="flex:1;">
-        <select class="new-prod-currency" style="flex:0 0 80px;">
-          <option value="USD">USD</option>
-          <option value="LBP">LBP</option>
-        </select>
-      </div>
-      <div class="add-row-inline">
-        <input type="text" inputmode="decimal" placeholder="Cost price (optional)" class="new-prod-cost" style="flex:1;">
-        <select class="new-prod-cost-currency" style="flex:0 0 80px;">
-          <option value="USD">USD</option>
-          <option value="LBP">LBP</option>
-        </select>
-      </div>
-      <div class="add-row-inline">
-        <select class="new-prod-cost-mode" style="flex:1;">
-          <option value="perUnit">Cost × quantity</option>
-          <option value="flat">Cost × 1 (flat)</option>
-        </select>
-        <button class="btn small" type="button" style="flex:0 0 140px;">Add product</button>
-      </div>
-      <label class="voucher-toggle-row">
-        <input type="checkbox" class="new-prod-voucher">
-        This item has extra details (login info, codes, links, etc. — filled in per sale, fields you choose)
-      </label>
-    `;
-    attachThousandsFormatting(addRow.querySelector('.new-prod-price'));
-    attachThousandsFormatting(addRow.querySelector('.new-prod-cost'));
-    addRow.querySelector('button').addEventListener('click', () => {
-      const nameInput = addRow.querySelector('.new-prod-name');
-      const priceInput = addRow.querySelector('.new-prod-price');
-      const currencySel = addRow.querySelector('.new-prod-currency');
-      const costInput = addRow.querySelector('.new-prod-cost');
-      const costCurrencySel = addRow.querySelector('.new-prod-cost-currency');
-      const costModeSel = addRow.querySelector('.new-prod-cost-mode');
-      const isVoucher = addRow.querySelector('.new-prod-voucher').checked;
-      addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value, costModeSel.value, costCurrencySel.value, isVoucher);
+    // Tucked behind a toggle button so the default view stays a clean list
+    // of products, not a form.
+    const addToggleBtn = document.createElement('button');
+    addToggleBtn.type = 'button';
+    addToggleBtn.className = 'add-product-toggle';
+    const addFormOpen = !!addFormOpenState[cat.id];
+    addToggleBtn.textContent = addFormOpen ? '− Hide add product form' : '+ Add product';
+    addToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      addFormOpenState[cat.id] = !addFormOpenState[cat.id];
+      renderCategories();
     });
-    body.appendChild(addRow);
+    body.appendChild(addToggleBtn);
+
+    if(addFormOpen){
+      const addRow = document.createElement('div');
+      addRow.className = 'add-row';
+      addRow.innerHTML = `
+        <input type="text" placeholder="Product name" class="new-prod-name">
+        <div class="add-row-inline">
+          <input type="text" inputmode="decimal" placeholder="Sell price" class="new-prod-price" style="flex:1;">
+          <select class="new-prod-currency" style="flex:0 0 80px;">
+            <option value="USD">USD</option>
+            <option value="LBP">LBP</option>
+          </select>
+        </div>
+        <div class="add-row-inline">
+          <input type="text" inputmode="decimal" placeholder="Cost price (optional)" class="new-prod-cost" style="flex:1;">
+          <select class="new-prod-cost-currency" style="flex:0 0 80px;">
+            <option value="USD">USD</option>
+            <option value="LBP">LBP</option>
+          </select>
+        </div>
+        <div class="add-row-inline">
+          <select class="new-prod-cost-mode" style="flex:1;">
+            <option value="perUnit">Cost × quantity</option>
+            <option value="flat">Cost × 1 (flat)</option>
+          </select>
+          <button class="btn small" type="button" style="flex:0 0 140px;">Add product</button>
+        </div>
+        <label class="voucher-toggle-row">
+          <input type="checkbox" class="new-prod-voucher">
+          This item has extra details (login info, codes, links, etc. — filled in per sale, fields you choose)
+        </label>
+      `;
+      attachThousandsFormatting(addRow.querySelector('.new-prod-price'));
+      attachThousandsFormatting(addRow.querySelector('.new-prod-cost'));
+      addRow.querySelector('button').addEventListener('click', () => {
+        const nameInput = addRow.querySelector('.new-prod-name');
+        const priceInput = addRow.querySelector('.new-prod-price');
+        const currencySel = addRow.querySelector('.new-prod-currency');
+        const costInput = addRow.querySelector('.new-prod-cost');
+        const costCurrencySel = addRow.querySelector('.new-prod-cost-currency');
+        const costModeSel = addRow.querySelector('.new-prod-cost-mode');
+        const isVoucher = addRow.querySelector('.new-prod-voucher').checked;
+        addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value, costModeSel.value, costCurrencySel.value, isVoucher);
+        addFormOpenState[cat.id] = false;
+      });
+      body.appendChild(addRow);
+    }
 
     // Add a subcategory nested inside this category.
     const addSubRow = document.createElement('div');
@@ -1908,7 +2100,7 @@
     body.appendChild(addSubRow);
 
     // Nested subcategories render recursively underneath.
-    subcats.forEach(sub => body.appendChild(buildCategoryNode(sub, depth + 1)));
+    subcats.forEach(sub => body.appendChild(buildCategoryNode(sub, depth + 1, query)));
 
     const delCatBtn = document.createElement('button');
     delCatBtn.className = 'mini-btn danger';
@@ -2224,17 +2416,56 @@
   // ---------- Invoice ----------
   function renderCatalogPicker(){
     const picker = $('#catalogPicker');
+    const chipsBox = $('#catChips');
     const query = ($('#productSearch').value || '').toLowerCase();
+
+    // Only categories that actually have products get a chip — no point
+    // tapping into an empty one.
+    const catsWithProducts = state.categories.filter(cat => state.products.some(p => p.categoryId === cat.id));
+    if(activeCatalogCategory && !catsWithProducts.some(c => c.id === activeCatalogCategory)) activeCatalogCategory = null;
+
+    if(catsWithProducts.length <= 1){
+      chipsBox.style.display = 'none';
+    } else {
+      chipsBox.style.display = 'flex';
+      chipsBox.innerHTML = '';
+      const allChip = document.createElement('button');
+      allChip.type = 'button';
+      allChip.className = 'cat-chip' + (activeCatalogCategory === null ? ' active' : '');
+      allChip.textContent = 'All';
+      allChip.addEventListener('click', () => { activeCatalogCategory = null; renderCatalogPicker(); });
+      chipsBox.appendChild(allChip);
+      catsWithProducts.forEach(cat => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'cat-chip' + (activeCatalogCategory === cat.id ? ' active' : '');
+        chip.textContent = cat.name;
+        chip.addEventListener('click', () => {
+          // Tapping a chip is a fresh browse — drop any leftover search text
+          // so it doesn't filter the category away.
+          $('#productSearch').value = '';
+          activeCatalogCategory = cat.id;
+          renderCatalogPicker();
+        });
+        chipsBox.appendChild(chip);
+      });
+    }
+
     picker.innerHTML = '';
     let any = false;
-    state.categories.forEach(cat => {
+    // A search query searches the whole catalog regardless of the selected
+    // chip — that's what people expect when they start typing.
+    const categoriesToShow = query ? state.categories : (activeCatalogCategory ? state.categories.filter(c => c.id === activeCatalogCategory) : state.categories);
+    categoriesToShow.forEach(cat => {
       const products = state.products.filter(p => p.categoryId === cat.id && p.name.toLowerCase().includes(query));
       if(products.length === 0) return;
       any = true;
-      const label = document.createElement('div');
-      label.className = 'pick-cat-label';
-      label.textContent = categoryPath(cat.id);
-      picker.appendChild(label);
+      if(!activeCatalogCategory || query){
+        const label = document.createElement('div');
+        label.className = 'pick-cat-label';
+        label.textContent = categoryPath(cat.id);
+        picker.appendChild(label);
+      }
       products.forEach(p => {
         const row = document.createElement('div');
         row.className = 'pick-row';
@@ -2244,7 +2475,11 @@
             <div class="pick-price">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}</div>
           </div>
           <div class="pick-plus">+</div>`;
-        row.addEventListener('click', () => addLine(p.id));
+        row.addEventListener('click', () => {
+          addLine(p.id);
+          row.classList.add('just-added');
+          setTimeout(() => row.classList.remove('just-added'), 250);
+        });
         picker.appendChild(row);
       });
     });
@@ -2302,6 +2537,32 @@
 
   const VOUCHER_QUICK_FIELDS = ['Expiry date', 'Redeem code', 'Link', 'Username', 'PIN', 'Email', 'Password', 'User ID'];
 
+  // Built-in quick fields plus any custom field labels the user has typed
+  // before (remembered in state.customVoucherFields), so a one-off field like
+  // "Mobile number" becomes a tappable chip on future sales instead of having
+  // to be retyped every time.
+  function getVoucherQuickFields(){
+    const learned = state.customVoucherFields || [];
+    const merged = VOUCHER_QUICK_FIELDS.slice();
+    learned.forEach(label => {
+      if(!merged.some(m => m.toLowerCase() === label.toLowerCase())) merged.push(label);
+    });
+    return merged;
+  }
+
+  function rememberVoucherFieldLabels(cleanedFields){
+    const known = getVoucherQuickFields().map(l => l.toLowerCase());
+    let changed = false;
+    cleanedFields.forEach(f => {
+      if(f.label && !known.includes(f.label.toLowerCase())){
+        state.customVoucherFields.push(f.label);
+        known.push(f.label.toLowerCase());
+        changed = true;
+      }
+    });
+    if(changed) saveCustomVoucherFields();
+  }
+
   // Dynamic "extra details" editor for a single unit of a line: unit fields are
   // stored as an array of {label, value} pairs the user can freely add to,
   // remove from, or rename — not a fixed schema. Quick-add chips just prefill a
@@ -2340,7 +2601,7 @@
       modalBox.innerHTML = `
         <h3>${escapeHtml(titleText)}</h3>
         <div class="voucher-quick-add" id="voucherQuickAdd">
-          ${VOUCHER_QUICK_FIELDS.map(label => `<button type="button" class="chip" data-label="${escapeHtml(label)}">+ ${escapeHtml(label)}</button>`).join('')}
+          ${getVoucherQuickFields().map(label => `<button type="button" class="chip" data-label="${escapeHtml(label)}">+ ${escapeHtml(label)}</button>`).join('')}
         </div>
         <div id="voucherFieldsList"></div>
         <button type="button" class="btn ghost small" id="addVoucherFieldBtn" style="margin-bottom:14px;">+ Add custom field</button>
@@ -2371,6 +2632,7 @@
       document.getElementById('modalCancelBtn').addEventListener('click', () => { closeModal(); resolve(null); });
       document.getElementById('modalSaveBtn').addEventListener('click', () => {
         const cleaned = fields.map(f => ({ label: f.label.trim(), value: f.value.trim() })).filter(f => f.label || f.value);
+        rememberVoucherFieldLabels(cleaned);
         closeModal();
         resolve(cleaned);
       });
@@ -2563,6 +2825,10 @@
       $('#clientPrevBalanceLabel').textContent = owesPrev ? 'Balance they owe you before this sale' : 'Balance you owe them before this sale';
       $('#clientPrevBalance').textContent = fmtUsd(Math.abs(client.balanceUsd)) + '  (' + fmtLbp(Math.abs(client.balanceUsd) * state.rate.value) + ')';
       $('#includeBalanceChkLabel').textContent = owesPrev ? 'Add this balance to the invoice total' : 'Deduct this credit from the invoice total';
+      // A carried-over balance matters for the total — don't leave it tucked
+      // away behind the collapsed details section.
+      $('#customerDetailsBody').classList.remove('collapsed');
+      $('#customerDetailsChev').classList.add('open');
     } else {
       balBox.style.display = 'none';
     }
@@ -2570,12 +2836,15 @@
     if(state.lines.length === 0){
       hint.style.display = 'block';
       $('#totalsCard').style.display = 'none';
+      $('#customerDetailsBlock').style.display = 'none';
       $('#previewBlock').style.display = 'none';
       return;
     }
     hint.style.display = 'none';
     $('#totalsCard').style.display = 'block';
+    $('#customerDetailsBlock').style.display = 'block';
     $('#previewBlock').style.display = 'block';
+    $('#showPaymentStatusChk').checked = state.invoiceSettings.showPaymentStatus !== false;
 
     state.lines.forEach(line => {
       const p = state.products.find(x => x.id === line.productId);
@@ -2761,7 +3030,7 @@
     lines.push(`*${t.totalDue}: ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
 
     const received = getAmountReceivedUsd();
-    if(!isNaN(received)){
+    if(s.showPaymentStatus !== false && !isNaN(received)){
       const remaining = nums.grandTotal - received;
       const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
       const statusEmoji = state.paymentStatus === 'paid' ? '✅' : state.paymentStatus === 'unpaid' ? '❌' : '🕓';
@@ -2825,7 +3094,16 @@
       state.balance.value += receivedVal;
       state.balance.updatedAt = Date.now();
       saveBalance();
-      logBalanceChange(receivedVal, 'Sale — ' + record.customerName);
+      logBalanceChange(receivedVal, 'Sale received — ' + record.customerName);
+      renderBalance();
+      renderBalanceLog();
+    }
+
+    if(nums.costTotalUsd !== 0){
+      state.balance.value -= nums.costTotalUsd;
+      state.balance.updatedAt = Date.now();
+      saveBalance();
+      logBalanceChange(-nums.costTotalUsd, 'Cost of goods — ' + record.customerName);
       renderBalance();
       renderBalanceLog();
     }
@@ -2973,6 +3251,9 @@
     const original = new Date(s.date);
     const newDate = new Date(y, m - 1, day, original.getHours(), original.getMinutes(), original.getSeconds());
 
+    const oldAmountReceived = s.amountReceived;
+    const oldCostUsd = s.costUsd;
+
     s.date = newDate.getTime();
     s.customerName = result.customer.trim();
     s.revenueUsd = parseFloat(result.revenue);
@@ -2981,14 +3262,39 @@
     s.amountReceived = parseFloat(result.received);
     s.newBalance = s.revenueUsd + (s.prevBalanceApplied||0) - s.amountReceived;
 
+    // net effect on balance = (change in cash received) − (change in cost of goods)
+    const netDelta = (s.amountReceived - oldAmountReceived) - (s.costUsd - oldCostUsd);
+    if(netDelta !== 0){
+      state.balance.value += netDelta;
+      state.balance.updatedAt = Date.now();
+      saveBalance();
+      logBalanceChange(netDelta, 'Edited sale — ' + s.customerName);
+      renderBalance();
+      renderBalanceLog();
+    }
+
     saveSales();
     renderReports();
   }
 
   async function deleteSale(id){
-    const ok = await confirmModal('Delete this invoice record from your reports? This only removes the record — it does not change any client balance.');
+    const s = state.sales.find(x => x.id === id);
+    if(!s) return;
+    const ok = await confirmModal('Delete this invoice record from your reports? This will also reverse its effect on the business balance, but it does not change any client balance.');
     if(!ok) return;
-    state.sales = state.sales.filter(s => s.id !== id);
+
+    // reverse both the cash received and the cost of goods that this sale applied
+    const netReversal = s.costUsd - s.amountReceived;
+    if(netReversal !== 0){
+      state.balance.value += netReversal;
+      state.balance.updatedAt = Date.now();
+      saveBalance();
+      logBalanceChange(netReversal, 'Deleted sale — ' + s.customerName);
+      renderBalance();
+      renderBalanceLog();
+    }
+
+    state.sales = state.sales.filter(x => x.id !== id);
     saveSales();
     renderReports();
   }
@@ -3234,7 +3540,7 @@
     html += `<div class="pr-row"><span></span><span>${fmtLbp(nums.grandTotal * state.rate.value)}</span></div>`;
 
     const received = getAmountReceivedUsd();
-    if(!isNaN(received)){
+    if(s.showPaymentStatus !== false && !isNaN(received)){
       const remaining = nums.grandTotal - received;
       const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
       html += `<div class="pr-hr"></div>`;
@@ -3306,6 +3612,7 @@
   $('#withdrawFundsBtn').addEventListener('click', withdrawFunds);
   $('#refreshRateBtn').addEventListener('click', refreshRate);
   $('#productSearch').addEventListener('input', renderCatalogPicker);
+  $('#catalogSearch').addEventListener('input', renderCategories);
   $('#customerName').addEventListener('input', renderPreviewOnly);
   $('#copyBtn').addEventListener('click', copyInvoice);
   $('#whatsappBtn').addEventListener('click', openWhatsapp);
@@ -3327,6 +3634,16 @@
   $('#includeBalanceChk').addEventListener('change', () => {
     $('#amountReceived').dataset.userEdited = 'false';
     renderInvoice();
+  });
+  $('#showPaymentStatusChk').addEventListener('change', (e) => {
+    state.invoiceSettings.showPaymentStatus = e.target.checked;
+    saveInvoiceSettings();
+    state.previewEdited = false;
+    renderPreviewOnly();
+  });
+  $('#customerDetailsToggle').addEventListener('click', () => {
+    $('#customerDetailsBody').classList.toggle('collapsed');
+    $('#customerDetailsChev').classList.toggle('open');
   });
   $('#amountReceived').addEventListener('input', (e) => {
     e.target.dataset.userEdited = 'true';
