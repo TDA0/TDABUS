@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>TDA Business</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%234F46E5'/%3E%3Cpath d='M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='9' y1='7' x2='15' y2='7' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='9' y1='11' x2='15' y2='11' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='9' y1='15' x2='13' y2='15' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -47,6 +48,16 @@
     max-width:560px;
     margin:0 auto;
     padding:18px 16px 60px;
+    transition:max-width .15s ease;
+  }
+  @media (min-width:700px){
+    .app{ max-width:680px; padding:24px 24px 64px; }
+  }
+  @media (min-width:1024px){
+    .app{ max-width:980px; padding:32px 32px 72px; }
+  }
+  @media (min-width:1400px){
+    .app{ max-width:1180px; }
   }
   header.top{
     display:flex;
@@ -54,10 +65,15 @@
     justify-content:space-between;
     padding:4px 2px 18px;
     margin-bottom:6px;
+    gap:12px;
+    flex-wrap:wrap;
   }
   header.top h1{
     font-size:25px;
     letter-spacing:-0.02em;
+  }
+  @media (min-width:1024px){
+    header.top h1{ font-size:29px; }
   }
   header.top .tag{
     font-size:13px;
@@ -65,6 +81,18 @@
     letter-spacing:0.2px;
     margin-top:3px;
     font-weight:500;
+  }
+
+  /* Top stat bars (rate + balance) — stack on phone, sit side by side from tablet up */
+  .top-stats{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  @media (min-width:700px){
+    .top-stats{ grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px; }
+    .top-stats .rate-bar{ margin-bottom:0; height:100%; }
   }
 
   /* Rate bar */
@@ -147,9 +175,24 @@
     background:var(--cedar);
     box-shadow:0 4px 10px rgba(79,70,229,0.28);
   }
+  @media (min-width:700px){
+    .tabs{ overflow-x:visible; padding:5px; }
+    .tab{ padding:11px 8px; font-size:14.5px; }
+  }
 
   .section{ display:none; }
   .section.active{ display:block; }
+
+  /* Reflow lists/cards into columns once there's room, without touching JS */
+  @media (min-width:900px){
+    #categoryList{ display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start; }
+    #categoryList .category{ margin-bottom:0; }
+    #tab-settings.active{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+    #tab-settings .settings-card{ margin-bottom:0; }
+  }
+  @media (min-width:1300px){
+    #categoryList{ grid-template-columns:1fr 1fr 1fr; }
+  }
 
   /* Category card */
   .category{
@@ -425,8 +468,18 @@
     justify-content:space-between;
     align-items:flex-start;
     margin-bottom:8px;
+    gap:8px;
   }
   .line-name{ font-size:16.5px; font-weight:700; }
+  .line-top-actions{ display:flex; gap:6px; flex-shrink:0; }
+  .discount-badge{
+    display:inline-block; font-size:11.5px; font-weight:700; color:var(--brass);
+    background:var(--brass-soft); padding:2px 7px; border-radius:999px; margin-left:6px;
+    letter-spacing:0.1px; vertical-align:middle;
+  }
+  .line-price-original{
+    display:block; font-size:12.5px; color:var(--ink-faint); text-decoration:line-through;
+  }
   .remove-line{
     background:#FDEDED; border:none; color:var(--danger);
     font-size:12.5px; font-weight:600; cursor:pointer;
@@ -565,21 +618,96 @@
   }
 
   /* Clients tab */
-  .client-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:12px 14px;
+  .clients-summary{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .client-stat{
     border:1px solid var(--line);
     border-radius:var(--radius);
     background:var(--paper-card);
     box-shadow:var(--shadow);
-    margin-bottom:8px;
+    padding:12px 8px;
+    text-align:center;
   }
-  .client-name{ font-size:16.5px; font-weight:700; }
-  .client-balance{ font-size:13.5px; color:var(--ink-soft); margin-top:3px; }
-  .client-balance.owes b{ color:var(--burgundy); }
-  .client-balance.credit b{ color:var(--success); }
+  .client-stat .cs-label{
+    font-size:11px; color:var(--ink-soft); font-weight:700;
+    text-transform:uppercase; letter-spacing:0.3px;
+  }
+  .client-stat .cs-value{
+    font-family:'Inter', sans-serif; font-size:17px; font-weight:800;
+    letter-spacing:-0.02em; margin-top:5px; color:var(--ink);
+  }
+  .client-stat.owed .cs-value{ color:var(--burgundy); }
+  .client-stat.credit .cs-value{ color:var(--success); }
+  @media (min-width:700px){
+    .client-stat{ padding:16px 10px; }
+    .client-stat .cs-value{ font-size:20px; }
+  }
+
+  .client-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  @media (min-width:700px){
+    .client-grid{ grid-template-columns:1fr 1fr; gap:12px; }
+  }
+  @media (min-width:1200px){
+    .client-grid{ grid-template-columns:1fr 1fr 1fr; }
+  }
+
+  .client-card{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:14px 15px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--paper-card);
+    box-shadow:var(--shadow);
+    transition:box-shadow .15s ease, transform .1s ease;
+  }
+  .client-card:hover{ box-shadow:0 6px 20px rgba(23,25,35,0.1); }
+  .client-card-top{ display:flex; align-items:center; gap:11px; min-width:0; }
+  .client-avatar{
+    width:42px; height:42px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:14.5px; letter-spacing:0.2px;
+    flex-shrink:0;
+    box-shadow:0 2px 6px rgba(23,25,35,0.15);
+  }
+  .client-card-info{ min-width:0; flex:1; }
+  .client-name{
+    font-size:16px; font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .client-phone{
+    font-size:12.5px; color:var(--ink-soft); margin-top:2px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .client-balance-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .client-balance-pill{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:12.5px; font-weight:700;
+    padding:6px 11px; border-radius:999px;
+    white-space:nowrap;
+  }
+  .client-balance-pill.owes{ background:#FDEDED; color:var(--burgundy); }
+  .client-balance-pill.credit{ background:var(--success-soft); color:var(--success); }
+  .client-balance-pill.settled{ background:var(--bg); color:var(--ink-faint); }
+  .client-balance-sub{ font-size:12px; color:var(--ink-faint); white-space:nowrap; }
+  .client-actions{ display:flex; flex-wrap:wrap; gap:6px; padding-top:8px; border-top:1px dashed var(--line-strong); }
+  .client-actions .mini-btn{ flex:1 1 auto; text-align:center; }
+
+  .add-client-card{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-card);
+    box-shadow:var(--shadow); padding:16px; margin-top:4px;
+  }
+  .add-client-card h3{ font-size:16px; margin-bottom:12px; }
 
   /* Reports tab */
   .report-grid{
@@ -587,6 +715,11 @@
     grid-template-columns:1fr 1fr 1fr;
     gap:8px;
     margin-bottom:18px;
+  }
+  @media (min-width:700px){
+    .report-grid{ gap:12px; }
+    .report-card{ padding:18px 10px; }
+    .report-card .r-profit{ font-size:23px; }
   }
   .report-card{
     border:1px solid var(--line);
@@ -790,21 +923,35 @@
     body > *:not(#printArea){ display:none !important; }
     #printArea{
       display:block !important;
-      font-family:'Courier New', monospace;
-      color:#000;
+      font-family:'Helvetica Neue', Arial, sans-serif;
+      color:#111;
       width:100%;
+      line-height:1.45;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
     }
-    #printArea .pr-logo{ display:block; max-width:100%; max-height:70px; margin:0 auto 6px; }
+    #printArea .pr-logo{ display:block; max-width:55%; max-height:64px; margin:0 auto 8px; object-fit:contain; }
     #printArea .pr-center{ text-align:center; }
-    #printArea .pr-title{ font-size:17px; font-weight:700; margin-bottom:2px; }
-    #printArea .pr-sub{ font-size:13px; margin-bottom:2px; }
-    #printArea .pr-hr{ border-top:1px dashed #000; margin:8px 0; }
-    #printArea .pr-row{ display:flex; justify-content:space-between; font-size:14px; padding:2px 0; }
-    #printArea .pr-item-name{ font-size:14.5px; font-weight:700; }
-    #printArea .pr-item-sub{ font-size:13px; padding-left:6px; }
-    #printArea .pr-voucher{ font-size:12.5px; padding-left:6px; border-left:2px solid #000; margin:3px 0 3px 2px; }
-    #printArea .pr-grand{ font-size:16px; font-weight:700; }
-    #printArea .pr-footer{ font-size:13px; text-align:center; margin-top:10px; white-space:pre-wrap; }
+    #printArea .pr-eyebrow{ font-size:9.5px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:#666; margin-bottom:3px; }
+    #printArea .pr-title{ font-size:19px; font-weight:800; letter-spacing:0.2px; margin-bottom:2px; }
+    #printArea .pr-sub{ font-size:12px; color:#333; margin-bottom:1px; }
+    #printArea .pr-meta{ font-size:11px; color:#555; margin-top:5px; letter-spacing:0.2px; }
+    #printArea .pr-hr{ border:none; border-top:1px dashed #aaa; margin:10px 0; }
+    #printArea .pr-hr.solid{ border-top:1.5px solid #111; }
+    #printArea .pr-section-label{ font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#777; margin:9px 0 5px; }
+    #printArea .pr-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; padding:2.5px 0; gap:10px; }
+    #printArea .pr-row > span:first-child{ color:#333; }
+    #printArea .pr-row > span:last-child, #printArea .pr-row > b:last-child{ text-align:right; white-space:nowrap; }
+    #printArea .pr-item{ margin:7px 0; }
+    #printArea .pr-item-top{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; font-weight:700; gap:10px; }
+    #printArea .pr-item-top .pr-item-title{ flex:1; }
+    #printArea .pr-item-qty{ color:#666; font-weight:500; font-size:11.5px; }
+    #printArea .pr-item-price{ font-size:12.5px; font-weight:700; white-space:nowrap; }
+    #printArea .pr-item-sub{ font-size:11px; color:#666; margin-top:1px; }
+    #printArea .pr-voucher{ font-size:11px; padding:5px 7px; margin:5px 0 2px; border-left:2px solid #111; background:#f4f4f4; border-radius:2px; }
+    #printArea .pr-grand{ font-size:15.5px; font-weight:800; padding:7px 0; border-top:1.5px solid #111; border-bottom:1.5px solid #111; margin:6px 0; }
+    #printArea .pr-footer{ font-size:11px; text-align:center; margin-top:10px; white-space:pre-wrap; color:#444; }
+    #printArea .pr-thankyou{ font-size:13px; text-align:center; margin-top:12px; font-style:italic; font-weight:600; letter-spacing:0.2px; }
   }
 </style>
 </head>
@@ -846,27 +993,29 @@
     <button class="icon-btn" id="signOutBtn" style="align-self:flex-start;">🚪 sign out</button>
   </header>
 
-  <div class="rate-bar">
-    <div>
-      <div class="rate-label">💱 1 USD equals</div>
-      <div class="rate-value" id="rateDisplay">—</div>
-      <div class="rate-meta" id="rateMeta"></div>
+  <div class="top-stats">
+    <div class="rate-bar">
+      <div>
+        <div class="rate-label">💱 1 USD equals</div>
+        <div class="rate-value" id="rateDisplay">—</div>
+        <div class="rate-meta" id="rateMeta"></div>
+      </div>
+      <div class="rate-actions">
+        <button class="icon-btn" id="editRateBtn">✏️ edit</button>
+        <button class="icon-btn" id="refreshRateBtn">🔄 refresh</button>
+      </div>
     </div>
-    <div class="rate-actions">
-      <button class="icon-btn" id="editRateBtn">✏️ edit</button>
-      <button class="icon-btn" id="refreshRateBtn">🔄 refresh</button>
-    </div>
-  </div>
 
-  <div class="rate-bar balance-bar">
-    <div>
-      <div class="rate-label">🏦 Business balance</div>
-      <div class="rate-value" id="balanceDisplay">$0.00</div>
-      <div class="rate-meta" id="balanceMeta"></div>
-    </div>
-    <div class="rate-actions">
-      <button class="icon-btn" id="addFundsBtn">➕ add</button>
-      <button class="icon-btn" id="withdrawFundsBtn">➖ withdraw</button>
+    <div class="rate-bar balance-bar">
+      <div>
+        <div class="rate-label">🏦 Business balance</div>
+        <div class="rate-value" id="balanceDisplay">$0.00</div>
+        <div class="rate-meta" id="balanceMeta"></div>
+      </div>
+      <div class="rate-actions">
+        <button class="icon-btn" id="addFundsBtn">➕ add</button>
+        <button class="icon-btn" id="withdrawFundsBtn">➖ withdraw</button>
+      </div>
     </div>
   </div>
 
@@ -891,8 +1040,12 @@
     <div class="empty-hint" id="noLinesHint">No items added yet. Tap a product above to add it.</div>
 
     <div class="totals-card" id="totalsCard" style="display:none;">
+      <div class="totals-row sub" id="discountSummaryRow" style="display:none;"><span>🏷️ Discount total</span><span id="discountSummaryLine">−$0.00</span></div>
       <div class="totals-row usd"><span>💵 Items subtotal (USD)</span><b id="totalUsd">$0.00</b></div>
       <div class="totals-row lbp sub"><span>💱 Items subtotal (LBP)</span><span id="totalLbp">0 LBP</span></div>
+      <div class="action-row" style="margin-top:6px;">
+        <button type="button" class="btn ghost small full" id="invoiceDiscountBtn">🏷️ Whole-invoice discount</button>
+      </div>
       <div class="totals-row sub" id="prevBalanceRow" style="display:none;"><span>📌 Previous balance</span><span id="prevBalanceLine">$0.00</span></div>
       <div class="totals-row grand"><span>💰 Total:</span><b><span id="grandUsd">$0.00</span> USD or <span id="grandLbp">0 LBP</span></b></div>
 
@@ -1005,18 +1158,29 @@
 
   <!-- CLIENTS TAB -->
   <section class="section" id="tab-clients">
-    <div id="clientList"></div>
-    <div class="add-row" style="border-top:none; padding-top:0;">
-      <input type="text" id="newClientName" placeholder="Client name">
-      <input type="tel" id="newClientPhone" placeholder="Mobile number (e.g. +961 71 234567)">
-      <div class="add-row-inline">
-        <input type="text" inputmode="decimal" id="newClientBalance" placeholder="Starting balance (+they owe you, −you owe them)" style="flex:1;">
-        <select id="newClientBalanceCurrency" style="flex:0 0 80px;">
-          <option value="USD">USD</option>
-          <option value="LBP">LBP</option>
-        </select>
+    <div class="clients-summary" id="clientsSummary"></div>
+
+    <div class="search-box">
+      <span class="field-label">🔍 Search clients</span>
+      <input type="text" id="clientSearch" placeholder="Search by name or phone...">
+    </div>
+
+    <div class="client-grid" id="clientList"></div>
+
+    <div class="add-client-card">
+      <h3>➕ Add a new client</h3>
+      <div class="add-row" style="border-top:none; padding-top:0; margin-top:0;">
+        <input type="text" id="newClientName" placeholder="Client name">
+        <input type="tel" id="newClientPhone" placeholder="Mobile number (e.g. +961 71 234567)">
+        <div class="add-row-inline">
+          <input type="text" inputmode="decimal" id="newClientBalance" placeholder="Starting balance (+they owe you, −you owe them)" style="flex:1;">
+          <select id="newClientBalanceCurrency" style="flex:0 0 80px;">
+            <option value="USD">USD</option>
+            <option value="LBP">LBP</option>
+          </select>
+        </div>
+        <button class="btn full" id="addClientBtn">➕ Add client</button>
       </div>
-      <button class="btn" id="addClientBtn">➕ Add</button>
     </div>
   </section>
 
@@ -1312,6 +1476,7 @@
     products: [],
     rate: { value: 89500, updatedAt: null, source: 'default' },
     lines: [],
+    invoiceDiscount: { mode: 'none', value: 0 },
     clients: [],
     sales: [],
     balance: { value: 0, updatedAt: null },
@@ -1368,7 +1533,8 @@
       reminderToPay: 'to pay.',
       reminderQuestions: 'If you have any questions, feel free to message us anytime! 😊',
       reminderThanks: 'Thank you! 🙏',
-      voucherHeader: 'Details'
+      voucherHeader: 'Details',
+      thankYouPrint: 'Thank you for your business!'
     },
     ar: {
       invoice: '*فاتورة*',
@@ -1393,7 +1559,8 @@
       reminderToPay: 'يرجى تسديده.',
       reminderQuestions: 'إذا كانت لديك أي استفسارات، لا تتردد في مراسلتنا في أي وقت! 😊',
       reminderThanks: 'شكراً لك! 🙏',
-      voucherHeader: 'التفاصيل'
+      voucherHeader: 'التفاصيل',
+      thankYouPrint: 'شكراً لتعاملكم معنا!'
     }
   };
 
@@ -1710,7 +1877,10 @@
     catch(e){ console.error(e); alertBanner('Could not save remembered fields: ' + e.message); }
   }
   async function saveInvoiceSettings(){
-    try{ await window.storage.set('invoiceSettings', JSON.stringify({ paymentMethods: state.paymentMethods, lang: state.invoiceLang, invoiceSettings: state.invoiceSettings })); }
+    try{
+      await window.storage.set('invoiceSettings', JSON.stringify({ paymentMethods: state.paymentMethods, lang: state.invoiceLang, invoiceSettings: state.invoiceSettings }));
+      alertBanner('Settings saved.');
+    }
     catch(e){ console.error(e); alertBanner('Could not save invoice settings: ' + e.message); }
   }
 
@@ -2274,43 +2444,89 @@
     if([...sel.options].some(o => o.value === current)) sel.value = current;
   }
 
+  const AVATAR_COLORS = ['#4F46E5','#D97706','#059669','#DC2626','#0891B2','#7C3AED','#DB2777','#65A30D'];
+  function getInitials(name){
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if(parts.length === 0) return '?';
+    if(parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  function avatarColor(name){
+    let hash = 0;
+    for(let i = 0; i < name.length; i++){ hash = name.charCodeAt(i) + ((hash << 5) - hash); }
+    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  }
+
+  function renderClientsSummary(){
+    const el = $('#clientsSummary');
+    if(!el) return;
+    if(state.clients.length === 0){ el.innerHTML = ''; return; }
+    const owedTotal = state.clients.reduce((s, c) => s + (c.balanceUsd > 0 ? c.balanceUsd : 0), 0);
+    const creditTotal = state.clients.reduce((s, c) => s + (c.balanceUsd < 0 ? -c.balanceUsd : 0), 0);
+    el.innerHTML = `
+      <div class="client-stat"><div class="cs-label">Clients</div><div class="cs-value">${state.clients.length}</div></div>
+      <div class="client-stat owed"><div class="cs-label">They owe you</div><div class="cs-value">${fmtUsd(owedTotal)}</div></div>
+      <div class="client-stat credit"><div class="cs-label">You owe them</div><div class="cs-value">${fmtUsd(creditTotal)}</div></div>
+    `;
+  }
+
   function renderClientList(){
     const list = $('#clientList');
+    renderClientsSummary();
+
     if(state.clients.length === 0){
       list.innerHTML = '<div class="empty-hint">No clients yet. Add one below to start tracking balances they owe you.</div>';
       return;
     }
+
+    const searchEl = $('#clientSearch');
+    const term = searchEl ? searchEl.value.trim().toLowerCase() : '';
+    const filtered = term
+      ? state.clients.filter(c => c.name.toLowerCase().includes(term) || (c.phone || '').toLowerCase().includes(term))
+      : state.clients;
+
+    if(filtered.length === 0){
+      list.innerHTML = '<div class="empty-hint">No clients match your search.</div>';
+      return;
+    }
+
     list.innerHTML = '';
-    state.clients.forEach(c => {
-      const row = document.createElement('div');
-      row.className = 'client-row';
+    filtered.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'client-card';
       const owes = c.balanceUsd > 0;
       const credit = c.balanceUsd < 0;
-      row.innerHTML = `
-        <div>
-          <div class="client-name">${escapeHtml(c.name)}</div>
-          ${c.phone ? '<div class="client-balance">' + escapeHtml(c.phone) + '</div>' : ''}
-          <div class="client-balance ${owes?'owes':credit?'credit':''}">
-            ${owes ? 'owes you <b>' + fmtUsd(c.balanceUsd) + '</b> (' + fmtLbp(c.balanceUsd * state.rate.value) + ')' : credit ? 'you owe them <b>' + fmtUsd(-c.balanceUsd) + '</b> (' + fmtLbp(-c.balanceUsd * state.rate.value) + ')' : 'settled up'}
+      card.innerHTML = `
+        <div class="client-card-top">
+          <div class="client-avatar" style="background:${avatarColor(c.name)}">${getInitials(c.name)}</div>
+          <div class="client-card-info">
+            <div class="client-name">${escapeHtml(c.name)}</div>
+            ${c.phone ? '<div class="client-phone">📱 ' + escapeHtml(c.phone) + '</div>' : ''}
           </div>
         </div>
-        <div class="product-actions">
+        <div class="client-balance-row">
+          <span class="client-balance-pill ${owes ? 'owes' : credit ? 'credit' : 'settled'}">
+            ${owes ? '⬆ Owes ' + fmtUsd(c.balanceUsd) : credit ? '⬇ You owe ' + fmtUsd(-c.balanceUsd) : '✓ Settled up'}
+          </span>
+          ${c.balanceUsd !== 0 ? '<span class="client-balance-sub">' + fmtLbp(Math.abs(c.balanceUsd) * state.rate.value) + '</span>' : ''}
+        </div>
+        <div class="client-actions">
           ${owes ? '<button class="mini-btn" data-action="remind">🔔 Remind</button>' : ''}
-          ${c.balanceUsd !== 0 ? '<button class="mini-btn" data-action="settle">' + (owes ? '✅ mark paid' : '✅ mark settled') + '</button>' : ''}
-          <button class="mini-btn" data-action="adjust">⚖️ adjust</button>
-          <button class="mini-btn" data-action="edit">✏️ edit</button>
-          <button class="mini-btn danger" data-action="delete">🗑️ delete</button>
+          ${c.balanceUsd !== 0 ? '<button class="mini-btn" data-action="settle">' + (owes ? '✅ Mark paid' : '✅ Settled') + '</button>' : ''}
+          <button class="mini-btn" data-action="adjust">⚖️ Adjust</button>
+          <button class="mini-btn" data-action="edit">✏️ Edit</button>
+          <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
         </div>`;
       if(owes){
-        row.querySelector('[data-action="remind"]').addEventListener('click', () => sendPaymentReminder(c.id));
+        card.querySelector('[data-action="remind"]').addEventListener('click', () => sendPaymentReminder(c.id));
       }
       if(c.balanceUsd !== 0){
-        row.querySelector('[data-action="settle"]').addEventListener('click', () => markClientPaid(c.id));
+        card.querySelector('[data-action="settle"]').addEventListener('click', () => markClientPaid(c.id));
       }
-      row.querySelector('[data-action="adjust"]').addEventListener('click', () => adjustClientBalance(c.id));
-      row.querySelector('[data-action="edit"]').addEventListener('click', () => editClient(c.id));
-      row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteClient(c.id));
-      list.appendChild(row);
+      card.querySelector('[data-action="adjust"]').addEventListener('click', () => adjustClientBalance(c.id));
+      card.querySelector('[data-action="edit"]').addEventListener('click', () => editClient(c.id));
+      card.querySelector('[data-action="delete"]').addEventListener('click', () => deleteClient(c.id));
+      list.appendChild(card);
     });
   }
 
@@ -2542,7 +2758,7 @@
       }
     }
     else{
-      state.lines.push({ productId, qty: 1, note: '', costOverride: null, costMode: null, costCurrency: 'USD', voucher: null });
+      state.lines.push({ productId, qty: 1, note: '', costOverride: null, costMode: null, costCurrency: 'USD', voucher: null, discount: null });
       if(p && p.type === 'voucher'){
         const line = state.lines[state.lines.length - 1];
         ensureUnitVouchers(line);
@@ -2731,6 +2947,105 @@
     line.costMode = mode === 'flat' ? 'flat' : 'perUnit';
   }
 
+  // ---------- Discounts (per line, and whole-invoice) ----------
+  // A line discount is either:
+  //   { mode:'percent', value: <0-100>, scope:'perUnit'|'oneUnit' }
+  //   { mode:'newPrice', value: <USD price for one unit>, scope:'perUnit'|'oneUnit' }
+  // scope 'perUnit' discounts every unit in the line (qty × discounted price).
+  // scope 'oneUnit' discounts just a single unit, the rest of the qty stays full price
+  // — this is the "single unit" discount case (e.g. buy 3, only 1 is on sale).
+  function getLineDiscount(line){
+    return (line && line.discount && line.discount.mode && line.discount.mode !== 'none') ? line.discount : null;
+  }
+  function computeLineAmounts(p, line){
+    const price = p.priceUsd;
+    const qty = line.qty;
+    const original = price * qty;
+    const d = getLineDiscount(line);
+    if(!d) return { total: original, original, discountAmount: 0, unitEffective: price };
+    let discountedUnit = d.mode === 'free' ? 0 : d.mode === 'percent' ? price * (1 - (d.value || 0) / 100) : d.value;
+    discountedUnit = Math.max(0, discountedUnit || 0);
+    const scope = d.scope === 'oneUnit' && qty > 1 ? 'oneUnit' : 'perUnit';
+    const total = scope === 'oneUnit' ? price * (qty - 1) + discountedUnit : discountedUnit * qty;
+    return { total, original, discountAmount: Math.max(0, original - total), unitEffective: discountedUnit };
+  }
+  function discountSummaryText(line){
+    const d = getLineDiscount(line);
+    if(!d) return '';
+    const scopeText = (d.scope === 'oneUnit' && line.qty > 1) ? ' (1 unit)' : '';
+    if(d.mode === 'free') return `FREE${scopeText}`;
+    return d.mode === 'percent' ? `${d.value}% off${scopeText}` : `new price ${fmtUsd(d.value)}${scopeText}`;
+  }
+  async function editLineDiscount(productId){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    const p = state.products.find(x => x.id === productId);
+    if(!p) return;
+    const current = line.discount || { mode: 'none', value: '', scope: 'perUnit' };
+    const fields = [
+      { id: 'mode', label: '🏷️ Discount type', type: 'select', value: current.mode, options: [
+        { value: 'none', label: 'No discount' },
+        { value: 'percent', label: '% off the item' },
+        { value: 'newPrice', label: 'Set a new price' },
+        { value: 'free', label: '🎁 Make it free' }
+      ] },
+      { id: 'value', label: 'Value — percent off (e.g. 10) or new price in USD (e.g. 4.5). Not needed for Free.', type: 'text', value: current.value === 0 ? '' : current.value || '' }
+    ];
+    if(line.qty > 1){
+      fields.push({ id: 'scope', label: 'Applies to', type: 'select', value: current.scope || 'perUnit', options: [
+        { value: 'perUnit', label: `Every unit (all ${line.qty})` },
+        { value: 'oneUnit', label: 'Just 1 unit — rest stay full price' }
+      ] });
+    }
+    const result = await promptModalValidated('Discount — ' + p.name, fields, (r) => {
+      if(r.mode === 'none' || r.mode === 'free') return null;
+      const n = parseFormattedNumber(r.value);
+      if(isNaN(n) || n < 0) return 'Enter a valid discount value.';
+      if(r.mode === 'percent' && n > 100) return 'Percentage off can\'t be more than 100.';
+      return null;
+    });
+    if(result === null) return;
+    if(result.mode === 'none'){
+      line.discount = null;
+    } else if(result.mode === 'free'){
+      line.discount = { mode: 'free', value: 0, scope: result.scope === 'oneUnit' ? 'oneUnit' : 'perUnit' };
+    } else {
+      line.discount = { mode: result.mode, value: parseFormattedNumber(result.value), scope: result.scope === 'oneUnit' ? 'oneUnit' : 'perUnit' };
+    }
+    state.previewEdited = false;
+    renderInvoice();
+  }
+
+  async function editInvoiceDiscount(){
+    const current = state.invoiceDiscount || { mode: 'none', value: '' };
+    const fields = [
+      { id: 'mode', label: '🏷️ Whole-invoice discount', type: 'select', value: current.mode, options: [
+        { value: 'none', label: 'No discount' },
+        { value: 'percent', label: '% off the whole invoice' },
+        { value: 'newPrice', label: 'Set a new total price' },
+        { value: 'free', label: '🎁 Make the whole invoice free' }
+      ] },
+      { id: 'value', label: 'Value — percent off (e.g. 10) or new total in USD (e.g. 50). Not needed for Free.', type: 'text', value: current.value === 0 ? '' : current.value || '' }
+    ];
+    const result = await promptModalValidated('Invoice discount', fields, (r) => {
+      if(r.mode === 'none' || r.mode === 'free') return null;
+      const n = parseFormattedNumber(r.value);
+      if(isNaN(n) || n < 0) return 'Enter a valid discount value.';
+      if(r.mode === 'percent' && n > 100) return 'Percentage off can\'t be more than 100.';
+      return null;
+    });
+    if(result === null) return;
+    if(result.mode === 'none'){
+      state.invoiceDiscount = { mode: 'none', value: 0 };
+    } else if(result.mode === 'free'){
+      state.invoiceDiscount = { mode: 'free', value: 0 };
+    } else {
+      state.invoiceDiscount = { mode: result.mode, value: parseFormattedNumber(result.value) };
+    }
+    state.previewEdited = false;
+    renderInvoice();
+  }
+
   function getSelectedClient(){
     const id = $('#clientSelect').value;
     if(!id) return null;
@@ -2739,19 +3054,41 @@
 
   function computeInvoiceNumbers(){
     let subtotalUsd = 0;
+    let originalSubtotalUsd = 0;
+    let lineDiscountUsd = 0;
     let costTotalUsd = 0;
     state.lines.forEach(line => {
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
-      subtotalUsd += p.priceUsd * line.qty;
+      const amt = computeLineAmounts(p, line);
+      subtotalUsd += amt.total;
+      originalSubtotalUsd += amt.original;
+      lineDiscountUsd += amt.discountAmount;
       const unitCost = getLineUnitCost(p, line);
       costTotalUsd += getLineCostMode(p, line) === 'flat' ? unitCost : unitCost * line.qty;
     });
+
+    // Whole-invoice discount applies on top of the (already line-discounted) subtotal.
+    const invDisc = (state.invoiceDiscount && state.invoiceDiscount.mode !== 'none') ? state.invoiceDiscount : null;
+    let invoiceDiscountUsd = 0;
+    if(invDisc){
+      if(invDisc.mode === 'free'){
+        invoiceDiscountUsd = subtotalUsd;
+      } else if(invDisc.mode === 'percent'){
+        invoiceDiscountUsd = subtotalUsd * ((invDisc.value || 0) / 100);
+      } else if(invDisc.mode === 'newPrice'){
+        invoiceDiscountUsd = Math.max(0, subtotalUsd - Math.max(0, invDisc.value || 0));
+      }
+      invoiceDiscountUsd = Math.min(Math.max(0, invoiceDiscountUsd), subtotalUsd);
+      subtotalUsd -= invoiceDiscountUsd;
+    }
+    const totalDiscountUsd = lineDiscountUsd + invoiceDiscountUsd;
+
     const client = getSelectedClient();
     const includeBalance = client && $('#includeBalanceChk').checked;
     const prevBalance = includeBalance ? client.balanceUsd : 0;
     const grandTotal = subtotalUsd + prevBalance;
-    return { subtotalUsd, costTotalUsd, profitUsd: subtotalUsd - costTotalUsd, client, includeBalance, prevBalance, grandTotal };
+    return { subtotalUsd, originalSubtotalUsd, lineDiscountUsd, invoiceDiscountUsd, totalDiscountUsd, costTotalUsd, profitUsd: subtotalUsd - costTotalUsd, client, includeBalance, prevBalance, grandTotal };
   }
 
   // ---------- Payment methods (shown on invoice, e.g. Whish: 70817032) ----------
@@ -2889,7 +3226,9 @@
     state.lines.forEach(line => {
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
-      const lineTotalUsd = p.priceUsd * line.qty;
+      const lineAmt = computeLineAmounts(p, line);
+      const lineTotalUsd = lineAmt.total;
+      const lineDiscount = getLineDiscount(line);
 
       const el = document.createElement('div');
       el.className = 'line-item';
@@ -2899,8 +3238,11 @@
       const costDisplayVal = costCurrency === 'LBP' ? Math.round(unitCost * state.rate.value) : unitCost;
       el.innerHTML = `
         <div class="line-top">
-          <div class="line-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
-          <button class="remove-line">remove</button>
+          <div class="line-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}${lineDiscount ? '<span class="discount-badge">🏷️ ' + escapeHtml(discountSummaryText(line)) + '</span>' : ''}</div>
+          <div class="line-top-actions">
+            <button class="mini-btn discount-btn" type="button">🏷️ discount</button>
+            <button class="remove-line">remove</button>
+          </div>
         </div>
         <div class="qty-row">
           <div class="qty-controls">
@@ -2908,7 +3250,10 @@
             <input type="text" value="${formatNumberString(String(line.qty))}" inputmode="numeric">
             <button data-act="plus">+</button>
           </div>
-          <div class="line-price">${fmtUsd(lineTotalUsd)}<br><b>${fmtLbp(lineTotalUsd * state.rate.value)}</b></div>
+          <div class="line-price">
+            ${lineDiscount ? '<span class="line-price-original">' + fmtUsd(lineAmt.original) + '</span>' : ''}
+            ${fmtUsd(lineTotalUsd)}<br><b>${fmtLbp(lineTotalUsd * state.rate.value)}</b>
+          </div>
         </div>
         <input type="text" class="note-input" placeholder="Note for this item (e.g. size, color)" value="${escapeHtml(line.note)}">
         ${p.type === 'voucher' ? `
@@ -2940,6 +3285,7 @@
         <div class="product-prices" style="margin-top:2px;">Cost · not shown on customer invoice</div>
       `;
       el.querySelector('.remove-line').addEventListener('click', () => removeLine(p.id));
+      el.querySelector('.discount-btn').addEventListener('click', () => editLineDiscount(p.id));
       el.querySelector('[data-act="minus"]').addEventListener('click', () => changeQty(p.id, -1));
       el.querySelector('[data-act="plus"]').addEventListener('click', () => changeQty(p.id, 1));
       el.querySelector('.qty-controls input').addEventListener('change', (e) => setQty(p.id, e.target.value));
@@ -2959,6 +3305,21 @@
     const nums = computeInvoiceNumbers();
     $('#totalUsd').textContent = fmtUsd(nums.subtotalUsd);
     $('#totalLbp').textContent = fmtLbp(nums.subtotalUsd * state.rate.value);
+
+    const discountRow = $('#discountSummaryRow');
+    if(nums.totalDiscountUsd > 0.004){
+      discountRow.style.display = 'flex';
+      $('#discountSummaryLine').textContent = '−' + fmtUsd(nums.totalDiscountUsd) + '  (' + fmtLbp(nums.totalDiscountUsd * state.rate.value) + ')';
+    } else {
+      discountRow.style.display = 'none';
+    }
+    const invDiscBtn = $('#invoiceDiscountBtn');
+    const invDisc = state.invoiceDiscount;
+    if(invDisc && invDisc.mode !== 'none'){
+      invDiscBtn.textContent = '🏷️ Invoice discount: ' + (invDisc.mode === 'free' ? '🎁 FREE' : invDisc.mode === 'percent' ? invDisc.value + '% off' : 'new total ' + fmtUsd(invDisc.value)) + ' (edit)';
+    } else {
+      invDiscBtn.textContent = '🏷️ Whole-invoice discount';
+    }
 
     const prevRow = $('#prevBalanceRow');
     if(nums.includeBalance && nums.prevBalance !== 0){
@@ -3044,9 +3405,13 @@
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
       lineNo++;
-      const lineTotal = p.priceUsd * line.qty;
+      const amt = computeLineAmounts(p, line);
+      const lineTotal = amt.total;
       lines.push(`${lineNo}) ${productDisplayName(p)} x${line.qty}`);
       if(line.note.trim()) lines.push(`   ${em('📝')}${t.note}: ${line.note.trim()}`);
+      if(getLineDiscount(line)){
+        lines.push(`   ${em('🏷️')}${discountSummaryText(line)} (was ${fmtUsd(amt.original)})`);
+      }
       lines.push(`   ${fmtUsd(lineTotal)}  (${fmtLbp(lineTotal * state.rate.value)})`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
         const units = ensureUnitVouchers(line);
@@ -3062,7 +3427,9 @@
 
     lines.push('');
     lines.push('———————————');
-    lines.push(`${em('💵')}${t.itemsSubtotal}: ${fmtUsd(nums.subtotalUsd)} (${fmtLbp(nums.subtotalUsd * state.rate.value)})`);
+    if(nums.totalDiscountUsd > 0.004){
+      lines.push(`${em('🏷️')}Discount total: −${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})`);
+    }
     if(nums.includeBalance && nums.prevBalance !== 0){
       lines.push(`${em('📌')}${t.previousBalance}: ${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
     }
@@ -3193,6 +3560,7 @@
       if(!ok) return;
     }
     state.lines = [];
+    state.invoiceDiscount = { mode: 'none', value: 0 };
     state.finalizedThisInvoice = false;
     state.paymentStatus = 'paid';
     state.previewEdited = false;
@@ -3416,18 +3784,32 @@
   }
 
   let settingsSaveTimer = null;
+  let settingsSavePending = false;
   function scheduleSaveSettings(){
+    settingsSavePending = true;
     clearTimeout(settingsSaveTimer);
-    settingsSaveTimer = setTimeout(saveInvoiceSettings, 400);
+    settingsSaveTimer = setTimeout(flushSettingsSave, 400);
   }
-
+  function flushSettingsSave(){
+    clearTimeout(settingsSaveTimer);
+    if(!settingsSavePending) return;
+    settingsSavePending = false;
+    saveInvoiceSettings();
+  }
+  // Make sure a pending debounced save is never lost: flush it whenever the
+  // user leaves the settings field (blur), switches tabs inside the app,
+  // switches away from the browser tab, or closes/reloads the page.
   ['setHeaderTitle','setHeaderSubtitle','setAddress','setPhone','setFooterNote'].forEach(id => {
+    const map = { setHeaderTitle:'headerTitle', setHeaderSubtitle:'headerSubtitle', setAddress:'address', setPhone:'phone', setFooterNote:'footerNote' };
     $('#' + id).addEventListener('input', () => {
-      const map = { setHeaderTitle:'headerTitle', setHeaderSubtitle:'headerSubtitle', setAddress:'address', setPhone:'phone', setFooterNote:'footerNote' };
       state.invoiceSettings[map[id]] = $('#' + id).value;
       scheduleSaveSettings();
     });
+    $('#' + id).addEventListener('blur', flushSettingsSave);
   });
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') flushSettingsSave(); });
+  window.addEventListener('pagehide', flushSettingsSave);
+  window.addEventListener('beforeunload', flushSettingsSave);
 
   $('#logoInput').addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
@@ -3504,31 +3886,112 @@
   }
   $('#btConnectBtn').addEventListener('click', connectBluetoothPrinter);
 
-  async function sendTextToBluetoothPrinter(text){
+  async function writeBytesToBluetoothPrinter(payload){
+    const chunkSize = 180; // conservative BLE MTU-safe chunk
+    for(let i = 0; i < payload.length; i += chunkSize){
+      const chunk = payload.slice(i, i + chunkSize);
+      if(btCharacteristic.properties.writeWithoutResponse){
+        await btCharacteristic.writeValueWithoutResponse(chunk);
+      } else {
+        await btCharacteristic.writeValue(chunk);
+      }
+    }
+  }
+
+  function loadImageEl(dataUrl){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Could not read the logo image.'));
+      img.src = dataUrl;
+    });
+  }
+
+  // Bluetooth thermal printers only understand raw ESC/POS commands, not
+  // HTML/CSS — a plain <img> in the receipt markup (used for System print)
+  // never reaches them. This rasterizes the logo into a 1-bit bitmap and
+  // encodes it as an ESC/POS "GS v 0" image command so it actually prints.
+  async function logoToEscPosRaster(dataUrl, printerWidthPx){
+    const img = await loadImageEl(dataUrl);
+    const targetW = Math.max(8, Math.min(printerWidthPx, 384) & ~7); // byte-aligned width
+    const scale = targetW / img.naturalWidth;
+    const targetH = Math.max(1, Math.round(img.naturalHeight * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, targetW, targetH);
+    ctx.drawImage(img, 0, 0, targetW, targetH);
+    const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
+    const bytesPerRow = targetW / 8;
+    const raster = new Uint8Array(bytesPerRow * targetH);
+    for(let y = 0; y < targetH; y++){
+      for(let x = 0; x < targetW; x++){
+        const idx = (y * targetW + x) * 4;
+        const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2], a = imgData[idx + 3];
+        const lum = a === 0 ? 255 : (0.299 * r + 0.587 * g + 0.114 * b);
+        if(lum < 160){
+          raster[y * bytesPerRow + (x >> 3)] |= (0x80 >> (x & 7));
+        }
+      }
+    }
+    const xL = bytesPerRow & 0xFF, xH = (bytesPerRow >> 8) & 0xFF;
+    const yL = targetH & 0xFF, yH = (targetH >> 8) & 0xFF;
+    const header = new Uint8Array([0x1D, 0x76, 0x30, 0x00, xL, xH, yL, yH]); // GS v 0, normal mode
+    const out = new Uint8Array(header.length + raster.length);
+    out.set(header, 0);
+    out.set(raster, header.length);
+    return out;
+  }
+
+  async function printToBluetoothPrinter(text){
     if(!btCharacteristic) return false;
     try{
       const encoder = new TextEncoder();
       const ESC_INIT = new Uint8Array([0x1B, 0x40]); // ESC @
+      const CENTER_ON = new Uint8Array([0x1B, 0x61, 0x01]); // ESC a 1 — center align
+      const CENTER_OFF = new Uint8Array([0x1B, 0x61, 0x00]); // ESC a 0 — left align
       const FEED_CUT = new Uint8Array([0x0A, 0x0A, 0x0A, 0x0A, 0x1D, 0x56, 0x00]); // feed + cut
-      const body = encoder.encode(text);
-      const payload = new Uint8Array(ESC_INIT.length + body.length + FEED_CUT.length);
-      payload.set(ESC_INIT, 0);
-      payload.set(body, ESC_INIT.length);
-      payload.set(FEED_CUT, ESC_INIT.length + body.length);
-      const chunkSize = 180; // conservative BLE MTU-safe chunk
-      for(let i = 0; i < payload.length; i += chunkSize){
-        const chunk = payload.slice(i, i + chunkSize);
-        if(btCharacteristic.properties.writeWithoutResponse){
-          await btCharacteristic.writeValueWithoutResponse(chunk);
-        } else {
-          await btCharacteristic.writeValue(chunk);
+
+      await writeBytesToBluetoothPrinter(ESC_INIT);
+
+      const s = state.invoiceSettings;
+      if(s.logo){
+        try{
+          const printerWidthPx = s.paperWidth === '58' ? 384 : 576;
+          const raster = await logoToEscPosRaster(s.logo, printerWidthPx);
+          await writeBytesToBluetoothPrinter(CENTER_ON);
+          await writeBytesToBluetoothPrinter(raster);
+          await writeBytesToBluetoothPrinter(encoder.encode('\n'));
+          await writeBytesToBluetoothPrinter(CENTER_OFF);
+        }catch(e){
+          console.error('Logo print failed, continuing with text only:', e);
         }
       }
+
+      const body = encoder.encode(text);
+      const payload = new Uint8Array(body.length + FEED_CUT.length);
+      payload.set(body, 0);
+      payload.set(FEED_CUT, body.length);
+      await writeBytesToBluetoothPrinter(payload);
       return true;
     }catch(e){
       alertBanner('Bluetooth print failed: ' + e.message + ' — try System print instead.');
       return false;
     }
+  }
+
+  // The Bluetooth text path is raw ESC/POS, not HTML — emoji, curly
+  // separators, and WhatsApp-style *bold* markers either print as garbled
+  // boxes or literal asterisks on a receipt printer. Strip/replace them
+  // here only; the WhatsApp/copy text from buildInvoiceText() is untouched.
+  function sanitizeForPrinter(text){
+    return text
+      .replace(/—+/g, '-'.repeat(24))
+      .replace(/\*(.+?)\*/g, '$1')
+      .replace(/•/g, '-')
+      .replace(/[^\x00-\x7F\u0600-\u06FF\n]/g, '');
   }
 
   // ---------- Print (system dialog or direct Bluetooth) ----------
@@ -3544,12 +4007,13 @@
     let html = '';
     if(s.logo) html += `<img class="pr-logo" src="${s.logo}" alt="logo">`;
     html += `<div class="pr-center">`;
+    html += `<div class="pr-eyebrow">${escapeHtml(t.invoice.replace(/\*/g, ''))}</div>`;
     html += `<div class="pr-title">${escapeHtml(s.headerTitle || 'Invoice')}</div>`;
     if(s.headerSubtitle) html += `<div class="pr-sub">${escapeHtml(s.headerSubtitle)}</div>`;
     if(s.address) html += `<div class="pr-sub">${escapeHtml(s.address)}</div>`;
     if(s.phone) html += `<div class="pr-sub">${escapeHtml(s.phone)}</div>`;
-    html += `<div class="pr-sub">${dateStr} · ${timeStr}</div>`;
-    html += `</div><div class="pr-hr"></div>`;
+    html += `<div class="pr-meta">${dateStr} · ${timeStr}</div>`;
+    html += `</div><div class="pr-hr solid"></div>`;
     if(customer) html += `<div class="pr-row"><span>${t.customer}</span><b>${escapeHtml(customer)}</b></div><div class="pr-hr"></div>`;
 
     let lineNo = 0;
@@ -3557,10 +4021,13 @@
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
       lineNo++;
-      const lineTotal = p.priceUsd * line.qty;
-      html += `<div class="pr-item-name">${lineNo}) ${escapeHtml(productDisplayName(p, state.invoiceLang))} x${line.qty}</div>`;
+      const amt = computeLineAmounts(p, line);
+      const lineTotal = amt.total;
+      html += `<div class="pr-item">`;
+      html += `<div class="pr-item-top"><span class="pr-item-title">${lineNo}. ${escapeHtml(productDisplayName(p, state.invoiceLang))} <span class="pr-item-qty">×${line.qty}</span></span><span class="pr-item-price">${fmtUsd(lineTotal)}</span></div>`;
+      html += `<div class="pr-item-sub">${fmtLbp(lineTotal * state.rate.value)}</div>`;
+      if(getLineDiscount(line)) html += `<div class="pr-item-sub">🏷️ ${escapeHtml(discountSummaryText(line))} (was ${fmtUsd(amt.original)})</div>`;
       if(line.note.trim()) html += `<div class="pr-item-sub">${t.note}: ${escapeHtml(line.note.trim())}</div>`;
-      html += `<div class="pr-item-sub">${fmtUsd(lineTotal)} (${fmtLbp(lineTotal * state.rate.value)})</div>`;
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
         const units = ensureUnitVouchers(line);
         units.forEach((unitFields, i) => {
@@ -3568,10 +4035,13 @@
           if(vh) html += `<div class="pr-voucher"><b>${t.voucherHeader}${line.qty > 1 ? ' — Unit ' + (i + 1) : ''}</b><br>${vh}</div>`;
         });
       }
+      html += `</div>`;
     });
 
     html += `<div class="pr-hr"></div>`;
-    html += `<div class="pr-row"><span>${t.itemsSubtotal}</span><span>${fmtUsd(nums.subtotalUsd)}</span></div>`;
+    if(nums.totalDiscountUsd > 0.004){
+      html += `<div class="pr-row"><span>🏷️ Discount total</span><span>−${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})</span></div>`;
+    }
     if(nums.includeBalance && nums.prevBalance !== 0){
       html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})</span></div>`;
     }
@@ -3581,7 +4051,7 @@
     if(s.showPaymentStatus !== false && !isNaN(received)){
       const remaining = nums.grandTotal - received;
       const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
-      html += `<div class="pr-hr"></div>`;
+      html += `<div class="pr-section-label">${t.paymentStatus}</div>`;
       html += `<div class="pr-row"><span>${t.paymentStatus}</span><span>${statusLabel}</span></div>`;
       html += `<div class="pr-row"><span>${t.received}</span><span>${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})</span></div>`;
       if(remaining > 0.004) html += `<div class="pr-row"><span>${t.remainingBalance}</span><span>${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})</span></div>`;
@@ -3590,13 +4060,18 @@
 
     const activeMethods = state.paymentMethods.filter(m => m.enabled);
     if(activeMethods.length){
-      html += `<div class="pr-hr"></div><div class="pr-row"><b>${t.paymentMethods}</b><span></span></div>`;
+      html += `<div class="pr-hr"></div><div class="pr-section-label">${t.paymentMethods}</div>`;
       activeMethods.forEach(m => { html += `<div class="pr-row"><span>${escapeHtml(m.label)}</span><span>${escapeHtml(m.value)}</span></div>`; });
     }
 
     if(s.footerNote){
       html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(s.footerNote)}</div>`;
     }
+
+    // Thank-you line: printed receipt only, never included in the
+    // WhatsApp/copy text (buildInvoiceText).
+    html += `<div class="pr-hr"></div><div class="pr-thankyou">${escapeHtml(t.thankYouPrint)}</div>`;
+
     return html;
   }
 
@@ -3608,13 +4083,14 @@
       document.head.appendChild(styleTag);
     }
     const width = state.invoiceSettings.paperWidth === '58' ? '58mm' : '80mm';
-    styleTag.textContent = `@page{ size:${width} auto; margin:2mm; } #printArea{ max-width:${width}; }`;
+    styleTag.textContent = `@page{ size:${width} auto; margin:3mm; } #printArea{ max-width:${width}; padding:0 1mm; }`;
   }
 
   async function printInvoice(){
     if(state.lines.length === 0){ alertBanner('Add items to the invoice first.'); return; }
     if(state.invoiceSettings.printerConnection === 'bluetooth' && btCharacteristic){
-      const ok = await sendTextToBluetoothPrinter(buildInvoiceText(false));
+      const printerText = sanitizeForPrinter(buildInvoiceText(false));
+      const ok = await printToBluetoothPrinter(printerText);
       if(ok){ alertBanner('Sent to printer.'); finalizeSaleIfNeeded(); }
       return;
     }
@@ -3628,6 +4104,7 @@
   // ---------- Tabs ----------
   $all('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
+      flushSettingsSave();
       $all('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       $all('.section').forEach(s => s.classList.remove('active'));
@@ -3644,6 +4121,7 @@
     input.value = '';
   };
   $('#addCategoryBtn').addEventListener('click', addRootCategory);
+  $('#invoiceDiscountBtn').addEventListener('click', editInvoiceDiscount);
   $('#newCategoryName').addEventListener('keydown', (e) => { if(e.key === 'Enter') addRootCategory(); });
   $('#editRateBtn').addEventListener('click', editRate);
   $('#addFundsBtn').addEventListener('click', addFunds);
@@ -3662,6 +4140,7 @@
     btn.addEventListener('click', () => setInvoiceLang(btn.dataset.lang));
   });
   $('#addClientBtn').addEventListener('click', addClient);
+  $('#clientSearch').addEventListener('input', renderClientList);
   $('#clientSelect').addEventListener('change', () => {
     const client = getSelectedClient();
     if(client) $('#customerName').value = client.name;
