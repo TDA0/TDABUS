@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TDA Business</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+  :root{
+    --paper:#F3EFE6;
+    --paper-card:#FBF9F4;
+    --ink:#221F1A;
+    --ink-soft:#6B6555;
+    --cedar:#2F5D50;
+    --cedar-dark:#1F4038;
+    --brass:#A9761F;
+    --burgundy:#7A3030;
+    --line:#DCD3BC;
+    --line-strong:#C7BB9C;
+    --danger:#963B3B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    margin:0;
+  }
+  .app{
+    max-width:520px;
+    margin:0 auto;
+    padding:18px 16px 60px;
+  }
+  header.top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:10px;
+    margin-bottom:14px;
+  }
+  header.top h1{
+    font-size:22px;
+    letter-spacing:0.2px;
+  }
+  header.top .tag{
+    font-size:10.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.5px;
+  }
+
+  /* Rate bar */
+  .rate-bar{
+    background:var(--paper-card);
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    padding:10px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .rate-bar .rate-label{
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .rate-bar .rate-value{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    font-weight:600;
+    color:var(--cedar-dark);
+  }
+  .rate-bar .rate-meta{
+    font-size:9.5px;
+    color:var(--ink-soft);
+    margin-top:1px;
+  }
+  .balance-bar .rate-value{ color:var(--brass); }
+  .rate-actions{ display:flex; gap:6px; }
+  .icon-btn{
+    background:none;
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    padding:6px 8px;
+    font-size:12px;
+    color:var(--ink);
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .icon-btn:active{ background:var(--line); }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    border-bottom:1px solid var(--line-strong);
+    margin-bottom:16px;
+    overflow-x:auto;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    padding:9px 4px 11px;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    margin-bottom:-1px;
+    background:none;
+    border-top:none;border-left:none;border-right:none;
+    font-family:'IBM Plex Mono', monospace;
+    white-space:nowrap;
+  }
+  .tab.active{
+    color:var(--ink);
+    border-bottom:2px solid var(--cedar);
+    font-weight:600;
+  }
+
+  .section{ display:none; }
+  .section.active{ display:block; }
+
+  /* Category card */
+  .category{
+    margin-bottom:14px;
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:var(--paper-card);
+    overflow:hidden;
+  }
+  .category-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 12px;
+    background:#EFE9D8;
+    cursor:pointer;
+  }
+  .category-head h3{ font-size:14px; }
+  .category-head .count{ font-size:10.5px; color:var(--ink-soft); }
+  .category-body{ padding:8px 12px 12px; }
+  .category-body.collapsed{ display:none; }
+
+  .product-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 0;
+    border-bottom:1px dashed var(--line);
+    gap:8px;
+  }
+  .product-row:last-child{ border-bottom:none; }
+  .product-name{ font-size:13px; }
+  .product-prices{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .product-actions{ display:flex; gap:6px; flex-shrink:0; }
+  .mini-btn{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    font-size:12px;
+    cursor:pointer;
+    padding:4px;
+  }
+  .mini-btn.danger{ color:var(--danger); }
+
+  .add-row{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-top:8px;
+    padding-top:10px;
+    border-top:1px solid var(--line);
+  }
+  .add-row-inline{ display:flex; gap:6px; }
+  input, select{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    padding:8px 9px;
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+    width:100%;
+  }
+  input:focus, select:focus{ outline:1.5px solid var(--cedar); }
+  input[disabled]{ background:#F0EDE4; color:var(--ink-soft); }
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    font-weight:600;
+    padding:9px 12px;
+    border-radius:3px;
+    border:1px solid var(--cedar);
+    background:var(--cedar);
+    color:#fff;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn:active{ background:var(--cedar-dark); }
+  .btn.ghost{
+    background:none;
+    color:var(--cedar-dark);
+  }
+  .btn.full{ width:100%; }
+  .btn.small{ padding:7px 10px; font-size:11.5px; }
+  .status-btns{ display:flex; gap:6px; }
+  .status-btns button{ flex:1; }
+
+  .add-category{
+    display:flex;
+    gap:6px;
+    margin-top:4px;
+  }
+
+  .empty-hint{
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:center;
+    padding:20px 10px;
+    border:1px dashed var(--line-strong);
+    border-radius:3px;
+  }
+
+  /* Invoice tab */
+  .field-label{
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+    display:block;
+  }
+  .field-block{ margin-bottom:14px; }
+
+  .search-box{ margin-bottom:10px; }
+
+  .catalog-picker{
+    max-height:220px;
+    overflow-y:auto;
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:var(--paper-card);
+    margin-bottom:16px;
+  }
+  .pick-cat-label{
+    font-size:10px;
+    color:var(--ink-soft);
+    padding:6px 10px 2px;
+    background:#EFE9D8;
+  }
+  .pick-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 10px;
+    border-bottom:1px dashed var(--line);
+    cursor:pointer;
+  }
+  .pick-row:active{ background:var(--line); }
+  .pick-name{ font-size:12.5px; }
+  .pick-price{ font-size:10.5px; color:var(--ink-soft); }
+  .pick-plus{
+    font-size:16px;
+    color:var(--cedar);
+    font-weight:700;
+  }
+
+  .line-item{
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:var(--paper-card);
+    padding:10px 12px;
+    margin-bottom:10px;
+  }
+  .line-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:6px;
+  }
+  .line-name{ font-size:13.5px; font-weight:600; }
+  .remove-line{
+    background:none; border:none; color:var(--danger);
+    font-size:11px; cursor:pointer;
+  }
+  .qty-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .qty-controls{
+    display:flex;
+    align-items:center;
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .qty-controls button{
+    background:#EFE9D8;
+    border:none;
+    width:26px; height:26px;
+    font-size:14px;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .qty-controls input{
+    width:38px;
+    text-align:center;
+    border:none;
+    border-left:1px solid var(--line-strong);
+    border-right:1px solid var(--line-strong);
+    border-radius:0;
+    padding:5px 0;
+  }
+  .line-price{ font-size:11.5px; color:var(--ink-soft); margin-left:auto; text-align:right; }
+  .line-price b{ color:var(--ink); }
+  .note-input{ font-size:12px; }
+
+  .client-box{
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:var(--paper-card);
+    padding:10px 12px;
+    margin-bottom:14px;
+  }
+  .balance-line{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12.5px;
+    padding:6px 0;
+  }
+  .balance-line b{ color:var(--burgundy); }
+  .checkbox-row{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+  .checkbox-row input[type="checkbox"]{ width:auto; }
+
+  .totals-card{
+    border:1.5px solid var(--ink);
+    border-radius:3px;
+    padding:12px 14px;
+    margin:16px 0;
+    background:var(--paper-card);
+  }
+  .totals-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    padding:3px 0;
+  }
+  .totals-row.usd b{ color:var(--brass); }
+  .totals-row.lbp b{ color:var(--burgundy); }
+  .totals-row.grand{
+    border-top:1px dashed var(--line-strong);
+    margin-top:6px;
+    padding-top:8px;
+    font-size:15px;
+  }
+  .totals-row.sub{ font-size:12px; color:var(--ink-soft); }
+
+  .preview-box{
+    background:#fff;
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    padding:12px;
+    font-size:12px;
+    white-space:pre-wrap;
+    line-height:1.5;
+    margin-bottom:12px;
+    max-height:280px;
+    overflow-y:auto;
+  }
+
+  .action-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .copied-msg{
+    font-size:11px;
+    color:var(--cedar-dark);
+    text-align:center;
+    margin-top:4px;
+    min-height:14px;
+  }
+
+  /* Clients tab */
+  .client-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 12px;
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:var(--paper-card);
+    margin-bottom:8px;
+  }
+  .client-name{ font-size:13.5px; font-weight:600; }
+  .client-balance{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .client-balance.owes b{ color:var(--burgundy); }
+  .client-balance.credit b{ color:var(--cedar-dark); }
+
+  /* Reports tab */
+  .report-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .report-card{
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:var(--paper-card);
+    padding:10px 8px;
+    text-align:center;
+  }
+  .report-card .r-label{ font-size:9.5px; color:var(--ink-soft); text-transform:lowercase; }
+  .report-card .r-profit{ font-family:'Fraunces', serif; font-size:16px; font-weight:600; color:var(--cedar-dark); margin:4px 0 2px; }
+  .report-card .r-rev{ font-size:9.5px; color:var(--ink-soft); }
+  .history-item{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:11.5px;
+  }
+  .history-item .h-left{ color:var(--ink-soft); }
+  .history-item .h-right{ text-align:right; }
+  .history-item .h-right b{ color:var(--cedar-dark); }
+  .history-item{ align-items:center; }
+  .history-item .h-actions{ display:flex; gap:4px; flex-shrink:0; margin-left:8px; }
+
+  /* Search block (Reports) */
+  .search-block{
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    background:var(--paper-card);
+    padding:10px 12px;
+    margin-bottom:16px;
+  }
+  .search-block h3{ font-size:13px; margin-bottom:8px; }
+  .search-mode-row{ display:flex; gap:6px; margin-bottom:8px; }
+  .search-mode-row select{ width:auto; flex:0 0 110px; }
+  .search-inputs{ display:flex; gap:6px; margin-bottom:8px; }
+  .search-inputs > *{ flex:1; }
+  .search-result{
+    display:none;
+    border-top:1px dashed var(--line-strong);
+    margin-top:8px;
+    padding-top:10px;
+  }
+  .search-result.show{ display:block; }
+  .search-result .sr-profit{ font-family:'Fraunces', serif; font-size:19px; font-weight:600; color:var(--cedar-dark); }
+  .search-result .sr-meta{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+
+  /* Modal */
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(34,31,26,0.55);
+    z-index:1000;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{
+    background:var(--paper-card);
+    width:100%;
+    max-width:520px;
+    max-height:88vh;
+    overflow-y:auto;
+    border-radius:10px 10px 0 0;
+    padding:18px 16px 22px;
+    border-top:1px solid var(--line-strong);
+  }
+  @media (min-width:560px){
+    .modal-overlay{ align-items:center; }
+    .modal-box{ border-radius:6px; padding:20px; }
+  }
+  .modal-box h3{ font-size:15px; margin-bottom:14px; }
+  .modal-field{ margin-bottom:12px; }
+  .modal-error{ font-size:11px; color:var(--danger); margin:-6px 0 10px; display:none; }
+  .modal-error.show{ display:block; }
+  .modal-actions{ display:flex; gap:8px; margin-top:6px; }
+  .modal-actions .btn{ flex:1; }
+  .modal-msg{ font-size:12.5px; line-height:1.5; margin-bottom:16px; }
+
+  /* Login screen */
+  .login-overlay{
+    display:flex;
+    min-height:100vh;
+    align-items:center;
+    justify-content:center;
+    padding:24px 16px;
+  }
+  .login-box{
+    width:100%;
+    max-width:360px;
+    background:var(--paper-card);
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    padding:24px 20px;
+  }
+
+  ::-webkit-scrollbar{ width:6px; }
+  ::-webkit-scrollbar-thumb{ background:var(--line-strong); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h1 style="font-size:20px; margin-bottom:4px;">🧾 TDA Business</h1>
+    <div class="field-label" style="margin-bottom:16px;">Sign in to your business data</div>
+    <div class="modal-field">
+      <span class="field-label">Email</span>
+      <input type="email" id="loginEmail" placeholder="you@example.com">
+    </div>
+    <div class="modal-field">
+      <span class="field-label">Password</span>
+      <input type="password" id="loginPassword" placeholder="At least 6 characters">
+    </div>
+    <div class="modal-error" id="authError"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" id="signupBtn">Create account</button>
+      <button type="button" class="btn" id="loginBtn">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<div id="appRoot" style="display:none;">
+<div class="app">
+
+  <header class="top">
+    <div>
+      <h1>🧾 TDA Business</h1>
+      <div class="tag">catalog &middot; rate &middot; invoices &middot; balance</div>
+    </div>
+    <button class="icon-btn" id="signOutBtn" style="align-self:flex-start;">🚪 sign out</button>
+  </header>
+
+  <div class="rate-bar">
+    <div>
+      <div class="rate-label">💱 1 USD equals</div>
+      <div class="rate-value" id="rateDisplay">—</div>
+      <div class="rate-meta" id="rateMeta"></div>
+    </div>
+    <div class="rate-actions">
+      <button class="icon-btn" id="editRateBtn">✏️ edit</button>
+      <button class="icon-btn" id="refreshRateBtn">🔄 refresh</button>
+    </div>
+  </div>
+
+  <div class="rate-bar balance-bar">
+    <div>
+      <div class="rate-label">💰 Business balance</div>
+      <div class="rate-value" id="balanceDisplay">$0.00</div>
+      <div class="rate-meta" id="balanceMeta"></div>
+    </div>
+    <div class="rate-actions">
+      <button class="icon-btn" id="addFundsBtn">➕ add</button>
+      <button class="icon-btn" id="withdrawFundsBtn">➖ withdraw</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="catalog">📦 Catalog</button>
+    <button class="tab" data-tab="invoice">🧾 Invoice</button>
+    <button class="tab" data-tab="clients">👥 Clients</button>
+    <button class="tab" data-tab="reports">📊 Reports</button>
+  </div>
+
+  <!-- CATALOG TAB -->
+  <section class="section active" id="tab-catalog">
+    <div id="categoryList"></div>
+
+    <div class="add-category">
+      <input type="text" id="newCategoryName" placeholder="🗂️ New category name">
+      <button class="btn" id="addCategoryBtn">➕ Add</button>
+    </div>
+  </section>
+
+  <!-- INVOICE TAB -->
+  <section class="section" id="tab-invoice">
+    <div class="field-block">
+      <span class="field-label">Client</span>
+      <select id="clientSelect">
+        <option value="">Walk-in (no account)</option>
+      </select>
+    </div>
+    <div class="field-block">
+      <span class="field-label">Customer name on receipt</span>
+      <input type="text" id="customerName" placeholder="🙋 Customer name">
+    </div>
+
+    <div class="client-box" id="clientBalanceBox" style="display:none;">
+      <div class="balance-line">
+        <span>Balance owed before this sale</span>
+        <b id="clientPrevBalance">$0.00</b>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="includeBalanceChk" checked>
+        <label for="includeBalanceChk">Add this balance to the invoice total</label>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span class="field-label">Add products</span>
+      <input type="text" id="productSearch" placeholder="🔍 Search catalog...">
+    </div>
+    <div class="catalog-picker" id="catalogPicker"></div>
+
+    <div id="lineItems"></div>
+    <div class="empty-hint" id="noLinesHint">No items added yet. Tap a product above to add it.</div>
+
+    <div class="totals-card" id="totalsCard" style="display:none;">
+      <div class="totals-row usd"><span>Items subtotal (USD)</span><b id="totalUsd">$0.00</b></div>
+      <div class="totals-row lbp sub"><span>Items subtotal (LBP)</span><span id="totalLbp">0 LBP</span></div>
+      <div class="totals-row sub" id="prevBalanceRow" style="display:none;"><span>Previous balance</span><span id="prevBalanceLine">$0.00</span></div>
+      <div class="totals-row grand"><span>Total due (USD)</span><b id="grandUsd">$0.00</b></div>
+      <div class="totals-row sub"><span>Total due (LBP)</span><span id="grandLbp">0 LBP</span></div>
+
+      <div class="field-block" style="margin-top:10px;">
+        <span class="field-label">Payment status</span>
+        <div class="status-btns" id="paymentStatusBtns">
+          <button type="button" class="btn small" data-status="paid">✅ Paid</button>
+          <button type="button" class="btn small ghost" data-status="partial">⏳ Partial</button>
+          <button type="button" class="btn small ghost" data-status="unpaid">❌ Not paid</button>
+        </div>
+      </div>
+      <div class="field-block" style="margin-top:8px;">
+        <span class="field-label">Amount received now (USD)</span>
+        <input type="number" step="0.01" id="amountReceived">
+      </div>
+      <div class="totals-row sub"><span>Remaining balance after payment</span><b id="remainingBalance">$0.00</b></div>
+      <div class="totals-row sub"><span>Rate used</span><span id="rateUsedLine">—</span></div>
+    </div>
+
+    <div class="field-block" id="previewBlock" style="display:none;">
+      <span class="field-label">Invoice preview (this is what gets copied)</span>
+      <div class="preview-box" id="previewBox"></div>
+      <div class="action-row">
+        <button class="btn full" id="copyBtn">📋 Copy invoice</button>
+      </div>
+      <div class="action-row">
+        <button class="btn ghost full" id="whatsappBtn">💬 Open in WhatsApp</button>
+      </div>
+      <div class="action-row">
+        <button class="btn ghost full" id="resetBtn">🆕 Start new invoice</button>
+      </div>
+      <div class="copied-msg" id="copiedMsg"></div>
+    </div>
+  </section>
+
+  <!-- CLIENTS TAB -->
+  <section class="section" id="tab-clients">
+    <div id="clientList"></div>
+    <div class="add-row" style="border-top:none; padding-top:0;">
+      <input type="text" id="newClientName" placeholder="👤 Client name">
+      <input type="tel" id="newClientPhone" placeholder="📱 Mobile number (e.g. +961 71 234567)">
+      <div class="add-row-inline">
+        <input type="number" step="0.01" id="newClientBalance" placeholder="💰 Starting balance owed (optional)">
+        <button class="btn" id="addClientBtn">➕ Add</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPORTS TAB -->
+  <section class="section" id="tab-reports">
+    <div class="report-grid">
+      <div class="report-card">
+        <div class="r-label">☀️ today</div>
+        <div class="r-profit" id="profitToday">$0.00</div>
+        <div class="r-rev" id="revToday">rev $0.00</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">📅 this month</div>
+        <div class="r-profit" id="profitMonth">$0.00</div>
+        <div class="r-rev" id="revMonth">rev $0.00</div>
+      </div>
+      <div class="report-card">
+        <div class="r-label">📆 this year</div>
+        <div class="r-profit" id="profitYear">$0.00</div>
+        <div class="r-rev" id="revYear">rev $0.00</div>
+      </div>
+    </div>
+    <div class="field-label">profit = selling price − cost price, on completed invoices. LBP figures use today's rate.</div>
+
+    <div class="search-block">
+      <h3>🔎 Search profit by date</h3>
+      <div class="search-mode-row">
+        <select id="searchMode">
+          <option value="day">Day</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+        </select>
+        <input type="date" id="searchDay" style="flex:1;">
+        <input type="month" id="searchMonth" style="flex:1; display:none;">
+        <input type="number" id="searchYear" placeholder="e.g. 2026" style="flex:1; display:none;">
+      </div>
+      <button class="btn full small" id="searchReportsBtn">Search</button>
+      <div class="search-result" id="searchResult">
+        <div class="r-label" id="searchResultLabel"></div>
+        <div class="sr-profit" id="searchResultProfit">$0.00</div>
+        <div class="sr-meta" id="searchResultMeta"></div>
+        <div id="searchResultList" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:13px; margin:16px 0 8px;">💰 Balance changes</h3>
+    <div id="balanceLogList"></div>
+
+    <h3 style="font-size:13px; margin:16px 0 8px;">🧾 Recent sales</h3>
+    <div id="salesHistory"></div>
+    <div class="empty-hint" id="noSalesHint" style="display:none;">🗒️ No completed sales yet. Copy or share an invoice to log it here.</div>
+  </section>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+</div>
+
+<script type="module">
+  // ============================================================================
+  // CLOUDFLARE WORKER + D1 SETUP — replaces Firebase. This talks to a small
+  // Worker API (see worker/index.js) which is the only thing allowed to touch
+  // D1. The window.storage shape below is unchanged, so nothing else in the
+  // app needs to be modified.
+  // ============================================================================
+
+  // ---- PUT YOUR DEPLOYED WORKER URL HERE ----
+  // This is the URL you get after `wrangler deploy`, e.g.
+  // "https://invoice-ledger-api.yoursubdomain.workers.dev"
+  const API_BASE = "https://invoice-ledger-api.tdabus.workers.dev";
+  // --------------------------------------------
+
+  const TOKEN_KEY = 'ledger_auth_token';
+  let authToken = localStorage.getItem(TOKEN_KEY) || null;
+
+  async function apiFetch(path, options = {}){
+    const res = await fetch(API_BASE + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}),
+        ...(options.headers || {})
+      }
+    });
+    if(res.status === 404) return null;
+    if(!res.ok){
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || ('Request failed (' + res.status + ')'));
+    }
+    return res.json();
+  }
+
+  // Same shape/behavior as before: get/set/delete/list, all scoped to the
+  // signed-in user by the Worker (via the bearer token).
+  window.storage = {
+    async get(key){
+      return apiFetch('/api/kv?key=' + encodeURIComponent(key));
+    },
+    async set(key, value){
+      return apiFetch('/api/kv', { method: 'PUT', body: JSON.stringify({ key, value }) });
+    },
+    async delete(key){
+      return apiFetch('/api/kv?key=' + encodeURIComponent(key), { method: 'DELETE' });
+    },
+    async list(prefix){
+      return apiFetch('/api/kv/list' + (prefix ? '?prefix=' + encodeURIComponent(prefix) : ''));
+    }
+  };
+
+  // ---- Login screen wiring ----
+  const loginOverlay = document.getElementById('loginOverlay');
+  const appRoot = document.getElementById('appRoot');
+  const authError = document.getElementById('authError');
+
+  function showApp(){
+    loginOverlay.style.display = 'none';
+    appRoot.style.display = '';
+    window.dispatchEvent(new Event('firebase-ready'));
+  }
+  function showLogin(){
+    loginOverlay.style.display = 'flex';
+    appRoot.style.display = 'none';
+  }
+
+  if(authToken) showApp(); else showLogin();
+
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    authError.classList.remove('show');
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    try{
+      const data = await apiFetch('/api/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
+      authToken = data.token;
+      localStorage.setItem(TOKEN_KEY, authToken);
+      showApp();
+    }catch(e){
+      authError.textContent = e.message;
+      authError.classList.add('show');
+    }
+  });
+
+  document.getElementById('signupBtn').addEventListener('click', async () => {
+    authError.classList.remove('show');
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    try{
+      const data = await apiFetch('/api/signup', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
+      authToken = data.token;
+      localStorage.setItem(TOKEN_KEY, authToken);
+      showApp();
+    }catch(e){
+      authError.textContent = e.message;
+      authError.classList.add('show');
+    }
+  });
+
+  document.getElementById('signOutBtn').addEventListener('click', () => {
+    authToken = null;
+    localStorage.removeItem(TOKEN_KEY);
+    showLogin();
+  });
+</script>
+
+<script>
+(function(){
+  const state = {
+    categories: [],
+    products: [],
+    rate: { value: 89500, updatedAt: null, source: 'default' },
+    lines: [],
+    clients: [],
+    sales: [],
+    balance: { value: 0, updatedAt: null },
+    balanceLog: [],
+    finalizedThisInvoice: false
+  };
+
+  const $ = (sel) => document.querySelector(sel);
+  const $all = (sel) => document.querySelectorAll(sel);
+  const uid = () => Math.random().toString(36).slice(2,9);
+
+  function fmtUsd(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtLbp(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + Math.round(Math.abs(n)).toLocaleString('en-US') + ' LBP';
+  }
+
+  // ---------- Modal (replaces prompt()/confirm(), which don't work in this sandboxed view) ----------
+  const modalOverlay = $('#modalOverlay');
+  const modalBox = $('#modalBox');
+
+  function closeModal(){
+    modalOverlay.classList.remove('show');
+    modalBox.innerHTML = '';
+  }
+  modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) closeModal(); });
+
+  // fields: [{id,label,type,value,placeholder,step}]
+  function promptModal(title, fields){
+    return new Promise((resolve) => {
+      modalBox.innerHTML = `
+        <h3>${escapeHtml(title)}</h3>
+        <form id="modalForm">
+          ${fields.map(f => `
+            <div class="modal-field">
+              <span class="field-label">${escapeHtml(f.label)}</span>
+              <input type="${f.type||'text'}" id="mf_${f.id}" value="${f.value !== undefined && f.value !== null ? escapeHtml(String(f.value)) : ''}" placeholder="${f.placeholder?escapeHtml(f.placeholder):''}" ${f.step?`step="${f.step}"`:''}>
+            </div>
+          `).join('')}
+          <div class="modal-error" id="modalError"></div>
+          <div class="modal-actions">
+            <button type="button" class="btn ghost" id="modalCancelBtn">Cancel</button>
+            <button type="submit" class="btn" id="modalSaveBtn">Save</button>
+          </div>
+        </form>`;
+      modalOverlay.classList.add('show');
+      const form = $('#modalForm');
+      $('#modalCancelBtn').addEventListener('click', () => { closeModal(); resolve(null); });
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const values = {};
+        fields.forEach(f => { values[f.id] = $('#mf_' + f.id).value; });
+        closeModal();
+        resolve(values);
+      });
+      setTimeout(() => { const first = $('#mf_' + fields[0].id); if(first) first.focus(); }, 30);
+    });
+  }
+
+  function confirmModal(message){
+    return new Promise((resolve) => {
+      modalBox.innerHTML = `
+        <div class="modal-msg">${escapeHtml(message)}</div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="modalNoBtn">Cancel</button>
+          <button type="button" class="btn" id="modalYesBtn">Confirm</button>
+        </div>`;
+      modalOverlay.classList.add('show');
+      $('#modalNoBtn').addEventListener('click', () => { closeModal(); resolve(false); });
+      $('#modalYesBtn').addEventListener('click', () => { closeModal(); resolve(true); });
+    });
+  }
+
+  // Like promptModal, but keeps re-opening with the last-entered values + an error banner
+  // until the validator passes (or the user cancels), so users get real inline feedback.
+  async function promptModalValidated(title, fields, validate){
+    let currentFields = fields;
+    while(true){
+      const result = await promptModal(title, currentFields);
+      if(result === null) return null;
+      const err = validate(result);
+      if(!err) return result;
+      alertBanner(err);
+      currentFields = currentFields.map(f => ({ ...f, value: result[f.id] }));
+    }
+  }
+
+  function alertBanner(msg){
+    // Lightweight non-blocking notice (avoids alert(), which is also unreliable here).
+    let el = document.getElementById('inlineAlert');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'inlineAlert';
+      el.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;font-size:12px;z-index:1100;max-width:90%;text-align:center;';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.display = 'block';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.display = 'none'; }, 2600);
+  }
+
+  // ---------- Storage ----------
+  async function loadAll(){
+    let loadError = null;
+    try{
+      const c = await window.storage.get('catalog');
+      if(c && c.value){
+        const parsed = JSON.parse(c.value);
+        state.categories = parsed.categories || [];
+        state.products = parsed.products || [];
+      }
+    }catch(e){ loadError = e; }
+    try{
+      const r = await window.storage.get('rate');
+      if(r && r.value){ state.rate = JSON.parse(r.value); }
+    }catch(e){ loadError = e; }
+    try{
+      const cl = await window.storage.get('clients');
+      if(cl && cl.value){ state.clients = JSON.parse(cl.value); }
+    }catch(e){ loadError = e; }
+    try{
+      const s = await window.storage.get('sales');
+      if(s && s.value){ state.sales = JSON.parse(s.value); }
+    }catch(e){ loadError = e; }
+    try{
+      const b = await window.storage.get('balance');
+      if(b && b.value){ state.balance = JSON.parse(b.value); }
+    }catch(e){ loadError = e; }
+    try{
+      const bl = await window.storage.get('balanceLog');
+      if(bl && bl.value){ state.balanceLog = JSON.parse(bl.value); }
+    }catch(e){ loadError = e; }
+    if(loadError){ alertBanner('⚠️ Could not load your data: ' + loadError.message); }
+
+    renderCategories();
+    renderRate();
+    renderBalance();
+    renderCatalogPicker();
+    renderClientSelect();
+    renderClientList();
+    renderReports();
+  }
+
+  async function saveCatalog(){
+    try{ await window.storage.set('catalog', JSON.stringify({ categories: state.categories, products: state.products })); }
+    catch(e){ console.error(e); alertBanner('⚠️ Could not save catalog: ' + e.message); }
+  }
+  async function saveRate(){
+    try{ await window.storage.set('rate', JSON.stringify(state.rate)); }
+    catch(e){ console.error(e); alertBanner('⚠️ Could not save rate: ' + e.message); }
+  }
+  async function saveClients(){
+    try{ await window.storage.set('clients', JSON.stringify(state.clients)); }
+    catch(e){ console.error(e); alertBanner('⚠️ Could not save clients: ' + e.message); }
+  }
+  async function saveSales(){
+    try{ await window.storage.set('sales', JSON.stringify(state.sales)); }
+    catch(e){ console.error(e); alertBanner('⚠️ Could not save sales: ' + e.message); }
+  }
+  async function saveBalance(){
+    try{ await window.storage.set('balance', JSON.stringify(state.balance)); }
+    catch(e){ console.error(e); alertBanner('⚠️ Could not save balance: ' + e.message); }
+  }
+  async function saveBalanceLog(){
+    try{ await window.storage.set('balanceLog', JSON.stringify(state.balanceLog)); }
+    catch(e){ console.error(e); alertBanner('⚠️ Could not save balance log: ' + e.message); }
+  }
+
+  // ---------- Rate ----------
+  function renderRate(){
+    $('#rateDisplay').textContent = fmtLbp(state.rate.value);
+    let meta = '';
+    if(state.rate.source === 'api' && state.rate.updatedAt){
+      meta = 'live rate · ' + new Date(state.rate.updatedAt).toLocaleString();
+    } else if(state.rate.source === 'manual' && state.rate.updatedAt){
+      meta = 'set manually · ' + new Date(state.rate.updatedAt).toLocaleString();
+    } else {
+      meta = 'default rate — tap refresh or edit';
+    }
+    $('#rateMeta').textContent = meta;
+    $('#rateUsedLine').textContent = '1 USD = ' + fmtLbp(state.rate.value);
+  }
+
+  async function refreshRate(){
+    const btn = $('#refreshRateBtn');
+    const original = btn.textContent;
+    btn.textContent = '...';
+    try{
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const data = await res.json();
+      if(data && data.rates && data.rates.LBP){
+        state.rate = { value: data.rates.LBP, updatedAt: Date.now(), source: 'api' };
+        await saveRate();
+        renderRate();
+        renderInvoiceIfNeeded();
+        renderReports();
+      } else { throw new Error('LBP not in response'); }
+    }catch(e){
+      alertBanner("Couldn't fetch a live rate right now. You can enter it manually with 'edit'.");
+    }
+    btn.textContent = original;
+  }
+
+  async function editRate(){
+    const result = await promptModalValidated(
+      'Edit exchange rate',
+      [{ id:'rate', label:'LBP per 1 USD', type:'text', value: state.rate.value, placeholder:'e.g. 89500' }],
+      (v) => {
+        const val = parseFloat((v.rate||'').replace(/,/g,''));
+        if(isNaN(val) || val <= 0) return 'Enter a valid number.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const val = parseFloat(result.rate.replace(/,/g,''));
+    state.rate = { value: val, updatedAt: Date.now(), source: 'manual' };
+    saveRate();
+    renderRate();
+    renderInvoiceIfNeeded();
+    renderReports();
+  }
+
+  // ---------- Business balance ----------
+  function renderBalance(){
+    $('#balanceDisplay').textContent = fmtUsd(state.balance.value);
+    $('#balanceMeta').textContent = state.balance.updatedAt
+      ? 'last updated ' + new Date(state.balance.updatedAt).toLocaleString()
+      : 'cash the business actually has on hand';
+  }
+
+  function logBalanceChange(delta, note){
+    state.balanceLog.unshift({ id: uid(), date: Date.now(), delta, note, resultingBalance: state.balance.value });
+    state.balanceLog = state.balanceLog.slice(0, 50);
+    saveBalanceLog();
+  }
+
+  async function addFunds(){
+    const result = await promptModalValidated(
+      'Add money to the business',
+      [
+        { id:'amount', label:'Amount to add (USD)', type:'number', step:'0.01', placeholder:'e.g. 100' },
+        { id:'note', label:'Note (optional)', placeholder:'e.g. owner deposit' }
+      ],
+      (v) => {
+        const val = parseFloat(v.amount);
+        if(isNaN(val) || val <= 0) return 'Enter a valid positive amount.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const val = parseFloat(result.amount);
+    state.balance.value += val;
+    state.balance.updatedAt = Date.now();
+    saveBalance();
+    logBalanceChange(val, result.note.trim() || 'Manual deposit');
+    renderBalance();
+    renderBalanceLog();
+  }
+
+  async function withdrawFunds(){
+    const result = await promptModalValidated(
+      'Withdraw money from the business',
+      [
+        { id:'amount', label:'Amount to withdraw (USD)', type:'number', step:'0.01', placeholder:'e.g. 50' },
+        { id:'note', label:'Note (optional)', placeholder:'e.g. rent, supplies' }
+      ],
+      (v) => {
+        const val = parseFloat(v.amount);
+        if(isNaN(val) || val <= 0) return 'Enter a valid positive amount.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const val = parseFloat(result.amount);
+    state.balance.value -= val;
+    state.balance.updatedAt = Date.now();
+    saveBalance();
+    logBalanceChange(-val, result.note.trim() || 'Manual withdrawal');
+    renderBalance();
+    renderBalanceLog();
+  }
+
+  function renderBalanceLog(){
+    const el = $('#balanceLogList');
+    if(!el) return;
+    if(state.balanceLog.length === 0){
+      el.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No balance changes yet.</div>';
+      return;
+    }
+    el.innerHTML = '';
+    state.balanceLog.slice(0, 15).forEach(entry => {
+      const d = new Date(entry.date);
+      const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+      const row = document.createElement('div');
+      row.className = 'history-item';
+      const positive = entry.delta > 0;
+      row.innerHTML = `
+        <div class="h-left">${dateStr} · ${escapeHtml(entry.note)}</div>
+        <div class="h-right"><b style="color:${positive?'var(--cedar-dark)':'var(--burgundy)'}">${positive?'+':''}${fmtUsd(entry.delta)}</b></div>`;
+      el.appendChild(row);
+    });
+  }
+
+  // ---------- Catalog ----------
+  const collapsedState = {};
+
+  function renderCategories(){
+    const list = $('#categoryList');
+    if(state.categories.length === 0){
+      list.innerHTML = '<div class="empty-hint">📦 No categories yet. Add one below to start building your catalog.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    state.categories.forEach(cat => {
+      const products = state.products.filter(p => p.categoryId === cat.id);
+      const wrap = document.createElement('div');
+      wrap.className = 'category';
+
+      const head = document.createElement('div');
+      head.className = 'category-head';
+      head.innerHTML = `<h3>${escapeHtml(cat.name)}</h3><span class="count">${products.length} item${products.length===1?'':'s'}</span>`;
+      head.addEventListener('click', () => { collapsedState[cat.id] = !collapsedState[cat.id]; renderCategories(); });
+
+      const body = document.createElement('div');
+      body.className = 'category-body' + (collapsedState[cat.id] ? ' collapsed' : '');
+
+      products.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'product-row';
+        const margin = p.priceUsd - (p.costUsd||0);
+        row.innerHTML = `
+          <div>
+            <div class="product-name">${escapeHtml(p.name)}</div>
+            <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) : ''}</div>
+          </div>
+          <div class="product-actions">
+            <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
+            <button class="mini-btn danger" data-action="delete" data-id="${p.id}">🗑️ delete</button>
+          </div>`;
+        row.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
+        row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
+        body.appendChild(row);
+      });
+
+      const addRow = document.createElement('div');
+      addRow.className = 'add-row';
+      addRow.innerHTML = `
+        <input type="text" placeholder="🏷️ Product name" class="new-prod-name">
+        <div class="add-row-inline">
+          <input type="number" step="0.01" placeholder="💵 Sell price" class="new-prod-price" style="flex:1;">
+          <select class="new-prod-currency" style="flex:0 0 80px;">
+            <option value="USD">USD</option>
+            <option value="LBP">LBP</option>
+          </select>
+        </div>
+        <div class="add-row-inline">
+          <input type="number" step="0.01" placeholder="📉 Cost price (optional, USD)" class="new-prod-cost" style="flex:1;">
+          <button class="btn small" data-cat="${cat.id}">➕ Add</button>
+        </div>
+      `;
+      addRow.querySelector('button').addEventListener('click', () => {
+        const nameInput = addRow.querySelector('.new-prod-name');
+        const priceInput = addRow.querySelector('.new-prod-price');
+        const currencySel = addRow.querySelector('.new-prod-currency');
+        const costInput = addRow.querySelector('.new-prod-cost');
+        addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value);
+      });
+      body.appendChild(addRow);
+
+      const delCatBtn = document.createElement('button');
+      delCatBtn.className = 'mini-btn danger';
+      delCatBtn.style.marginTop = '8px';
+      delCatBtn.textContent = '🗑️ delete category';
+      delCatBtn.addEventListener('click', () => deleteCategory(cat.id));
+      body.appendChild(delCatBtn);
+
+      wrap.appendChild(head);
+      wrap.appendChild(body);
+      list.appendChild(wrap);
+    });
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function addCategory(){
+    const input = $('#newCategoryName');
+    const name = input.value.trim();
+    if(!name) return;
+    state.categories.push({ id: uid(), name });
+    input.value = '';
+    saveCatalog();
+    renderCategories();
+    renderCatalogPicker();
+  }
+
+  async function deleteCategory(catId){
+    const ok = await confirmModal('Delete this category and all its products?');
+    if(!ok) return;
+    state.categories = state.categories.filter(c => c.id !== catId);
+    state.products = state.products.filter(p => p.categoryId !== catId);
+    saveCatalog();
+    renderCategories();
+    renderCatalogPicker();
+  }
+
+  function addProduct(catId, name, priceRaw, currency, costRaw){
+    name = (name||'').trim();
+    const price = parseFloat(priceRaw);
+    if(!name || isNaN(price) || price <= 0){ alertBanner('Enter a product name and a valid sell price.'); return; }
+    const priceUsd = currency === 'LBP' ? price / state.rate.value : price;
+    let costUsd = 0;
+    if(costRaw !== undefined && costRaw !== '' && !isNaN(parseFloat(costRaw))){
+      costUsd = parseFloat(costRaw);
+    }
+    state.products.push({ id: uid(), name, categoryId: catId, priceUsd, costUsd });
+    saveCatalog();
+    renderCategories();
+    renderCatalogPicker();
+  }
+
+  async function editProduct(id){
+    const p = state.products.find(x => x.id === id);
+    if(!p) return;
+    const result = await promptModalValidated(
+      'Edit product',
+      [
+        { id:'name', label:'Product name', value:p.name },
+        { id:'price', label:'Sell price (USD)', type:'number', step:'0.01', value:p.priceUsd.toFixed(2) },
+        { id:'cost', label:'Cost price (USD, 0 if unknown)', type:'number', step:'0.01', value:(p.costUsd||0).toFixed(2) }
+      ],
+      (v) => {
+        const val = parseFloat(v.price), costVal = parseFloat(v.cost);
+        if(!v.name.trim()) return 'Enter a product name.';
+        if(isNaN(val) || val <= 0) return 'Enter a valid sell price.';
+        if(isNaN(costVal) || costVal < 0) return 'Enter a valid cost price.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    p.name = result.name.trim();
+    p.priceUsd = parseFloat(result.price);
+    p.costUsd = parseFloat(result.cost);
+    saveCatalog();
+    renderCategories();
+    renderCatalogPicker();
+    renderInvoiceIfNeeded();
+  }
+
+  async function deleteProduct(id){
+    const ok = await confirmModal('Delete this product?');
+    if(!ok) return;
+    state.products = state.products.filter(p => p.id !== id);
+    state.lines = state.lines.filter(l => l.productId !== id);
+    saveCatalog();
+    renderCategories();
+    renderCatalogPicker();
+    renderInvoice();
+  }
+
+  // ---------- Clients ----------
+  function renderClientSelect(){
+    const sel = $('#clientSelect');
+    const current = sel.value;
+    sel.innerHTML = '<option value="">Walk-in (no account)</option>';
+    state.clients.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name + (c.balanceUsd ? ' (' + fmtUsd(c.balanceUsd) + ' owed)' : '');
+      sel.appendChild(opt);
+    });
+    if([...sel.options].some(o => o.value === current)) sel.value = current;
+  }
+
+  function renderClientList(){
+    const list = $('#clientList');
+    if(state.clients.length === 0){
+      list.innerHTML = '<div class="empty-hint">👥 No clients yet. Add one below to start tracking balances they owe you.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    state.clients.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'client-row';
+      const owes = c.balanceUsd > 0;
+      const credit = c.balanceUsd < 0;
+      row.innerHTML = `
+        <div>
+          <div class="client-name">${escapeHtml(c.name)}</div>
+          ${c.phone ? '<div class="client-balance">📱 ' + escapeHtml(c.phone) + '</div>' : ''}
+          <div class="client-balance ${owes?'owes':credit?'credit':''}">
+            ${owes ? '⚠️ owes <b>' + fmtUsd(c.balanceUsd) + '</b>' : credit ? '💚 credit <b>' + fmtUsd(-c.balanceUsd) + '</b>' : '✅ settled up'}
+          </div>
+        </div>
+        <div class="product-actions">
+          ${owes ? '<button class="mini-btn" data-action="markpaid">✅ mark paid</button>' : ''}
+          <button class="mini-btn" data-action="edit">✏️ edit</button>
+          <button class="mini-btn danger" data-action="delete">🗑️ delete</button>
+        </div>`;
+      if(owes){
+        row.querySelector('[data-action="markpaid"]').addEventListener('click', () => markClientPaid(c.id));
+      }
+      row.querySelector('[data-action="edit"]').addEventListener('click', () => editClient(c.id));
+      row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteClient(c.id));
+      list.appendChild(row);
+    });
+  }
+
+  function addClient(){
+    const nameInput = $('#newClientName');
+    const phoneInput = $('#newClientPhone');
+    const balInput = $('#newClientBalance');
+    const name = nameInput.value.trim();
+    if(!name){ alertBanner('Enter a client name.'); return; }
+    const bal = parseFloat(balInput.value);
+    state.clients.push({ id: uid(), name, phone: phoneInput.value.trim(), balanceUsd: isNaN(bal) ? 0 : bal });
+    nameInput.value = '';
+    phoneInput.value = '';
+    balInput.value = '';
+    saveClients();
+    renderClientList();
+    renderClientSelect();
+  }
+
+  async function editClient(id){
+    const c = state.clients.find(x => x.id === id);
+    if(!c) return;
+    const result = await promptModalValidated(
+      'Edit client',
+      [
+        { id:'name', label:'Client name', value:c.name },
+        { id:'phone', label:'Mobile number (for WhatsApp)', type:'tel', value:c.phone || '' },
+        { id:'balance', label:'Balance owed (USD, negative = credit)', type:'number', step:'0.01', value:c.balanceUsd.toFixed(2) }
+      ],
+      (v) => {
+        if(!v.name.trim()) return 'Name cannot be empty.';
+        if(isNaN(parseFloat(v.balance))) return 'Enter a valid balance.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    c.name = result.name.trim();
+    c.phone = result.phone.trim();
+    c.balanceUsd = parseFloat(result.balance);
+    saveClients();
+    renderClientList();
+    renderClientSelect();
+    renderInvoiceIfNeeded();
+  }
+
+  async function markClientPaid(id){
+    const c = state.clients.find(x => x.id === id);
+    if(!c) return;
+    const ok = await confirmModal(`Mark ${c.name}'s balance of ${fmtUsd(c.balanceUsd)} as fully paid?`);
+    if(!ok) return;
+    c.balanceUsd = 0;
+    saveClients();
+    renderClientList();
+    renderClientSelect();
+    renderInvoiceIfNeeded();
+  }
+
+  async function deleteClient(id){
+    const ok = await confirmModal('Delete this client? Their balance record will be lost.');
+    if(!ok) return;
+    state.clients = state.clients.filter(c => c.id !== id);
+    saveClients();
+    renderClientList();
+    renderClientSelect();
+  }
+
+  // ---------- Invoice ----------
+  function renderCatalogPicker(){
+    const picker = $('#catalogPicker');
+    const query = ($('#productSearch').value || '').toLowerCase();
+    picker.innerHTML = '';
+    let any = false;
+    state.categories.forEach(cat => {
+      const products = state.products.filter(p => p.categoryId === cat.id && p.name.toLowerCase().includes(query));
+      if(products.length === 0) return;
+      any = true;
+      const label = document.createElement('div');
+      label.className = 'pick-cat-label';
+      label.textContent = cat.name;
+      picker.appendChild(label);
+      products.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'pick-row';
+        row.innerHTML = `
+          <div>
+            <div class="pick-name">${escapeHtml(p.name)}</div>
+            <div class="pick-price">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}</div>
+          </div>
+          <div class="pick-plus">+</div>`;
+        row.addEventListener('click', () => addLine(p.id));
+        picker.appendChild(row);
+      });
+    });
+    if(!any){
+      picker.innerHTML = '<div class="empty-hint" style="border:none;">🔍 No products match. Add products in the Catalog tab.</div>';
+    }
+  }
+
+  function addLine(productId){
+    const existing = state.lines.find(l => l.productId === productId);
+    if(existing){ existing.qty += 1; }
+    else{ state.lines.push({ productId, qty: 1, note: '' }); }
+    state.finalizedThisInvoice = false;
+    renderInvoice();
+  }
+  function removeLine(productId){
+    state.lines = state.lines.filter(l => l.productId !== productId);
+    renderInvoice();
+  }
+  function changeQty(productId, delta){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    line.qty = Math.max(1, line.qty + delta);
+    renderInvoice();
+  }
+  function setQty(productId, val){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    const n = parseInt(val);
+    line.qty = isNaN(n) || n < 1 ? 1 : n;
+    renderInvoice();
+  }
+  function setNote(productId, note){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    line.note = note;
+    renderPreviewOnly();
+  }
+
+  function getSelectedClient(){
+    const id = $('#clientSelect').value;
+    if(!id) return null;
+    return state.clients.find(c => c.id === id) || null;
+  }
+
+  function computeInvoiceNumbers(){
+    let subtotalUsd = 0;
+    let costTotalUsd = 0;
+    state.lines.forEach(line => {
+      const p = state.products.find(x => x.id === line.productId);
+      if(!p) return;
+      subtotalUsd += p.priceUsd * line.qty;
+      costTotalUsd += (p.costUsd||0) * line.qty;
+    });
+    const client = getSelectedClient();
+    const includeBalance = client && $('#includeBalanceChk').checked;
+    const prevBalance = includeBalance ? client.balanceUsd : 0;
+    const grandTotal = subtotalUsd + prevBalance;
+    return { subtotalUsd, costTotalUsd, profitUsd: subtotalUsd - costTotalUsd, client, includeBalance, prevBalance, grandTotal };
+  }
+
+  function renderInvoice(){
+    const container = $('#lineItems');
+    const hint = $('#noLinesHint');
+    container.innerHTML = '';
+
+    const client = getSelectedClient();
+    const balBox = $('#clientBalanceBox');
+    if(client && client.balanceUsd !== 0){
+      balBox.style.display = 'block';
+      $('#clientPrevBalance').textContent = fmtUsd(client.balanceUsd);
+    } else {
+      balBox.style.display = 'none';
+    }
+
+    if(state.lines.length === 0){
+      hint.style.display = 'block';
+      $('#totalsCard').style.display = 'none';
+      $('#previewBlock').style.display = 'none';
+      return;
+    }
+    hint.style.display = 'none';
+    $('#totalsCard').style.display = 'block';
+    $('#previewBlock').style.display = 'block';
+
+    state.lines.forEach(line => {
+      const p = state.products.find(x => x.id === line.productId);
+      if(!p) return;
+      const lineTotalUsd = p.priceUsd * line.qty;
+
+      const el = document.createElement('div');
+      el.className = 'line-item';
+      el.innerHTML = `
+        <div class="line-top">
+          <div class="line-name">${escapeHtml(p.name)}</div>
+          <button class="remove-line">remove</button>
+        </div>
+        <div class="qty-row">
+          <div class="qty-controls">
+            <button data-act="minus">−</button>
+            <input type="text" value="${line.qty}" inputmode="numeric">
+            <button data-act="plus">+</button>
+          </div>
+          <div class="line-price">${fmtUsd(lineTotalUsd)}<br><b>${fmtLbp(lineTotalUsd * state.rate.value)}</b></div>
+        </div>
+        <input type="text" class="note-input" placeholder="Note for this item (e.g. size, color)" value="${escapeHtml(line.note)}">
+      `;
+      el.querySelector('.remove-line').addEventListener('click', () => removeLine(p.id));
+      el.querySelector('[data-act="minus"]').addEventListener('click', () => changeQty(p.id, -1));
+      el.querySelector('[data-act="plus"]').addEventListener('click', () => changeQty(p.id, 1));
+      el.querySelector('.qty-controls input').addEventListener('change', (e) => setQty(p.id, e.target.value));
+      el.querySelector('.note-input').addEventListener('input', (e) => setNote(p.id, e.target.value));
+      container.appendChild(el);
+    });
+
+    const nums = computeInvoiceNumbers();
+    $('#totalUsd').textContent = fmtUsd(nums.subtotalUsd);
+    $('#totalLbp').textContent = fmtLbp(nums.subtotalUsd * state.rate.value);
+
+    const prevRow = $('#prevBalanceRow');
+    if(nums.includeBalance && nums.prevBalance !== 0){
+      prevRow.style.display = 'flex';
+      $('#prevBalanceLine').textContent = fmtUsd(nums.prevBalance);
+    } else {
+      prevRow.style.display = 'none';
+    }
+
+    $('#grandUsd').textContent = fmtUsd(nums.grandTotal);
+    $('#grandLbp').textContent = fmtLbp(nums.grandTotal * state.rate.value);
+
+    if(!state.paymentStatus) state.paymentStatus = 'paid';
+    const receivedInput = $('#amountReceived');
+    if(state.paymentStatus === 'paid'){
+      receivedInput.value = nums.grandTotal.toFixed(2);
+      receivedInput.disabled = true;
+    } else if(state.paymentStatus === 'unpaid'){
+      receivedInput.value = '0.00';
+      receivedInput.disabled = true;
+    } else {
+      receivedInput.disabled = false;
+    }
+    updateStatusButtonsUI();
+    updateRemaining();
+    renderPreviewOnly();
+  }
+
+  function setPaymentStatus(status){
+    state.paymentStatus = status;
+    $('#amountReceived').dataset.userEdited = 'true';
+    renderInvoice();
+  }
+
+  function updateStatusButtonsUI(){
+    $all('#paymentStatusBtns button').forEach(b => {
+      if(b.dataset.status === state.paymentStatus) b.classList.remove('ghost');
+      else b.classList.add('ghost');
+    });
+  }
+
+  function updateRemaining(){
+    const nums = computeInvoiceNumbers();
+    const received = parseFloat($('#amountReceived').value);
+    const receivedVal = isNaN(received) ? 0 : received;
+    const remaining = nums.grandTotal - receivedVal;
+    $('#remainingBalance').innerHTML = (remaining > 0 ? '⚠️ owes <b>' + fmtUsd(remaining) + '</b>' : remaining < 0 ? '💚 credit <b>' + fmtUsd(-remaining) + '</b>' : '✅ <b>$0.00</b>');
+  }
+
+  function renderInvoiceIfNeeded(){
+    if(state.lines.length > 0) renderInvoice();
+    renderCatalogPicker();
+  }
+
+  function buildInvoiceText(){
+    const customer = $('#customerName').value.trim();
+    const dateStr = new Date().toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    const nums = computeInvoiceNumbers();
+    let lines = [];
+    lines.push('🧾 *Invoice*');
+    lines.push('📅 ' + dateStr);
+    if(customer) lines.push('👤 Customer: ' + customer);
+    lines.push('');
+
+    state.lines.forEach((line, i) => {
+      const p = state.products.find(x => x.id === line.productId);
+      if(!p) return;
+      const lineTotal = p.priceUsd * line.qty;
+      lines.push(`${i+1}) ${p.name} x${line.qty}`);
+      if(line.note.trim()) lines.push(`   📝 note: ${line.note.trim()}`);
+      lines.push(`   ${fmtUsd(lineTotal)}  (${fmtLbp(lineTotal * state.rate.value)})`);
+    });
+
+    lines.push('');
+    lines.push('———————————');
+    lines.push(`Items subtotal: ${fmtUsd(nums.subtotalUsd)} (${fmtLbp(nums.subtotalUsd * state.rate.value)})`);
+    if(nums.includeBalance && nums.prevBalance !== 0){
+      lines.push(`⚠️ Previous balance: ${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
+    }
+    lines.push(`*Total due: ${fmtUsd(nums.grandTotal)}*`);
+    lines.push(`*Total due: ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
+
+    const received = parseFloat($('#amountReceived').value);
+    if(!isNaN(received)){
+      const remaining = nums.grandTotal - received;
+      const statusLabel = state.paymentStatus === 'paid' ? '✅ PAID' : state.paymentStatus === 'unpaid' ? '❌ NOT PAID' : '⏳ PARTIALLY PAID';
+      lines.push('');
+      lines.push(`Payment status: ${statusLabel}`);
+      lines.push(`💵 Received: ${fmtUsd(received)}`);
+      if(remaining > 0.004) lines.push(`⚠️ Remaining balance: ${fmtUsd(remaining)}`);
+      else if(remaining < -0.004) lines.push(`💚 Credit on account: ${fmtUsd(-remaining)}`);
+    }
+
+    lines.push('');
+    lines.push(`💱 Rate: 1 USD = ${fmtLbp(state.rate.value)}`);
+    return lines.join('\n');
+  }
+
+  function renderPreviewOnly(){
+    if(state.lines.length === 0) return;
+    $('#previewBox').textContent = buildInvoiceText();
+  }
+
+  function finalizeSaleIfNeeded(){
+    if(state.finalizedThisInvoice || state.lines.length === 0) return;
+    const nums = computeInvoiceNumbers();
+    const received = parseFloat($('#amountReceived').value);
+    const receivedVal = isNaN(received) ? nums.grandTotal : received;
+    const newBalance = nums.grandTotal - receivedVal;
+
+    const record = {
+      id: uid(),
+      date: Date.now(),
+      customerName: $('#customerName').value.trim() || (nums.client ? nums.client.name : 'Walk-in'),
+      clientId: nums.client ? nums.client.id : null,
+      revenueUsd: nums.subtotalUsd,
+      costUsd: nums.costTotalUsd,
+      profitUsd: nums.profitUsd,
+      prevBalanceApplied: nums.includeBalance ? nums.prevBalance : 0,
+      amountReceived: receivedVal,
+      newBalance,
+      rateUsed: state.rate.value
+    };
+    state.sales.push(record);
+    saveSales();
+
+    if(receivedVal !== 0){
+      state.balance.value += receivedVal;
+      state.balance.updatedAt = Date.now();
+      saveBalance();
+      logBalanceChange(receivedVal, 'Sale — ' + record.customerName);
+      renderBalance();
+      renderBalanceLog();
+    }
+
+    if(nums.client){
+      nums.client.balanceUsd = newBalance;
+      saveClients();
+      renderClientList();
+      renderClientSelect();
+    }
+    state.finalizedThisInvoice = true;
+    renderReports();
+  }
+
+  async function copyInvoice(){
+    const text = buildInvoiceText();
+    try{
+      await navigator.clipboard.writeText(text);
+      $('#copiedMsg').textContent = 'Copied — paste it into WhatsApp.';
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      $('#copiedMsg').textContent = 'Copied — paste it into WhatsApp.';
+    }
+    finalizeSaleIfNeeded();
+    setTimeout(() => { $('#copiedMsg').textContent = ''; }, 3000);
+  }
+
+  function openWhatsapp(){
+    const text = buildInvoiceText();
+    const client = getSelectedClient();
+    let phoneDigits = '';
+    if(client && client.phone){
+      phoneDigits = client.phone.replace(/[^0-9]/g, '');
+    }
+    const url = 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(text);
+    window.open(url, '_blank');
+    finalizeSaleIfNeeded();
+  }
+
+  async function resetInvoice(){
+    if(state.lines.length > 0){
+      const ok = await confirmModal('Start a new invoice? Current items will be cleared.');
+      if(!ok) return;
+    }
+    state.lines = [];
+    state.finalizedThisInvoice = false;
+    state.paymentStatus = 'paid';
+    $('#customerName').value = '';
+    $('#clientSelect').value = '';
+    $('#amountReceived').value = '';
+    $('#amountReceived').dataset.userEdited = 'false';
+    renderInvoice();
+  }
+
+  // ---------- Reports ----------
+  function renderReports(){
+    renderBalanceLog();
+    const now = new Date();
+    const isToday = (d) => d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate();
+    const isMonth = (d) => d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+    const isYear = (d) => d.getFullYear()===now.getFullYear();
+
+    let pToday=0, rToday=0, pMonth=0, rMonth=0, pYear=0, rYear=0;
+    state.sales.forEach(s => {
+      const d = new Date(s.date);
+      if(isToday(d)){ pToday += s.profitUsd; rToday += s.revenueUsd; }
+      if(isMonth(d)){ pMonth += s.profitUsd; rMonth += s.revenueUsd; }
+      if(isYear(d)){ pYear += s.profitUsd; rYear += s.revenueUsd; }
+    });
+
+    $('#profitToday').textContent = fmtUsd(pToday);
+    $('#revToday').textContent = 'rev ' + fmtUsd(rToday);
+    $('#profitMonth').textContent = fmtUsd(pMonth);
+    $('#revMonth').textContent = 'rev ' + fmtUsd(rMonth);
+    $('#profitYear').textContent = fmtUsd(pYear);
+    $('#revYear').textContent = 'rev ' + fmtUsd(rYear);
+
+    const historyEl = $('#salesHistory');
+    const noSalesHint = $('#noSalesHint');
+    const recent = [...state.sales].sort((a,b) => b.date - a.date).slice(0, 15);
+    if(recent.length === 0){
+      historyEl.innerHTML = '';
+      noSalesHint.style.display = 'block';
+      return;
+    }
+    noSalesHint.style.display = 'none';
+    historyEl.innerHTML = '';
+    recent.forEach(s => renderSaleRow(historyEl, s));
+  }
+
+  function renderSaleRow(container, s){
+    const d = new Date(s.date);
+    const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    const row = document.createElement('div');
+    row.className = 'history-item';
+    row.innerHTML = `
+      <div class="h-left">${dateStr} · ${escapeHtml(s.customerName)}</div>
+      <div class="h-right">rev ${fmtUsd(s.revenueUsd)}<br>profit <b>${fmtUsd(s.profitUsd)}</b></div>
+      <div class="h-actions">
+        <button class="mini-btn" data-action="edit">✏️</button>
+        <button class="mini-btn danger" data-action="delete">🗑️</button>
+      </div>`;
+    row.querySelector('[data-action="edit"]').addEventListener('click', () => editSale(s.id));
+    row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteSale(s.id));
+    container.appendChild(row);
+  }
+
+  function dateToInputValue(ts){
+    const d = new Date(ts);
+    const pad = (n) => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+
+  async function editSale(id){
+    const s = state.sales.find(x => x.id === id);
+    if(!s) return;
+    const result = await promptModalValidated(
+      'Edit invoice record',
+      [
+        { id:'date', label:'Date', type:'date', value: dateToInputValue(s.date) },
+        { id:'customer', label:'Customer name', value: s.customerName },
+        { id:'revenue', label:'Revenue (USD)', type:'number', step:'0.01', value: s.revenueUsd.toFixed(2) },
+        { id:'cost', label:'Cost (USD)', type:'number', step:'0.01', value: s.costUsd.toFixed(2) },
+        { id:'received', label:'Amount received (USD)', type:'number', step:'0.01', value: s.amountReceived.toFixed(2) }
+      ],
+      (v) => {
+        if(!v.date) return 'Pick a valid date.';
+        if(!v.customer.trim()) return 'Enter a customer name.';
+        if(isNaN(parseFloat(v.revenue)) || parseFloat(v.revenue) < 0) return 'Enter a valid revenue amount.';
+        if(isNaN(parseFloat(v.cost)) || parseFloat(v.cost) < 0) return 'Enter a valid cost amount.';
+        if(isNaN(parseFloat(v.received))) return 'Enter a valid received amount.';
+        return null;
+      }
+    );
+    if(result === null) return;
+
+    const [y, m, day] = result.date.split('-').map(Number);
+    const original = new Date(s.date);
+    const newDate = new Date(y, m - 1, day, original.getHours(), original.getMinutes(), original.getSeconds());
+
+    s.date = newDate.getTime();
+    s.customerName = result.customer.trim();
+    s.revenueUsd = parseFloat(result.revenue);
+    s.costUsd = parseFloat(result.cost);
+    s.profitUsd = s.revenueUsd - s.costUsd;
+    s.amountReceived = parseFloat(result.received);
+    s.newBalance = s.revenueUsd + (s.prevBalanceApplied||0) - s.amountReceived;
+
+    saveSales();
+    renderReports();
+  }
+
+  async function deleteSale(id){
+    const ok = await confirmModal('Delete this invoice record from your reports? This only removes the record — it does not change any client balance.');
+    if(!ok) return;
+    state.sales = state.sales.filter(s => s.id !== id);
+    saveSales();
+    renderReports();
+  }
+
+  // ---------- Reports: search by day/month/year ----------
+  function updateSearchInputsVisibility(){
+    const mode = $('#searchMode').value;
+    $('#searchDay').style.display = mode === 'day' ? '' : 'none';
+    $('#searchMonth').style.display = mode === 'month' ? '' : 'none';
+    $('#searchYear').style.display = mode === 'year' ? '' : 'none';
+  }
+
+  function runReportSearch(){
+    const mode = $('#searchMode').value;
+    let matches, label;
+
+    if(mode === 'day'){
+      const val = $('#searchDay').value;
+      if(!val){ alertBanner('Pick a day to search.'); return; }
+      const [y, m, day] = val.split('-').map(Number);
+      matches = state.sales.filter(s => {
+        const d = new Date(s.date);
+        return d.getFullYear()===y && d.getMonth()===m-1 && d.getDate()===day;
+      });
+      const d = new Date(y, m-1, day);
+      label = d.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    } else if(mode === 'month'){
+      const val = $('#searchMonth').value;
+      if(!val){ alertBanner('Pick a month to search.'); return; }
+      const [y, m] = val.split('-').map(Number);
+      matches = state.sales.filter(s => {
+        const d = new Date(s.date);
+        return d.getFullYear()===y && d.getMonth()===m-1;
+      });
+      const d = new Date(y, m-1, 1);
+      label = d.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    } else {
+      const val = parseInt($('#searchYear').value);
+      if(!val || val < 1970){ alertBanner('Enter a valid year.'); return; }
+      matches = state.sales.filter(s => new Date(s.date).getFullYear() === val);
+      label = String(val);
+    }
+
+    const profit = matches.reduce((sum, s) => sum + s.profitUsd, 0);
+    const revenue = matches.reduce((sum, s) => sum + s.revenueUsd, 0);
+
+    $('#searchResultLabel').textContent = label;
+    $('#searchResultProfit').textContent = fmtUsd(profit);
+    $('#searchResultMeta').textContent = `rev ${fmtUsd(revenue)} · ${matches.length} invoice${matches.length===1?'':'s'}`;
+    const listEl = $('#searchResultList');
+    listEl.innerHTML = '';
+    [...matches].sort((a,b) => b.date - a.date).forEach(s => renderSaleRow(listEl, s));
+    $('#searchResult').classList.add('show');
+  }
+
+  // ---------- Tabs ----------
+  $all('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      $all('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      $all('.section').forEach(s => s.classList.remove('active'));
+      $('#tab-' + tab.dataset.tab).classList.add('active');
+      if(tab.dataset.tab === 'reports') renderReports();
+    });
+  });
+
+  // ---------- Wire up ----------
+  $('#addCategoryBtn').addEventListener('click', addCategory);
+  $('#newCategoryName').addEventListener('keydown', (e) => { if(e.key === 'Enter') addCategory(); });
+  $('#editRateBtn').addEventListener('click', editRate);
+  $('#addFundsBtn').addEventListener('click', addFunds);
+  $('#withdrawFundsBtn').addEventListener('click', withdrawFunds);
+  $('#refreshRateBtn').addEventListener('click', refreshRate);
+  $('#productSearch').addEventListener('input', renderCatalogPicker);
+  $('#customerName').addEventListener('input', renderPreviewOnly);
+  $('#copyBtn').addEventListener('click', copyInvoice);
+  $('#whatsappBtn').addEventListener('click', openWhatsapp);
+  $('#resetBtn').addEventListener('click', resetInvoice);
+  $('#addClientBtn').addEventListener('click', addClient);
+  $('#clientSelect').addEventListener('change', () => {
+    const client = getSelectedClient();
+    if(client) $('#customerName').value = client.name;
+    $('#amountReceived').dataset.userEdited = 'false';
+    state.finalizedThisInvoice = false;
+    renderInvoice();
+  });
+  $('#includeBalanceChk').addEventListener('change', () => {
+    $('#amountReceived').dataset.userEdited = 'false';
+    renderInvoice();
+  });
+  $('#amountReceived').addEventListener('input', (e) => {
+    e.target.dataset.userEdited = 'true';
+    updateRemaining();
+    renderPreviewOnly();
+  });
+  $all('#paymentStatusBtns button').forEach(btn => {
+    btn.addEventListener('click', () => setPaymentStatus(btn.dataset.status));
+  });
+  $('#searchMode').addEventListener('change', updateSearchInputsVisibility);
+  $('#searchReportsBtn').addEventListener('click', runReportSearch);
+  updateSearchInputsVisibility();
+
+  window.addEventListener('firebase-ready', () => {
+    loadAll().then(() => {
+      if(state.rate.source === 'default'){ refreshRate(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
