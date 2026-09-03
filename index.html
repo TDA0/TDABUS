@@ -816,11 +816,11 @@
     <h1 style="font-size:21px; margin-bottom:4px;">TDA Business</h1>
     <div class="field-label" style="margin-bottom:18px; font-weight:500; text-transform:none;">Sign in to your business data</div>
     <div class="modal-field">
-      <span class="field-label">Email</span>
+      <span class="field-label">📧 Email</span>
       <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
     </div>
     <div class="modal-field">
-      <span class="field-label">Password</span>
+      <span class="field-label">🔒 Password</span>
       <input type="password" id="loginPassword" placeholder="At least 6 characters" autocomplete="current-password">
     </div>
     <div class="modal-error" id="authError"></div>
@@ -829,7 +829,7 @@
       <button type="button" class="btn" id="loginBtn">Sign in</button>
     </div>
     <div class="login-divider">OR</div>
-    <button type="button" class="guest-btn" id="guestBtn">Continue as guest</button>
+    <button type="button" class="guest-btn" id="guestBtn">🚶 Continue as guest</button>
     <div class="field-label" style="margin-top:10px; text-align:center; font-weight:500; text-transform:none; font-size:11px;">Guest data stays on this device only — sign up anytime to sync it across devices.</div>
   </div>
 </div>
@@ -839,49 +839,49 @@
 
   <header class="top">
     <div>
-      <h1>TDA Business</h1>
+      <h1>🏪 TDA Business</h1>
       <div class="tag">catalog &middot; rate &middot; invoices &middot; balance</div>
       <div class="guest-badge" id="guestBadge" style="display:none;">Guest mode — data saved on this device</div>
     </div>
-    <button class="icon-btn" id="signOutBtn" style="align-self:flex-start;">sign out</button>
+    <button class="icon-btn" id="signOutBtn" style="align-self:flex-start;">🚪 sign out</button>
   </header>
 
   <div class="rate-bar">
     <div>
-      <div class="rate-label">1 USD equals</div>
+      <div class="rate-label">💱 1 USD equals</div>
       <div class="rate-value" id="rateDisplay">—</div>
       <div class="rate-meta" id="rateMeta"></div>
     </div>
     <div class="rate-actions">
-      <button class="icon-btn" id="editRateBtn">edit</button>
-      <button class="icon-btn" id="refreshRateBtn">refresh</button>
+      <button class="icon-btn" id="editRateBtn">✏️ edit</button>
+      <button class="icon-btn" id="refreshRateBtn">🔄 refresh</button>
     </div>
   </div>
 
   <div class="rate-bar balance-bar">
     <div>
-      <div class="rate-label">Business balance</div>
+      <div class="rate-label">🏦 Business balance</div>
       <div class="rate-value" id="balanceDisplay">$0.00</div>
       <div class="rate-meta" id="balanceMeta"></div>
     </div>
     <div class="rate-actions">
-      <button class="icon-btn" id="addFundsBtn">add</button>
-      <button class="icon-btn" id="withdrawFundsBtn">withdraw</button>
+      <button class="icon-btn" id="addFundsBtn">➕ add</button>
+      <button class="icon-btn" id="withdrawFundsBtn">➖ withdraw</button>
     </div>
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="invoice">Invoice</button>
-    <button class="tab" data-tab="catalog">Catalog</button>
-    <button class="tab" data-tab="clients">Clients</button>
-    <button class="tab" data-tab="reports">Reports</button>
-    <button class="tab" data-tab="settings">Settings</button>
+    <button class="tab active" data-tab="invoice">🧾 Invoice</button>
+    <button class="tab" data-tab="catalog">📦 Catalog</button>
+    <button class="tab" data-tab="clients">👥 Clients</button>
+    <button class="tab" data-tab="reports">📊 Reports</button>
+    <button class="tab" data-tab="settings">⚙️ Settings</button>
   </div>
 
   <!-- INVOICE TAB -->
   <section class="section active" id="tab-invoice">
     <div class="search-box">
-      <span class="field-label">Add products</span>
+      <span class="field-label">🛒 Add products</span>
       <input type="text" id="productSearch" placeholder="Search catalog...">
     </div>
     <div class="cat-chips" id="catChips"></div>
@@ -891,26 +891,25 @@
     <div class="empty-hint" id="noLinesHint">No items added yet. Tap a product above to add it.</div>
 
     <div class="totals-card" id="totalsCard" style="display:none;">
-      <div class="totals-row usd"><span>Items subtotal (USD)</span><b id="totalUsd">$0.00</b></div>
-      <div class="totals-row lbp sub"><span>Items subtotal (LBP)</span><span id="totalLbp">0 LBP</span></div>
-      <div class="totals-row sub" id="prevBalanceRow" style="display:none;"><span>Previous balance</span><span id="prevBalanceLine">$0.00</span></div>
-      <div class="totals-row grand"><span>Total due (USD)</span><b id="grandUsd">$0.00</b></div>
-      <div class="totals-row sub"><span>Total due (LBP)</span><span id="grandLbp">0 LBP</span></div>
+      <div class="totals-row usd"><span>💵 Items subtotal (USD)</span><b id="totalUsd">$0.00</b></div>
+      <div class="totals-row lbp sub"><span>💱 Items subtotal (LBP)</span><span id="totalLbp">0 LBP</span></div>
+      <div class="totals-row sub" id="prevBalanceRow" style="display:none;"><span>📌 Previous balance</span><span id="prevBalanceLine">$0.00</span></div>
+      <div class="totals-row grand"><span>💰 Total:</span><b><span id="grandUsd">$0.00</span> USD or <span id="grandLbp">0 LBP</span></b></div>
 
       <div class="field-block" style="margin-top:10px;">
-        <span class="field-label">Payment status</span>
+        <span class="field-label">💳 Payment status</span>
         <div class="status-btns" id="paymentStatusBtns">
-          <button type="button" class="btn small" data-status="paid">Paid</button>
-          <button type="button" class="btn small ghost" data-status="partial">Partial</button>
-          <button type="button" class="btn small ghost" data-status="unpaid">Not paid</button>
+          <button type="button" class="btn small" data-status="paid">✅ Paid</button>
+          <button type="button" class="btn small ghost" data-status="partial">🕓 Partial</button>
+          <button type="button" class="btn small ghost" data-status="unpaid">❌ Not paid</button>
         </div>
         <div class="checkbox-row" style="margin-top:8px;">
           <input type="checkbox" id="showPaymentStatusChk" checked>
-          <label for="showPaymentStatusChk">Show payment status on invoice</label>
+          <label for="showPaymentStatusChk">👁️ Show payment status on invoice</label>
         </div>
       </div>
       <div class="field-block" style="margin-top:8px;">
-        <span class="field-label">Amount received now</span>
+        <span class="field-label">💵 Amount received now</span>
         <div class="add-row-inline">
           <input type="text" inputmode="decimal" id="amountReceived" style="flex:1;">
           <select id="amountReceivedCurrency" style="flex:0 0 84px;">
@@ -925,18 +924,18 @@
 
     <div class="collapse-block" id="customerDetailsBlock" style="display:none;">
       <button type="button" class="collapse-toggle" id="customerDetailsToggle">
-        <span>Customer &amp; payment details</span>
+        <span>🧑‍💼 Customer &amp; payment details</span>
         <span class="chev" id="customerDetailsChev">▾</span>
       </button>
       <div class="collapse-body collapsed" id="customerDetailsBody">
         <div class="field-block">
-          <span class="field-label">Client</span>
+          <span class="field-label">👤 Client</span>
           <select id="clientSelect">
             <option value="">Walk-in (no account)</option>
           </select>
         </div>
         <div class="field-block">
-          <span class="field-label">Customer name on receipt</span>
+          <span class="field-label">📝 Customer name on receipt</span>
           <input type="text" id="customerName" placeholder="Customer name">
         </div>
 
@@ -952,39 +951,39 @@
         </div>
 
         <div class="field-block" id="paymentMethodsBlock">
-          <span class="field-label">Payment methods (shown on invoice)</span>
+          <span class="field-label">📱 Payment methods (shown on invoice)</span>
           <div id="paymentMethodsList"></div>
           <div class="add-row" style="border-top:none; padding-top:0;">
             <input type="text" id="newPmLabel" placeholder="e.g. Whish">
             <input type="text" id="newPmValue" placeholder="e.g. 70817032">
-            <button class="btn small" id="addPmBtn">Add payment method</button>
+            <button class="btn small" id="addPmBtn">➕ Add payment method</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="field-block" id="previewBlock" style="display:none;">
-      <span class="field-label">Invoice language</span>
+      <span class="field-label">🌐 Invoice language</span>
       <div class="status-btns" id="invoiceLangBtns">
         <button type="button" class="btn small" data-lang="en">English</button>
         <button type="button" class="btn small ghost" data-lang="ar">العربية</button>
       </div>
-      <span class="field-label" style="margin-top:10px;">Invoice preview — edit freely, this is exactly what gets copied</span>
+      <span class="field-label" style="margin-top:10px;">👀 Invoice preview — edit freely, this is exactly what gets copied</span>
       <textarea class="preview-box" id="previewBox" rows="14"></textarea>
       <div class="action-row">
-        <button class="btn ghost full" id="regenPreviewBtn">Regenerate from items</button>
+        <button class="btn ghost full" id="regenPreviewBtn">🔄 Regenerate from items</button>
       </div>
       <div class="action-row">
-        <button class="btn full" id="copyBtn">Copy invoice</button>
+        <button class="btn full" id="copyBtn">📋 Copy invoice</button>
       </div>
       <div class="action-row">
-        <button class="btn ghost full" id="whatsappBtn">Open in WhatsApp</button>
+        <button class="btn ghost full" id="whatsappBtn">💬 Open in WhatsApp</button>
       </div>
       <div class="action-row">
-        <button class="btn ghost full" id="printBtn">Print invoice</button>
+        <button class="btn ghost full" id="printBtn">🖨️ Print invoice</button>
       </div>
       <div class="action-row">
-        <button class="btn ghost full" id="resetBtn">Start new invoice</button>
+        <button class="btn ghost full" id="resetBtn">🆕 Start new invoice</button>
       </div>
       <div class="copied-msg" id="copiedMsg"></div>
     </div>
@@ -993,14 +992,14 @@
   <!-- CATALOG TAB -->
   <section class="section" id="tab-catalog">
     <div class="search-box">
-      <span class="field-label">Search catalog</span>
+      <span class="field-label">🔍 Search catalog</span>
       <input type="text" id="catalogSearch" placeholder="Search categories or products...">
     </div>
     <div id="categoryList"></div>
 
     <div class="add-category">
       <input type="text" id="newCategoryName" placeholder="New category name">
-      <button class="btn" id="addCategoryBtn">Add</button>
+      <button class="btn" id="addCategoryBtn">➕ Add</button>
     </div>
   </section>
 
@@ -1017,7 +1016,7 @@
           <option value="LBP">LBP</option>
         </select>
       </div>
-      <button class="btn" id="addClientBtn">Add</button>
+      <button class="btn" id="addClientBtn">➕ Add</button>
     </div>
   </section>
 
@@ -1043,7 +1042,7 @@
     <div class="field-label">profit = selling price − cost price, on completed invoices. LBP figures use today's rate.</div>
 
     <div class="search-block">
-      <h3>Search profit by date</h3>
+      <h3>🔍 Search profit by date</h3>
       <div class="search-mode-row">
         <select id="searchMode">
           <option value="day">Day</option>
@@ -1054,7 +1053,7 @@
         <input type="month" id="searchMonth" style="flex:1; display:none;">
         <input type="number" id="searchYear" placeholder="e.g. 2026" style="flex:1; display:none;">
       </div>
-      <button class="btn full small" id="searchReportsBtn">Search</button>
+      <button class="btn full small" id="searchReportsBtn">🔍 Search</button>
       <div class="search-result" id="searchResult">
         <div class="r-label" id="searchResultLabel"></div>
         <div class="sr-profit" id="searchResultProfit">$0.00</div>
@@ -1063,10 +1062,10 @@
       </div>
     </div>
 
-    <h3 style="font-size:13px; margin:16px 0 8px;">Balance changes</h3>
+    <h3 style="font-size:13px; margin:16px 0 8px;">💰 Balance changes</h3>
     <div id="balanceLogList"></div>
 
-    <h3 style="font-size:13px; margin:16px 0 8px;">Recent sales</h3>
+    <h3 style="font-size:13px; margin:16px 0 8px;">🧾 Recent sales</h3>
     <div id="salesHistory"></div>
     <div class="empty-hint" id="noSalesHint" style="display:none;">No completed sales yet. Copy or share an invoice to log it here.</div>
   </section>
@@ -1074,7 +1073,7 @@
   <!-- SETTINGS TAB -->
   <section class="section" id="tab-settings">
     <div class="settings-card">
-      <h3>Logo</h3>
+      <h3>🖼️ Logo</h3>
       <div class="logo-preview-row">
         <div class="logo-preview" id="logoPreview"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg></div>
         <div style="flex:1;">
@@ -1082,41 +1081,41 @@
           <div class="settings-hint">Shown at the top of the printed invoice. Not included in the WhatsApp/text version.</div>
         </div>
       </div>
-      <button class="btn ghost small" id="removeLogoBtn" type="button">Remove logo</button>
+      <button class="btn ghost small" id="removeLogoBtn" type="button">🗑️ Remove logo</button>
     </div>
 
     <div class="settings-card">
-      <h3>Invoice header &amp; footer</h3>
+      <h3>📝 Invoice header &amp; footer</h3>
       <div class="modal-field">
-        <span class="field-label">Business name (header)</span>
+        <span class="field-label">🏷️ Business name (header)</span>
         <input type="text" id="setHeaderTitle" placeholder="e.g. TDA Business">
       </div>
       <div class="modal-field">
-        <span class="field-label">Header subtitle / tagline</span>
+        <span class="field-label">✨ Header subtitle / tagline</span>
         <input type="text" id="setHeaderSubtitle" placeholder="e.g. Trusted digital goods & top-ups">
       </div>
       <div class="modal-field">
-        <span class="field-label">Address / location (optional)</span>
+        <span class="field-label">📍 Address / location (optional)</span>
         <input type="text" id="setAddress" placeholder="e.g. Beirut, Lebanon">
       </div>
       <div class="modal-field">
-        <span class="field-label">Phone / contact (optional)</span>
+        <span class="field-label">📞 Phone / contact (optional)</span>
         <input type="text" id="setPhone" placeholder="e.g. +961 71 234567">
       </div>
       <div class="modal-field" style="margin-bottom:0;">
-        <span class="field-label">Footer note (thank-you message, terms, etc.)</span>
+        <span class="field-label">🙏 Footer note (thank-you message, terms, etc.)</span>
         <textarea id="setFooterNote" rows="3" class="preview-box" style="max-height:none; margin-bottom:0;" placeholder="e.g. Thank you for your business! All sales final."></textarea>
       </div>
     </div>
 
     <div class="settings-card">
-      <h3>Printer</h3>
-      <span class="field-label">Paper width</span>
+      <h3>🖨️ Printer</h3>
+      <span class="field-label">📏 Paper width</span>
       <div class="paper-btns" id="paperWidthBtns" style="margin-bottom:12px;">
         <button type="button" class="btn small ghost" data-width="58">58mm</button>
         <button type="button" class="btn small ghost" data-width="80">80mm</button>
       </div>
-      <span class="field-label">Connection</span>
+      <span class="field-label">🔌 Connection</span>
       <div class="paper-btns" id="printerConnBtns" style="margin-bottom:6px;">
         <button type="button" class="btn small ghost" data-conn="system">System / WiFi (print dialog)</button>
         <button type="button" class="btn small ghost" data-conn="bluetooth">Bluetooth (direct)</button>
@@ -1125,7 +1124,7 @@
         <b>System / WiFi</b> uses your phone or computer's normal print dialog — pick any WiFi-connected or Bluetooth-paired printer already set up on your device.<br>
         <b>Bluetooth (direct)</b> connects straight from this app to a nearby thermal receipt printer and skips the print dialog. It works with BLE thermal printers (common on newer 58mm/80mm models) using Chrome on Android or desktop — older printers that only support classic Bluetooth (SPP) can't be reached this way; use System print for those instead.
       </div>
-      <button class="btn full" id="btConnectBtn" type="button" style="margin-top:10px;">Connect Bluetooth printer</button>
+      <button class="btn full" id="btConnectBtn" type="button" style="margin-top:10px;">🔗 Connect Bluetooth printer</button>
       <div class="printer-status disconnected" id="printerStatus">Not connected</div>
     </div>
   </section>
@@ -1351,7 +1350,7 @@
       customer: 'Customer',
       itemsSubtotal: 'Items subtotal',
       previousBalance: 'Previous balance',
-      totalDue: 'Total due',
+      totalDue: 'Total',
       paymentStatus: 'Payment status',
       paid: 'PAID',
       notPaid: 'NOT PAID',
@@ -1363,10 +1362,12 @@
       note: 'note',
       paymentMethods: 'Payment methods',
       dateLocale: 'en-US',
+      orWord: 'or',
       reminderHi: 'Hi',
-      reminderBody: 'this is a friendly reminder that you still have a balance of',
-      reminderLeft: 'left to pay.',
-      reminderThanks: 'Thank you!',
+      reminderBody: 'Just a friendly reminder that you still have an outstanding balance of',
+      reminderToPay: 'to pay.',
+      reminderQuestions: 'If you have any questions, feel free to message us anytime! 😊',
+      reminderThanks: 'Thank you! 🙏',
       voucherHeader: 'Details'
     },
     ar: {
@@ -1374,7 +1375,7 @@
       customer: 'الزبون',
       itemsSubtotal: 'مجموع الأصناف',
       previousBalance: 'الرصيد السابق',
-      totalDue: 'المبلغ المستحق',
+      totalDue: 'الإجمالي',
       paymentStatus: 'حالة الدفع',
       paid: 'تم الدفع',
       notPaid: 'لم يُدفع',
@@ -1386,10 +1387,12 @@
       note: 'ملاحظة',
       paymentMethods: 'طرق الدفع',
       dateLocale: 'ar-LB',
+      orWord: 'أو',
       reminderHi: 'مرحباً',
-      reminderBody: 'هذا تذكير ودّي بأن لديك رصيد متبقٍ قدره',
-      reminderLeft: 'يرجى تسديده.',
-      reminderThanks: 'شكراً لك!',
+      reminderBody: 'هذا تذكير ودّي بأنه لا يزال لديك رصيد مستحق قدره',
+      reminderToPay: 'يرجى تسديده.',
+      reminderQuestions: 'إذا كانت لديك أي استفسارات، لا تتردد في مراسلتنا في أي وقت! 😊',
+      reminderThanks: 'شكراً لك! 🙏',
       voucherHeader: 'التفاصيل'
     }
   };
@@ -1548,6 +1551,25 @@
         resolve(values);
       });
       setTimeout(() => { const first = $('#mf_' + fields[0].id); if(first) first.focus(); }, 30);
+    });
+  }
+
+  // Two-button-plus-cancel modal used before sending a reminder, so the
+  // person can pick which language to send it in. Resolves 'en', 'ar', or
+  // null if cancelled.
+  function chooseLanguageModal(message){
+    return new Promise((resolve) => {
+      modalBox.innerHTML = `
+        <div class="modal-msg">${escapeHtml(message)}</div>
+        <div class="modal-actions" style="flex-wrap:wrap;">
+          <button type="button" class="btn ghost" id="modalLangCancelBtn">Cancel</button>
+          <button type="button" class="btn ghost" id="modalLangArBtn">🇱🇧 العربية</button>
+          <button type="button" class="btn" id="modalLangEnBtn">🇬🇧 English</button>
+        </div>`;
+      modalOverlay.classList.add('show');
+      $('#modalLangCancelBtn').addEventListener('click', () => { closeModal(); resolve(null); });
+      $('#modalLangEnBtn').addEventListener('click', () => { closeModal(); resolve('en'); });
+      $('#modalLangArBtn').addEventListener('click', () => { closeModal(); resolve('ar'); });
     });
   }
 
@@ -1824,8 +1846,8 @@
         <div class="h-left">${dateStr} · ${escapeHtml(entry.note)}</div>
         <div class="h-right"><b style="color:${positive?'var(--cedar-dark)':'var(--burgundy)'}">${positive?'+':''}${fmtUsd(entry.delta)}</b></div>
         <div class="h-actions">
-          <button class="mini-btn" data-action="edit">Edit</button>
-          <button class="mini-btn danger" data-action="delete">Delete</button>
+          <button class="mini-btn" data-action="edit">✏️ Edit</button>
+          <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
         </div>`;
       row.querySelector('[data-action="edit"]').addEventListener('click', () => editBalanceLogEntry(entry.id));
       row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteBalanceLogEntry(entry.id));
@@ -1979,7 +2001,7 @@
       </div>
       <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
         <span class="count">${countLabel}</span>
-        <button class="mini-btn" data-action="rename" type="button">Rename</button>
+        <button class="mini-btn" data-action="rename" type="button">✏️ Rename</button>
       </div>`;
     head.addEventListener('click', () => {
       if(catalogSearchQuery) return;
@@ -1995,7 +2017,7 @@
     if(products.length){
       const label = document.createElement('div');
       label.className = 'cat-section-label';
-      label.textContent = 'Products';
+      label.textContent = '🛍️ Products';
       body.appendChild(label);
     }
 
@@ -2009,8 +2031,8 @@
           <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) + (p.costMode === 'flat' ? ' (cost flat)' : '') : ''}</div>
         </div>
         <div class="product-actions">
-          <button class="mini-btn" data-action="edit" data-id="${p.id}">edit</button>
-          <button class="mini-btn danger" data-action="delete" data-id="${p.id}">delete</button>
+          <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
+          <button class="mini-btn danger" data-action="delete" data-id="${p.id}">🗑️ delete</button>
         </div>`;
       row.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
       row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
@@ -2031,7 +2053,7 @@
     addToggleBtn.type = 'button';
     addToggleBtn.className = 'add-product-toggle';
     const addFormOpen = !!addFormOpenState[cat.id];
-    addToggleBtn.textContent = addFormOpen ? '− Hide add product form' : '+ Add product';
+    addToggleBtn.textContent = addFormOpen ? '➖ Hide add product form' : '➕ Add product';
     addToggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       addFormOpenState[cat.id] = !addFormOpenState[cat.id];
@@ -2044,6 +2066,7 @@
       addRow.className = 'add-row';
       addRow.innerHTML = `
         <input type="text" placeholder="Product name" class="new-prod-name">
+        <input type="text" placeholder="🇱🇧 Arabic name (optional, shown when Arabic is selected)" class="new-prod-name-ar" dir="rtl">
         <div class="add-row-inline">
           <input type="text" inputmode="decimal" placeholder="Sell price" class="new-prod-price" style="flex:1;">
           <select class="new-prod-currency" style="flex:0 0 80px;">
@@ -2063,7 +2086,7 @@
             <option value="perUnit">Cost × quantity</option>
             <option value="flat">Cost × 1 (flat)</option>
           </select>
-          <button class="btn small" type="button" style="flex:0 0 140px;">Add product</button>
+          <button class="btn small" type="button" style="flex:0 0 140px;">➕ Add product</button>
         </div>
         <label class="voucher-toggle-row">
           <input type="checkbox" class="new-prod-voucher">
@@ -2074,13 +2097,14 @@
       attachThousandsFormatting(addRow.querySelector('.new-prod-cost'));
       addRow.querySelector('button').addEventListener('click', () => {
         const nameInput = addRow.querySelector('.new-prod-name');
+        const nameArInput = addRow.querySelector('.new-prod-name-ar');
         const priceInput = addRow.querySelector('.new-prod-price');
         const currencySel = addRow.querySelector('.new-prod-currency');
         const costInput = addRow.querySelector('.new-prod-cost');
         const costCurrencySel = addRow.querySelector('.new-prod-cost-currency');
         const costModeSel = addRow.querySelector('.new-prod-cost-mode');
         const isVoucher = addRow.querySelector('.new-prod-voucher').checked;
-        addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value, costModeSel.value, costCurrencySel.value, isVoucher);
+        addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value, costModeSel.value, costCurrencySel.value, isVoucher, nameArInput.value);
         addFormOpenState[cat.id] = false;
       });
       body.appendChild(addRow);
@@ -2091,7 +2115,7 @@
     addSubRow.className = 'add-category';
     addSubRow.innerHTML = `
       <input type="text" placeholder="New subcategory name" class="new-subcat-name">
-      <button class="btn small" type="button">Add</button>
+      <button class="btn small" type="button">➕ Add</button>
     `;
     const subNameInput = addSubRow.querySelector('.new-subcat-name');
     const doAddSub = () => { addCategory(subNameInput.value, cat.id); subNameInput.value = ''; };
@@ -2105,7 +2129,7 @@
     const delCatBtn = document.createElement('button');
     delCatBtn.className = 'mini-btn danger';
     delCatBtn.style.marginTop = '8px';
-    delCatBtn.textContent = 'delete category';
+    delCatBtn.textContent = '🗑️ delete category';
     delCatBtn.addEventListener('click', () => deleteCategory(cat.id));
     body.appendChild(delCatBtn);
 
@@ -2160,8 +2184,9 @@
     renderCatalogPicker();
   }
 
-  function addProduct(catId, name, priceRaw, currency, costRaw, costMode, costCurrency, isVoucher){
+  function addProduct(catId, name, priceRaw, currency, costRaw, costMode, costCurrency, isVoucher, nameAr){
     name = (name||'').trim();
+    nameAr = (nameAr||'').trim();
     const price = parseFormattedNumber(priceRaw);
     if(!name || isNaN(price) || price <= 0){ alertBanner('Enter a product name and a valid sell price.'); return; }
     const priceUsd = currency === 'LBP' ? price / state.rate.value : price;
@@ -2171,10 +2196,17 @@
       costUsd = costCurrency === 'LBP' ? costParsed / state.rate.value : costParsed;
     }
     costMode = costMode === 'flat' ? 'flat' : 'perUnit';
-    state.products.push({ id: uid(), name, categoryId: catId, priceUsd, costUsd, costMode, type: isVoucher ? 'voucher' : 'product' });
+    state.products.push({ id: uid(), name, nameAr, categoryId: catId, priceUsd, costUsd, costMode, type: isVoucher ? 'voucher' : 'product' });
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
+  }
+
+  // Returns the product name to show to the customer for the given (or current)
+  // invoice language — falls back to the base name if no Arabic name is set.
+  function productDisplayName(p, lang){
+    lang = lang || state.invoiceLang;
+    return (lang === 'ar' && p.nameAr && p.nameAr.trim()) ? p.nameAr.trim() : p.name;
   }
 
   async function editProduct(id){
@@ -2184,6 +2216,7 @@
       'Edit product',
       [
         { id:'name', label:'Product name', value:p.name },
+        { id:'nameAr', label:'🇱🇧 Arabic name (optional, shown when Arabic is selected)', value:p.nameAr || '' },
         { id:'price', label:'Sell price', type:'money', value:p.priceUsd.toFixed(2) },
         { id:'cost', label:'Cost price (0 if unknown)', type:'money', value:(p.costUsd||0).toFixed(2) },
         { id:'costMode', label:'Cost applies', type:'select', value:p.costMode==='flat'?'flat':'perUnit', options:[
@@ -2205,6 +2238,7 @@
     );
     if(result === null) return;
     p.name = result.name.trim();
+    p.nameAr = result.nameAr.trim();
     p.priceUsd = parseFloat(result.price);
     p.costUsd = parseFloat(result.cost);
     p.costMode = result.costMode === 'flat' ? 'flat' : 'perUnit';
@@ -2261,11 +2295,11 @@
           </div>
         </div>
         <div class="product-actions">
-          ${owes ? '<button class="mini-btn" data-action="remind">Remind</button>' : ''}
-          ${c.balanceUsd !== 0 ? '<button class="mini-btn" data-action="settle">' + (owes ? 'mark paid' : 'mark settled') + '</button>' : ''}
-          <button class="mini-btn" data-action="adjust">adjust</button>
-          <button class="mini-btn" data-action="edit">edit</button>
-          <button class="mini-btn danger" data-action="delete">delete</button>
+          ${owes ? '<button class="mini-btn" data-action="remind">🔔 Remind</button>' : ''}
+          ${c.balanceUsd !== 0 ? '<button class="mini-btn" data-action="settle">' + (owes ? '✅ mark paid' : '✅ mark settled') + '</button>' : ''}
+          <button class="mini-btn" data-action="adjust">⚖️ adjust</button>
+          <button class="mini-btn" data-action="edit">✏️ edit</button>
+          <button class="mini-btn danger" data-action="delete">🗑️ delete</button>
         </div>`;
       if(owes){
         row.querySelector('[data-action="remind"]').addEventListener('click', () => sendPaymentReminder(c.id));
@@ -2280,13 +2314,17 @@
     });
   }
 
-  function buildReminderText(client){
-    const t = I18N[state.invoiceLang] || I18N.en;
+  function buildReminderText(client, lang){
+    const t = I18N[lang] || I18N[state.invoiceLang] || I18N.en;
     const amountUsd = fmtUsd(client.balanceUsd);
     const amountLbp = fmtLbp(client.balanceUsd * state.rate.value);
     const lines = [];
-    lines.push(`${t.reminderHi} ${client.name},`);
-    lines.push(`${t.reminderBody} ${amountUsd} (${amountLbp}) ${t.reminderLeft}`);
+    lines.push(`👋 ${t.reminderHi} ${client.name},`);
+    lines.push('');
+    lines.push(`${t.reminderBody} ${amountUsd} ${t.orWord} ${amountLbp} 💰 ${t.reminderToPay}`);
+    lines.push('');
+    lines.push(t.reminderQuestions);
+    lines.push('');
     lines.push(t.reminderThanks);
     return lines.join('\n');
   }
@@ -2294,7 +2332,9 @@
   async function sendPaymentReminder(clientId){
     const c = state.clients.find(x => x.id === clientId);
     if(!c) return;
-    const text = buildReminderText(c);
+    const lang = await chooseLanguageModal('🌐 Send this reminder in which language?');
+    if(!lang) return;
+    const text = buildReminderText(c, lang);
     const phoneDigits = c.phone ? c.phone.replace(/[^0-9]/g, '') : '';
     if(phoneDigits){
       const url = 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(text);
@@ -2733,8 +2773,8 @@
           <div class="pm-value">${escapeHtml(m.value)}</div>
         </div>
         <div class="product-actions">
-          <button class="mini-btn" data-action="edit">Edit</button>
-          <button class="mini-btn danger" data-action="delete">Delete</button>
+          <button class="mini-btn" data-action="edit">✏️ Edit</button>
+          <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
         </div>`;
       row.querySelector('input[type="checkbox"]').addEventListener('change', (e) => togglePaymentMethod(m.id, e.target.checked));
       row.querySelector('[data-action="edit"]').addEventListener('click', () => editPaymentMethod(m.id));
@@ -2877,7 +2917,7 @@
             <div class="voucher-unit" data-unit-idx="${i}">
               <div class="voucher-unit-head">
                 <span>${line.qty > 1 ? 'Unit ' + (i + 1) : 'Details'}</span>
-                <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${i}">edit</button>
+                <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${i}">✏️ edit</button>
               </div>
               <div class="voucher-unit-body">${unitFields.length ? unitFields.map(f => `${escapeHtml(f.label || 'Detail')}: <b>${escapeHtml(f.value)}</b><br>`).join('') : `<span class="v-empty">No details entered yet.</span>`}</div>
             </div>
@@ -3005,7 +3045,7 @@
       if(!p) return;
       lineNo++;
       const lineTotal = p.priceUsd * line.qty;
-      lines.push(`${lineNo}) ${p.name} x${line.qty}`);
+      lines.push(`${lineNo}) ${productDisplayName(p)} x${line.qty}`);
       if(line.note.trim()) lines.push(`   ${em('📝')}${t.note}: ${line.note.trim()}`);
       lines.push(`   ${fmtUsd(lineTotal)}  (${fmtLbp(lineTotal * state.rate.value)})`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
@@ -3026,8 +3066,7 @@
     if(nums.includeBalance && nums.prevBalance !== 0){
       lines.push(`${em('📌')}${t.previousBalance}: ${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
     }
-    lines.push(`*${em('💰')}${t.totalDue}: ${fmtUsd(nums.grandTotal)}*`);
-    lines.push(`*${t.totalDue}: ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
+    lines.push(`*${em('💰')}${t.totalDue}: ${fmtUsd(nums.grandTotal)} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
 
     const received = getAmountReceivedUsd();
     if(s.showPaymentStatus !== false && !isNaN(received)){
@@ -3210,8 +3249,8 @@
       <div class="h-left">${dateStr} · ${escapeHtml(s.customerName)}</div>
       <div class="h-right">rev ${fmtUsd(s.revenueUsd)}<br>profit <b>${fmtUsd(s.profitUsd)}</b></div>
       <div class="h-actions">
-        <button class="mini-btn" data-action="edit">Edit</button>
-        <button class="mini-btn danger" data-action="delete">Delete</button>
+        <button class="mini-btn" data-action="edit">✏️ Edit</button>
+        <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
       </div>`;
     row.querySelector('[data-action="edit"]').addEventListener('click', () => editSale(s.id));
     row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteSale(s.id));
@@ -3519,7 +3558,7 @@
       if(!p) return;
       lineNo++;
       const lineTotal = p.priceUsd * line.qty;
-      html += `<div class="pr-item-name">${lineNo}) ${escapeHtml(p.name)} x${line.qty}</div>`;
+      html += `<div class="pr-item-name">${lineNo}) ${escapeHtml(productDisplayName(p, state.invoiceLang))} x${line.qty}</div>`;
       if(line.note.trim()) html += `<div class="pr-item-sub">${t.note}: ${escapeHtml(line.note.trim())}</div>`;
       html += `<div class="pr-item-sub">${fmtUsd(lineTotal)} (${fmtLbp(lineTotal * state.rate.value)})</div>`;
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
@@ -3536,8 +3575,7 @@
     if(nums.includeBalance && nums.prevBalance !== 0){
       html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})</span></div>`;
     }
-    html += `<div class="pr-row pr-grand"><span>${t.totalDue}</span><span>${fmtUsd(nums.grandTotal)}</span></div>`;
-    html += `<div class="pr-row"><span></span><span>${fmtLbp(nums.grandTotal * state.rate.value)}</span></div>`;
+    html += `<div class="pr-row pr-grand"><span>${t.totalDue}</span><span>${fmtUsd(nums.grandTotal)} (${fmtLbp(nums.grandTotal * state.rate.value)})</span></div>`;
 
     const received = getAmountReceivedUsd();
     if(s.showPaymentStatus !== false && !isNaN(received)){
