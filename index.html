@@ -5,124 +5,147 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>TDA Business</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   :root{
-    --paper:#F3EFE6;
-    --paper-card:#FBF9F4;
-    --ink:#221F1A;
-    --ink-soft:#6B6555;
-    --cedar:#2F5D50;
-    --cedar-dark:#1F4038;
-    --brass:#A9761F;
-    --burgundy:#7A3030;
-    --line:#DCD3BC;
-    --line-strong:#C7BB9C;
-    --danger:#963B3B;
+    --bg:#F4F5FA;
+    --paper-card:#FFFFFF;
+    --ink:#171923;
+    --ink-soft:#6B7080;
+    --ink-faint:#9AA0AF;
+    --cedar:#4F46E5;
+    --cedar-dark:#4338CA;
+    --cedar-soft:#EEF0FF;
+    --brass:#D97706;
+    --brass-soft:#FEF3E2;
+    --burgundy:#DC2626;
+    --success:#059669;
+    --success-soft:#E7F7F1;
+    --line:#EAEBF2;
+    --line-strong:#DEE0EA;
+    --danger:#DC2626;
+    --radius:14px;
+    --radius-sm:9px;
+    --shadow:0 1px 2px rgba(23,25,35,0.04), 0 6px 20px rgba(23,25,35,0.06);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:var(--paper);
+    background:var(--bg);
     color:var(--ink);
-    font-family:'IBM Plex Mono', monospace;
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing:antialiased;
     padding-bottom:40px;
   }
   h1,h2,h3{
-    font-family:'Fraunces', serif;
-    font-weight:600;
+    font-family:'Inter', sans-serif;
+    font-weight:800;
+    letter-spacing:-0.02em;
     margin:0;
   }
   .app{
-    max-width:520px;
+    max-width:560px;
     margin:0 auto;
     padding:18px 16px 60px;
   }
   header.top{
     display:flex;
-    align-items:baseline;
+    align-items:center;
     justify-content:space-between;
-    border-bottom:2px solid var(--ink);
-    padding-bottom:10px;
-    margin-bottom:14px;
+    padding:4px 2px 18px;
+    margin-bottom:6px;
   }
   header.top h1{
-    font-size:22px;
-    letter-spacing:0.2px;
+    font-size:21px;
+    letter-spacing:-0.02em;
   }
   header.top .tag{
-    font-size:10.5px;
+    font-size:11px;
     color:var(--ink-soft);
-    letter-spacing:0.5px;
+    letter-spacing:0.2px;
+    margin-top:3px;
+    font-weight:500;
   }
 
   /* Rate bar */
   .rate-bar{
     background:var(--paper-card);
-    border:1px solid var(--line-strong);
-    border-radius:3px;
-    padding:10px 12px;
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    border-radius:var(--radius);
+    padding:14px 16px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:8px;
-    margin-bottom:16px;
+    margin-bottom:10px;
   }
   .rate-bar .rate-label{
-    font-size:11px;
+    font-size:11.5px;
     color:var(--ink-soft);
+    font-weight:600;
   }
   .rate-bar .rate-value{
-    font-family:'Fraunces', serif;
-    font-size:17px;
-    font-weight:600;
-    color:var(--cedar-dark);
+    font-family:'Inter', sans-serif;
+    font-size:19px;
+    font-weight:800;
+    letter-spacing:-0.02em;
+    color:var(--cedar);
+    margin-top:2px;
   }
   .rate-bar .rate-meta{
-    font-size:9.5px;
-    color:var(--ink-soft);
-    margin-top:1px;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    margin-top:2px;
   }
+  .balance-bar{ margin-bottom:18px; }
   .balance-bar .rate-value{ color:var(--brass); }
   .rate-actions{ display:flex; gap:6px; }
   .icon-btn{
-    background:none;
+    background:var(--bg);
     border:1px solid var(--line-strong);
-    border-radius:3px;
-    padding:6px 8px;
-    font-size:12px;
+    border-radius:999px;
+    padding:7px 12px;
+    font-size:11.5px;
+    font-weight:600;
     color:var(--ink);
     cursor:pointer;
     font-family:inherit;
+    transition:background .12s ease;
   }
   .icon-btn:active{ background:var(--line); }
 
   /* Tabs */
   .tabs{
     display:flex;
-    border-bottom:1px solid var(--line-strong);
-    margin-bottom:16px;
+    gap:4px;
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:4px;
+    margin-bottom:18px;
     overflow-x:auto;
+    box-shadow:var(--shadow);
   }
   .tab{
     flex:1;
     text-align:center;
-    padding:9px 4px 11px;
-    font-size:11.5px;
+    padding:9px 6px;
+    font-size:12px;
+    font-weight:600;
     color:var(--ink-soft);
     cursor:pointer;
-    border-bottom:2px solid transparent;
-    margin-bottom:-1px;
+    border-radius:999px;
     background:none;
-    border-top:none;border-left:none;border-right:none;
-    font-family:'IBM Plex Mono', monospace;
+    border:none;
+    font-family:'Inter', sans-serif;
     white-space:nowrap;
+    transition:background .12s ease, color .12s ease;
   }
   .tab.active{
-    color:var(--ink);
-    border-bottom:2px solid var(--cedar);
-    font-weight:600;
+    color:#fff;
+    background:var(--cedar);
+    box-shadow:0 4px 10px rgba(79,70,229,0.28);
   }
 
   .section{ display:none; }
@@ -130,87 +153,94 @@
 
   /* Category card */
   .category{
-    margin-bottom:14px;
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    margin-bottom:12px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
     background:var(--paper-card);
+    box-shadow:var(--shadow);
     overflow:hidden;
   }
   .category-head{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:10px 12px;
-    background:#EFE9D8;
+    padding:13px 15px;
+    background:none;
     cursor:pointer;
   }
-  .category-head h3{ font-size:14px; }
-  .category-head .count{ font-size:10.5px; color:var(--ink-soft); }
-  .category-body{ padding:8px 12px 12px; }
+  .category-head h3{ font-size:14.5px; font-weight:700; }
+  .category-head .count{ font-size:11px; color:var(--ink-faint); font-weight:500; }
+  .category-body{ padding:2px 15px 14px; }
   .category-body.collapsed{ display:none; }
 
   .product-row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:8px 0;
-    border-bottom:1px dashed var(--line);
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
     gap:8px;
   }
   .product-row:last-child{ border-bottom:none; }
-  .product-name{ font-size:13px; }
-  .product-prices{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
-  .product-actions{ display:flex; gap:6px; flex-shrink:0; }
+  .product-name{ font-size:13.5px; font-weight:600; }
+  .product-prices{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .product-actions{ display:flex; gap:4px; flex-shrink:0; }
   .mini-btn{
-    background:none;
-    border:none;
+    background:var(--bg);
+    border:1px solid transparent;
+    border-radius:var(--radius-sm);
     color:var(--ink-soft);
-    font-size:12px;
+    font-size:11.5px;
+    font-weight:600;
     cursor:pointer;
-    padding:4px;
+    padding:6px 9px;
   }
-  .mini-btn.danger{ color:var(--danger); }
+  .mini-btn.danger{ color:var(--danger); background:#FDEDED; }
 
   .add-row{
     display:flex;
     flex-direction:column;
-    gap:6px;
-    margin-top:8px;
-    padding-top:10px;
-    border-top:1px solid var(--line);
+    gap:8px;
+    margin-top:10px;
+    padding-top:12px;
+    border-top:1px dashed var(--line-strong);
   }
   .add-row-inline{ display:flex; gap:6px; }
   input, select{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:13px;
-    padding:8px 9px;
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    font-family:'Inter', sans-serif;
+    font-size:13.5px;
+    padding:10px 12px;
+    border:1.5px solid var(--line-strong);
+    border-radius:var(--radius-sm);
     background:#fff;
     color:var(--ink);
     width:100%;
   }
-  input:focus, select:focus{ outline:1.5px solid var(--cedar); }
-  input[disabled]{ background:#F0EDE4; color:var(--ink-soft); }
+  input::placeholder{ color:var(--ink-faint); }
+  input:focus, select:focus{ outline:none; border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  input[disabled]{ background:var(--bg); color:var(--ink-soft); }
   .btn{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12.5px;
-    font-weight:600;
-    padding:9px 12px;
-    border-radius:3px;
-    border:1px solid var(--cedar);
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    font-weight:700;
+    padding:11px 14px;
+    border-radius:var(--radius-sm);
+    border:1.5px solid var(--cedar);
     background:var(--cedar);
     color:#fff;
     cursor:pointer;
     white-space:nowrap;
+    transition:transform .08s ease, background .12s ease;
   }
-  .btn:active{ background:var(--cedar-dark); }
+  .btn:active{ background:var(--cedar-dark); transform:scale(0.98); }
   .btn.ghost{
     background:none;
-    color:var(--cedar-dark);
+    border:1.5px solid var(--line-strong);
+    color:var(--ink);
   }
+  .btn.ghost:active{ background:var(--line); }
   .btn.full{ width:100%; }
-  .btn.small{ padding:7px 10px; font-size:11.5px; }
+  .btn.small{ padding:8px 10px; font-size:11.5px; border-radius:8px; }
   .status-btns{ display:flex; gap:6px; }
   .status-btns button{ flex:1; }
 
@@ -221,19 +251,21 @@
   }
 
   .empty-hint{
-    font-size:12px;
+    font-size:12.5px;
     color:var(--ink-soft);
     text-align:center;
-    padding:20px 10px;
-    border:1px dashed var(--line-strong);
-    border-radius:3px;
+    padding:26px 14px;
+    border:1.5px dashed var(--line-strong);
+    border-radius:var(--radius);
+    background:var(--paper-card);
   }
 
   /* Invoice tab */
   .field-label{
-    font-size:10.5px;
+    font-size:11.5px;
     color:var(--ink-soft);
-    margin-bottom:4px;
+    font-weight:600;
+    margin-bottom:6px;
     display:block;
   }
   .field-block{ margin-bottom:14px; }
@@ -241,93 +273,109 @@
   .search-box{ margin-bottom:10px; }
 
   .catalog-picker{
-    max-height:220px;
+    max-height:240px;
     overflow-y:auto;
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
     background:var(--paper-card);
+    box-shadow:var(--shadow);
     margin-bottom:16px;
   }
   .pick-cat-label{
-    font-size:10px;
+    font-size:10.5px;
+    font-weight:700;
     color:var(--ink-soft);
-    padding:6px 10px 2px;
-    background:#EFE9D8;
+    padding:10px 12px 4px;
+    background:none;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
   }
   .pick-row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:8px 10px;
-    border-bottom:1px dashed var(--line);
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
     cursor:pointer;
+    transition:background .1s ease;
   }
-  .pick-row:active{ background:var(--line); }
-  .pick-name{ font-size:12.5px; }
-  .pick-price{ font-size:10.5px; color:var(--ink-soft); }
+  .pick-row:last-child{ border-bottom:none; }
+  .pick-row:active{ background:var(--cedar-soft); }
+  .pick-name{ font-size:13px; font-weight:600; }
+  .pick-price{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
   .pick-plus{
     font-size:16px;
-    color:var(--cedar);
+    color:#fff;
+    background:var(--cedar);
+    width:24px; height:24px;
+    line-height:24px;
+    text-align:center;
+    border-radius:999px;
     font-weight:700;
+    flex-shrink:0;
   }
 
   .line-item{
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
     background:var(--paper-card);
-    padding:10px 12px;
+    box-shadow:var(--shadow);
+    padding:12px 14px;
     margin-bottom:10px;
   }
   .line-top{
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
-    margin-bottom:6px;
+    margin-bottom:8px;
   }
-  .line-name{ font-size:13.5px; font-weight:600; }
+  .line-name{ font-size:14px; font-weight:700; }
   .remove-line{
-    background:none; border:none; color:var(--danger);
-    font-size:11px; cursor:pointer;
+    background:#FDEDED; border:none; color:var(--danger);
+    font-size:10.5px; font-weight:600; cursor:pointer;
+    padding:4px 9px; border-radius:7px;
   }
   .qty-row{
     display:flex;
     align-items:center;
     gap:10px;
-    margin-bottom:6px;
+    margin-bottom:8px;
   }
   .qty-controls{
     display:flex;
     align-items:center;
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    border:1.5px solid var(--line-strong);
+    border-radius:999px;
     overflow:hidden;
   }
   .qty-controls button{
-    background:#EFE9D8;
+    background:var(--bg);
     border:none;
-    width:26px; height:26px;
-    font-size:14px;
+    width:28px; height:28px;
+    font-size:15px;
     cursor:pointer;
-    color:var(--ink);
+    color:var(--cedar);
+    font-weight:700;
   }
   .qty-controls input{
-    width:38px;
+    width:36px;
     text-align:center;
     border:none;
-    border-left:1px solid var(--line-strong);
-    border-right:1px solid var(--line-strong);
+    border-left:1.5px solid var(--line-strong);
+    border-right:1.5px solid var(--line-strong);
     border-radius:0;
     padding:5px 0;
   }
-  .line-price{ font-size:11.5px; color:var(--ink-soft); margin-left:auto; text-align:right; }
-  .line-price b{ color:var(--ink); }
-  .note-input{ font-size:12px; }
+  .qty-controls input:focus{ box-shadow:none; }
+  .line-price{ font-size:12px; color:var(--ink-soft); margin-left:auto; text-align:right; }
+  .line-price b{ color:var(--ink); font-size:13px; }
+  .note-input{ font-size:12.5px; }
 
   .client-box{
-    border:1px solid var(--line-strong);
-    border-radius:3px;
-    background:var(--paper-card);
-    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--cedar-soft);
+    padding:12px 14px;
     margin-bottom:14px;
   }
   .balance-line{
@@ -346,43 +394,64 @@
     color:var(--ink-soft);
     margin-top:4px;
   }
-  .checkbox-row input[type="checkbox"]{ width:auto; }
+  .checkbox-row input[type="checkbox"]{ width:auto; accent-color:var(--cedar); }
 
   .totals-card{
-    border:1.5px solid var(--ink);
-    border-radius:3px;
-    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 16px;
     margin:16px 0;
     background:var(--paper-card);
+    box-shadow:var(--shadow);
   }
   .totals-row{
     display:flex;
     justify-content:space-between;
     font-size:13.5px;
-    padding:3px 0;
+    padding:4px 0;
   }
   .totals-row.usd b{ color:var(--brass); }
   .totals-row.lbp b{ color:var(--burgundy); }
   .totals-row.grand{
     border-top:1px dashed var(--line-strong);
-    margin-top:6px;
-    padding-top:8px;
-    font-size:15px;
+    margin-top:8px;
+    padding-top:10px;
+    font-size:16px;
+    font-weight:700;
   }
   .totals-row.sub{ font-size:12px; color:var(--ink-soft); }
 
   .preview-box{
-    background:#fff;
-    border:1px solid var(--line-strong);
-    border-radius:3px;
-    padding:12px;
-    font-size:12px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    padding:14px;
+    font-size:12.5px;
     white-space:pre-wrap;
-    line-height:1.5;
+    line-height:1.55;
     margin-bottom:12px;
     max-height:280px;
     overflow-y:auto;
+    font-family:'SF Mono', 'Menlo', 'Consolas', monospace;
+    width:100%;
+    box-sizing:border-box;
+    resize:vertical;
+    color:var(--ink);
+    outline:none;
   }
+  .preview-box[dir="rtl"]{ text-align:right; font-family:'Inter', 'Menlo', monospace; }
+  .pm-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    border-bottom:1px solid var(--line);
+    font-size:13px;
+  }
+  .pm-row:last-child{ border-bottom:none; }
+  .pm-row .pm-info{ flex:1; }
+  .pm-row .pm-label{ font-weight:600; }
+  .pm-row .pm-value{ color:var(--ink-soft); font-size:12px; }
 
   .action-row{
     display:flex;
@@ -390,8 +459,9 @@
     margin-bottom:8px;
   }
   .copied-msg{
-    font-size:11px;
-    color:var(--cedar-dark);
+    font-size:11.5px;
+    color:var(--success);
+    font-weight:600;
     text-align:center;
     margin-top:4px;
     min-height:14px;
@@ -402,16 +472,17 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:10px 12px;
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
     background:var(--paper-card);
+    box-shadow:var(--shadow);
     margin-bottom:8px;
   }
-  .client-name{ font-size:13.5px; font-weight:600; }
-  .client-balance{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .client-name{ font-size:14px; font-weight:700; }
+  .client-balance{ font-size:11.5px; color:var(--ink-soft); margin-top:3px; }
   .client-balance.owes b{ color:var(--burgundy); }
-  .client-balance.credit b{ color:var(--cedar-dark); }
+  .client-balance.credit b{ color:var(--success); }
 
   /* Reports tab */
   .report-grid{
@@ -421,37 +492,39 @@
     margin-bottom:18px;
   }
   .report-card{
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
     background:var(--paper-card);
-    padding:10px 8px;
+    box-shadow:var(--shadow);
+    padding:14px 8px;
     text-align:center;
   }
-  .report-card .r-label{ font-size:9.5px; color:var(--ink-soft); text-transform:lowercase; }
-  .report-card .r-profit{ font-family:'Fraunces', serif; font-size:16px; font-weight:600; color:var(--cedar-dark); margin:4px 0 2px; }
-  .report-card .r-rev{ font-size:9.5px; color:var(--ink-soft); }
+  .report-card .r-label{ font-size:10px; color:var(--ink-soft); font-weight:600; text-transform:lowercase; }
+  .report-card .r-profit{ font-family:'Inter', sans-serif; font-size:16px; font-weight:800; letter-spacing:-0.02em; color:var(--success); margin:6px 0 3px; }
+  .report-card .r-rev{ font-size:9.5px; color:var(--ink-faint); }
   .history-item{
     display:flex;
     justify-content:space-between;
-    padding:8px 0;
-    border-bottom:1px dashed var(--line);
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
     font-size:11.5px;
   }
   .history-item .h-left{ color:var(--ink-soft); }
   .history-item .h-right{ text-align:right; }
-  .history-item .h-right b{ color:var(--cedar-dark); }
+  .history-item .h-right b{ color:var(--success); }
   .history-item{ align-items:center; }
   .history-item .h-actions{ display:flex; gap:4px; flex-shrink:0; margin-left:8px; }
 
   /* Search block (Reports) */
   .search-block{
-    border:1px solid var(--line-strong);
-    border-radius:3px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
     background:var(--paper-card);
-    padding:10px 12px;
+    box-shadow:var(--shadow);
+    padding:14px 16px;
     margin-bottom:16px;
   }
-  .search-block h3{ font-size:13px; margin-bottom:8px; }
+  .search-block h3{ font-size:13.5px; margin-bottom:10px; }
   .search-mode-row{ display:flex; gap:6px; margin-bottom:8px; }
   .search-mode-row select{ width:auto; flex:0 0 110px; }
   .search-inputs{ display:flex; gap:6px; margin-bottom:8px; }
@@ -460,10 +533,10 @@
     display:none;
     border-top:1px dashed var(--line-strong);
     margin-top:8px;
-    padding-top:10px;
+    padding-top:12px;
   }
   .search-result.show{ display:block; }
-  .search-result .sr-profit{ font-family:'Fraunces', serif; font-size:19px; font-weight:600; color:var(--cedar-dark); }
+  .search-result .sr-profit{ font-family:'Inter', sans-serif; font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--success); }
   .search-result .sr-meta{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
 
   /* Modal */
@@ -471,7 +544,8 @@
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(34,31,26,0.55);
+    background:rgba(23,22,31,0.5);
+    backdrop-filter:blur(2px);
     z-index:1000;
     align-items:flex-end;
     justify-content:center;
@@ -483,21 +557,21 @@
     max-width:520px;
     max-height:88vh;
     overflow-y:auto;
-    border-radius:10px 10px 0 0;
-    padding:18px 16px 22px;
-    border-top:1px solid var(--line-strong);
+    border-radius:20px 20px 0 0;
+    padding:22px 18px 24px;
+    box-shadow:0 -8px 30px rgba(23,25,35,0.15);
   }
   @media (min-width:560px){
     .modal-overlay{ align-items:center; }
-    .modal-box{ border-radius:6px; padding:20px; }
+    .modal-box{ border-radius:var(--radius); padding:24px; box-shadow:0 20px 60px rgba(23,25,35,0.25); }
   }
-  .modal-box h3{ font-size:15px; margin-bottom:14px; }
+  .modal-box h3{ font-size:16px; margin-bottom:16px; }
   .modal-field{ margin-bottom:12px; }
-  .modal-error{ font-size:11px; color:var(--danger); margin:-6px 0 10px; display:none; }
+  .modal-error{ font-size:11.5px; color:var(--danger); margin:-6px 0 10px; display:none; font-weight:600; }
   .modal-error.show{ display:block; }
   .modal-actions{ display:flex; gap:8px; margin-top:6px; }
   .modal-actions .btn{ flex:1; }
-  .modal-msg{ font-size:12.5px; line-height:1.5; margin-bottom:16px; }
+  .modal-msg{ font-size:13px; line-height:1.55; margin-bottom:16px; }
 
   /* Login screen */
   .login-overlay{
@@ -506,39 +580,141 @@
     align-items:center;
     justify-content:center;
     padding:24px 16px;
+    background:radial-gradient(circle at 20% 15%, #EEF0FF 0%, var(--bg) 55%);
   }
   .login-box{
     width:100%;
-    max-width:360px;
+    max-width:380px;
     background:var(--paper-card);
-    border:1px solid var(--line-strong);
-    border-radius:6px;
-    padding:24px 20px;
+    border:1px solid var(--line);
+    box-shadow:0 20px 50px rgba(23,25,35,0.09);
+    border-radius:22px;
+    padding:30px 26px;
+  }
+  .login-box .login-icon{
+    width:48px; height:48px;
+    border-radius:14px;
+    background:var(--cedar-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px;
+    margin-bottom:14px;
+  }
+  .login-divider{
+    display:flex; align-items:center; gap:10px;
+    margin:16px 0 14px;
+    color:var(--ink-faint); font-size:11px; font-weight:600;
+  }
+  .login-divider::before, .login-divider::after{
+    content:''; flex:1; height:1px; background:var(--line-strong);
+  }
+  .guest-btn{
+    width:100%;
+    background:none;
+    border:1.5px dashed var(--line-strong);
+    color:var(--ink-soft);
+    border-radius:var(--radius-sm);
+    padding:11px 14px;
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .guest-btn:active{ background:var(--bg); }
+  .guest-badge{
+    display:inline-block;
+    font-size:10px;
+    font-weight:700;
+    color:var(--brass);
+    background:var(--brass-soft);
+    padding:3px 8px;
+    border-radius:999px;
+    margin-top:4px;
+    letter-spacing:0.2px;
   }
 
   ::-webkit-scrollbar{ width:6px; }
   ::-webkit-scrollbar-thumb{ background:var(--line-strong); border-radius:3px; }
+
+  /* Voucher badge + fields */
+  .voucher-badge{
+    display:inline-block; font-size:9.5px; font-weight:700; color:var(--cedar);
+    background:var(--cedar-soft); padding:2px 7px; border-radius:999px; margin-left:6px; letter-spacing:0.2px;
+  }
+  .voucher-toggle-row{ display:flex; align-items:center; gap:7px; font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .voucher-toggle-row input[type="checkbox"]{ width:auto; accent-color:var(--cedar); }
+  .voucher-summary{
+    margin-top:8px; padding:8px 10px; background:var(--cedar-soft); border-radius:var(--radius-sm);
+    font-size:11.5px; color:var(--ink); line-height:1.5;
+  }
+  .voucher-summary b{ font-weight:700; }
+  .voucher-summary .v-empty{ color:var(--ink-soft); font-style:italic; }
+
+  /* Settings tab */
+  .settings-card{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-card);
+    box-shadow:var(--shadow); padding:16px; margin-bottom:14px;
+  }
+  .settings-card h3{ font-size:13.5px; margin-bottom:12px; }
+  .settings-hint{ font-size:11px; color:var(--ink-soft); margin-top:6px; line-height:1.5; }
+  .logo-preview-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .logo-preview{
+    width:56px; height:56px; border-radius:10px; border:1.5px dashed var(--line-strong);
+    background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;
+  }
+  .logo-preview img{ width:100%; height:100%; object-fit:contain; }
+  .paper-btns{ display:flex; gap:6px; }
+  .paper-btns button{ flex:1; }
+  .printer-status{ font-size:11.5px; font-weight:600; margin-top:8px; }
+  .printer-status.connected{ color:var(--success); }
+  .printer-status.disconnected{ color:var(--ink-faint); }
+
+  /* Print-only receipt (hidden on screen, shown when printing) */
+  #printArea{ display:none; }
+  @media print{
+    body > *:not(#printArea){ display:none !important; }
+    #printArea{
+      display:block !important;
+      font-family:'Courier New', monospace;
+      color:#000;
+      width:100%;
+    }
+    #printArea .pr-logo{ display:block; max-width:100%; max-height:70px; margin:0 auto 6px; }
+    #printArea .pr-center{ text-align:center; }
+    #printArea .pr-title{ font-size:15px; font-weight:700; margin-bottom:2px; }
+    #printArea .pr-sub{ font-size:11px; margin-bottom:2px; }
+    #printArea .pr-hr{ border-top:1px dashed #000; margin:8px 0; }
+    #printArea .pr-row{ display:flex; justify-content:space-between; font-size:12px; padding:2px 0; }
+    #printArea .pr-item-name{ font-size:12.5px; font-weight:700; }
+    #printArea .pr-item-sub{ font-size:11px; padding-left:6px; }
+    #printArea .pr-voucher{ font-size:10.5px; padding-left:6px; border-left:2px solid #000; margin:3px 0 3px 2px; }
+    #printArea .pr-grand{ font-size:14px; font-weight:700; }
+    #printArea .pr-footer{ font-size:11px; text-align:center; margin-top:10px; white-space:pre-wrap; }
+  }
 </style>
 </head>
 <body>
 
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
-    <h1 style="font-size:20px; margin-bottom:4px;">🧾 TDA Business</h1>
-    <div class="field-label" style="margin-bottom:16px;">Sign in to your business data</div>
+    <div class="login-icon">🧾</div>
+    <h1 style="font-size:21px; margin-bottom:4px;">TDA Business</h1>
+    <div class="field-label" style="margin-bottom:18px; font-weight:500; text-transform:none;">Sign in to your business data</div>
     <div class="modal-field">
       <span class="field-label">Email</span>
-      <input type="email" id="loginEmail" placeholder="you@example.com">
+      <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
     </div>
     <div class="modal-field">
       <span class="field-label">Password</span>
-      <input type="password" id="loginPassword" placeholder="At least 6 characters">
+      <input type="password" id="loginPassword" placeholder="At least 6 characters" autocomplete="current-password">
     </div>
     <div class="modal-error" id="authError"></div>
     <div class="modal-actions">
       <button type="button" class="btn ghost" id="signupBtn">Create account</button>
       <button type="button" class="btn" id="loginBtn">Sign in</button>
     </div>
+    <div class="login-divider">OR</div>
+    <button type="button" class="guest-btn" id="guestBtn">👋 Continue as guest</button>
+    <div class="field-label" style="margin-top:10px; text-align:center; font-weight:500; text-transform:none; font-size:11px;">Guest data stays on this device only — sign up anytime to sync it across devices.</div>
   </div>
 </div>
 
@@ -549,6 +725,7 @@
     <div>
       <h1>🧾 TDA Business</h1>
       <div class="tag">catalog &middot; rate &middot; invoices &middot; balance</div>
+      <div class="guest-badge" id="guestBadge" style="display:none;">👋 Guest mode — data saved on this device</div>
     </div>
     <button class="icon-btn" id="signOutBtn" style="align-self:flex-start;">🚪 sign out</button>
   </header>
@@ -582,6 +759,7 @@
     <button class="tab" data-tab="invoice">🧾 Invoice</button>
     <button class="tab" data-tab="clients">👥 Clients</button>
     <button class="tab" data-tab="reports">📊 Reports</button>
+    <button class="tab" data-tab="settings">⚙️ Settings</button>
   </div>
 
   <!-- CATALOG TAB -->
@@ -609,12 +787,22 @@
 
     <div class="client-box" id="clientBalanceBox" style="display:none;">
       <div class="balance-line">
-        <span>Balance owed before this sale</span>
+        <span id="clientPrevBalanceLabel">Balance owed before this sale</span>
         <b id="clientPrevBalance">$0.00</b>
       </div>
       <div class="checkbox-row">
         <input type="checkbox" id="includeBalanceChk" checked>
-        <label for="includeBalanceChk">Add this balance to the invoice total</label>
+        <label for="includeBalanceChk" id="includeBalanceChkLabel">Add this balance to the invoice total</label>
+      </div>
+    </div>
+
+    <div class="field-block" id="paymentMethodsBlock">
+      <span class="field-label">💳 Payment methods (shown on invoice)</span>
+      <div id="paymentMethodsList"></div>
+      <div class="add-row" style="border-top:none; padding-top:0;">
+        <input type="text" id="newPmLabel" placeholder="e.g. Whish">
+        <input type="text" id="newPmValue" placeholder="e.g. 70817032">
+        <button class="btn small" id="addPmBtn">➕ Add payment method</button>
       </div>
     </div>
 
@@ -643,21 +831,38 @@
         </div>
       </div>
       <div class="field-block" style="margin-top:8px;">
-        <span class="field-label">Amount received now (USD)</span>
-        <input type="number" step="0.01" id="amountReceived">
+        <span class="field-label">Amount received now</span>
+        <div class="add-row-inline">
+          <input type="text" inputmode="decimal" id="amountReceived" style="flex:1;">
+          <select id="amountReceivedCurrency" style="flex:0 0 84px;">
+            <option value="USD">USD</option>
+            <option value="LBP">LBP</option>
+          </select>
+        </div>
       </div>
       <div class="totals-row sub"><span>Remaining balance after payment</span><b id="remainingBalance">$0.00</b></div>
       <div class="totals-row sub"><span>Rate used</span><span id="rateUsedLine">—</span></div>
     </div>
 
     <div class="field-block" id="previewBlock" style="display:none;">
-      <span class="field-label">Invoice preview (this is what gets copied)</span>
-      <div class="preview-box" id="previewBox"></div>
+      <span class="field-label">Invoice language</span>
+      <div class="status-btns" id="invoiceLangBtns">
+        <button type="button" class="btn small" data-lang="en">English</button>
+        <button type="button" class="btn small ghost" data-lang="ar">العربية</button>
+      </div>
+      <span class="field-label" style="margin-top:10px;">Invoice preview — edit freely, this is exactly what gets copied</span>
+      <textarea class="preview-box" id="previewBox" rows="14"></textarea>
+      <div class="action-row">
+        <button class="btn ghost full" id="regenPreviewBtn">🔄 Regenerate from items</button>
+      </div>
       <div class="action-row">
         <button class="btn full" id="copyBtn">📋 Copy invoice</button>
       </div>
       <div class="action-row">
         <button class="btn ghost full" id="whatsappBtn">💬 Open in WhatsApp</button>
+      </div>
+      <div class="action-row">
+        <button class="btn ghost full" id="printBtn">🖨️ Print invoice</button>
       </div>
       <div class="action-row">
         <button class="btn ghost full" id="resetBtn">🆕 Start new invoice</button>
@@ -673,9 +878,13 @@
       <input type="text" id="newClientName" placeholder="👤 Client name">
       <input type="tel" id="newClientPhone" placeholder="📱 Mobile number (e.g. +961 71 234567)">
       <div class="add-row-inline">
-        <input type="number" step="0.01" id="newClientBalance" placeholder="💰 Starting balance owed (optional)">
-        <button class="btn" id="addClientBtn">➕ Add</button>
+        <input type="text" inputmode="decimal" id="newClientBalance" placeholder="💰 Starting balance (+they owe you, −you owe them)" style="flex:1;">
+        <select id="newClientBalanceCurrency" style="flex:0 0 80px;">
+          <option value="USD">USD</option>
+          <option value="LBP">LBP</option>
+        </select>
       </div>
+      <button class="btn" id="addClientBtn">➕ Add</button>
     </div>
   </section>
 
@@ -729,11 +938,72 @@
     <div class="empty-hint" id="noSalesHint" style="display:none;">🗒️ No completed sales yet. Copy or share an invoice to log it here.</div>
   </section>
 
+  <!-- SETTINGS TAB -->
+  <section class="section" id="tab-settings">
+    <div class="settings-card">
+      <h3>🖼️ Logo</h3>
+      <div class="logo-preview-row">
+        <div class="logo-preview" id="logoPreview">🧾</div>
+        <div style="flex:1;">
+          <input type="file" id="logoInput" accept="image/*">
+          <div class="settings-hint">Shown at the top of the printed invoice. Not included in the WhatsApp/text version.</div>
+        </div>
+      </div>
+      <button class="btn ghost small" id="removeLogoBtn" type="button">🗑️ Remove logo</button>
+    </div>
+
+    <div class="settings-card">
+      <h3>🧾 Invoice header &amp; footer</h3>
+      <div class="modal-field">
+        <span class="field-label">Business name (header)</span>
+        <input type="text" id="setHeaderTitle" placeholder="e.g. TDA Business">
+      </div>
+      <div class="modal-field">
+        <span class="field-label">Header subtitle / tagline</span>
+        <input type="text" id="setHeaderSubtitle" placeholder="e.g. Trusted digital goods & top-ups">
+      </div>
+      <div class="modal-field">
+        <span class="field-label">Address / location (optional)</span>
+        <input type="text" id="setAddress" placeholder="e.g. Beirut, Lebanon">
+      </div>
+      <div class="modal-field">
+        <span class="field-label">Phone / contact (optional)</span>
+        <input type="text" id="setPhone" placeholder="e.g. +961 71 234567">
+      </div>
+      <div class="modal-field" style="margin-bottom:0;">
+        <span class="field-label">Footer note (thank-you message, terms, etc.)</span>
+        <textarea id="setFooterNote" rows="3" class="preview-box" style="max-height:none; margin-bottom:0;" placeholder="e.g. Thank you for your business! All sales final."></textarea>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h3>🖨️ Printer</h3>
+      <span class="field-label">Paper width</span>
+      <div class="paper-btns" id="paperWidthBtns" style="margin-bottom:12px;">
+        <button type="button" class="btn small ghost" data-width="58">58mm</button>
+        <button type="button" class="btn small ghost" data-width="80">80mm</button>
+      </div>
+      <span class="field-label">Connection</span>
+      <div class="paper-btns" id="printerConnBtns" style="margin-bottom:6px;">
+        <button type="button" class="btn small ghost" data-conn="system">🖥️ System / WiFi (print dialog)</button>
+        <button type="button" class="btn small ghost" data-conn="bluetooth">🔵 Bluetooth (direct)</button>
+      </div>
+      <div class="settings-hint">
+        <b>System / WiFi</b> uses your phone or computer's normal print dialog — pick any WiFi-connected or Bluetooth-paired printer already set up on your device.<br>
+        <b>Bluetooth (direct)</b> connects straight from this app to a nearby thermal receipt printer and skips the print dialog. It works with BLE thermal printers (common on newer 58mm/80mm models) using Chrome on Android or desktop — older printers that only support classic Bluetooth (SPP) can't be reached this way; use System print for those instead.
+      </div>
+      <button class="btn full" id="btConnectBtn" type="button" style="margin-top:10px;">🔵 Connect Bluetooth printer</button>
+      <div class="printer-status disconnected" id="printerStatus">Not connected</div>
+    </div>
+  </section>
+
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox"></div>
 </div>
+
+<div id="printArea"></div>
 </div>
 
 <script type="module">
@@ -747,11 +1017,14 @@
   // ---- PUT YOUR DEPLOYED WORKER URL HERE ----
   // This is the URL you get after `wrangler deploy`, e.g.
   // "https://invoice-ledger-api.yoursubdomain.workers.dev"
-  const API_BASE = "https://invoice-ledger-api.tdabus.workers.dev";
+  const API_BASE = "https://invoice-ledger-api.tdabus.workers.dev/";
   // --------------------------------------------
 
   const TOKEN_KEY = 'ledger_auth_token';
+  const GUEST_KEY = 'ledger_guest_mode';
+  const GUEST_PREFIX = 'ledger_guest_data:';
   let authToken = localStorage.getItem(TOKEN_KEY) || null;
+  let guestMode = localStorage.getItem(GUEST_KEY) === 'true';
 
   async function apiFetch(path, options = {}){
     const res = await fetch(API_BASE + path, {
@@ -770,20 +1043,48 @@
     return res.json();
   }
 
-  // Same shape/behavior as before: get/set/delete/list, all scoped to the
-  // signed-in user by the Worker (via the bearer token).
-  window.storage = {
+  // ---- Guest storage: everything stays in this browser's localStorage,
+  // no Worker/D1 involved. Same get/set/delete/list shape as the real API,
+  // so the rest of the app can't tell the difference.
+  const guestStorage = {
     async get(key){
-      return apiFetch('/api/kv?key=' + encodeURIComponent(key));
+      const raw = localStorage.getItem(GUEST_PREFIX + key);
+      return raw === null ? null : { key, value: raw };
     },
     async set(key, value){
-      return apiFetch('/api/kv', { method: 'PUT', body: JSON.stringify({ key, value }) });
+      localStorage.setItem(GUEST_PREFIX + key, value);
+      return { key, value };
     },
     async delete(key){
-      return apiFetch('/api/kv?key=' + encodeURIComponent(key), { method: 'DELETE' });
+      localStorage.removeItem(GUEST_PREFIX + key);
+      return { key, deleted: true };
     },
     async list(prefix){
-      return apiFetch('/api/kv/list' + (prefix ? '?prefix=' + encodeURIComponent(prefix) : ''));
+      const keys = [];
+      const p = GUEST_PREFIX + (prefix || '');
+      for(let i = 0; i < localStorage.length; i++){
+        const k = localStorage.key(i);
+        if(k && k.startsWith(p)) keys.push(k.slice(GUEST_PREFIX.length));
+      }
+      return { keys };
+    }
+  };
+
+  // Same shape/behavior either way: get/set/delete/list. When signed in
+  // normally, this hits the Worker (scoped by the bearer token); in guest
+  // mode it's swapped for the local-only version above.
+  window.storage = {
+    async get(key){
+      return guestMode ? guestStorage.get(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key));
+    },
+    async set(key, value){
+      return guestMode ? guestStorage.set(key, value) : apiFetch('/api/kv', { method: 'PUT', body: JSON.stringify({ key, value }) });
+    },
+    async delete(key){
+      return guestMode ? guestStorage.delete(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key), { method: 'DELETE' });
+    },
+    async list(prefix){
+      return guestMode ? guestStorage.list(prefix) : apiFetch('/api/kv/list' + (prefix ? '?prefix=' + encodeURIComponent(prefix) : ''));
     }
   };
 
@@ -791,10 +1092,12 @@
   const loginOverlay = document.getElementById('loginOverlay');
   const appRoot = document.getElementById('appRoot');
   const authError = document.getElementById('authError');
+  const guestBadge = document.getElementById('guestBadge');
 
   function showApp(){
     loginOverlay.style.display = 'none';
     appRoot.style.display = '';
+    guestBadge.style.display = guestMode ? 'inline-block' : 'none';
     window.dispatchEvent(new Event('firebase-ready'));
   }
   function showLogin(){
@@ -802,7 +1105,9 @@
     appRoot.style.display = 'none';
   }
 
-  if(authToken) showApp(); else showLogin();
+  if(authToken || guestMode) showApp(); else showLogin();
+
+  function doLogin(){ document.getElementById('loginBtn').click(); }
 
   document.getElementById('loginBtn').addEventListener('click', async () => {
     authError.classList.remove('show');
@@ -811,7 +1116,9 @@
     try{
       const data = await apiFetch('/api/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
       authToken = data.token;
+      guestMode = false;
       localStorage.setItem(TOKEN_KEY, authToken);
+      localStorage.removeItem(GUEST_KEY);
       showApp();
     }catch(e){
       authError.textContent = e.message;
@@ -826,7 +1133,9 @@
     try{
       const data = await apiFetch('/api/signup', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
       authToken = data.token;
+      guestMode = false;
       localStorage.setItem(TOKEN_KEY, authToken);
+      localStorage.removeItem(GUEST_KEY);
       showApp();
     }catch(e){
       authError.textContent = e.message;
@@ -834,9 +1143,30 @@
     }
   });
 
-  document.getElementById('signOutBtn').addEventListener('click', () => {
+  document.getElementById('guestBtn').addEventListener('click', () => {
+    guestMode = true;
     authToken = null;
+    localStorage.setItem(GUEST_KEY, 'true');
     localStorage.removeItem(TOKEN_KEY);
+    showApp();
+  });
+
+  // Pressing Enter in either field submits the sign-in form (easier on mobile).
+  ['loginEmail', 'loginPassword'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') doLogin();
+    });
+  });
+
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    if(guestMode){
+      const ok = confirm('Sign out of guest mode? Your guest data stays saved on this device unless you clear your browser storage.');
+      if(!ok) return;
+    }
+    authToken = null;
+    guestMode = false;
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(GUEST_KEY);
     showLogin();
   });
 </script>
@@ -852,7 +1182,89 @@
     sales: [],
     balance: { value: 0, updatedAt: null },
     balanceLog: [],
-    finalizedThisInvoice: false
+    finalizedThisInvoice: false,
+    paymentMethods: [],
+    invoiceLang: 'en',
+    previewEdited: false,
+    invoiceSettings: {
+      headerTitle: '',
+      headerSubtitle: '',
+      address: '',
+      phone: '',
+      footerNote: '',
+      logo: null,
+      paperWidth: '80',
+      printerConnection: 'system'
+    }
+  };
+
+  // Live Web Bluetooth handles — not persisted (GATT objects aren't serializable).
+  // Re-connect is required each session; state.invoiceSettings.btPrinterName is just
+  // the remembered label shown in the Settings tab.
+  let btDevice = null;
+  let btCharacteristic = null;
+
+  const I18N = {
+    en: {
+      invoice: '🧾 *Invoice*',
+      customer: '👤 Customer',
+      itemsSubtotal: 'Items subtotal',
+      previousBalance: '⚠️ Previous balance',
+      totalDue: 'Total due',
+      paymentStatus: 'Payment status',
+      paid: '✅ PAID',
+      notPaid: '❌ NOT PAID',
+      partial: '⏳ PARTIALLY PAID',
+      received: '💵 Received',
+      remainingBalance: '⚠️ Remaining balance',
+      creditOnAccount: '💚 Credit on account',
+      rate: '💱 Rate',
+      note: '📝 note',
+      paymentMethods: '💳 Payment methods',
+      dateLocale: 'en-US',
+      reminderHi: 'Hi',
+      reminderBody: 'this is a friendly reminder that you still have a balance of',
+      reminderLeft: 'left to pay.',
+      reminderThanks: 'Thank you! 🙏',
+      voucherHeader: '🔒 Voucher details',
+      voucherExpiry: 'Expiry',
+      voucherCode: 'Redeem code',
+      voucherLink: 'Link',
+      voucherUsername: 'Username',
+      voucherPin: 'PIN',
+      voucherEmail: 'Email',
+      voucherPassword: 'Password'
+    },
+    ar: {
+      invoice: '🧾 *فاتورة*',
+      customer: '👤 الزبون',
+      itemsSubtotal: 'مجموع الأصناف',
+      previousBalance: '⚠️ الرصيد السابق',
+      totalDue: 'المبلغ المستحق',
+      paymentStatus: 'حالة الدفع',
+      paid: '✅ تم الدفع',
+      notPaid: '❌ لم يُدفع',
+      partial: '⏳ دفع جزئي',
+      received: '💵 المبلغ المستلم',
+      remainingBalance: '⚠️ الرصيد المتبقي',
+      creditOnAccount: '💚 رصيد دائن',
+      rate: '💱 سعر الصرف',
+      note: '📝 ملاحظة',
+      paymentMethods: '💳 طرق الدفع',
+      dateLocale: 'ar-LB',
+      reminderHi: 'مرحباً',
+      reminderBody: 'هذا تذكير ودّي بأن لديك رصيد متبقٍ قدره',
+      reminderLeft: 'يرجى تسديده.',
+      reminderThanks: 'شكراً لك! 🙏',
+      voucherHeader: '🔒 تفاصيل القسيمة',
+      voucherExpiry: 'تاريخ الانتهاء',
+      voucherCode: 'رمز الاسترداد',
+      voucherLink: 'الرابط',
+      voucherUsername: 'اسم المستخدم',
+      voucherPin: 'الرمز السري',
+      voucherEmail: 'البريد الإلكتروني',
+      voucherPassword: 'كلمة المرور'
+    }
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -868,6 +1280,48 @@
     return sign + Math.round(Math.abs(n)).toLocaleString('en-US') + ' LBP';
   }
 
+  // ---------- Number formatting (thousands separators, incl. live in inputs) ----------
+  // Formats a (possibly partially-typed) numeric string with thousands
+  // commas on the integer part, preserving a trailing decimal point/digits
+  // and a leading minus sign so it's safe to call on every keystroke.
+  function formatNumberString(raw){
+    if(raw === undefined || raw === null) return '';
+    let str = String(raw);
+    const neg = /^\s*-/.test(str);
+    str = str.replace(/-/g, '').replace(/[^0-9.]/g, '');
+    if(str === '') return neg ? '-' : '';
+    const dot = str.indexOf('.');
+    let intPart = dot === -1 ? str : str.slice(0, dot);
+    let decPart = dot === -1 ? '' : '.' + str.slice(dot + 1).replace(/\./g, '');
+    intPart = intPart.replace(/^0+(?=\d)/, '');
+    if(intPart === '') intPart = decPart ? '0' : (str.startsWith('.') ? '0' : '');
+    if(intPart) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (neg ? '-' : '') + intPart + decPart;
+  }
+  // Undoes formatNumberString for math/storage: strips commas, returns a number.
+  function parseFormattedNumber(str){
+    if(str === undefined || str === null) return NaN;
+    return parseFloat(String(str).replace(/,/g, ''));
+  }
+  // Wires an input so it always displays with thousands commas as the user
+  // types, keeping the caret in the right place relative to the digits.
+  function attachThousandsFormatting(input){
+    if(!input || input.dataset.commaFormatted) return;
+    input.dataset.commaFormatted = 'true';
+    input.addEventListener('input', () => {
+      const start = input.selectionStart === null ? input.value.length : input.selectionStart;
+      const digitsBeforeCursor = input.value.slice(0, start).replace(/[^0-9]/g, '').length;
+      input.value = formatNumberString(input.value);
+      if(digitsBeforeCursor === 0){ input.setSelectionRange(0, 0); return; }
+      let count = 0, pos = input.value.length;
+      for(let i = 0; i < input.value.length; i++){
+        if(/[0-9]/.test(input.value[i])) count++;
+        if(count === digitsBeforeCursor){ pos = i + 1; break; }
+      }
+      input.setSelectionRange(pos, pos);
+    });
+  }
+
   // ---------- Modal (replaces prompt()/confirm(), which don't work in this sandboxed view) ----------
   const modalOverlay = $('#modalOverlay');
   const modalBox = $('#modalBox');
@@ -879,17 +1333,63 @@
   modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) closeModal(); });
 
   // fields: [{id,label,type,value,placeholder,step}]
+  // A field with type:'money' renders an amount input paired with a USD/LBP
+  // select. Whatever currency the user picks, the resolved value handed back
+  // in the resolve()'d object (values[f.id]) is always converted to USD, so
+  // every caller can keep treating that value exactly as before. The raw
+  // amount + chosen currency the user typed are also included as
+  // values[f.id+'_raw'] / values[f.id+'_currency'] so a failed-validation
+  // retry can redisplay exactly what they entered instead of the converted
+  // USD number.
+  function moneyToUsd(amount, currency){
+    if(isNaN(amount)) return NaN;
+    return currency === 'LBP' ? amount / state.rate.value : amount;
+  }
   function promptModal(title, fields){
     return new Promise((resolve) => {
       modalBox.innerHTML = `
         <h3>${escapeHtml(title)}</h3>
         <form id="modalForm">
-          ${fields.map(f => `
+          ${fields.map(f => {
+            if(f.type === 'money'){
+              const cur = f.currency === 'LBP' ? 'LBP' : 'USD';
+              const displayVal = f.value !== undefined && f.value !== null ? formatNumberString(String(f.value)) : '';
+              return `
+              <div class="modal-field">
+                <span class="field-label">${escapeHtml(f.label)}</span>
+                <div class="add-row-inline">
+                  <input type="text" inputmode="decimal" id="mf_${f.id}" value="${escapeHtml(displayVal)}" placeholder="${f.placeholder?escapeHtml(f.placeholder):''}" style="flex:1;">
+                  <select id="mf_${f.id}_cur" style="flex:0 0 84px;">
+                    <option value="USD" ${cur==='USD'?'selected':''}>USD</option>
+                    <option value="LBP" ${cur==='LBP'?'selected':''}>LBP</option>
+                  </select>
+                </div>
+              </div>`;
+            }
+            if(f.type === 'select'){
+              return `
+              <div class="modal-field">
+                <span class="field-label">${escapeHtml(f.label)}</span>
+                <select id="mf_${f.id}">
+                  ${(f.options||[]).map(o => `<option value="${escapeHtml(o.value)}" ${String(o.value)===String(f.value)?'selected':''}>${escapeHtml(o.label)}</option>`).join('')}
+                </select>
+              </div>`;
+            }
+            if(f.commas){
+              const displayVal = f.value !== undefined && f.value !== null ? formatNumberString(String(f.value)) : '';
+              return `
+              <div class="modal-field">
+                <span class="field-label">${escapeHtml(f.label)}</span>
+                <input type="text" inputmode="decimal" id="mf_${f.id}" value="${escapeHtml(displayVal)}" placeholder="${f.placeholder?escapeHtml(f.placeholder):''}">
+              </div>`;
+            }
+            return `
             <div class="modal-field">
               <span class="field-label">${escapeHtml(f.label)}</span>
               <input type="${f.type||'text'}" id="mf_${f.id}" value="${f.value !== undefined && f.value !== null ? escapeHtml(String(f.value)) : ''}" placeholder="${f.placeholder?escapeHtml(f.placeholder):''}" ${f.step?`step="${f.step}"`:''}>
             </div>
-          `).join('')}
+          `;
+          }).join('')}
           <div class="modal-error" id="modalError"></div>
           <div class="modal-actions">
             <button type="button" class="btn ghost" id="modalCancelBtn">Cancel</button>
@@ -897,12 +1397,26 @@
           </div>
         </form>`;
       modalOverlay.classList.add('show');
+      fields.forEach(f => {
+        if(f.type === 'money' || f.commas) attachThousandsFormatting(document.getElementById('mf_' + f.id));
+      });
       const form = $('#modalForm');
       $('#modalCancelBtn').addEventListener('click', () => { closeModal(); resolve(null); });
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const values = {};
-        fields.forEach(f => { values[f.id] = $('#mf_' + f.id).value; });
+        fields.forEach(f => {
+          if(f.type === 'money'){
+            const rawStr = $('#mf_' + f.id).value;
+            const cur = $('#mf_' + f.id + '_cur').value;
+            const raw = parseFormattedNumber(rawStr);
+            values[f.id + '_raw'] = rawStr;
+            values[f.id + '_currency'] = cur;
+            values[f.id] = isNaN(raw) ? '' : String(moneyToUsd(raw, cur));
+          } else {
+            values[f.id] = $('#mf_' + f.id).value;
+          }
+        });
         closeModal();
         resolve(values);
       });
@@ -934,7 +1448,9 @@
       const err = validate(result);
       if(!err) return result;
       alertBanner(err);
-      currentFields = currentFields.map(f => ({ ...f, value: result[f.id] }));
+      currentFields = currentFields.map(f => f.type === 'money'
+        ? { ...f, value: result[f.id + '_raw'], currency: result[f.id + '_currency'] }
+        : { ...f, value: result[f.id] });
     }
   }
 
@@ -984,6 +1500,20 @@
       const bl = await window.storage.get('balanceLog');
       if(bl && bl.value){ state.balanceLog = JSON.parse(bl.value); }
     }catch(e){ loadError = e; }
+    try{
+      const inv = await window.storage.get('invoiceSettings');
+      if(inv && inv.value){
+        const parsed = JSON.parse(inv.value);
+        state.paymentMethods = parsed.paymentMethods || [];
+        state.invoiceLang = parsed.lang === 'ar' ? 'ar' : 'en';
+        if(parsed.invoiceSettings){
+          state.invoiceSettings = Object.assign({}, state.invoiceSettings, parsed.invoiceSettings);
+        }
+      } else {
+        // First run: seed with the example payment method so there's something to edit.
+        state.paymentMethods = [{ id: uid(), label: 'Whish', value: '70817032', enabled: true }];
+      }
+    }catch(e){ loadError = e; }
     if(loadError){ alertBanner('⚠️ Could not load your data: ' + loadError.message); }
 
     renderCategories();
@@ -993,6 +1523,9 @@
     renderClientSelect();
     renderClientList();
     renderReports();
+    renderPaymentMethods();
+    updateLangButtonsUI();
+    renderSettingsTab();
   }
 
   async function saveCatalog(){
@@ -1018,6 +1551,10 @@
   async function saveBalanceLog(){
     try{ await window.storage.set('balanceLog', JSON.stringify(state.balanceLog)); }
     catch(e){ console.error(e); alertBanner('⚠️ Could not save balance log: ' + e.message); }
+  }
+  async function saveInvoiceSettings(){
+    try{ await window.storage.set('invoiceSettings', JSON.stringify({ paymentMethods: state.paymentMethods, lang: state.invoiceLang, invoiceSettings: state.invoiceSettings })); }
+    catch(e){ console.error(e); alertBanner('⚠️ Could not save invoice settings: ' + e.message); }
   }
 
   // ---------- Rate ----------
@@ -1058,7 +1595,7 @@
   async function editRate(){
     const result = await promptModalValidated(
       'Edit exchange rate',
-      [{ id:'rate', label:'LBP per 1 USD', type:'text', value: state.rate.value, placeholder:'e.g. 89500' }],
+      [{ id:'rate', label:'LBP per 1 USD', type:'text', commas:true, value: state.rate.value, placeholder:'e.g. 89,500' }],
       (v) => {
         const val = parseFloat((v.rate||'').replace(/,/g,''));
         if(isNaN(val) || val <= 0) return 'Enter a valid number.';
@@ -1092,7 +1629,7 @@
     const result = await promptModalValidated(
       'Add money to the business',
       [
-        { id:'amount', label:'Amount to add (USD)', type:'number', step:'0.01', placeholder:'e.g. 100' },
+        { id:'amount', label:'Amount to add', type:'money', placeholder:'e.g. 100' },
         { id:'note', label:'Note (optional)', placeholder:'e.g. owner deposit' }
       ],
       (v) => {
@@ -1115,7 +1652,7 @@
     const result = await promptModalValidated(
       'Withdraw money from the business',
       [
-        { id:'amount', label:'Amount to withdraw (USD)', type:'number', step:'0.01', placeholder:'e.g. 50' },
+        { id:'amount', label:'Amount to withdraw', type:'money', placeholder:'e.g. 50' },
         { id:'note', label:'Note (optional)', placeholder:'e.g. rent, supplies' }
       ],
       (v) => {
@@ -1158,6 +1695,35 @@
   // ---------- Catalog ----------
   const collapsedState = {};
 
+  function childCategories(parentId){
+    return state.categories.filter(c => (c.parentId || null) === (parentId || null));
+  }
+
+  // All descendant category ids of catId, including catId itself.
+  function categorySubtreeIds(catId){
+    const ids = new Set([catId]);
+    let grew = true;
+    while(grew){
+      grew = false;
+      state.categories.forEach(c => {
+        if(c.parentId && ids.has(c.parentId) && !ids.has(c.id)){ ids.add(c.id); grew = true; }
+      });
+    }
+    return ids;
+  }
+
+  // "Parent > Child" style breadcrumb, used wherever a nested category
+  // needs to be identified unambiguously (e.g. the invoice product picker).
+  function categoryPath(catId){
+    const names = [];
+    let cur = state.categories.find(c => c.id === catId);
+    while(cur){
+      names.unshift(cur.name);
+      cur = cur.parentId ? state.categories.find(c => c.id === cur.parentId) : null;
+    }
+    return names.join(' › ');
+  }
+
   function renderCategories(){
     const list = $('#categoryList');
     if(state.categories.length === 0){
@@ -1165,73 +1731,122 @@
       return;
     }
     list.innerHTML = '';
-    state.categories.forEach(cat => {
-      const products = state.products.filter(p => p.categoryId === cat.id);
-      const wrap = document.createElement('div');
-      wrap.className = 'category';
+    childCategories(null).forEach(cat => list.appendChild(buildCategoryNode(cat, 0)));
+  }
 
-      const head = document.createElement('div');
-      head.className = 'category-head';
-      head.innerHTML = `<h3>${escapeHtml(cat.name)}</h3><span class="count">${products.length} item${products.length===1?'':'s'}</span>`;
-      head.addEventListener('click', () => { collapsedState[cat.id] = !collapsedState[cat.id]; renderCategories(); });
+  function buildCategoryNode(cat, depth){
+    const products = state.products.filter(p => p.categoryId === cat.id);
+    const subcats = childCategories(cat.id);
 
-      const body = document.createElement('div');
-      body.className = 'category-body' + (collapsedState[cat.id] ? ' collapsed' : '');
+    const wrap = document.createElement('div');
+    wrap.className = 'category';
+    if(depth > 0) wrap.style.marginLeft = (depth * 14) + 'px';
 
-      products.forEach(p => {
-        const row = document.createElement('div');
-        row.className = 'product-row';
-        const margin = p.priceUsd - (p.costUsd||0);
-        row.innerHTML = `
-          <div>
-            <div class="product-name">${escapeHtml(p.name)}</div>
-            <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) : ''}</div>
-          </div>
-          <div class="product-actions">
-            <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
-            <button class="mini-btn danger" data-action="delete" data-id="${p.id}">🗑️ delete</button>
-          </div>`;
-        row.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
-        row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
-        body.appendChild(row);
-      });
+    const head = document.createElement('div');
+    head.className = 'category-head';
+    let countLabel = `${products.length} item${products.length===1?'':'s'}`;
+    if(subcats.length) countLabel += ` · ${subcats.length} subcat${subcats.length===1?'':'s'}`;
+    head.innerHTML = `
+      <h3>${depth>0 ? '↳ ' : ''}${escapeHtml(cat.name)}</h3>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="count">${countLabel}</span>
+        <button class="mini-btn" data-action="rename" type="button">✏️</button>
+      </div>`;
+    head.addEventListener('click', () => { collapsedState[cat.id] = !collapsedState[cat.id]; renderCategories(); });
+    head.querySelector('[data-action="rename"]').addEventListener('click', (e) => { e.stopPropagation(); editCategory(cat.id); });
 
-      const addRow = document.createElement('div');
-      addRow.className = 'add-row';
-      addRow.innerHTML = `
-        <input type="text" placeholder="🏷️ Product name" class="new-prod-name">
-        <div class="add-row-inline">
-          <input type="number" step="0.01" placeholder="💵 Sell price" class="new-prod-price" style="flex:1;">
-          <select class="new-prod-currency" style="flex:0 0 80px;">
-            <option value="USD">USD</option>
-            <option value="LBP">LBP</option>
-          </select>
+    const body = document.createElement('div');
+    body.className = 'category-body' + (collapsedState[cat.id] ? ' collapsed' : '');
+
+    products.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'product-row';
+      const margin = p.priceUsd - (p.costUsd||0);
+      row.innerHTML = `
+        <div>
+          <div class="product-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">🎫 voucher</span>' : ''}</div>
+          <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) + (p.costMode === 'flat' ? ' (cost flat)' : '') : ''}</div>
         </div>
-        <div class="add-row-inline">
-          <input type="number" step="0.01" placeholder="📉 Cost price (optional, USD)" class="new-prod-cost" style="flex:1;">
-          <button class="btn small" data-cat="${cat.id}">➕ Add</button>
-        </div>
-      `;
-      addRow.querySelector('button').addEventListener('click', () => {
-        const nameInput = addRow.querySelector('.new-prod-name');
-        const priceInput = addRow.querySelector('.new-prod-price');
-        const currencySel = addRow.querySelector('.new-prod-currency');
-        const costInput = addRow.querySelector('.new-prod-cost');
-        addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value);
-      });
-      body.appendChild(addRow);
-
-      const delCatBtn = document.createElement('button');
-      delCatBtn.className = 'mini-btn danger';
-      delCatBtn.style.marginTop = '8px';
-      delCatBtn.textContent = '🗑️ delete category';
-      delCatBtn.addEventListener('click', () => deleteCategory(cat.id));
-      body.appendChild(delCatBtn);
-
-      wrap.appendChild(head);
-      wrap.appendChild(body);
-      list.appendChild(wrap);
+        <div class="product-actions">
+          <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
+          <button class="mini-btn danger" data-action="delete" data-id="${p.id}">🗑️ delete</button>
+        </div>`;
+      row.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
+      row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
+      body.appendChild(row);
     });
+
+    // Add a product directly inside this category (works at any depth).
+    const addRow = document.createElement('div');
+    addRow.className = 'add-row';
+    addRow.innerHTML = `
+      <input type="text" placeholder="🏷️ Product name" class="new-prod-name">
+      <div class="add-row-inline">
+        <input type="text" inputmode="decimal" placeholder="💵 Sell price" class="new-prod-price" style="flex:1;">
+        <select class="new-prod-currency" style="flex:0 0 80px;">
+          <option value="USD">USD</option>
+          <option value="LBP">LBP</option>
+        </select>
+      </div>
+      <div class="add-row-inline">
+        <input type="text" inputmode="decimal" placeholder="📉 Cost price (optional)" class="new-prod-cost" style="flex:1;">
+        <select class="new-prod-cost-currency" style="flex:0 0 80px;">
+          <option value="USD">USD</option>
+          <option value="LBP">LBP</option>
+        </select>
+      </div>
+      <div class="add-row-inline">
+        <select class="new-prod-cost-mode" style="flex:1;">
+          <option value="perUnit">Cost × quantity</option>
+          <option value="flat">Cost × 1 (flat)</option>
+        </select>
+        <button class="btn small" type="button" style="flex:0 0 140px;">➕ Add product</button>
+      </div>
+      <label class="voucher-toggle-row">
+        <input type="checkbox" class="new-prod-voucher">
+        🎫 This is a voucher / account (expiry, code, login, etc. — filled in per sale)
+      </label>
+    `;
+    attachThousandsFormatting(addRow.querySelector('.new-prod-price'));
+    attachThousandsFormatting(addRow.querySelector('.new-prod-cost'));
+    addRow.querySelector('button').addEventListener('click', () => {
+      const nameInput = addRow.querySelector('.new-prod-name');
+      const priceInput = addRow.querySelector('.new-prod-price');
+      const currencySel = addRow.querySelector('.new-prod-currency');
+      const costInput = addRow.querySelector('.new-prod-cost');
+      const costCurrencySel = addRow.querySelector('.new-prod-cost-currency');
+      const costModeSel = addRow.querySelector('.new-prod-cost-mode');
+      const isVoucher = addRow.querySelector('.new-prod-voucher').checked;
+      addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value, costModeSel.value, costCurrencySel.value, isVoucher);
+    });
+    body.appendChild(addRow);
+
+    // Add a subcategory nested inside this category.
+    const addSubRow = document.createElement('div');
+    addSubRow.className = 'add-category';
+    addSubRow.innerHTML = `
+      <input type="text" placeholder="🗂️ New subcategory name" class="new-subcat-name">
+      <button class="btn small" type="button">➕ Add</button>
+    `;
+    const subNameInput = addSubRow.querySelector('.new-subcat-name');
+    const doAddSub = () => { addCategory(subNameInput.value, cat.id); subNameInput.value = ''; };
+    addSubRow.querySelector('button').addEventListener('click', doAddSub);
+    subNameInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') doAddSub(); });
+    body.appendChild(addSubRow);
+
+    // Nested subcategories render recursively underneath.
+    subcats.forEach(sub => body.appendChild(buildCategoryNode(sub, depth + 1)));
+
+    const delCatBtn = document.createElement('button');
+    delCatBtn.className = 'mini-btn danger';
+    delCatBtn.style.marginTop = '8px';
+    delCatBtn.textContent = '🗑️ delete category';
+    delCatBtn.addEventListener('click', () => deleteCategory(cat.id));
+    body.appendChild(delCatBtn);
+
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    return wrap;
   }
 
   function escapeHtml(s){
@@ -1240,37 +1855,58 @@
     return d.innerHTML;
   }
 
-  function addCategory(){
-    const input = $('#newCategoryName');
-    const name = input.value.trim();
+  // parentId is optional — omit it (or pass null/undefined) for a top-level
+  // category, or pass another category's id to create it as a subcategory.
+  function addCategory(name, parentId){
+    name = (name || '').trim();
     if(!name) return;
-    state.categories.push({ id: uid(), name });
-    input.value = '';
+    state.categories.push({ id: uid(), name, parentId: parentId || null });
+    saveCatalog();
+    renderCategories();
+    renderCatalogPicker();
+  }
+
+  async function editCategory(catId){
+    const cat = state.categories.find(c => c.id === catId);
+    if(!cat) return;
+    const result = await promptModalValidated(
+      'Rename category',
+      [{ id:'name', label:'Category name', value:cat.name }],
+      (v) => !v.name.trim() ? 'Enter a category name.' : null
+    );
+    if(result === null) return;
+    cat.name = result.name.trim();
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
   }
 
   async function deleteCategory(catId){
-    const ok = await confirmModal('Delete this category and all its products?');
+    const idsToDelete = categorySubtreeIds(catId);
+    const msg = idsToDelete.size > 1
+      ? 'Delete this category, all its subcategories, and all products inside them?'
+      : 'Delete this category and all its products?';
+    const ok = await confirmModal(msg);
     if(!ok) return;
-    state.categories = state.categories.filter(c => c.id !== catId);
-    state.products = state.products.filter(p => p.categoryId !== catId);
+    state.categories = state.categories.filter(c => !idsToDelete.has(c.id));
+    state.products = state.products.filter(p => !idsToDelete.has(p.categoryId));
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
   }
 
-  function addProduct(catId, name, priceRaw, currency, costRaw){
+  function addProduct(catId, name, priceRaw, currency, costRaw, costMode, costCurrency, isVoucher){
     name = (name||'').trim();
-    const price = parseFloat(priceRaw);
+    const price = parseFormattedNumber(priceRaw);
     if(!name || isNaN(price) || price <= 0){ alertBanner('Enter a product name and a valid sell price.'); return; }
     const priceUsd = currency === 'LBP' ? price / state.rate.value : price;
     let costUsd = 0;
-    if(costRaw !== undefined && costRaw !== '' && !isNaN(parseFloat(costRaw))){
-      costUsd = parseFloat(costRaw);
+    const costParsed = parseFormattedNumber(costRaw);
+    if(costRaw !== undefined && costRaw !== '' && !isNaN(costParsed)){
+      costUsd = costCurrency === 'LBP' ? costParsed / state.rate.value : costParsed;
     }
-    state.products.push({ id: uid(), name, categoryId: catId, priceUsd, costUsd });
+    costMode = costMode === 'flat' ? 'flat' : 'perUnit';
+    state.products.push({ id: uid(), name, categoryId: catId, priceUsd, costUsd, costMode, type: isVoucher ? 'voucher' : 'product' });
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
@@ -1283,8 +1919,16 @@
       'Edit product',
       [
         { id:'name', label:'Product name', value:p.name },
-        { id:'price', label:'Sell price (USD)', type:'number', step:'0.01', value:p.priceUsd.toFixed(2) },
-        { id:'cost', label:'Cost price (USD, 0 if unknown)', type:'number', step:'0.01', value:(p.costUsd||0).toFixed(2) }
+        { id:'price', label:'Sell price', type:'money', value:p.priceUsd.toFixed(2) },
+        { id:'cost', label:'Cost price (0 if unknown)', type:'money', value:(p.costUsd||0).toFixed(2) },
+        { id:'costMode', label:'Cost applies', type:'select', value:p.costMode==='flat'?'flat':'perUnit', options:[
+          { value:'perUnit', label:'× quantity (per unit cost)' },
+          { value:'flat', label:'× 1 (flat, regardless of qty)' }
+        ] },
+        { id:'type', label:'Item type', type:'select', value:p.type==='voucher'?'voucher':'product', options:[
+          { value:'product', label:'Regular product' },
+          { value:'voucher', label:'🎫 Voucher / account' }
+        ] }
       ],
       (v) => {
         const val = parseFloat(v.price), costVal = parseFloat(v.cost);
@@ -1298,6 +1942,8 @@
     p.name = result.name.trim();
     p.priceUsd = parseFloat(result.price);
     p.costUsd = parseFloat(result.cost);
+    p.costMode = result.costMode === 'flat' ? 'flat' : 'perUnit';
+    p.type = result.type === 'voucher' ? 'voucher' : 'product';
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
@@ -1323,7 +1969,7 @@
     state.clients.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.id;
-      opt.textContent = c.name + (c.balanceUsd ? ' (' + fmtUsd(c.balanceUsd) + ' owed)' : '');
+      opt.textContent = c.name + (c.balanceUsd > 0 ? ' (owes ' + fmtUsd(c.balanceUsd) + ')' : c.balanceUsd < 0 ? ' (you owe ' + fmtUsd(-c.balanceUsd) + ')' : '');
       sel.appendChild(opt);
     });
     if([...sel.options].some(o => o.value === current)) sel.value = current;
@@ -1346,34 +1992,77 @@
           <div class="client-name">${escapeHtml(c.name)}</div>
           ${c.phone ? '<div class="client-balance">📱 ' + escapeHtml(c.phone) + '</div>' : ''}
           <div class="client-balance ${owes?'owes':credit?'credit':''}">
-            ${owes ? '⚠️ owes <b>' + fmtUsd(c.balanceUsd) + '</b>' : credit ? '💚 credit <b>' + fmtUsd(-c.balanceUsd) + '</b>' : '✅ settled up'}
+            ${owes ? '⚠️ owes you <b>' + fmtUsd(c.balanceUsd) + '</b>' : credit ? '💸 you owe them <b>' + fmtUsd(-c.balanceUsd) + '</b>' : '✅ settled up'}
           </div>
         </div>
         <div class="product-actions">
-          ${owes ? '<button class="mini-btn" data-action="markpaid">✅ mark paid</button>' : ''}
+          ${owes ? '<button class="mini-btn" data-action="remind">🔔 Remind</button>' : ''}
+          ${c.balanceUsd !== 0 ? '<button class="mini-btn" data-action="settle">✅ ' + (owes ? 'mark paid' : 'mark settled') + '</button>' : ''}
+          <button class="mini-btn" data-action="adjust">⚖️ adjust</button>
           <button class="mini-btn" data-action="edit">✏️ edit</button>
           <button class="mini-btn danger" data-action="delete">🗑️ delete</button>
         </div>`;
       if(owes){
-        row.querySelector('[data-action="markpaid"]').addEventListener('click', () => markClientPaid(c.id));
+        row.querySelector('[data-action="remind"]').addEventListener('click', () => sendPaymentReminder(c.id));
       }
+      if(c.balanceUsd !== 0){
+        row.querySelector('[data-action="settle"]').addEventListener('click', () => markClientPaid(c.id));
+      }
+      row.querySelector('[data-action="adjust"]').addEventListener('click', () => adjustClientBalance(c.id));
       row.querySelector('[data-action="edit"]').addEventListener('click', () => editClient(c.id));
       row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteClient(c.id));
       list.appendChild(row);
     });
   }
 
+  function buildReminderText(client){
+    const t = I18N[state.invoiceLang] || I18N.en;
+    const amountUsd = fmtUsd(client.balanceUsd);
+    const amountLbp = fmtLbp(client.balanceUsd * state.rate.value);
+    const lines = [];
+    lines.push(`${t.reminderHi} ${client.name},`);
+    lines.push(`${t.reminderBody} ${amountUsd} (${amountLbp}) ${t.reminderLeft}`);
+    lines.push(t.reminderThanks);
+    return lines.join('\n');
+  }
+
+  async function sendPaymentReminder(clientId){
+    const c = state.clients.find(x => x.id === clientId);
+    if(!c) return;
+    const text = buildReminderText(c);
+    const phoneDigits = c.phone ? c.phone.replace(/[^0-9]/g, '') : '';
+    if(phoneDigits){
+      const url = 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(text);
+      window.open(url, '_blank');
+    } else {
+      try{
+        await navigator.clipboard.writeText(text);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      alertBanner('No phone number on file — reminder copied, paste it wherever you like.');
+    }
+  }
+
   function addClient(){
     const nameInput = $('#newClientName');
     const phoneInput = $('#newClientPhone');
     const balInput = $('#newClientBalance');
+    const balCurrency = $('#newClientBalanceCurrency');
     const name = nameInput.value.trim();
     if(!name){ alertBanner('Enter a client name.'); return; }
-    const bal = parseFloat(balInput.value);
-    state.clients.push({ id: uid(), name, phone: phoneInput.value.trim(), balanceUsd: isNaN(bal) ? 0 : bal });
+    const balRaw = parseFormattedNumber(balInput.value);
+    const bal = isNaN(balRaw) ? 0 : moneyToUsd(balRaw, balCurrency.value);
+    state.clients.push({ id: uid(), name, phone: phoneInput.value.trim(), balanceUsd: bal });
     nameInput.value = '';
     phoneInput.value = '';
     balInput.value = '';
+    balCurrency.value = 'USD';
     saveClients();
     renderClientList();
     renderClientSelect();
@@ -1387,7 +2076,7 @@
       [
         { id:'name', label:'Client name', value:c.name },
         { id:'phone', label:'Mobile number (for WhatsApp)', type:'tel', value:c.phone || '' },
-        { id:'balance', label:'Balance owed (USD, negative = credit)', type:'number', step:'0.01', value:c.balanceUsd.toFixed(2) }
+        { id:'balance', label:'Balance (positive = they owe you, negative = you owe them)', type:'money', value:c.balanceUsd.toFixed(2) }
       ],
       (v) => {
         if(!v.name.trim()) return 'Name cannot be empty.';
@@ -1408,9 +2097,42 @@
   async function markClientPaid(id){
     const c = state.clients.find(x => x.id === id);
     if(!c) return;
-    const ok = await confirmModal(`Mark ${c.name}'s balance of ${fmtUsd(c.balanceUsd)} as fully paid?`);
+    const owes = c.balanceUsd > 0;
+    const msg = owes
+      ? `Mark ${c.name}'s balance of ${fmtUsd(c.balanceUsd)} as fully paid?`
+      : `Mark as settled — confirms you paid ${c.name} the ${fmtUsd(-c.balanceUsd)} you owed them?`;
+    const ok = await confirmModal(msg);
     if(!ok) return;
     c.balanceUsd = 0;
+    saveClients();
+    renderClientList();
+    renderClientSelect();
+    renderInvoiceIfNeeded();
+  }
+
+  async function adjustClientBalance(id){
+    const c = state.clients.find(x => x.id === id);
+    if(!c) return;
+    const result = await promptModalValidated(
+      'Adjust balance — ' + c.name,
+      [
+        { id:'amount', label:'Amount', type:'money', placeholder:'e.g. 20' },
+        { id:'direction', label:'Direction', type:'select', value:'theyOwe', options:[
+          { value:'theyOwe', label:'They owe me more' },
+          { value:'iOwe', label:'I owe them (refund / credit)' }
+        ] },
+        { id:'note', label:'Note (optional)', placeholder:'e.g. returned item, gave cash back' }
+      ],
+      (v) => {
+        const val = parseFloat(v.amount);
+        if(isNaN(val) || val <= 0) return 'Enter a valid positive amount.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const val = parseFloat(result.amount);
+    const delta = result.direction === 'iOwe' ? -val : val;
+    c.balanceUsd += delta;
     saveClients();
     renderClientList();
     renderClientSelect();
@@ -1438,14 +2160,14 @@
       any = true;
       const label = document.createElement('div');
       label.className = 'pick-cat-label';
-      label.textContent = cat.name;
+      label.textContent = categoryPath(cat.id);
       picker.appendChild(label);
       products.forEach(p => {
         const row = document.createElement('div');
         row.className = 'pick-row';
         row.innerHTML = `
           <div>
-            <div class="pick-name">${escapeHtml(p.name)}</div>
+            <div class="pick-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">🎫</span>' : ''}</div>
             <div class="pick-price">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}</div>
           </div>
           <div class="pick-plus">+</div>`;
@@ -1459,10 +2181,50 @@
   }
 
   function addLine(productId){
+    const p = state.products.find(x => x.id === productId);
     const existing = state.lines.find(l => l.productId === productId);
     if(existing){ existing.qty += 1; }
-    else{ state.lines.push({ productId, qty: 1, note: '' }); }
+    else{
+      state.lines.push({ productId, qty: 1, note: '', costOverride: null, costMode: null, costCurrency: 'USD', voucher: null });
+      if(p && p.type === 'voucher'){
+        state.finalizedThisInvoice = false;
+        renderInvoice();
+        editVoucherDetails(productId, true);
+        return;
+      }
+    }
     state.finalizedThisInvoice = false;
+    renderInvoice();
+  }
+
+  function emptyVoucher(){
+    return { expiry:'', code:'', link:'', username:'', pin:'', email:'', password:'' };
+  }
+
+  async function editVoucherDetails(productId){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    const v = line.voucher || emptyVoucher();
+    const result = await promptModal('🎫 Voucher details for this sale', [
+      { id:'expiry', label:'Expiry date (optional)', type:'date', value: v.expiry },
+      { id:'code', label:'Redeem / secret code', value: v.code, placeholder:'e.g. XXXX-XXXX-XXXX' },
+      { id:'link', label:'Link (optional)', value: v.link, placeholder:'https://...' },
+      { id:'username', label:'Profile / username (optional)', value: v.username },
+      { id:'pin', label:'PIN (optional)', value: v.pin },
+      { id:'email', label:'Gmail / email (optional)', value: v.email },
+      { id:'password', label:'Password (optional)', value: v.password }
+    ]);
+    if(result === null) return;
+    line.voucher = {
+      expiry: result.expiry.trim(),
+      code: result.code.trim(),
+      link: result.link.trim(),
+      username: result.username.trim(),
+      pin: result.pin.trim(),
+      email: result.email.trim(),
+      password: result.password.trim()
+    };
+    state.previewEdited = false;
     renderInvoice();
   }
   function removeLine(productId){
@@ -1478,7 +2240,7 @@
   function setQty(productId, val){
     const line = state.lines.find(l => l.productId === productId);
     if(!line) return;
-    const n = parseInt(val);
+    const n = parseInt(String(val).replace(/,/g, ''), 10);
     line.qty = isNaN(n) || n < 1 ? 1 : n;
     renderInvoice();
   }
@@ -1487,6 +2249,25 @@
     if(!line) return;
     line.note = note;
     renderPreviewOnly();
+  }
+  function getLineUnitCost(p, line){
+    if(line.costOverride !== null && line.costOverride !== undefined && !isNaN(line.costOverride)) return line.costOverride;
+    return p.costUsd || 0;
+  }
+  function getLineCostMode(p, line){
+    return line.costMode === 'flat' || line.costMode === 'perUnit' ? line.costMode : (p.costMode === 'flat' ? 'flat' : 'perUnit');
+  }
+  function setLineCost(productId, val, currency){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    line.costCurrency = currency === 'LBP' ? 'LBP' : 'USD';
+    const raw = parseFormattedNumber(val);
+    line.costOverride = (val === '' || val === undefined || isNaN(raw)) ? null : Math.max(0, moneyToUsd(raw, line.costCurrency));
+  }
+  function setLineCostMode(productId, mode){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    line.costMode = mode === 'flat' ? 'flat' : 'perUnit';
   }
 
   function getSelectedClient(){
@@ -1502,13 +2283,112 @@
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
       subtotalUsd += p.priceUsd * line.qty;
-      costTotalUsd += (p.costUsd||0) * line.qty;
+      const unitCost = getLineUnitCost(p, line);
+      costTotalUsd += getLineCostMode(p, line) === 'flat' ? unitCost : unitCost * line.qty;
     });
     const client = getSelectedClient();
     const includeBalance = client && $('#includeBalanceChk').checked;
     const prevBalance = includeBalance ? client.balanceUsd : 0;
     const grandTotal = subtotalUsd + prevBalance;
     return { subtotalUsd, costTotalUsd, profitUsd: subtotalUsd - costTotalUsd, client, includeBalance, prevBalance, grandTotal };
+  }
+
+  // ---------- Payment methods (shown on invoice, e.g. Whish: 70817032) ----------
+  function renderPaymentMethods(){
+    const list = $('#paymentMethodsList');
+    if(!list) return;
+    if(state.paymentMethods.length === 0){
+      list.innerHTML = '<div class="empty-hint">No payment methods yet. Add one below (e.g. Whish, OMT, bank transfer).</div>';
+      return;
+    }
+    list.innerHTML = '';
+    state.paymentMethods.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'pm-row';
+      row.innerHTML = `
+        <input type="checkbox" ${m.enabled ? 'checked' : ''}>
+        <div class="pm-info">
+          <div class="pm-label">${escapeHtml(m.label)}</div>
+          <div class="pm-value">${escapeHtml(m.value)}</div>
+        </div>
+        <div class="product-actions">
+          <button class="mini-btn" data-action="edit">✏️</button>
+          <button class="mini-btn danger" data-action="delete">🗑️</button>
+        </div>`;
+      row.querySelector('input[type="checkbox"]').addEventListener('change', (e) => togglePaymentMethod(m.id, e.target.checked));
+      row.querySelector('[data-action="edit"]').addEventListener('click', () => editPaymentMethod(m.id));
+      row.querySelector('[data-action="delete"]').addEventListener('click', () => deletePaymentMethod(m.id));
+      list.appendChild(row);
+    });
+  }
+
+  function addPaymentMethod(){
+    const labelInput = $('#newPmLabel');
+    const valueInput = $('#newPmValue');
+    const label = labelInput.value.trim();
+    const value = valueInput.value.trim();
+    if(!label || !value){ alertBanner('Enter a payment method name and value (e.g. Whish / 70817032).'); return; }
+    state.paymentMethods.push({ id: uid(), label, value, enabled: true });
+    labelInput.value = '';
+    valueInput.value = '';
+    saveInvoiceSettings();
+    renderPaymentMethods();
+    if(!state.previewEdited) renderPreviewOnly();
+  }
+
+  function togglePaymentMethod(id, enabled){
+    const m = state.paymentMethods.find(x => x.id === id);
+    if(!m) return;
+    m.enabled = enabled;
+    saveInvoiceSettings();
+    if(!state.previewEdited) renderPreviewOnly();
+  }
+
+  async function editPaymentMethod(id){
+    const m = state.paymentMethods.find(x => x.id === id);
+    if(!m) return;
+    const result = await promptModalValidated(
+      'Edit payment method',
+      [
+        { id:'label', label:'Name (e.g. Whish)', value:m.label },
+        { id:'value', label:'Number / details', value:m.value }
+      ],
+      (v) => {
+        if(!v.label.trim()) return 'Enter a name.';
+        if(!v.value.trim()) return 'Enter the number or details.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    m.label = result.label.trim();
+    m.value = result.value.trim();
+    saveInvoiceSettings();
+    renderPaymentMethods();
+    if(!state.previewEdited) renderPreviewOnly();
+  }
+
+  async function deletePaymentMethod(id){
+    const ok = await confirmModal('Delete this payment method?');
+    if(!ok) return;
+    state.paymentMethods = state.paymentMethods.filter(x => x.id !== id);
+    saveInvoiceSettings();
+    renderPaymentMethods();
+    if(!state.previewEdited) renderPreviewOnly();
+  }
+
+  function updateLangButtonsUI(){
+    $all('#invoiceLangBtns button').forEach(b => {
+      if(b.dataset.lang === state.invoiceLang) b.classList.remove('ghost');
+      else b.classList.add('ghost');
+    });
+  }
+
+  function setInvoiceLang(lang){
+    state.invoiceLang = lang === 'ar' ? 'ar' : 'en';
+    updateLangButtonsUI();
+    saveInvoiceSettings();
+    state.previewEdited = false;
+    renderPreviewOnly();
   }
 
   function renderInvoice(){
@@ -1520,7 +2400,10 @@
     const balBox = $('#clientBalanceBox');
     if(client && client.balanceUsd !== 0){
       balBox.style.display = 'block';
-      $('#clientPrevBalance').textContent = fmtUsd(client.balanceUsd);
+      const owesPrev = client.balanceUsd > 0;
+      $('#clientPrevBalanceLabel').textContent = owesPrev ? 'Balance they owe you before this sale' : 'Balance you owe them before this sale';
+      $('#clientPrevBalance').textContent = fmtUsd(Math.abs(client.balanceUsd));
+      $('#includeBalanceChkLabel').textContent = owesPrev ? 'Add this balance to the invoice total' : 'Deduct this credit from the invoice total';
     } else {
       balBox.style.display = 'none';
     }
@@ -1542,26 +2425,67 @@
 
       const el = document.createElement('div');
       el.className = 'line-item';
+      const unitCost = getLineUnitCost(p, line);
+      const effCostMode = getLineCostMode(p, line);
+      const costCurrency = line.costCurrency === 'LBP' ? 'LBP' : 'USD';
+      const costDisplayVal = costCurrency === 'LBP' ? Math.round(unitCost * state.rate.value) : unitCost;
       el.innerHTML = `
         <div class="line-top">
-          <div class="line-name">${escapeHtml(p.name)}</div>
+          <div class="line-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">🎫 voucher</span>' : ''}</div>
           <button class="remove-line">remove</button>
         </div>
         <div class="qty-row">
           <div class="qty-controls">
             <button data-act="minus">−</button>
-            <input type="text" value="${line.qty}" inputmode="numeric">
+            <input type="text" value="${formatNumberString(String(line.qty))}" inputmode="numeric">
             <button data-act="plus">+</button>
           </div>
           <div class="line-price">${fmtUsd(lineTotalUsd)}<br><b>${fmtLbp(lineTotalUsd * state.rate.value)}</b></div>
         </div>
         <input type="text" class="note-input" placeholder="Note for this item (e.g. size, color)" value="${escapeHtml(line.note)}">
+        ${p.type === 'voucher' ? `
+        <div class="voucher-summary">
+          ${line.voucher && (line.voucher.code || line.voucher.link || line.voucher.username || line.voucher.email || line.voucher.pin || line.voucher.password || line.voucher.expiry) ? `
+            ${line.voucher.expiry ? `📅 Expiry: <b>${escapeHtml(line.voucher.expiry)}</b><br>` : ''}
+            ${line.voucher.code ? `🔑 Code: <b>${escapeHtml(line.voucher.code)}</b><br>` : ''}
+            ${line.voucher.link ? `🔗 Link: <b>${escapeHtml(line.voucher.link)}</b><br>` : ''}
+            ${line.voucher.username ? `👤 Username: <b>${escapeHtml(line.voucher.username)}</b><br>` : ''}
+            ${line.voucher.pin ? `🔢 PIN: <b>${escapeHtml(line.voucher.pin)}</b><br>` : ''}
+            ${line.voucher.email ? `📧 Email: <b>${escapeHtml(line.voucher.email)}</b><br>` : ''}
+            ${line.voucher.password ? `🔒 Password: <b>${escapeHtml(line.voucher.password)}</b>` : ''}
+          ` : `<span class="v-empty">No voucher details entered yet.</span>`}
+          <div style="margin-top:6px;"><button class="mini-btn edit-voucher-btn" type="button">✏️ edit voucher details</button></div>
+        </div>
+        ` : ''}
+        <div class="add-row-inline" style="margin-top:6px;">
+          <input type="text" inputmode="decimal" class="cost-input" placeholder="💲 Cost price for this sale" value="${costDisplayVal ? formatNumberString(costCurrency==='LBP' ? String(costDisplayVal) : costDisplayVal.toFixed(2)) : ''}" style="flex:1;">
+          <select class="cost-currency-select" style="flex:0 0 80px;">
+            <option value="USD" ${costCurrency==='USD'?'selected':''}>USD</option>
+            <option value="LBP" ${costCurrency==='LBP'?'selected':''}>LBP</option>
+          </select>
+        </div>
+        <div class="add-row-inline" style="margin-top:6px;">
+          <select class="cost-mode-select" style="flex:1;">
+            <option value="perUnit" ${effCostMode==='perUnit'?'selected':''}>Cost × quantity</option>
+            <option value="flat" ${effCostMode==='flat'?'selected':''}>Cost × 1 (flat)</option>
+          </select>
+        </div>
+        <div class="product-prices" style="margin-top:2px;">Cost · not shown on customer invoice</div>
       `;
       el.querySelector('.remove-line').addEventListener('click', () => removeLine(p.id));
       el.querySelector('[data-act="minus"]').addEventListener('click', () => changeQty(p.id, -1));
       el.querySelector('[data-act="plus"]').addEventListener('click', () => changeQty(p.id, 1));
       el.querySelector('.qty-controls input').addEventListener('change', (e) => setQty(p.id, e.target.value));
+      attachThousandsFormatting(el.querySelector('.qty-controls input'));
       el.querySelector('.note-input').addEventListener('input', (e) => setNote(p.id, e.target.value));
+      const editVoucherBtn = el.querySelector('.edit-voucher-btn');
+      if(editVoucherBtn) editVoucherBtn.addEventListener('click', () => editVoucherDetails(p.id));
+      const costInput = el.querySelector('.cost-input');
+      const costCurrencySelect = el.querySelector('.cost-currency-select');
+      attachThousandsFormatting(costInput);
+      costInput.addEventListener('change', (e) => setLineCost(p.id, e.target.value, costCurrencySelect.value));
+      costCurrencySelect.addEventListener('change', (e) => { setLineCost(p.id, costInput.value, e.target.value); renderInvoice(); });
+      el.querySelector('.cost-mode-select').addEventListener('change', (e) => setLineCostMode(p.id, e.target.value));
       container.appendChild(el);
     });
 
@@ -1582,11 +2506,12 @@
 
     if(!state.paymentStatus) state.paymentStatus = 'paid';
     const receivedInput = $('#amountReceived');
+    const receivedCurrency = $('#amountReceivedCurrency').value;
     if(state.paymentStatus === 'paid'){
-      receivedInput.value = nums.grandTotal.toFixed(2);
+      receivedInput.value = receivedCurrency === 'LBP' ? formatNumberString(String(Math.round(nums.grandTotal * state.rate.value))) : formatNumberString(nums.grandTotal.toFixed(2));
       receivedInput.disabled = true;
     } else if(state.paymentStatus === 'unpaid'){
-      receivedInput.value = '0.00';
+      receivedInput.value = receivedCurrency === 'LBP' ? '0' : '0.00';
       receivedInput.disabled = true;
     } else {
       receivedInput.disabled = false;
@@ -1609,9 +2534,15 @@
     });
   }
 
+  function getAmountReceivedUsd(){
+    const raw = parseFormattedNumber($('#amountReceived').value);
+    if(isNaN(raw)) return NaN;
+    return moneyToUsd(raw, $('#amountReceivedCurrency').value);
+  }
+
   function updateRemaining(){
     const nums = computeInvoiceNumbers();
-    const received = parseFloat($('#amountReceived').value);
+    const received = getAmountReceivedUsd();
     const receivedVal = isNaN(received) ? 0 : received;
     const remaining = nums.grandTotal - receivedVal;
     $('#remainingBalance').innerHTML = (remaining > 0 ? '⚠️ owes <b>' + fmtUsd(remaining) + '</b>' : remaining < 0 ? '💚 credit <b>' + fmtUsd(-remaining) + '</b>' : '✅ <b>$0.00</b>');
@@ -1623,58 +2554,89 @@
   }
 
   function buildInvoiceText(){
+    const t = I18N[state.invoiceLang] || I18N.en;
     const customer = $('#customerName').value.trim();
-    const dateStr = new Date().toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    const now = new Date();
+    const dateStr = now.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit' });
     const nums = computeInvoiceNumbers();
     let lines = [];
-    lines.push('🧾 *Invoice*');
-    lines.push('📅 ' + dateStr);
-    if(customer) lines.push('👤 Customer: ' + customer);
+    lines.push(t.invoice);
+    lines.push('📅 ' + dateStr + '   🕒 ' + timeStr);
+    if(customer) lines.push(t.customer + ': ' + customer);
     lines.push('');
 
-    state.lines.forEach((line, i) => {
+    let lineNo = 0;
+    state.lines.forEach((line) => {
       const p = state.products.find(x => x.id === line.productId);
       if(!p) return;
+      lineNo++;
       const lineTotal = p.priceUsd * line.qty;
-      lines.push(`${i+1}) ${p.name} x${line.qty}`);
-      if(line.note.trim()) lines.push(`   📝 note: ${line.note.trim()}`);
+      lines.push(`${lineNo}) ${p.name} x${line.qty}`);
+      if(line.note.trim()) lines.push(`   ${t.note}: ${line.note.trim()}`);
       lines.push(`   ${fmtUsd(lineTotal)}  (${fmtLbp(lineTotal * state.rate.value)})`);
+      if(p.type === 'voucher' && line.voucher){
+        const v = line.voucher;
+        const vLines = [];
+        if(v.expiry) vLines.push(`   ${t.voucherExpiry}: ${v.expiry}`);
+        if(v.code) vLines.push(`   ${t.voucherCode}: ${v.code}`);
+        if(v.link) vLines.push(`   ${t.voucherLink}: ${v.link}`);
+        if(v.username) vLines.push(`   ${t.voucherUsername}: ${v.username}`);
+        if(v.pin) vLines.push(`   ${t.voucherPin}: ${v.pin}`);
+        if(v.email) vLines.push(`   ${t.voucherEmail}: ${v.email}`);
+        if(v.password) vLines.push(`   ${t.voucherPassword}: ${v.password}`);
+        if(vLines.length){
+          lines.push(`   ${t.voucherHeader}`);
+          lines.push(...vLines);
+        }
+      }
     });
 
     lines.push('');
     lines.push('———————————');
-    lines.push(`Items subtotal: ${fmtUsd(nums.subtotalUsd)} (${fmtLbp(nums.subtotalUsd * state.rate.value)})`);
+    lines.push(`${t.itemsSubtotal}: ${fmtUsd(nums.subtotalUsd)} (${fmtLbp(nums.subtotalUsd * state.rate.value)})`);
     if(nums.includeBalance && nums.prevBalance !== 0){
-      lines.push(`⚠️ Previous balance: ${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
+      lines.push(`${t.previousBalance}: ${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
     }
-    lines.push(`*Total due: ${fmtUsd(nums.grandTotal)}*`);
-    lines.push(`*Total due: ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
+    lines.push(`*${t.totalDue}: ${fmtUsd(nums.grandTotal)}*`);
+    lines.push(`*${t.totalDue}: ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
 
-    const received = parseFloat($('#amountReceived').value);
+    const received = getAmountReceivedUsd();
     if(!isNaN(received)){
       const remaining = nums.grandTotal - received;
-      const statusLabel = state.paymentStatus === 'paid' ? '✅ PAID' : state.paymentStatus === 'unpaid' ? '❌ NOT PAID' : '⏳ PARTIALLY PAID';
+      const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
       lines.push('');
-      lines.push(`Payment status: ${statusLabel}`);
-      lines.push(`💵 Received: ${fmtUsd(received)}`);
-      if(remaining > 0.004) lines.push(`⚠️ Remaining balance: ${fmtUsd(remaining)}`);
-      else if(remaining < -0.004) lines.push(`💚 Credit on account: ${fmtUsd(-remaining)}`);
+      lines.push(`${t.paymentStatus}: ${statusLabel}`);
+      lines.push(`${t.received}: ${fmtUsd(received)}`);
+      if(remaining > 0.004) lines.push(`${t.remainingBalance}: ${fmtUsd(remaining)}`);
+      else if(remaining < -0.004) lines.push(`${t.creditOnAccount}: ${fmtUsd(-remaining)}`);
     }
 
     lines.push('');
-    lines.push(`💱 Rate: 1 USD = ${fmtLbp(state.rate.value)}`);
+    lines.push(`${t.rate}: 1 USD = ${fmtLbp(state.rate.value)}`);
+
+    const activeMethods = state.paymentMethods.filter(m => m.enabled);
+    if(activeMethods.length > 0){
+      lines.push('');
+      lines.push(`${t.paymentMethods}:`);
+      activeMethods.forEach(m => lines.push(`• ${m.label}: ${m.value}`));
+    }
+
     return lines.join('\n');
   }
 
   function renderPreviewOnly(){
     if(state.lines.length === 0) return;
-    $('#previewBox').textContent = buildInvoiceText();
+    const box = $('#previewBox');
+    box.dir = state.invoiceLang === 'ar' ? 'rtl' : 'ltr';
+    if(state.previewEdited) return;
+    box.value = buildInvoiceText();
   }
 
   function finalizeSaleIfNeeded(){
     if(state.finalizedThisInvoice || state.lines.length === 0) return;
     const nums = computeInvoiceNumbers();
-    const received = parseFloat($('#amountReceived').value);
+    const received = getAmountReceivedUsd();
     const receivedVal = isNaN(received) ? nums.grandTotal : received;
     const newBalance = nums.grandTotal - receivedVal;
 
@@ -1714,7 +2676,7 @@
   }
 
   async function copyInvoice(){
-    const text = buildInvoiceText();
+    const text = $('#previewBox').value;
     try{
       await navigator.clipboard.writeText(text);
       $('#copiedMsg').textContent = 'Copied — paste it into WhatsApp.';
@@ -1732,7 +2694,7 @@
   }
 
   function openWhatsapp(){
-    const text = buildInvoiceText();
+    const text = $('#previewBox').value;
     const client = getSelectedClient();
     let phoneDigits = '';
     if(client && client.phone){
@@ -1751,10 +2713,12 @@
     state.lines = [];
     state.finalizedThisInvoice = false;
     state.paymentStatus = 'paid';
+    state.previewEdited = false;
     $('#customerName').value = '';
     $('#clientSelect').value = '';
     $('#amountReceived').value = '';
     $('#amountReceived').dataset.userEdited = 'false';
+    $('#amountReceivedCurrency').value = 'USD';
     renderInvoice();
   }
 
@@ -1825,9 +2789,9 @@
       [
         { id:'date', label:'Date', type:'date', value: dateToInputValue(s.date) },
         { id:'customer', label:'Customer name', value: s.customerName },
-        { id:'revenue', label:'Revenue (USD)', type:'number', step:'0.01', value: s.revenueUsd.toFixed(2) },
-        { id:'cost', label:'Cost (USD)', type:'number', step:'0.01', value: s.costUsd.toFixed(2) },
-        { id:'received', label:'Amount received (USD)', type:'number', step:'0.01', value: s.amountReceived.toFixed(2) }
+        { id:'revenue', label:'Revenue', type:'money', value: s.revenueUsd.toFixed(2) },
+        { id:'cost', label:'Cost', type:'money', value: s.costUsd.toFixed(2) },
+        { id:'received', label:'Amount received', type:'money', value: s.amountReceived.toFixed(2) }
       ],
       (v) => {
         if(!v.date) return 'Pick a valid date.';
@@ -1915,6 +2879,248 @@
     $('#searchResult').classList.add('show');
   }
 
+  // ---------- Settings (header/footer/logo/printer) ----------
+  function renderSettingsTab(){
+    const s = state.invoiceSettings;
+    $('#setHeaderTitle').value = s.headerTitle || '';
+    $('#setHeaderSubtitle').value = s.headerSubtitle || '';
+    $('#setAddress').value = s.address || '';
+    $('#setPhone').value = s.phone || '';
+    $('#setFooterNote').value = s.footerNote || '';
+    const preview = $('#logoPreview');
+    preview.innerHTML = s.logo ? `<img src="${s.logo}" alt="logo">` : '🧾';
+    $all('#paperWidthBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.width !== String(s.paperWidth)));
+    $all('#printerConnBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.conn !== s.printerConnection));
+    updateBtStatusUI();
+  }
+
+  function updateBtStatusUI(){
+    const el = $('#printerStatus');
+    if(btDevice && btCharacteristic){
+      el.textContent = '🔵 Connected: ' + (btDevice.name || 'Bluetooth printer');
+      el.className = 'printer-status connected';
+    } else {
+      el.textContent = 'Not connected';
+      el.className = 'printer-status disconnected';
+    }
+  }
+
+  let settingsSaveTimer = null;
+  function scheduleSaveSettings(){
+    clearTimeout(settingsSaveTimer);
+    settingsSaveTimer = setTimeout(saveInvoiceSettings, 400);
+  }
+
+  ['setHeaderTitle','setHeaderSubtitle','setAddress','setPhone','setFooterNote'].forEach(id => {
+    $('#' + id).addEventListener('input', () => {
+      const map = { setHeaderTitle:'headerTitle', setHeaderSubtitle:'headerSubtitle', setAddress:'address', setPhone:'phone', setFooterNote:'footerNote' };
+      state.invoiceSettings[map[id]] = $('#' + id).value;
+      scheduleSaveSettings();
+    });
+  });
+
+  $('#logoInput').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    if(file.size > 900 * 1024){ alertBanner('Logo image is too large — please use one under ~900KB.'); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      state.invoiceSettings.logo = reader.result;
+      renderSettingsTab();
+      saveInvoiceSettings();
+    };
+    reader.readAsDataURL(file);
+  });
+  $('#removeLogoBtn').addEventListener('click', () => {
+    state.invoiceSettings.logo = null;
+    $('#logoInput').value = '';
+    renderSettingsTab();
+    saveInvoiceSettings();
+  });
+
+  $all('#paperWidthBtns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.invoiceSettings.paperWidth = btn.dataset.width;
+      renderSettingsTab();
+      saveInvoiceSettings();
+    });
+  });
+  $all('#printerConnBtns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.invoiceSettings.printerConnection = btn.dataset.conn;
+      renderSettingsTab();
+      saveInvoiceSettings();
+    });
+  });
+
+  async function connectBluetoothPrinter(){
+    if(!navigator.bluetooth){
+      alertBanner('Bluetooth printing isn\'t supported in this browser. Try Chrome on Android/desktop, or use System print instead.');
+      return;
+    }
+    try{
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: [
+          '000018f0-0000-1000-8000-00805f9b34fb',
+          '0000ff00-0000-1000-8000-00805f9b34fb',
+          '49535343-fe7d-4ae5-8fa9-9fafd205e455'
+        ]
+      });
+      const server = await device.gatt.connect();
+      let foundChar = null;
+      const services = await server.getPrimaryServices();
+      for(const service of services){
+        const chars = await service.getCharacteristics();
+        for(const ch of chars){
+          if(ch.properties.write || ch.properties.writeWithoutResponse){ foundChar = ch; break; }
+        }
+        if(foundChar) break;
+      }
+      if(!foundChar){
+        alertBanner('Connected, but no writable printer channel was found on this device. Try System print instead.');
+        return;
+      }
+      btDevice = device;
+      btCharacteristic = foundChar;
+      device.addEventListener('gattserverdisconnected', () => {
+        btDevice = null; btCharacteristic = null; updateBtStatusUI();
+      });
+      updateBtStatusUI();
+      alertBanner('🔵 Printer connected.');
+    }catch(e){
+      if(e.name !== 'NotFoundError'){ alertBanner('Could not connect: ' + e.message); }
+    }
+  }
+  $('#btConnectBtn').addEventListener('click', connectBluetoothPrinter);
+
+  async function sendTextToBluetoothPrinter(text){
+    if(!btCharacteristic) return false;
+    try{
+      const encoder = new TextEncoder();
+      const ESC_INIT = new Uint8Array([0x1B, 0x40]); // ESC @
+      const FEED_CUT = new Uint8Array([0x0A, 0x0A, 0x0A, 0x0A, 0x1D, 0x56, 0x00]); // feed + cut
+      const body = encoder.encode(text);
+      const payload = new Uint8Array(ESC_INIT.length + body.length + FEED_CUT.length);
+      payload.set(ESC_INIT, 0);
+      payload.set(body, ESC_INIT.length);
+      payload.set(FEED_CUT, ESC_INIT.length + body.length);
+      const chunkSize = 180; // conservative BLE MTU-safe chunk
+      for(let i = 0; i < payload.length; i += chunkSize){
+        const chunk = payload.slice(i, i + chunkSize);
+        if(btCharacteristic.properties.writeWithoutResponse){
+          await btCharacteristic.writeValueWithoutResponse(chunk);
+        } else {
+          await btCharacteristic.writeValue(chunk);
+        }
+      }
+      return true;
+    }catch(e){
+      alertBanner('Bluetooth print failed: ' + e.message + ' — try System print instead.');
+      return false;
+    }
+  }
+
+  // ---------- Print (system dialog or direct Bluetooth) ----------
+  function buildPrintReceiptHtml(){
+    const s = state.invoiceSettings;
+    const t = I18N[state.invoiceLang] || I18N.en;
+    const nums = computeInvoiceNumbers();
+    const customer = $('#customerName').value.trim();
+    const now = new Date();
+    const dateStr = now.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit' });
+
+    let html = '';
+    if(s.logo) html += `<img class="pr-logo" src="${s.logo}" alt="logo">`;
+    html += `<div class="pr-center">`;
+    html += `<div class="pr-title">${escapeHtml(s.headerTitle || 'Invoice')}</div>`;
+    if(s.headerSubtitle) html += `<div class="pr-sub">${escapeHtml(s.headerSubtitle)}</div>`;
+    if(s.address) html += `<div class="pr-sub">${escapeHtml(s.address)}</div>`;
+    if(s.phone) html += `<div class="pr-sub">${escapeHtml(s.phone)}</div>`;
+    html += `<div class="pr-sub">${dateStr} · ${timeStr}</div>`;
+    html += `</div><div class="pr-hr"></div>`;
+    if(customer) html += `<div class="pr-row"><span>${t.customer}</span><b>${escapeHtml(customer)}</b></div><div class="pr-hr"></div>`;
+
+    let lineNo = 0;
+    state.lines.forEach(line => {
+      const p = state.products.find(x => x.id === line.productId);
+      if(!p) return;
+      lineNo++;
+      const lineTotal = p.priceUsd * line.qty;
+      html += `<div class="pr-item-name">${lineNo}) ${escapeHtml(p.name)} x${line.qty}</div>`;
+      if(line.note.trim()) html += `<div class="pr-item-sub">${t.note}: ${escapeHtml(line.note.trim())}</div>`;
+      html += `<div class="pr-item-sub">${fmtUsd(lineTotal)} (${fmtLbp(lineTotal * state.rate.value)})</div>`;
+      if(p.type === 'voucher' && line.voucher){
+        const v = line.voucher;
+        let vh = '';
+        if(v.expiry) vh += `${t.voucherExpiry}: ${escapeHtml(v.expiry)}<br>`;
+        if(v.code) vh += `${t.voucherCode}: ${escapeHtml(v.code)}<br>`;
+        if(v.link) vh += `${t.voucherLink}: ${escapeHtml(v.link)}<br>`;
+        if(v.username) vh += `${t.voucherUsername}: ${escapeHtml(v.username)}<br>`;
+        if(v.pin) vh += `${t.voucherPin}: ${escapeHtml(v.pin)}<br>`;
+        if(v.email) vh += `${t.voucherEmail}: ${escapeHtml(v.email)}<br>`;
+        if(v.password) vh += `${t.voucherPassword}: ${escapeHtml(v.password)}`;
+        if(vh) html += `<div class="pr-voucher"><b>${t.voucherHeader}</b><br>${vh}</div>`;
+      }
+    });
+
+    html += `<div class="pr-hr"></div>`;
+    html += `<div class="pr-row"><span>${t.itemsSubtotal}</span><span>${fmtUsd(nums.subtotalUsd)}</span></div>`;
+    if(nums.includeBalance && nums.prevBalance !== 0){
+      html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(nums.prevBalance)}</span></div>`;
+    }
+    html += `<div class="pr-row pr-grand"><span>${t.totalDue}</span><span>${fmtUsd(nums.grandTotal)}</span></div>`;
+    html += `<div class="pr-row"><span></span><span>${fmtLbp(nums.grandTotal * state.rate.value)}</span></div>`;
+
+    const received = getAmountReceivedUsd();
+    if(!isNaN(received)){
+      const remaining = nums.grandTotal - received;
+      const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
+      html += `<div class="pr-hr"></div>`;
+      html += `<div class="pr-row"><span>${t.paymentStatus}</span><span>${statusLabel}</span></div>`;
+      html += `<div class="pr-row"><span>${t.received}</span><span>${fmtUsd(received)}</span></div>`;
+      if(remaining > 0.004) html += `<div class="pr-row"><span>${t.remainingBalance}</span><span>${fmtUsd(remaining)}</span></div>`;
+      else if(remaining < -0.004) html += `<div class="pr-row"><span>${t.creditOnAccount}</span><span>${fmtUsd(-remaining)}</span></div>`;
+    }
+
+    const activeMethods = state.paymentMethods.filter(m => m.enabled);
+    if(activeMethods.length){
+      html += `<div class="pr-hr"></div><div class="pr-row"><b>${t.paymentMethods}</b><span></span></div>`;
+      activeMethods.forEach(m => { html += `<div class="pr-row"><span>${escapeHtml(m.label)}</span><span>${escapeHtml(m.value)}</span></div>`; });
+    }
+
+    if(s.footerNote){
+      html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(s.footerNote)}</div>`;
+    }
+    return html;
+  }
+
+  function applyPrintPageStyle(){
+    let styleTag = document.getElementById('printPageStyle');
+    if(!styleTag){
+      styleTag = document.createElement('style');
+      styleTag.id = 'printPageStyle';
+      document.head.appendChild(styleTag);
+    }
+    const width = state.invoiceSettings.paperWidth === '58' ? '58mm' : '80mm';
+    styleTag.textContent = `@page{ size:${width} auto; margin:2mm; } #printArea{ max-width:${width}; }`;
+  }
+
+  async function printInvoice(){
+    if(state.lines.length === 0){ alertBanner('Add items to the invoice first.'); return; }
+    if(state.invoiceSettings.printerConnection === 'bluetooth' && btCharacteristic){
+      const ok = await sendTextToBluetoothPrinter(buildInvoiceText());
+      if(ok){ alertBanner('🔵 Sent to printer.'); finalizeSaleIfNeeded(); }
+      return;
+    }
+    applyPrintPageStyle();
+    $('#printArea').innerHTML = buildPrintReceiptHtml();
+    window.print();
+    finalizeSaleIfNeeded();
+  }
+  $('#printBtn').addEventListener('click', printInvoice);
+
   // ---------- Tabs ----------
   $all('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -1923,12 +3129,18 @@
       $all('.section').forEach(s => s.classList.remove('active'));
       $('#tab-' + tab.dataset.tab).classList.add('active');
       if(tab.dataset.tab === 'reports') renderReports();
+      if(tab.dataset.tab === 'settings') renderSettingsTab();
     });
   });
 
   // ---------- Wire up ----------
-  $('#addCategoryBtn').addEventListener('click', addCategory);
-  $('#newCategoryName').addEventListener('keydown', (e) => { if(e.key === 'Enter') addCategory(); });
+  const addRootCategory = () => {
+    const input = $('#newCategoryName');
+    addCategory(input.value, null);
+    input.value = '';
+  };
+  $('#addCategoryBtn').addEventListener('click', addRootCategory);
+  $('#newCategoryName').addEventListener('keydown', (e) => { if(e.key === 'Enter') addRootCategory(); });
   $('#editRateBtn').addEventListener('click', editRate);
   $('#addFundsBtn').addEventListener('click', addFunds);
   $('#withdrawFundsBtn').addEventListener('click', withdrawFunds);
@@ -1938,6 +3150,12 @@
   $('#copyBtn').addEventListener('click', copyInvoice);
   $('#whatsappBtn').addEventListener('click', openWhatsapp);
   $('#resetBtn').addEventListener('click', resetInvoice);
+  $('#addPmBtn').addEventListener('click', addPaymentMethod);
+  $('#regenPreviewBtn').addEventListener('click', () => { state.previewEdited = false; renderPreviewOnly(); });
+  $('#previewBox').addEventListener('input', () => { state.previewEdited = true; });
+  $all('#invoiceLangBtns button').forEach(btn => {
+    btn.addEventListener('click', () => setInvoiceLang(btn.dataset.lang));
+  });
   $('#addClientBtn').addEventListener('click', addClient);
   $('#clientSelect').addEventListener('change', () => {
     const client = getSelectedClient();
@@ -1955,12 +3173,30 @@
     updateRemaining();
     renderPreviewOnly();
   });
+  let amountReceivedPrevCurrency = 'USD';
+  $('#amountReceivedCurrency').addEventListener('change', (e) => {
+    const input = $('#amountReceived');
+    if(input.disabled){
+      renderInvoice();
+    } else {
+      const raw = parseFormattedNumber(input.value);
+      if(!isNaN(raw)){
+        const usdVal = moneyToUsd(raw, amountReceivedPrevCurrency);
+        input.value = e.target.value === 'LBP' ? formatNumberString(String(Math.round(usdVal * state.rate.value))) : formatNumberString(usdVal.toFixed(2));
+      }
+      updateRemaining();
+      renderPreviewOnly();
+    }
+    amountReceivedPrevCurrency = e.target.value;
+  });
   $all('#paymentStatusBtns button').forEach(btn => {
     btn.addEventListener('click', () => setPaymentStatus(btn.dataset.status));
   });
   $('#searchMode').addEventListener('change', updateSearchInputsVisibility);
   $('#searchReportsBtn').addEventListener('click', runReportSearch);
   updateSearchInputsVisibility();
+  attachThousandsFormatting($('#amountReceived'));
+  attachThousandsFormatting($('#newClientBalance'));
 
   window.addEventListener('firebase-ready', () => {
     loadAll().then(() => {
