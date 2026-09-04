@@ -1120,46 +1120,50 @@
     body > *:not(#printArea){ display:none !important; }
     #printArea{
       display:block !important;
-      font-family:'Helvetica Neue', Arial, sans-serif;
-      color:#111;
+      font-family:'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, monospace;
+      background:#171923;
+      color:#E4E4E7;
       width:100%;
-      line-height:1.45;
+      line-height:1.55;
+      padding:20px 16px;
       -webkit-print-color-adjust:exact;
       print-color-adjust:exact;
     }
-    #printArea .pr-logo{ display:block; max-width:55%; max-height:64px; margin:0 auto 8px; object-fit:contain; }
+    #printArea .pr-logo{ display:block; max-width:55%; max-height:64px; margin:0 auto 8px; object-fit:contain; filter:brightness(0) invert(1); }
     #printArea .pr-center{ text-align:center; }
-    #printArea .pr-eyebrow{ font-size:9.5px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:#666; margin-bottom:3px; }
-    #printArea .pr-title{ font-size:19px; font-weight:800; letter-spacing:0.2px; margin-bottom:2px; }
-    #printArea .pr-sub{ font-size:12px; color:#333; margin-bottom:1px; }
-    #printArea .pr-meta{ font-size:11px; color:#555; margin-top:5px; letter-spacing:0.2px; }
-    #printArea .pr-hr{ border:none; border-top:1px dashed #aaa; margin:10px 0; }
-    #printArea .pr-hr.solid{ border-top:1.5px solid #111; }
-    #printArea .pr-section-label{ font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#777; margin:9px 0 5px; }
-    #printArea .pr-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; padding:2.5px 0; gap:10px; }
-    #printArea .pr-row > span:first-child{ color:#333; }
-    #printArea .pr-row > span:last-child, #printArea .pr-row > b:last-child{ text-align:right; white-space:nowrap; }
-    #printArea .pr-item{ margin:7px 0; }
-    #printArea .pr-item-top{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; font-weight:700; gap:10px; }
+    #printArea .pr-eyebrow{ font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#9AA0AF; margin-bottom:6px; }
+    #printArea .pr-title{ font-size:24px; font-weight:700; letter-spacing:0.2px; margin-bottom:6px; }
+    #printArea .pr-sub{ font-size:13px; color:#9AA0AF; margin-bottom:2px; }
+    #printArea .pr-meta{ font-size:12px; color:#6B7080; margin-top:8px; letter-spacing:0.2px; }
+    #printArea .pr-hr{ border:none; border-top:1px dashed #3A3D4A; margin:14px 0; }
+    #printArea .pr-hr.solid{ border-top:2px solid #E4E4E7; }
+    #printArea .pr-section-label{ font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#9AA0AF; margin:12px 0 6px; }
+    #printArea .pr-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:14px; padding:3px 0; gap:10px; }
+    #printArea .pr-row > span:first-child{ color:#E4E4E7; }
+    #printArea .pr-row > span:last-child, #printArea .pr-row > b:last-child{ text-align:right; white-space:nowrap; font-weight:500; }
+    #printArea .pr-item{ margin:8px 0; }
+    #printArea .pr-item-top{ display:flex; justify-content:space-between; align-items:baseline; font-size:14px; font-weight:700; gap:10px; }
     #printArea .pr-item-top .pr-item-title{ flex:1; }
-    #printArea .pr-item-qty{ color:#666; font-weight:500; font-size:11.5px; }
-    #printArea .pr-item-price{ font-size:12.5px; font-weight:700; white-space:nowrap; }
-    #printArea .pr-item-sub{ font-size:11px; color:#666; margin-top:1px; }
-    #printArea .pr-items-table{ width:100%; border-collapse:collapse; margin:4px 0 2px; }
-    #printArea .pr-items-table th{ font-size:9.5px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#666; border-bottom:1.5px solid #111; padding:0 2px 4px; text-align:left; }
-    #printArea .pr-items-table td{ font-size:12px; padding:4px 2px; vertical-align:top; border-bottom:1px dashed #ccc; }
-    #printArea .pr-items-table tr:last-child td{ border-bottom:1px dashed #ccc; }
+    #printArea .pr-item-qty{ color:#9AA0AF; font-weight:500; font-size:12.5px; }
+    #printArea .pr-item-price{ font-size:14px; font-weight:700; white-space:nowrap; }
+    #printArea .pr-item-sub{ font-size:12px; color:#9AA0AF; margin-top:2px; }
+    #printArea .pr-col-total-lbp{ font-size:11px; font-weight:400; color:#6B7080; margin-top:3px; }
+    #printArea .pr-items-table{ width:100%; border-collapse:collapse; margin:6px 0 2px; }
+    #printArea .pr-items-table th{ font-size:10.5px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#9AA0AF; border-bottom:1.5px solid #E4E4E7; padding:0 2px 6px; text-align:left; }
+    #printArea .pr-items-table td{ font-size:13px; padding:6px 2px; vertical-align:top; border-bottom:1px dashed #3A3D4A; }
+    #printArea .pr-items-table tr:last-child td{ border-bottom:1px dashed #3A3D4A; }
     #printArea .pr-items-table .pr-col-qty{ text-align:center; white-space:nowrap; padding-right:10px; }
     #printArea .pr-items-table .pr-col-price{ text-align:right; white-space:nowrap; padding-left:10px; }
-    #printArea .pr-items-table .pr-col-total{ text-align:right; white-space:nowrap; font-weight:700; }
+    #printArea .pr-items-table .pr-col-total{ text-align:right; white-space:nowrap; font-weight:700; padding-left:16px; }
     #printArea .pr-items-table .pr-col-name{ font-weight:700; }
-    #printArea .pr-items-table tr.pr-item-subrow td{ padding:0 2px 6px; border-bottom:1px dashed #ccc; }
+    #printArea .pr-items-table tr.pr-item-subrow td{ padding:0 2px 8px; border-bottom:1px dashed #3A3D4A; color:#9AA0AF; }
     #printArea .pr-items-table tr.pr-item-subrow .pr-item-sub{ margin-top:2px; }
     #printArea .pr-items-table tr.pr-item-subrow .pr-item-sub:first-child{ margin-top:0; }
-    #printArea .pr-voucher{ font-size:11px; padding:5px 7px; margin:5px 0 2px; border-left:2px solid #111; background:#f4f4f4; border-radius:2px; }
-    #printArea .pr-grand{ font-size:20px; font-weight:800; padding:9px 0; border-top:2px solid #111; border-bottom:2px solid #111; margin:8px 0; }
-    #printArea .pr-footer{ font-size:13.5px; font-weight:600; text-align:center; margin-top:10px; white-space:pre-wrap; color:#111; }
-    #printArea .pr-thankyou{ font-size:13px; text-align:center; margin-top:12px; font-style:italic; font-weight:600; letter-spacing:0.2px; }
+    #printArea .pr-voucher{ font-size:12px; padding:6px 8px; margin:6px 0 2px; border-left:2px solid #E4E4E7; background:#20222C; border-radius:2px; }
+    #printArea .pr-grand{ font-size:22px; font-weight:700; padding:12px 0; border-top:2px solid #E4E4E7; border-bottom:2px solid #E4E4E7; margin:12px 0; }
+    #printArea .pr-grand > span:last-child{ text-align:right; }
+    #printArea .pr-footer{ font-size:14px; font-weight:600; text-align:center; margin-top:12px; white-space:pre-wrap; color:#E4E4E7; }
+    #printArea .pr-thankyou{ font-size:15px; text-align:center; margin-top:14px; font-weight:500; letter-spacing:0.2px; color:#E4E4E7; }
   }
 
   /* Print preview modal — on-screen rendering of the exact receipt before printing */
@@ -1198,17 +1202,18 @@
   .print-preview-scroll{
     overflow-y:auto;
     padding:16px;
-    background:#e9e9ee;
+    background:#0d0d10;
     flex:1;
   }
   .print-preview-paper{
-    background:#fff;
+    background:#171923;
     margin:0 auto;
-    padding:14px;
-    font-family:'Helvetica Neue', Arial, sans-serif;
-    color:#111;
-    line-height:1.45;
-    box-shadow:0 2px 10px rgba(0,0,0,0.12);
+    padding:20px 16px;
+    font-family:'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, monospace;
+    color:#E4E4E7;
+    line-height:1.55;
+    border-radius:14px;
+    box-shadow:0 2px 16px rgba(0,0,0,0.4);
     max-width:100%;
   }
   .print-preview-actions{
@@ -1220,40 +1225,44 @@
   }
   .print-preview-actions .btn{ flex:1; }
 
-  /* Reuse the receipt's print styling so the preview matches the printout */
-  .print-preview-paper .pr-logo{ display:block; max-width:55%; max-height:64px; margin:0 auto 8px; object-fit:contain; }
+  /* Reuse the receipt's print styling so the preview matches the printout —
+     dark/monospace theme for the on-screen preview only; actual paper
+     output (#printArea, @media print above) stays light for ink/thermal. */
+  .print-preview-paper .pr-logo{ display:block; max-width:55%; max-height:64px; margin:0 auto 8px; object-fit:contain; filter:brightness(0) invert(1); }
   .print-preview-paper .pr-center{ text-align:center; }
-  .print-preview-paper .pr-eyebrow{ font-size:9.5px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:#666; margin-bottom:3px; }
-  .print-preview-paper .pr-title{ font-size:19px; font-weight:800; letter-spacing:0.2px; margin-bottom:2px; }
-  .print-preview-paper .pr-sub{ font-size:12px; color:#333; margin-bottom:1px; }
-  .print-preview-paper .pr-meta{ font-size:11px; color:#555; margin-top:5px; letter-spacing:0.2px; }
-  .print-preview-paper .pr-hr{ border:none; border-top:1px dashed #aaa; margin:10px 0; }
-  .print-preview-paper .pr-hr.solid{ border-top:1.5px solid #111; }
-  .print-preview-paper .pr-section-label{ font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#777; margin:9px 0 5px; }
-  .print-preview-paper .pr-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; padding:2.5px 0; gap:10px; }
-  .print-preview-paper .pr-row > span:first-child{ color:#333; }
-  .print-preview-paper .pr-row > span:last-child, .print-preview-paper .pr-row > b:last-child{ text-align:right; white-space:nowrap; }
-  .print-preview-paper .pr-item{ margin:7px 0; }
-  .print-preview-paper .pr-item-top{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; font-weight:700; gap:10px; }
+  .print-preview-paper .pr-eyebrow{ font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#9AA0AF; margin-bottom:6px; }
+  .print-preview-paper .pr-title{ font-size:24px; font-weight:700; letter-spacing:0.2px; margin-bottom:6px; }
+  .print-preview-paper .pr-sub{ font-size:13px; color:#9AA0AF; margin-bottom:2px; }
+  .print-preview-paper .pr-meta{ font-size:12px; color:#6B7080; margin-top:8px; letter-spacing:0.2px; }
+  .print-preview-paper .pr-hr{ border:none; border-top:1px dashed #3A3D4A; margin:14px 0; }
+  .print-preview-paper .pr-hr.solid{ border-top:2px solid #E4E4E7; }
+  .print-preview-paper .pr-section-label{ font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#9AA0AF; margin:12px 0 6px; }
+  .print-preview-paper .pr-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:14px; padding:3px 0; gap:10px; }
+  .print-preview-paper .pr-row > span:first-child{ color:#E4E4E7; }
+  .print-preview-paper .pr-row > span:last-child, .print-preview-paper .pr-row > b:last-child{ text-align:right; white-space:nowrap; font-weight:500; }
+  .print-preview-paper .pr-item{ margin:8px 0; }
+  .print-preview-paper .pr-item-top{ display:flex; justify-content:space-between; align-items:baseline; font-size:14px; font-weight:700; gap:10px; }
   .print-preview-paper .pr-item-top .pr-item-title{ flex:1; }
-  .print-preview-paper .pr-item-qty{ color:#666; font-weight:500; font-size:11.5px; }
-  .print-preview-paper .pr-item-price{ font-size:12.5px; font-weight:700; white-space:nowrap; }
-  .print-preview-paper .pr-item-sub{ font-size:11px; color:#666; margin-top:1px; }
-  .print-preview-paper .pr-items-table{ width:100%; border-collapse:collapse; margin:4px 0 2px; }
-  .print-preview-paper .pr-items-table th{ font-size:9.5px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#666; border-bottom:1.5px solid #111; padding:0 2px 4px; text-align:left; }
-  .print-preview-paper .pr-items-table td{ font-size:12px; padding:4px 2px; vertical-align:top; border-bottom:1px dashed #ccc; }
-  .print-preview-paper .pr-items-table tr:last-child td{ border-bottom:1px dashed #ccc; }
+  .print-preview-paper .pr-item-qty{ color:#9AA0AF; font-weight:500; font-size:12.5px; }
+  .print-preview-paper .pr-item-price{ font-size:14px; font-weight:700; white-space:nowrap; }
+  .print-preview-paper .pr-item-sub{ font-size:12px; color:#9AA0AF; margin-top:2px; }
+  .print-preview-paper .pr-col-total-lbp{ font-size:11px; font-weight:400; color:#6B7080; margin-top:3px; }
+  .print-preview-paper .pr-items-table{ width:100%; border-collapse:collapse; margin:6px 0 2px; }
+  .print-preview-paper .pr-items-table th{ font-size:10.5px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#9AA0AF; border-bottom:1.5px solid #E4E4E7; padding:0 2px 6px; text-align:left; }
+  .print-preview-paper .pr-items-table td{ font-size:13px; padding:6px 2px; vertical-align:top; border-bottom:1px dashed #3A3D4A; }
+  .print-preview-paper .pr-items-table tr:last-child td{ border-bottom:1px dashed #3A3D4A; }
   .print-preview-paper .pr-items-table .pr-col-qty{ text-align:center; white-space:nowrap; padding-right:10px; }
   .print-preview-paper .pr-items-table .pr-col-price{ text-align:right; white-space:nowrap; padding-left:10px; }
-  .print-preview-paper .pr-items-table .pr-col-total{ text-align:right; white-space:nowrap; font-weight:700; }
+  .print-preview-paper .pr-items-table .pr-col-total{ text-align:right; white-space:nowrap; font-weight:700; padding-left:16px; }
   .print-preview-paper .pr-items-table .pr-col-name{ font-weight:700; }
-  .print-preview-paper .pr-items-table tr.pr-item-subrow td{ padding:0 2px 6px; border-bottom:1px dashed #ccc; }
+  .print-preview-paper .pr-items-table tr.pr-item-subrow td{ padding:0 2px 8px; border-bottom:1px dashed #3A3D4A; color:#9AA0AF; }
   .print-preview-paper .pr-items-table tr.pr-item-subrow .pr-item-sub{ margin-top:2px; }
   .print-preview-paper .pr-items-table tr.pr-item-subrow .pr-item-sub:first-child{ margin-top:0; }
-  .print-preview-paper .pr-voucher{ font-size:11px; padding:5px 7px; margin:5px 0 2px; border-left:2px solid #111; background:#f4f4f4; border-radius:2px; }
-  .print-preview-paper .pr-grand{ font-size:20px; font-weight:800; padding:9px 0; border-top:2px solid #111; border-bottom:2px solid #111; margin:8px 0; }
-  .print-preview-paper .pr-footer{ font-size:13.5px; font-weight:600; text-align:center; margin-top:10px; white-space:pre-wrap; color:#111; }
-  .print-preview-paper .pr-thankyou{ font-size:13px; text-align:center; margin-top:12px; font-style:italic; font-weight:600; letter-spacing:0.2px; }
+  .print-preview-paper .pr-voucher{ font-size:12px; padding:6px 8px; margin:6px 0 2px; border-left:2px solid #E4E4E7; background:#20222C; border-radius:2px; }
+  .print-preview-paper .pr-grand{ font-size:22px; font-weight:700; padding:12px 0; border-top:2px solid #E4E4E7; border-bottom:2px solid #E4E4E7; margin:12px 0; }
+  .print-preview-paper .pr-grand > span:last-child{ text-align:right; }
+  .print-preview-paper .pr-footer{ font-size:14px; font-weight:600; text-align:center; margin-top:12px; white-space:pre-wrap; color:#E4E4E7; }
+  .print-preview-paper .pr-thankyou{ font-size:15px; text-align:center; margin-top:14px; font-weight:500; letter-spacing:0.2px; color:#E4E4E7; }
 </style>
 </head>
 <body>
@@ -1900,7 +1909,7 @@
       headerSubtitle: '',
       address: '',
       phone: '',
-      footerNote: '',
+      footerNote: 'Thank you for choosing TDA!',
       logo: null,
       paperWidth: '80',
       printerConnection: 'system',
@@ -1923,6 +1932,7 @@
       invoice: '*Invoice*',
       customer: 'Customer',
       itemsSubtotal: 'Items subtotal',
+      subtotalAfterDiscount: 'Subtotal after discount',
       previousBalance: 'Previous balance',
       totalDue: 'Total',
       paymentStatus: 'Payment status',
@@ -1937,7 +1947,7 @@
       note: 'note',
       itemCol: 'Item',
       qtyCol: 'Qty',
-      priceCol: 'Unit price',
+      priceCol: 'Unit',
       totalCol: 'Total',
       paymentMethods: 'Payment methods',
       dateLocale: 'en-US',
@@ -1958,12 +1968,13 @@
       fullOverCredit: 'You paid extra — we now owe you',
       fullOverTip: 'Thank you so much for the generous tip of',
       voucherHeader: 'Details',
-      thankYouPrint: 'Thank you for your business!'
+      thankYouPrint: 'Thank you for choosing TDA!'
     },
     ar: {
       invoice: '*فاتورة*',
       customer: 'الزبون',
       itemsSubtotal: 'مجموع الأصناف',
+      subtotalAfterDiscount: 'المجموع بعد الخصم',
       previousBalance: 'الرصيد السابق',
       totalDue: 'الإجمالي',
       paymentStatus: 'حالة الدفع',
@@ -1999,7 +2010,7 @@
       fullOverCredit: 'لقد دفعت مبلغاً إضافياً — أصبحنا مدينين لك بـ',
       fullOverTip: 'شكراً جزيلاً على البقشيش الكريم وقدره',
       voucherHeader: 'التفاصيل',
-      thankYouPrint: 'شكراً لتعاملكم معنا!'
+      thankYouPrint: 'شكراً لاختياركم TDA!'
     }
   };
 
@@ -4072,6 +4083,12 @@
     renderCatalogPicker();
   }
 
+  // Plain "N)" item numbering — simplest, works consistently regardless
+  // of item count. WhatsApp-only, see buildInvoiceText().
+  function itemMarker(n){
+    return `${n})`;
+  }
+
   function buildInvoiceText(withEmojis){
     if(withEmojis === undefined) withEmojis = true; // default on: this text is mainly used for the WhatsApp preview
     const em = (e) => withEmojis ? (e + ' ') : '';
@@ -4083,13 +4100,14 @@
     const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit', second:'2-digit' });
     const nums = computeInvoiceNumbers();
     let lines = [];
-    lines.push(em('🧾') + (s.headerTitle || t.invoice));
+    lines.push(em('🧾') + `*${s.headerTitle || t.invoice}*`);
     if(s.headerSubtitle) lines.push(s.headerSubtitle);
     if(s.address) lines.push(em('📍') + s.address);
     if(s.phone) lines.push(em('📞') + s.phone);
     lines.push(em('📅') + dateStr + '   ' + timeStr);
-    if(customer) lines.push(em('👤') + t.customer + ': ' + customer);
+    if(customer) lines.push(em('👤') + t.customer + ': ' + `*${customer}*`);
     lines.push('');
+    lines.push('———————————');
 
     let lineNo = 0;
     state.lines.forEach((line) => {
@@ -4098,12 +4116,12 @@
       lineNo++;
       const amt = computeLineAmounts(p, line);
       const lineTotal = amt.total;
-      lines.push(`${lineNo}) ${productDisplayName(p)} x${line.qty}`);
+      lines.push(`${itemMarker(lineNo)} ${productDisplayName(p)} ${fmtUsd(p.priceUsd)} ×${line.qty}`);
       if(line.note.trim()) lines.push(`   ${em('📝')}${t.note}: ${line.note.trim()}`);
       if(getLineDiscount(line)){
-        lines.push(`   ${em('🏷️')}${discountSummaryText(line)} (was ${fmtUsd(amt.original)})`);
+        lines.push(`   ${em('🏷️')}${discountSummaryText(line)} ~${fmtUsd(amt.original)}~`);
       }
-      lines.push(`   ${fmtUsd(lineTotal)}  (${fmtLbp(lineTotal * state.rate.value)})`);
+      lines.push(`   ${fmtUsd(lineTotal)} Or ${fmtLbp(lineTotal * state.rate.value)}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
         const units = ensureUnitVouchers(line);
         units.forEach((unitFields, i) => {
@@ -4119,15 +4137,16 @@
       }
     });
 
-    lines.push('');
     lines.push('———————————');
+    lines.push(`${t.itemsSubtotal} : ${fmtUsd(nums.originalSubtotalUsd)} ${t.orWord} ${fmtLbp(nums.originalSubtotalUsd * state.rate.value)}`);
     if(nums.totalDiscountUsd > 0.004){
-      lines.push(`${em('🏷️')}Discount total: −${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})`);
+      lines.push(`${em('🏷️')}Discount total: −${fmtUsd(nums.totalDiscountUsd)} _(${fmtLbp(nums.totalDiscountUsd * state.rate.value)})_`);
     }
     if(nums.includeBalance && nums.prevBalance !== 0){
-      lines.push(`${em('📌')}${t.previousBalance}: ${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
+      lines.push(`${em('📌')}${t.previousBalance}: ${fmtUsd(nums.prevBalance)} _(${fmtLbp(nums.prevBalance * state.rate.value)})_`);
     }
-    lines.push(`*${em('💰')}${t.totalDue}: ${fmtUsd(nums.grandTotal)} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
+    lines.push('');
+    lines.push(`*${em('💰')}${t.totalDue.toUpperCase()}: ${fmtUsd(nums.grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
 
     const received = getAmountReceivedUsd();
     if(s.showPaymentStatus !== false && !isNaN(received)){
@@ -4135,10 +4154,10 @@
       const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
       const statusEmoji = state.paymentStatus === 'paid' ? '✅' : state.paymentStatus === 'unpaid' ? '❌' : '🕓';
       lines.push('');
-      lines.push(`${em(statusEmoji)}${t.paymentStatus}: ${statusLabel}`);
-      lines.push(`${em('💳')}${t.received}: ${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})`);
-      if(remaining > 0.004) lines.push(`${em('⚠️')}${t.remainingBalance}: ${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})`);
-      else if(remaining < -0.004) lines.push(state.overpaymentMode === 'tip' ? `${em('🙏')}${t.tipReceived}: ${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})` : `${em('🟢')}${t.creditOnAccount}: ${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})`);
+      lines.push(`${em(statusEmoji)}${t.paymentStatus}: *${statusLabel}*`);
+      lines.push(`${em('💳')}${t.received}: ${fmtUsd(received)} _(${fmtLbp(received * state.rate.value)})_`);
+      if(remaining > 0.004) lines.push(`${em('⚠️')}${t.remainingBalance}: *${fmtUsd(remaining)}* _(${fmtLbp(remaining * state.rate.value)})_`);
+      else if(remaining < -0.004) lines.push(state.overpaymentMode === 'tip' ? `${em('🙏')}${t.tipReceived}: ${fmtUsd(-remaining)} _(${fmtLbp(-remaining * state.rate.value)})_` : `${em('🟢')}${t.creditOnAccount}: ${fmtUsd(-remaining)} _(${fmtLbp(-remaining * state.rate.value)})_`);
     }
 
     lines.push('');
@@ -4147,14 +4166,17 @@
     const activeMethods = state.paymentMethods.filter(m => m.enabled);
     if(activeMethods.length > 0){
       lines.push('');
-      lines.push(`${em('📱')}${t.paymentMethods}:`);
+      lines.push(`*${em('📱')}${t.paymentMethods}:*`);
       activeMethods.forEach(m => lines.push(`• ${m.label}: ${m.value}`));
     }
 
     if(s.footerNote){
       lines.push('');
-      lines.push(s.footerNote);
+      lines.push(`_${s.footerNote}_`);
     }
+
+    lines.push('');
+    lines.push(em('🙏') + t.thankYouPrint);
 
     return lines.join('\n');
   }
@@ -4770,8 +4792,7 @@
       let tableRows = '';
       s.items.forEach((it, i) => {
         const unit = it.qty ? it.revenueUsd / it.qty : it.revenueUsd;
-        tableRows += `<tr><td class="pr-col-name">${i + 1}. ${escapeHtml(it.name)}</td><td class="pr-col-qty">×${it.qty}</td><td class="pr-col-price">${fmtUsd(unit)}</td><td class="pr-col-total">${fmtUsd(it.revenueUsd)}</td></tr>`;
-        tableRows += `<tr class="pr-item-subrow"><td colspan="4"><div class="pr-item-sub">${fmtLbp(it.revenueUsd * rate)}</div></td></tr>`;
+        tableRows += `<tr><td class="pr-col-name">${i + 1}. ${escapeHtml(it.name)}</td><td class="pr-col-qty">×${it.qty}</td><td class="pr-col-price">${fmtUsd(unit)}</td><td class="pr-col-total">${fmtUsd(it.revenueUsd)}<div class="pr-col-total-lbp">${fmtLbp(it.revenueUsd * rate)}</div></td></tr>`;
       });
       html += `<table class="pr-items-table"><thead><tr><th class="pr-col-name">${t.itemCol}</th><th class="pr-col-qty">${t.qtyCol}</th><th class="pr-col-price">${t.priceCol}</th><th class="pr-col-total">${t.totalCol}</th></tr></thead><tbody>${tableRows}</tbody></table>`;
     } else {
@@ -4781,13 +4802,14 @@
     html += `<div class="pr-hr"></div>`;
     if(s.prevBalanceApplied) html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})</span></div>`;
     const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
-    html += `<div class="pr-row pr-grand"><span>${t.totalDue}:</span><span>${fmtUsd(grandTotal)} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}</span></div>`;
+    html += `<div class="pr-row pr-grand"><span>${t.totalDue}:</span><span>${fmtUsd(grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}</span></div>`;
     html += `<div class="pr-row"><span>Payment status</span><b>${printStatusLabel(getSaleStatus(s), t)}</b></div>`;
     html += `<div class="pr-row"><span>Amount received</span><span>${fmtUsd(s.amountReceived)}</span></div>`;
     const remaining = s.newBalance || 0;
     if(remaining > 0.004) html += `<div class="pr-row"><span>Remaining balance</span><span>${fmtUsd(remaining)}</span></div>`;
     else if(remaining < -0.004) html += `<div class="pr-row"><span>Credit on account</span><span>${fmtUsd(-remaining)}</span></div>`;
     if(s.tipUsd > 0.004) html += `<div class="pr-row"><span>Tip</span><span>${fmtUsd(s.tipUsd)}</span></div>`;
+    html += `<div class="pr-hr"></div><div class="pr-row"><span>${t.rate}</span><span>1 USD = ${fmtLbp(rate)}</span></div>`;
     if(!s.items || !s.items.length) html += `<div class="pr-hr"></div><div class="pr-footer">Reconstructed summary — itemized details were not saved for this older invoice.</div>`;
     if(set.footerNote) html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(set.footerNote)}</div>`;
     return html;
@@ -4812,13 +4834,15 @@
     }
     if(s.prevBalanceApplied) lines.push(`📌 ${t.previousBalance}: ${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})`);
     const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
-    lines.push(`*💰 ${t.totalDue}: ${fmtUsd(grandTotal)} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}*`);
+    lines.push(`*💰 ${t.totalDue}: ${fmtUsd(grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}*`);
     lines.push(SALE_STATUS_LABEL[getSaleStatus(s)]);
     lines.push('💳 Received: ' + fmtUsd(s.amountReceived));
     const remaining = s.newBalance || 0;
     if(remaining > 0.004) lines.push('⚠️ Remaining balance: ' + fmtUsd(remaining));
     else if(remaining < -0.004) lines.push('🟢 Credit on account: ' + fmtUsd(-remaining));
     if(s.tipUsd > 0.004) lines.push('🙏 Tip: ' + fmtUsd(s.tipUsd));
+    lines.push('');
+    lines.push(`💱 ${t.rate}: 1 USD = ${fmtLbp(rate)}`);
     if(state.invoiceSettings.footerNote){
       lines.push('');
       lines.push(state.invoiceSettings.footerNote);
@@ -4854,9 +4878,9 @@
       seg(left + ' '.repeat(space) + right);
     };
     const qtyW = 5;
-    const priceW = W >= 40 ? 10 : 7;
-    const totalW = W >= 40 ? 10 : 7;
-    const nameW = W - qtyW - 1 - priceW - totalW;
+    const priceW = W >= 40 ? 9 : 6;
+    const totalW = W >= 40 ? 9 : 6;
+    const nameW = W - qtyW - 4 - priceW - totalW;
     const colWidths = [nameW, qtyW, priceW, totalW];
     const colAligns = ['l', 'c', 'r', 'r'];
     const padCell = (str, w, align) => {
@@ -4866,7 +4890,7 @@
       if(align === 'c'){ const left = Math.floor(gap / 2); return ' '.repeat(left) + str + ' '.repeat(gap - left); }
       return str + ' '.repeat(gap);
     };
-    const tableRow = (cells, opts) => { const parts = cells.map((c, i) => padCell(c, colWidths[i], colAligns[i])); seg(parts[0] + parts[1] + ' ' + parts[2] + parts[3], opts); };
+    const tableRow = (cells, opts) => { const parts = cells.map((c, i) => padCell(c, colWidths[i], colAligns[i])); seg(parts[0] + ' ' + parts[1] + ' ' + parts[2] + '  ' + parts[3], opts); };
 
     seg(t.invoice.replace(/\*/g, '').toUpperCase(), { align:'center' });
     seg((set.headerTitle || 'Invoice').toUpperCase(), { align:'center', bold:true });
@@ -4884,17 +4908,17 @@
       s.items.forEach((it, i) => {
         const unit = it.qty ? it.revenueUsd / it.qty : it.revenueUsd;
         tableRow([`${i + 1}. ${it.name}`, `x${it.qty}`, fmtUsd(unit), fmtUsd(it.revenueUsd)]);
-        seg(fmtLbp(it.revenueUsd * rate));
+        seg(fmtLbp(it.revenueUsd * rate), { align:'right' });
       });
     } else {
       twoCol('Amount', fmtUsd(s.revenueUsd));
-      seg(fmtLbp(s.revenueUsd * rate));
+      seg(fmtLbp(s.revenueUsd * rate), { align:'right' });
     }
 
     seg(hr('-'));
     if(s.prevBalanceApplied) twoCol(t.previousBalance, `${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})`);
     const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
-    seg(`${t.totalDue}: ${fmtUsd(grandTotal)} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}`, { bold:true });
+    seg(`${t.totalDue}: ${fmtUsd(grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}`, { bold:true });
 
     seg(hr('-'));
     twoCol('Payment status', printStatusLabel(getSaleStatus(s), t));
@@ -4903,6 +4927,9 @@
     if(remaining > 0.004) twoCol(t.remainingBalance, fmtUsd(remaining));
     else if(remaining < -0.004) twoCol(t.creditOnAccount, fmtUsd(-remaining));
     if(s.tipUsd > 0.004) twoCol(t.tipReceived, fmtUsd(s.tipUsd));
+
+    seg(hr('-'));
+    twoCol(t.rate, `1 USD = ${fmtLbp(rate)}`);
 
     const activeMethods = state.paymentMethods.filter(m => m.enabled);
     if(activeMethods.length){
@@ -5701,9 +5728,9 @@
     // Item table columns: ITEM | QTY | UNIT PRICE | TOTAL — same four
     // columns as the preview's table, sized to fit the paper width.
     const qtyW = 5;
-    const priceW = W >= 40 ? 10 : 7;
-    const totalW = W >= 40 ? 10 : 7;
-    const nameW = W - qtyW - 1 - priceW - totalW;
+    const priceW = W >= 40 ? 9 : 6;
+    const totalW = W >= 40 ? 9 : 6;
+    const nameW = W - qtyW - 4 - priceW - totalW;
     const colWidths = [nameW, qtyW, priceW, totalW];
     const colAligns = ['l', 'c', 'r', 'r'];
     const padCell = (str, w, align) => {
@@ -5713,7 +5740,7 @@
       if(align === 'c'){ const left = Math.floor(gap / 2); return ' '.repeat(left) + str + ' '.repeat(gap - left); }
       return str + ' '.repeat(gap);
     };
-    const tableRow = (cells, opts) => { const parts = cells.map((c, i) => padCell(c, colWidths[i], colAligns[i])); seg(parts[0] + parts[1] + ' ' + parts[2] + parts[3], opts); };
+    const tableRow = (cells, opts) => { const parts = cells.map((c, i) => padCell(c, colWidths[i], colAligns[i])); seg(parts[0] + ' ' + parts[1] + ' ' + parts[2] + '  ' + parts[3], opts); };
 
     // ---- Header block (centered, like the preview's eyebrow/title/meta) ----
     seg(t.invoice.replace(/\*/g, '').toUpperCase(), { align:'center' });
@@ -5741,7 +5768,7 @@
       const amt = computeLineAmounts(p, line);
       const lineTotal = amt.total;
       tableRow([`${lineNo}. ${productDisplayName(p, state.invoiceLang)}`, `x${line.qty}`, fmtUsd(p.priceUsd), fmtUsd(lineTotal)]);
-      seg(fmtLbp(lineTotal * state.rate.value));
+      seg(fmtLbp(lineTotal * state.rate.value), { align:'right' });
       if(getLineDiscount(line)) seg(`  ${discountSummaryText(line)} (was ${fmtUsd(amt.original)})`);
       if(line.note.trim()) seg(`  ${t.note}: ${line.note.trim()}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
@@ -5756,24 +5783,31 @@
 
     // ---- Totals ----
     seg(hr('-'));
+    twoCol(t.itemsSubtotal, `${fmtUsd(nums.originalSubtotalUsd)} ${t.orWord} ${fmtLbp(nums.originalSubtotalUsd * state.rate.value)}`);
     if(nums.totalDiscountUsd > 0.004){
       twoCol('Discount total', `-${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})`);
     }
     if(nums.includeBalance && nums.prevBalance !== 0){
       twoCol(t.previousBalance, `${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})`);
     }
-    seg(`${t.totalDue}: ${fmtUsd(nums.grandTotal)} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}`, { bold:true });
+    seg(hr('='));
+    seg(`${t.totalDue}: ${fmtUsd(nums.grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}`, { bold:true });
+    seg(hr('='));
 
     const received = getAmountReceivedUsd();
     if(s.showPaymentStatus !== false && !isNaN(received)){
       const remaining = nums.grandTotal - received;
       const statusLabel = state.paymentStatus === 'paid' ? t.paid : state.paymentStatus === 'unpaid' ? t.notPaid : t.partial;
       seg(hr('-'));
-      twoCol(t.paymentStatus, statusLabel);
+      seg(t.paymentStatus.toUpperCase());
+      twoCol('Status', statusLabel);
       twoCol(t.received, `${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})`);
       if(remaining > 0.004) twoCol(t.remainingBalance, `${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})`);
       else if(remaining < -0.004) twoCol(state.overpaymentMode === 'tip' ? t.tipReceived : t.creditOnAccount, `${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})`);
     }
+
+    seg(hr('-'));
+    twoCol(t.rate, `1 USD = ${fmtLbp(state.rate.value)}`);
 
     // ---- Payment methods ----
     const activeMethods = state.paymentMethods.filter(m => m.enabled);
@@ -5828,12 +5862,14 @@
       tableRows += `<td class="pr-col-name">${lineNo}. ${escapeHtml(productDisplayName(p, state.invoiceLang))}</td>`;
       tableRows += `<td class="pr-col-qty">×${line.qty}</td>`;
       tableRows += `<td class="pr-col-price">${fmtUsd(p.priceUsd)}</td>`;
-      tableRows += `<td class="pr-col-total">${fmtUsd(lineTotal)}</td>`;
+      tableRows += `<td class="pr-col-total">${fmtUsd(lineTotal)}<div class="pr-col-total-lbp">${fmtLbp(lineTotal * state.rate.value)}</div></td>`;
       tableRows += `</tr>`;
-      const subLines = [`${fmtLbp(lineTotal * state.rate.value)}`];
-      if(getLineDiscount(line)) subLines.push(`${escapeHtml(discountSummaryText(line))} (was ${fmtUsd(amt.original)})`);
-      if(line.note.trim()) subLines.push(`${t.note}: ${escapeHtml(line.note.trim())}`);
-      tableRows += `<tr class="pr-item-subrow"><td colspan="4">${subLines.map(x => `<div class="pr-item-sub">${x}</div>`).join('')}</td></tr>`;
+      const subLines = [];
+      if(getLineDiscount(line)) subLines.push({ text: `${escapeHtml(discountSummaryText(line))} (was ${fmtUsd(amt.original)})` });
+      if(line.note.trim()) subLines.push({ text: `${t.note}: ${escapeHtml(line.note.trim())}` });
+      if(subLines.length){
+        tableRows += `<tr class="pr-item-subrow"><td colspan="4">${subLines.map(x => `<div class="pr-item-sub${x.cls ? ' ' + x.cls : ''}">${x.text}</div>`).join('')}</td></tr>`;
+      }
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
         const units = ensureUnitVouchers(line);
         units.forEach((unitFields, i) => {
@@ -5850,13 +5886,14 @@
     }
 
     html += `<div class="pr-hr"></div>`;
+    html += `<div class="pr-row"><span>${t.itemsSubtotal}</span><span>${fmtUsd(nums.originalSubtotalUsd)} ${t.orWord} ${fmtLbp(nums.originalSubtotalUsd * state.rate.value)}</span></div>`;
     if(nums.totalDiscountUsd > 0.004){
       html += `<div class="pr-row"><span>Discount total</span><span>−${fmtUsd(nums.totalDiscountUsd)} (${fmtLbp(nums.totalDiscountUsd * state.rate.value)})</span></div>`;
     }
     if(nums.includeBalance && nums.prevBalance !== 0){
       html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(nums.prevBalance)} (${fmtLbp(nums.prevBalance * state.rate.value)})</span></div>`;
     }
-    html += `<div class="pr-row pr-grand"><span>${t.totalDue}:</span><span>${fmtUsd(nums.grandTotal)} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}</span></div>`;
+    html += `<div class="pr-row pr-grand"><span>${t.totalDue.toUpperCase()}:</span><span>${fmtUsd(nums.grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}</span></div>`;
 
     const received = getAmountReceivedUsd();
     if(s.showPaymentStatus !== false && !isNaN(received)){
@@ -5869,6 +5906,8 @@
       else if(remaining < -0.004) html += `<div class="pr-row"><span>${state.overpaymentMode === 'tip' ? t.tipReceived : t.creditOnAccount}</span><span>${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})</span></div>`;
     }
 
+    html += `<div class="pr-hr"></div><div class="pr-row"><span>${t.rate}</span><span>1 USD = ${fmtLbp(state.rate.value)}</span></div>`;
+
     const activeMethods = state.paymentMethods.filter(m => m.enabled);
     if(activeMethods.length){
       html += `<div class="pr-hr"></div><div class="pr-section-label">${t.paymentMethods}</div>`;
@@ -5879,8 +5918,7 @@
       html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(s.footerNote)}</div>`;
     }
 
-    // Thank-you line: printed receipt only, never included in the
-    // WhatsApp/copy text (buildInvoiceText).
+    // Thank-you line: also included in the WhatsApp/copy text, see buildInvoiceText().
     html += `<div class="pr-hr"></div><div class="pr-thankyou">${escapeHtml(t.thankYouPrint)}</div>`;
 
     return html;
