@@ -849,6 +849,7 @@
   .report-card .r-label{ font-size:12px; color:var(--ink-soft); font-weight:600; text-transform:lowercase; }
   .report-card .r-profit{ font-family:'Inter', sans-serif; font-size:19px; font-weight:800; letter-spacing:-0.02em; color:var(--success); margin:6px 0 3px; }
   .report-card .r-rev{ font-size:11px; color:var(--ink-faint); }
+  .report-card .r-tip{ font-size:11px; color:var(--brass); margin-top:1px; }
   .history-item{
     display:flex;
     flex-wrap:wrap;
@@ -1589,19 +1590,22 @@
         <div class="r-label">today</div>
         <div class="r-profit" id="profitToday">$0.00</div>
         <div class="r-rev" id="revToday">rev $0.00</div>
+        <div class="r-tip" id="tipToday">tips $0.00</div>
       </div>
       <div class="report-card">
         <div class="r-label">this month</div>
         <div class="r-profit" id="profitMonth">$0.00</div>
         <div class="r-rev" id="revMonth">rev $0.00</div>
+        <div class="r-tip" id="tipMonth">tips $0.00</div>
       </div>
       <div class="report-card">
         <div class="r-label">this year</div>
         <div class="r-profit" id="profitYear">$0.00</div>
         <div class="r-rev" id="revYear">rev $0.00</div>
+        <div class="r-tip" id="tipYear">tips $0.00</div>
       </div>
     </div>
-    <div class="field-label">profit = selling price − cost price, on completed invoices. LBP figures use today's rate.</div>
+    <div class="field-label">profit = selling price − cost price, on completed invoices (tips shown separately, not included in profit). LBP figures use today's rate.</div>
 
     <div class="compare-row" id="momCompareRow"></div>
 
@@ -4515,21 +4519,25 @@
     const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const isPrevMonth = (d) => d.getFullYear()===prevMonthDate.getFullYear() && d.getMonth()===prevMonthDate.getMonth();
 
-    let pToday=0, rToday=0, pMonth=0, rMonth=0, pYear=0, rYear=0, pPrevMonth=0, rPrevMonth=0;
+    let pToday=0, rToday=0, tToday=0, pMonth=0, rMonth=0, tMonth=0, pYear=0, rYear=0, tYear=0, pPrevMonth=0, rPrevMonth=0;
     state.sales.forEach(s => {
       const d = new Date(s.date);
-      if(isToday(d)){ pToday += s.profitUsd; rToday += s.revenueUsd; }
-      if(isMonth(d)){ pMonth += s.profitUsd; rMonth += s.revenueUsd; }
-      if(isYear(d)){ pYear += s.profitUsd; rYear += s.revenueUsd; }
+      const tip = s.tipUsd || 0;
+      if(isToday(d)){ pToday += s.profitUsd; rToday += s.revenueUsd; tToday += tip; }
+      if(isMonth(d)){ pMonth += s.profitUsd; rMonth += s.revenueUsd; tMonth += tip; }
+      if(isYear(d)){ pYear += s.profitUsd; rYear += s.revenueUsd; tYear += tip; }
       if(isPrevMonth(d)){ pPrevMonth += s.profitUsd; rPrevMonth += s.revenueUsd; }
     });
 
     $('#profitToday').textContent = fmtUsd(pToday);
     $('#revToday').textContent = 'rev ' + fmtUsd(rToday);
+    $('#tipToday').textContent = 'tips ' + fmtUsd(tToday);
     $('#profitMonth').textContent = fmtUsd(pMonth);
     $('#revMonth').textContent = 'rev ' + fmtUsd(rMonth);
+    $('#tipMonth').textContent = 'tips ' + fmtUsd(tMonth);
     $('#profitYear').textContent = fmtUsd(pYear);
     $('#revYear').textContent = 'rev ' + fmtUsd(rYear);
+    $('#tipYear').textContent = 'tips ' + fmtUsd(tYear);
 
     renderMonthComparison(pMonth, rMonth, pPrevMonth, rPrevMonth);
     renderReportsOutstanding();
