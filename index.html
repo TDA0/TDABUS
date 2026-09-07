@@ -1732,6 +1732,7 @@
         <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
           <button class="mini-btn" id="viewInvoiceHistoryBtn">📜 Search all invoices</button>
         </div>
+        <div id="salesOfflineNotice" style="display:none; background:var(--brass-soft); border:1px solid var(--brass); color:var(--brass); border-radius:var(--radius-sm); padding:9px 12px; font-size:12.5px; font-weight:600; margin-bottom:8px;">⚠️ Couldn't reach the server — showing the last saved copy of your invoices from this device. Reload once you're back online to get the latest.</div>
         <div id="salesHistory"></div>
         <div class="empty-hint" id="noSalesHint" style="display:none;">No completed sales yet. Copy or share an invoice to log it here.</div>
       </div>
@@ -2012,6 +2013,7 @@
     invoiceDiscount: { mode: 'none', value: 0 },
     clients: [],
     sales: [],
+    salesShowingOfflineCache: false,
     balance: { value: 0, updatedAt: null },
     balanceLog: [],
     customVoucherFields: [],
@@ -2417,7 +2419,19 @@
     }catch(e){ loadError = e; }
     try{
       state.sales = await loadAllSales();
-    }catch(e){ loadError = e; }
+      state.salesShowingOfflineCache = false;
+    }catch(e){
+      loadError = e;
+      // Don't let a failed/ambiguous fetch blank out invoices you already
+      // had — fall back to the last clean copy saved on this device and
+      // flag it, so the UI can say clearly "this may be out of date"
+      // rather than letting a stale-looking-empty screen pass as normal.
+      const backup = loadSalesBackupCache();
+      if(backup && backup.length){
+        state.sales = backup;
+        state.salesShowingOfflineCache = true;
+      }
+    }
     try{
       const b = await window.storage.get('balance');
       if(b && b.value){ state.balance = JSON.parse(b.value); }
@@ -2492,6 +2506,33 @@
   const SALES_MIGRATION_KEY = 'salesMigrationDone_v3';
   const SALES_DELETED_PREFIX = 'salesDeleted:';
 
+  // ---- Local backup cache of the invoice list ----
+  // The server (Worker/D1) is the source of truth, but if a fetch fails —
+  // or the server returns an ambiguous "not found" for the list itself —
+  // we don't want that to silently look like "you have zero invoices".
+  // So every time we get a clean, complete list from the server, we mirror
+  // it into this device's localStorage. If a later load fails, we fall
+  // back to this cached copy and say so clearly, instead of showing an
+  // empty "No completed sales yet" that looks identical to a real empty
+  // account. Scoped per account so switching users/guest mode on the same
+  // browser can't mix up whose invoices are being shown.
+  const SALES_BACKUP_PREFIX = 'salesBackupCache:';
+  function salesBackupKey(){
+    return SALES_BACKUP_PREFIX + (guestMode ? 'guest' : (authToken || 'unknown'));
+  }
+  function saveSalesBackupCache(sales){
+    try{ localStorage.setItem(salesBackupKey(), JSON.stringify(sales)); }
+    catch(e){ console.error('Could not save local sales backup cache:', e); }
+  }
+  function loadSalesBackupCache(){
+    try{
+      const raw = localStorage.getItem(salesBackupKey());
+      if(!raw) return null;
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : null;
+    }catch(e){ return null; }
+  }
+
   async function migrateSalesIfNeeded(){
     try{
       const done = await window.storage.get(SALES_MIGRATION_KEY);
@@ -2559,8 +2600,24 @@
   async function loadAllSales(){
     await migrateSalesIfNeeded();
     const listRes = await window.storage.list(SALES_PREFIX);
+    // A null response here means the server returned 404 for the LIST
+    // itself, which is ambiguous — it should never be treated the same as
+    // "the list came back and it's empty". Confusing the two is exactly
+    // what makes a real invoice history look like it "disappeared": no
+    // error is shown, the screen just quietly renders as if there were
+    // never any invoices. Fail loudly instead, so the caller falls back
+    // to the local backup cache and tells the user what happened.
+    if(listRes === null){
+      throw new Error('Could not reach the server to list your invoices — check your connection and try again.');
+    }
     const keys = (listRes && listRes.keys) || [];
-    if(keys.length === 0) return [];
+    if(keys.length === 0){
+      // Genuinely nothing on the server. Clear any stale local backup so
+      // a later real failure can't resurrect invoices that were actually,
+      // legitimately, deleted/never existed on this account.
+      saveSalesBackupCache([]);
+      return [];
+    }
 
     // Fetch with a bounded number of requests in flight at once — fast
     // (unlike the old one-batch-of-20-at-a-time-in-sequence approach) but
@@ -2584,6 +2641,13 @@
         if(r && r.value){
           try{ sales.push(JSON.parse(r.value)); }
           catch(e){ failCount++; console.error('Could not parse invoice ' + k + ':', e); }
+        } else {
+          // The list said this key exists, but fetching it came back empty.
+          // That's a data inconsistency, not confirmation the invoice is
+          // gone — silently dropping it is how a real invoice quietly
+          // vanishes from view with no explanation. Count it as a failure.
+          failCount++;
+          console.error('Invoice ' + k + ' was listed but could not be retrieved.');
         }
       }
     }
@@ -2597,6 +2661,9 @@
     }
     if(failCount > 0){
       alertBanner(failCount + ' invoice' + (failCount === 1 ? '' : 's') + ' failed to load this time — try reloading.');
+    } else {
+      // Clean, complete load — this is now our best known-good copy.
+      saveSalesBackupCache(sales);
     }
     return sales;
   }
@@ -4720,6 +4787,8 @@
 
     const historyEl = $('#salesHistory');
     const noSalesHint = $('#noSalesHint');
+    const offlineNotice = $('#salesOfflineNotice');
+    if(offlineNotice) offlineNotice.style.display = state.salesShowingOfflineCache ? 'block' : 'none';
     const recent = [...state.sales].sort((a,b) => b.date - a.date).slice(0, 15);
     $('#salesHistoryToggleLabel').textContent = 'Old invoices' + (state.sales.length ? ' (' + state.sales.length + ')' : '');
     if(recent.length === 0){
