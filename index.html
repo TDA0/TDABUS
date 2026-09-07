@@ -1535,6 +1535,9 @@
         <button class="btn ghost full" id="printBtn">🖨️ Print invoice</button>
       </div>
       <div class="action-row">
+        <button class="btn ghost full" id="completeSaleBtn">✅ Complete sale (no receipt needed)</button>
+      </div>
+      <div class="action-row">
         <button class="btn ghost full" id="resetBtn">🆕 Start new invoice</button>
       </div>
       <div class="copied-msg" id="copiedMsg"></div>
@@ -1850,6 +1853,11 @@
   async function apiFetch(path, options = {}){
     const res = await fetch(API_BASE + path, {
       ...options,
+      // keepalive lets this request keep running in the background even if
+      // the page is being closed/navigated away from right after it fires —
+      // needed for the closing-tab safety net further down, so an in-flight
+      // save isn't just aborted along with the page.
+      keepalive: true,
       headers: {
         'Content-Type': 'application/json',
         ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}),
@@ -2408,8 +2416,7 @@
       if(cl && cl.value){ state.clients = JSON.parse(cl.value); }
     }catch(e){ loadError = e; }
     try{
-      const s = await window.storage.get('sales');
-      if(s && s.value){ state.sales = JSON.parse(s.value); }
+      state.sales = await loadAllSales();
     }catch(e){ loadError = e; }
     try{
       const b = await window.storage.get('balance');
@@ -2463,9 +2470,74 @@
     try{ await window.storage.set('clients', JSON.stringify(state.clients)); }
     catch(e){ console.error(e); alertBanner('Could not save clients: ' + e.message); }
   }
-  async function saveSales(){
-    try{ await window.storage.set('sales', JSON.stringify(state.sales)); }
-    catch(e){ console.error(e); alertBanner('Could not save sales: ' + e.message); }
+  // ---------- Invoices ("sales") — stored one-per-key, not as one big blob ----------
+  // Older versions stored the ENTIRE invoice history as a single JSON blob under
+  // the key 'sales'. Every device held its own in-memory copy of that whole list
+  // and re-saved the whole thing on every change — so if two devices (or two tabs)
+  // were used around the same time, whichever one saved LAST would silently wipe
+  // out any invoices the other had added in the meantime, with no error shown.
+  //
+  // Now each invoice is stored under its own key, 'sales:<id>', so one device
+  // can never overwrite another device's invoice — it can only ever touch its
+  // own key. A one-time migration (below) moves any old blob-style data over to
+  // the new per-invoice keys the first time this runs for an account.
+  const SALES_PREFIX = 'sales:';
+  const SALES_MIGRATION_KEY = 'salesMigrationDone_v2';
+
+  async function migrateSalesIfNeeded(){
+    try{
+      const done = await window.storage.get(SALES_MIGRATION_KEY);
+      if(done && done.value) return;
+    }catch(e){ /* if we can't tell, fall through and try anyway below */ }
+
+    try{
+      const old = await window.storage.get('sales');
+      if(old && old.value){
+        const oldSales = JSON.parse(old.value);
+        if(Array.isArray(oldSales)){
+          for(const rec of oldSales){
+            if(rec && rec.id){
+              await window.storage.set(SALES_PREFIX + rec.id, JSON.stringify(rec));
+            }
+          }
+        }
+      }
+    }catch(e){ console.error('Sales migration error:', e); }
+
+    try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); }
+    catch(e){ console.error(e); }
+  }
+
+  async function loadAllSales(){
+    await migrateSalesIfNeeded();
+    const listRes = await window.storage.list(SALES_PREFIX);
+    const keys = (listRes && listRes.keys) || [];
+    // Fetch every invoice at once instead of in small sequential batches —
+    // these are independent GETs to the same Worker, so firing them all
+    // together lets them resolve in parallel instead of waiting on each
+    // batch one after another, which is what was making load slow once
+    // there were more than a couple dozen invoices.
+    const results = await Promise.all(keys.map(k =>
+      window.storage.get(k).catch(() => null)
+    ));
+    const sales = [];
+    results.forEach(r => {
+      if(r && r.value){
+        try{ sales.push(JSON.parse(r.value)); }
+        catch(e){ console.error('Could not parse invoice ' + r.key + ':', e); }
+      }
+    });
+    return sales;
+  }
+
+  async function saveSaleRecord(record){
+    try{ await window.storage.set(SALES_PREFIX + record.id, JSON.stringify(record)); }
+    catch(e){ console.error(e); alertBanner('Could not save invoice: ' + e.message); }
+  }
+
+  async function deleteSaleRecord(id){
+    try{ await window.storage.delete(SALES_PREFIX + id); }
+    catch(e){ console.error(e); alertBanner('Could not delete invoice: ' + e.message); }
   }
   async function saveBalance(){
     try{ await window.storage.set('balance', JSON.stringify(state.balance)); }
@@ -4422,7 +4494,7 @@
       snapshotPhone: (nums.client && nums.client.phone) ? nums.client.phone : ''
     };
     state.sales.push(record);
-    saveSales();
+    saveSaleRecord(record);
 
     if(receivedVal !== 0){
       state.balance.value += receivedVal;
@@ -4509,7 +4581,30 @@
     renderInvoice();
   }
 
-  // ---------- Reports ----------
+  // Saves the current invoice without requiring a copy/print/WhatsApp step —
+  // for cases like an unpaid or no-receipt-needed sale, where staff would
+  // otherwise have no reason to trigger any of those and the sale would
+  // never get recorded at all.
+  function completeSale(){
+    if(state.lines.length === 0){ alertBanner('Add items to the invoice first.'); return; }
+    finalizeSaleIfNeeded();
+    alertBanner('Sale recorded.');
+    state.lines = [];
+    expandedLineIds.clear();
+    state.invoiceDiscount = { mode: 'none', value: 0 };
+    state.finalizedThisInvoice = false;
+    state.paymentStatus = 'paid';
+    state.overpaymentMode = 'owe';
+    state.previewEdited = false;
+    $('#customerName').value = '';
+    $('#clientSelect').value = '';
+    $('#amountReceived').value = '';
+    $('#amountReceived').dataset.userEdited = 'false';
+    $('#amountReceivedCurrency').value = 'USD';
+    setInvoiceDateTimeToNow();
+    updateOverpaymentModeUI();
+    renderInvoice();
+  }
   function renderReports(){
     renderBalanceLog();
     const now = new Date();
@@ -5650,7 +5745,7 @@
       renderBalanceLog();
     }
 
-    saveSales();
+    saveSaleRecord(s);
     renderReports();
   }
 
@@ -5672,7 +5767,7 @@
     }
 
     state.sales = state.sales.filter(x => x.id !== id);
-    saveSales();
+    deleteSaleRecord(id);
     renderReports();
   }
 
@@ -6465,6 +6560,18 @@
   $('#copyBtn').addEventListener('click', copyInvoice);
   $('#whatsappBtn').addEventListener('click', openWhatsapp);
   $('#resetBtn').addEventListener('click', resetInvoice);
+  $('#completeSaleBtn').addEventListener('click', completeSale);
+
+  // Safety net: if the tab is closed, refreshed, or navigated away from
+  // while an invoice is still in progress and was never copied/printed/
+  // sent/completed, save it rather than silently losing it. This only
+  // fires on an actual close/reload of the page — never on switching
+  // between the app's own tabs (Invoice/Reports/Settings/etc.) or just
+  // backgrounding the browser — because coming back afterward and
+  // continuing to edit the same cart, then finalizing again normally,
+  // would otherwise record the sale twice.
+  window.addEventListener('pagehide', () => { finalizeSaleIfNeeded(); });
+  window.addEventListener('beforeunload', () => { finalizeSaleIfNeeded(); });
   $('#addPmBtn').addEventListener('click', addPaymentMethod);
   $('#regenPreviewBtn').addEventListener('click', () => { state.previewEdited = false; renderPreviewOnly(); });
   $('#previewBox').addEventListener('input', () => { state.previewEdited = true; });
