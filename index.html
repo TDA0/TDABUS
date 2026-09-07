@@ -1848,8 +1848,14 @@
   const TOKEN_KEY = 'ledger_auth_token';
   const GUEST_KEY = 'ledger_guest_mode';
   const GUEST_PREFIX = 'ledger_guest_data:';
-  let authToken = localStorage.getItem(TOKEN_KEY) || null;
-  let guestMode = localStorage.getItem(GUEST_KEY) === 'true';
+  // NOTE: these live on window (not as module-local `let`s) because this
+  // file also has a second, non-module <script> block further down (the
+  // main app code) that needs to read/update them. A `type="module"` script
+  // has its own top-level scope, so plain `let` here would be invisible to
+  // that later plain <script> block — that mismatch was the cause of the
+  // "window.guestMode is not defined" / "Failed to fetch" errors.
+  window.authToken = localStorage.getItem(TOKEN_KEY) || null;
+  window.guestMode = localStorage.getItem(GUEST_KEY) === 'true';
 
   async function apiFetch(path, options = {}){
     const res = await fetch(API_BASE + path, {
@@ -1861,7 +1867,7 @@
       keepalive: true,
       headers: {
         'Content-Type': 'application/json',
-        ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}),
+        ...(window.authToken ? { 'Authorization': 'Bearer ' + window.authToken } : {}),
         ...(options.headers || {})
       }
     });
@@ -1905,16 +1911,16 @@
   // mode it's swapped for the local-only version above.
   window.storage = {
     async get(key){
-      return guestMode ? guestStorage.get(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key));
+      return window.guestMode ? guestStorage.get(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key));
     },
     async set(key, value){
-      return guestMode ? guestStorage.set(key, value) : apiFetch('/api/kv', { method: 'PUT', body: JSON.stringify({ key, value }) });
+      return window.guestMode ? guestStorage.set(key, value) : apiFetch('/api/kv', { method: 'PUT', body: JSON.stringify({ key, value }) });
     },
     async delete(key){
-      return guestMode ? guestStorage.delete(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key), { method: 'DELETE' });
+      return window.guestMode ? guestStorage.delete(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key), { method: 'DELETE' });
     },
     async list(prefix){
-      return guestMode ? guestStorage.list(prefix) : apiFetch('/api/kv/list' + (prefix ? '?prefix=' + encodeURIComponent(prefix) : ''));
+      return window.guestMode ? guestStorage.list(prefix) : apiFetch('/api/kv/list' + (prefix ? '?prefix=' + encodeURIComponent(prefix) : ''));
     }
   };
 
@@ -1927,7 +1933,7 @@
   function showApp(){
     loginOverlay.style.display = 'none';
     appRoot.style.display = '';
-    guestBadge.style.display = guestMode ? 'inline-block' : 'none';
+    guestBadge.style.display = window.guestMode ? 'inline-block' : 'none';
     window.dispatchEvent(new Event('firebase-ready'));
   }
   function showLogin(){
@@ -1935,7 +1941,7 @@
     appRoot.style.display = 'none';
   }
 
-  if(authToken || guestMode) showApp(); else showLogin();
+  if(window.authToken || window.guestMode) showApp(); else showLogin();
 
   function doLogin(){ document.getElementById('loginBtn').click(); }
 
@@ -1946,9 +1952,9 @@
     try{
       const data = await apiFetch('/api/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
       if(!data || !data.token) throw new Error('Server did not return a login token — the /api/login route on your Worker may be missing or misconfigured.');
-      authToken = data.token;
-      guestMode = false;
-      localStorage.setItem(TOKEN_KEY, authToken);
+      window.authToken = data.token;
+      window.guestMode = false;
+      localStorage.setItem(TOKEN_KEY, window.authToken);
       localStorage.removeItem(GUEST_KEY);
       showApp();
     }catch(e){
@@ -1964,9 +1970,9 @@
     try{
       const data = await apiFetch('/api/signup', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
       if(!data || !data.token) throw new Error('Server did not return a signup token — the /api/signup route on your Worker may be missing or misconfigured.');
-      authToken = data.token;
-      guestMode = false;
-      localStorage.setItem(TOKEN_KEY, authToken);
+      window.authToken = data.token;
+      window.guestMode = false;
+      localStorage.setItem(TOKEN_KEY, window.authToken);
       localStorage.removeItem(GUEST_KEY);
       showApp();
     }catch(e){
@@ -1976,8 +1982,8 @@
   });
 
   document.getElementById('guestBtn').addEventListener('click', () => {
-    guestMode = true;
-    authToken = null;
+    window.guestMode = true;
+    window.authToken = null;
     localStorage.setItem(GUEST_KEY, 'true');
     localStorage.removeItem(TOKEN_KEY);
     showApp();
@@ -1991,12 +1997,12 @@
   });
 
   document.getElementById('signOutBtn').addEventListener('click', async () => {
-    if(guestMode){
+    if(window.guestMode){
       const ok = confirm('Sign out of guest mode? Your guest data stays saved on this device unless you clear your browser storage.');
       if(!ok) return;
     }
-    authToken = null;
-    guestMode = false;
+    window.authToken = null;
+    window.guestMode = false;
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(GUEST_KEY);
     showLogin();
@@ -2518,7 +2524,7 @@
   // browser can't mix up whose invoices are being shown.
   const SALES_BACKUP_PREFIX = 'salesBackupCache:';
   function salesBackupKey(){
-    return SALES_BACKUP_PREFIX + (guestMode ? 'guest' : (authToken || 'unknown'));
+    return SALES_BACKUP_PREFIX + (window.guestMode ? 'guest' : (window.authToken || 'unknown'));
   }
   function saveSalesBackupCache(sales){
     try{ localStorage.setItem(salesBackupKey(), JSON.stringify(sales)); }
