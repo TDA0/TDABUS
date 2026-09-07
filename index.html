@@ -2482,7 +2482,15 @@
   // own key. A one-time migration (below) moves any old blob-style data over to
   // the new per-invoice keys the first time this runs for an account.
   const SALES_PREFIX = 'sales:';
-  const SALES_MIGRATION_KEY = 'salesMigrationDone_v2';
+  // Bumped to _v3: an earlier bug in this migration marked itself "done"
+  // even when it failed partway through (e.g. a network blip on the very
+  // first run), permanently skipping the real copy step and leaving
+  // accounts affected by that blip looking like they had zero invoices,
+  // forever, with nothing telling them why. Bumping the key forces every
+  // account to retry once under the corrected logic below, which only
+  // marks itself done after actually confirming success.
+  const SALES_MIGRATION_KEY = 'salesMigrationDone_v3';
+  const SALES_DELETED_PREFIX = 'salesDeleted:';
 
   async function migrateSalesIfNeeded(){
     try{
@@ -2490,43 +2498,106 @@
       if(done && done.value) return;
     }catch(e){ /* if we can't tell, fall through and try anyway below */ }
 
+    let old;
     try{
-      const old = await window.storage.get('sales');
-      if(old && old.value){
-        const oldSales = JSON.parse(old.value);
-        if(Array.isArray(oldSales)){
-          for(const rec of oldSales){
-            if(rec && rec.id){
-              await window.storage.set(SALES_PREFIX + rec.id, JSON.stringify(rec));
-            }
-          }
-        }
-      }
-    }catch(e){ console.error('Sales migration error:', e); }
+      old = await window.storage.get('sales');
+    }catch(e){
+      // Couldn't even check for old data this time — don't mark migration
+      // done, so this gets retried on the next load instead of silently
+      // giving up.
+      console.error('Sales migration: could not check for old data, will retry next load:', e);
+      return;
+    }
 
-    try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); }
-    catch(e){ console.error(e); }
+    if(!old || !old.value){
+      // Genuinely nothing to migrate — safe to mark done.
+      try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); }
+      catch(e){ console.error(e); }
+      return;
+    }
+
+    let oldSales;
+    try{ oldSales = JSON.parse(old.value); }
+    catch(e){
+      console.error('Sales migration: old data was corrupted, leaving unmigrated for now:', e);
+      return;
+    }
+    if(!Array.isArray(oldSales)) oldSales = [];
+
+    // Skip anything already copied over, and anything explicitly deleted
+    // since — so re-running this (as happens once now, to recover from the
+    // earlier bug) can't resurrect an invoice you deliberately removed.
+    let existingIds = new Set();
+    let deletedIds = new Set();
+    try{
+      const existingList = await window.storage.list(SALES_PREFIX);
+      (existingList && existingList.keys || []).forEach(k => existingIds.add(k.slice(SALES_PREFIX.length)));
+      const deletedList = await window.storage.list(SALES_DELETED_PREFIX);
+      (deletedList && deletedList.keys || []).forEach(k => deletedIds.add(k.slice(SALES_DELETED_PREFIX.length)));
+    }catch(e){
+      console.error('Sales migration: could not check existing/deleted invoices, will retry next load:', e);
+      return;
+    }
+
+    let allOk = true;
+    for(const rec of oldSales){
+      if(rec && rec.id && !existingIds.has(rec.id) && !deletedIds.has(rec.id)){
+        try{ await window.storage.set(SALES_PREFIX + rec.id, JSON.stringify(rec)); }
+        catch(e){ allOk = false; console.error('Sales migration: could not copy invoice ' + rec.id + ':', e); }
+      }
+    }
+
+    if(allOk){
+      try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); }
+      catch(e){ console.error(e); }
+    }
+    // If something failed partway through, deliberately leave the "done"
+    // flag unset so this whole thing is retried on the next load instead
+    // of quietly giving up again.
   }
 
   async function loadAllSales(){
     await migrateSalesIfNeeded();
     const listRes = await window.storage.list(SALES_PREFIX);
     const keys = (listRes && listRes.keys) || [];
-    // Fetch every invoice at once instead of in small sequential batches —
-    // these are independent GETs to the same Worker, so firing them all
-    // together lets them resolve in parallel instead of waiting on each
-    // batch one after another, which is what was making load slow once
-    // there were more than a couple dozen invoices.
-    const results = await Promise.all(keys.map(k =>
-      window.storage.get(k).catch(() => null)
-    ));
+    if(keys.length === 0) return [];
+
+    // Fetch with a bounded number of requests in flight at once — fast
+    // (unlike the old one-batch-of-20-at-a-time-in-sequence approach) but
+    // not so many all at once that it risks overwhelming/rate-limiting the
+    // Worker, which would make every single fetch fail at once. Each
+    // fetch also gets one retry, to ride out a transient blip rather than
+    // just dropping that invoice.
     const sales = [];
-    results.forEach(r => {
-      if(r && r.value){
-        try{ sales.push(JSON.parse(r.value)); }
-        catch(e){ console.error('Could not parse invoice ' + r.key + ':', e); }
+    let failCount = 0;
+    const CONCURRENCY = 8;
+    let idx = 0;
+    async function worker(){
+      while(idx < keys.length){
+        const k = keys[idx++];
+        let r = null;
+        try{ r = await window.storage.get(k); }
+        catch(e){
+          try{ r = await window.storage.get(k); } // one retry
+          catch(e2){ failCount++; console.error('Could not load invoice ' + k + ':', e2); continue; }
+        }
+        if(r && r.value){
+          try{ sales.push(JSON.parse(r.value)); }
+          catch(e){ failCount++; console.error('Could not parse invoice ' + k + ':', e); }
+        }
       }
-    });
+    }
+    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, keys.length) }, worker));
+
+    if(sales.length === 0 && failCount > 0){
+      // We know there SHOULD be invoices (keys.length > 0) but every single
+      // one failed to load — that's a real problem, not an empty account.
+      // Throw so the caller shows an error instead of a silent blank list.
+      throw new Error(failCount + ' invoice' + (failCount === 1 ? '' : 's') + ' could not be loaded — check your connection and reload.');
+    }
+    if(failCount > 0){
+      alertBanner(failCount + ' invoice' + (failCount === 1 ? '' : 's') + ' failed to load this time — try reloading.');
+    }
     return sales;
   }
 
@@ -2536,7 +2607,13 @@
   }
 
   async function deleteSaleRecord(id){
-    try{ await window.storage.delete(SALES_PREFIX + id); }
+    try{
+      await window.storage.delete(SALES_PREFIX + id);
+      // Record that this one was deliberately deleted, so it can never be
+      // re-added by a future migration/recovery pass that sees it still
+      // sitting in old backup data.
+      await window.storage.set(SALES_DELETED_PREFIX + id, 'true');
+    }
     catch(e){ console.error(e); alertBanner('Could not delete invoice: ' + e.message); }
   }
   async function saveBalance(){
