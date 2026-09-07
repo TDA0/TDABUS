@@ -3539,7 +3539,31 @@
     }
     while(line.voucher.length < line.qty) line.voucher.push([]);
     if(line.voucher.length > line.qty) line.voucher = line.voucher.slice(0, line.qty);
+    // When details apply to the whole quantity (line.voucherShared), unit 0 is
+    // the single source of truth — mirror it onto every unit so the data stays
+    // correct even after qty changes, while display code only ever shows it once.
+    if(line.voucherShared && line.voucher.length > 1){
+      const shared0 = line.voucher[0];
+      line.voucher = line.voucher.map(() => shared0.map(f => ({ ...f })));
+    }
     return line.voucher;
+  }
+
+  // What to actually render for a line's extra details: the full per-unit
+  // array normally, or just a single collapsed entry when the same details
+  // apply to the whole quantity (so it isn't repeated once per unit).
+  function voucherDisplayUnits(line){
+    const units = ensureUnitVouchers(line);
+    return line.voucherShared ? [units[0] || []] : units;
+  }
+
+  function setVoucherShared(productId, shared){
+    const line = state.lines.find(l => l.productId === productId);
+    if(!line) return;
+    line.voucherShared = !!shared;
+    ensureUnitVouchers(line);
+    state.previewEdited = false;
+    renderInvoice();
   }
 
   const VOUCHER_QUICK_FIELDS = ['Expiry date', 'Redeem code', 'Link', 'Username', 'PIN', 'Email', 'Password', 'User ID'];
@@ -3614,7 +3638,8 @@
     }
 
     const result = await new Promise((resolve) => {
-      const titleText = line.qty > 1 ? `Extra details — Unit ${unitIndex + 1} of ${line.qty}` : 'Extra details for this item';
+      const titleText = line.voucherShared ? `Extra details — same for all ${line.qty} units`
+        : (line.qty > 1 ? `Extra details — Unit ${unitIndex + 1} of ${line.qty}` : 'Extra details for this item');
       modalBox.innerHTML = `
         <h3>${escapeHtml(titleText)}</h3>
         <div class="voucher-quick-add" id="voucherQuickAdd">
@@ -4061,10 +4086,16 @@
         </div>
         ${p.type === 'voucher' ? `
         <div class="voucher-summary">
-          ${ensureUnitVouchers(line).map((unitFields, i) => `
+          ${line.qty > 1 ? `
+          <label class="voucher-toggle-row">
+            <input type="checkbox" class="voucher-shared-chk" ${line.voucherShared ? 'checked' : ''}>
+            Same details for all ${line.qty} units (not shown per unit)
+          </label>
+          ` : ''}
+          ${voucherDisplayUnits(line).map((unitFields, i) => `
             <div class="voucher-unit" data-unit-idx="${i}">
               <div class="voucher-unit-head">
-                <span>${line.qty > 1 ? 'Unit ' + (i + 1) : 'Details'}</span>
+                <span>${line.voucherShared ? 'Details (all ' + line.qty + ' units)' : (line.qty > 1 ? 'Unit ' + (i + 1) : 'Details')}</span>
                 <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${i}">✏️ edit</button>
               </div>
               <div class="voucher-unit-body">${unitFields.length ? unitFields.map(f => f.emph ? `<span class="vf-emph-line">${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}</span><br>` : `${escapeHtml(f.label || 'Detail')}: <b>${escapeHtml(f.value)}</b><br>`).join('') : `<span class="v-empty">No details entered yet.</span>`}</div>
@@ -4110,6 +4141,8 @@
       });
       const editVoucherBtns = el.querySelectorAll('.edit-voucher-btn');
       editVoucherBtns.forEach(btn => btn.addEventListener('click', () => editVoucherDetails(p.id, parseInt(btn.dataset.unitIdx, 10))));
+      const voucherSharedChk = el.querySelector('.voucher-shared-chk');
+      if(voucherSharedChk) voucherSharedChk.addEventListener('change', (e) => setVoucherShared(p.id, e.target.checked));
       const costInput = el.querySelector('.cost-input');
       const costCurrencySelect = el.querySelector('.cost-currency-select');
       attachThousandsFormatting(costInput);
@@ -4272,10 +4305,11 @@
       }
       lines.push(`   ${fmtUsd(lineTotal)} Or ${fmtLbp(lineTotal * state.rate.value)}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
-        const units = ensureUnitVouchers(line);
+        const units = voucherDisplayUnits(line);
         units.forEach((unitFields, i) => {
           if(!unitFields.length) return;
-          lines.push(`   ${em('🎟️')}${t.voucherHeader}${line.qty > 1 ? ' — Unit ' + (i + 1) : ''}`);
+          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' — Unit ' + (i + 1) : '');
+          lines.push(`   ${em('🎟️')}${t.voucherHeader}${unitSuffix}`);
           unitFields.forEach(f => {
             if(f.label || f.value){
               const detailLine = `${f.label || 'Detail'}: ${f.value}`;
@@ -5422,48 +5456,177 @@
     return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   }
 
+  // Full editor for a past invoice record: date/time, customer, every line
+  // item (name/qty/revenue/cost — add or remove rows), amount received, and
+  // tip. Older sales saved before per-item breakdowns existed are seeded
+  // with a single row built from their totals, so any invoice can be
+  // edited the same way. Nothing is written back to state.sales until the
+  // user hits Save.
   async function editSale(id){
     const s = state.sales.find(x => x.id === id);
     if(!s) return;
-    const result = await promptModalValidated(
-      'Edit invoice record',
-      [
-        { id:'date', label:'Date', type:'date', value: dateToInputValue(s.date) },
-        { id:'customer', label:'Customer name', value: s.customerName },
-        { id:'revenue', label:'Revenue', type:'money', value: s.revenueUsd.toFixed(2) },
-        { id:'cost', label:'Cost', type:'money', value: s.costUsd.toFixed(2) },
-        { id:'received', label:'Amount received', type:'money', value: s.amountReceived.toFixed(2) }
-      ],
-      (v) => {
-        if(!v.date) return 'Pick a valid date.';
-        if(!v.customer.trim()) return 'Enter a customer name.';
-        if(isNaN(parseFloat(v.revenue)) || parseFloat(v.revenue) < 0) return 'Enter a valid revenue amount.';
-        if(isNaN(parseFloat(v.cost)) || parseFloat(v.cost) < 0) return 'Enter a valid cost amount.';
-        if(isNaN(parseFloat(v.received))) return 'Enter a valid received amount.';
-        return null;
-      }
-    );
-    if(result === null) return;
 
-    const [y, m, day] = result.date.split('-').map(Number);
-    const original = new Date(s.date);
-    const newDate = new Date(y, m - 1, day, original.getHours(), original.getMinutes(), original.getSeconds());
+    const itemsState = (Array.isArray(s.items) && s.items.length)
+      ? s.items.map(it => ({ name: it.name || '', qty: it.qty, revenueUsd: it.revenueUsd, costUsd: it.costUsd }))
+      : [{ name: 'Invoice total', qty: 1, revenueUsd: s.revenueUsd, costUsd: s.costUsd }];
+
+    const d0 = new Date(s.date);
+    let fieldVals = {
+      date: dateToInputValue(s.date),
+      time: String(d0.getHours()).padStart(2,'0') + ':' + String(d0.getMinutes()).padStart(2,'0'),
+      customer: s.customerName || '',
+      received: s.amountReceived.toFixed(2),
+      tip: (s.tipUsd || 0).toFixed(2)
+    };
+
+    function renderItemRows(){
+      const list = document.getElementById('esItemsList');
+      if(!list) return;
+      list.innerHTML = itemsState.map((it, idx) => `
+        <div class="es-item-row" style="border:1px solid var(--line-strong);border-radius:10px;padding:8px 10px;margin-bottom:8px;">
+          <input type="text" class="es-item-name" data-idx="${idx}" placeholder="Item name" value="${escapeHtml(it.name)}" style="width:100%;box-sizing:border-box;margin-bottom:6px;padding:7px 9px;border:1px solid var(--line-strong);border-radius:8px;font-family:inherit;font-size:14px;">
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="number" step="any" min="0" class="es-item-qty" data-idx="${idx}" placeholder="Qty" value="${it.qty}" style="width:56px;padding:7px 4px;text-align:center;border:1px solid var(--line-strong);border-radius:8px;">
+            <input type="number" step="0.01" min="0" class="es-item-revenue" data-idx="${idx}" placeholder="Revenue $" value="${Number(it.revenueUsd).toFixed(2)}" style="flex:1;min-width:0;padding:7px 4px;border:1px solid var(--line-strong);border-radius:8px;">
+            <input type="number" step="0.01" min="0" class="es-item-cost" data-idx="${idx}" placeholder="Cost $" value="${Number(it.costUsd).toFixed(2)}" style="flex:1;min-width:0;padding:7px 4px;border:1px solid var(--line-strong);border-radius:8px;">
+            <button type="button" class="mini-btn danger es-item-remove" data-idx="${idx}" style="flex:0 0 auto;padding:7px 9px;">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+      updateTotalsPreview();
+    }
+
+    function updateTotalsPreview(){
+      const preview = document.getElementById('esTotalsPreview');
+      if(!preview) return;
+      const revenue = itemsState.reduce((sum, it) => sum + (parseFloat(it.revenueUsd) || 0), 0);
+      const cost = itemsState.reduce((sum, it) => sum + (parseFloat(it.costUsd) || 0), 0);
+      preview.textContent = `Revenue ${fmtUsd(revenue)} · Cost ${fmtUsd(cost)} · Profit ${fmtUsd(revenue - cost)}`;
+    }
+
+    while(true){
+      modalBox.innerHTML = `
+        <h3>Edit invoice</h3>
+        <form id="editSaleForm">
+          <div class="modal-field">
+            <span class="field-label">Date &amp; time</span>
+            <div class="add-row-inline">
+              <input type="date" id="esDate" value="${escapeHtml(fieldVals.date)}" style="flex:1;">
+              <input type="time" id="esTime" value="${escapeHtml(fieldVals.time)}" style="flex:0 0 110px;">
+            </div>
+          </div>
+          <div class="modal-field">
+            <span class="field-label">Customer name</span>
+            <input type="text" id="esCustomer" value="${escapeHtml(fieldVals.customer)}">
+          </div>
+          <div class="modal-field">
+            <span class="field-label">Items</span>
+            <div id="esItemsList"></div>
+            <button type="button" class="mini-btn" id="esAddItemBtn">+ Add item</button>
+          </div>
+          <div class="modal-field">
+            <span class="field-label">Amount received (USD)</span>
+            <input type="number" step="0.01" id="esReceived" value="${escapeHtml(fieldVals.received)}">
+          </div>
+          <div class="modal-field">
+            <span class="field-label">Tip received (USD) — kept by business, separate from client balance</span>
+            <input type="number" step="0.01" min="0" id="esTip" value="${escapeHtml(fieldVals.tip)}">
+          </div>
+          <div id="esTotalsPreview" style="font-size:12.5px;color:var(--ink-faint);margin:-4px 0 10px;font-weight:600;"></div>
+          <div class="modal-error" id="modalError"></div>
+          <div class="modal-actions">
+            <button type="button" class="btn ghost" id="esCancelBtn">Cancel</button>
+            <button type="submit" class="btn" id="esSaveBtn">Save</button>
+          </div>
+        </form>`;
+      modalOverlay.classList.add('show');
+      renderItemRows();
+
+      const listEl = document.getElementById('esItemsList');
+      listEl.addEventListener('input', (e) => {
+        const idx = Number(e.target.dataset.idx);
+        if(isNaN(idx)) return;
+        if(e.target.classList.contains('es-item-name')) itemsState[idx].name = e.target.value;
+        else if(e.target.classList.contains('es-item-qty')) itemsState[idx].qty = parseFloat(e.target.value);
+        else if(e.target.classList.contains('es-item-revenue')) itemsState[idx].revenueUsd = parseFloat(e.target.value);
+        else if(e.target.classList.contains('es-item-cost')) itemsState[idx].costUsd = parseFloat(e.target.value);
+        updateTotalsPreview();
+      });
+      listEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('.es-item-remove');
+        if(!btn) return;
+        if(itemsState.length <= 1){ alertBanner('An invoice needs at least one item.'); return; }
+        itemsState.splice(Number(btn.dataset.idx), 1);
+        renderItemRows();
+      });
+      document.getElementById('esAddItemBtn').addEventListener('click', () => {
+        itemsState.push({ name: '', qty: 1, revenueUsd: 0, costUsd: 0 });
+        renderItemRows();
+        const rows = document.querySelectorAll('#esItemsList .es-item-name');
+        if(rows.length) rows[rows.length - 1].focus();
+      });
+
+      const result = await new Promise((resolve) => {
+        document.getElementById('esCancelBtn').addEventListener('click', () => { closeModal(); resolve(null); });
+        document.getElementById('editSaleForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          resolve({
+            date: document.getElementById('esDate').value,
+            time: document.getElementById('esTime').value,
+            customer: document.getElementById('esCustomer').value,
+            received: document.getElementById('esReceived').value,
+            tip: document.getElementById('esTip').value
+          });
+        });
+      });
+      if(result === null) return;
+      fieldVals = result;
+
+      let err = null;
+      if(!fieldVals.date) err = 'Pick a valid date.';
+      else if(!fieldVals.customer.trim()) err = 'Enter a customer name.';
+      else if(itemsState.some(it => !it.name.trim())) err = 'Every item needs a name.';
+      else if(itemsState.some(it => isNaN(it.qty) || it.qty <= 0)) err = 'Enter a valid quantity for every item.';
+      else if(itemsState.some(it => isNaN(it.revenueUsd) || it.revenueUsd < 0)) err = 'Enter a valid revenue amount for every item.';
+      else if(itemsState.some(it => isNaN(it.costUsd) || it.costUsd < 0)) err = 'Enter a valid cost amount for every item.';
+      else if(isNaN(parseFloat(fieldVals.received))) err = 'Enter a valid received amount.';
+      else if(isNaN(parseFloat(fieldVals.tip)) || parseFloat(fieldVals.tip) < 0) err = 'Enter a valid tip amount.';
+
+      if(err){ alertBanner(err); continue; }
+      break;
+    }
+
+    const [y, m, day] = fieldVals.date.split('-').map(Number);
+    const [hh, mm] = fieldVals.time ? fieldVals.time.split(':').map(Number) : [d0.getHours(), d0.getMinutes()];
+    const newDate = new Date(y, m - 1, day, hh || 0, mm || 0, 0);
 
     const oldAmountReceived = s.amountReceived;
     const oldCostUsd = s.costUsd;
 
+    const newItems = itemsState.map(it => ({
+      productId: null,
+      name: it.name.trim(),
+      qty: it.qty,
+      revenueUsd: it.revenueUsd,
+      costUsd: it.costUsd,
+      profitUsd: it.revenueUsd - it.costUsd
+    }));
+    const newRevenueUsd = newItems.reduce((sum, it) => sum + it.revenueUsd, 0);
+    const newCostUsd = newItems.reduce((sum, it) => sum + it.costUsd, 0);
+
     s.date = newDate.getTime();
-    s.customerName = result.customer.trim();
-    s.revenueUsd = parseFloat(result.revenue);
-    s.costUsd = parseFloat(result.cost);
-    s.profitUsd = s.revenueUsd - s.costUsd;
-    s.amountReceived = parseFloat(result.received);
+    s.customerName = fieldVals.customer.trim();
+    s.items = newItems;
+    s.revenueUsd = newRevenueUsd;
+    s.costUsd = newCostUsd;
+    s.profitUsd = newRevenueUsd - newCostUsd;
+    s.amountReceived = parseFloat(fieldVals.received);
+    s.tipUsd = parseFloat(fieldVals.tip);
     s.newBalance = s.revenueUsd + (s.prevBalanceApplied||0) - s.amountReceived;
 
     // The original snapshot (if any) was captured at finalize time and would
-    // now be out of sync with the edited totals above, and itemized line
-    // data isn't stored on the record to begin with — so rebuild the
-    // printable/WhatsApp snapshot from the updated summary numbers.
+    // now be out of sync with the edited totals above — rebuild the
+    // printable/WhatsApp snapshot, now properly itemized, from the updated record.
     s.snapshotHtml = buildFallbackReceiptHtml(s);
     s.snapshotText = buildFallbackReceiptText(s);
     s.snapshotThermal = buildThermalSegmentsFromSale(s);
@@ -6033,10 +6196,11 @@
       if(getLineDiscount(line)) seg(`  ${discountSummaryText(line)} (was ${fmtUsd(amt.original)})`);
       if(line.note.trim()) seg(`  ${t.note}: ${line.note.trim()}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
-        const units = ensureUnitVouchers(line);
+        const units = voucherDisplayUnits(line);
         units.forEach((unitFields, i) => {
           if(!unitFields.length) return;
-          seg(`  ${t.voucherHeader}${line.qty > 1 ? ' - Unit ' + (i + 1) : ''}`);
+          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' - Unit ' + (i + 1) : '');
+          seg(`  ${t.voucherHeader}${unitSuffix}`);
           unitFields.forEach(f => { if(f.label || f.value) seg(`    ${f.label || 'Detail'}: ${f.value}`, { bold: !!f.emph }); });
         });
       }
@@ -6132,13 +6296,14 @@
         tableRows += `<tr class="pr-item-subrow"><td colspan="4">${subLines.map(x => `<div class="pr-item-sub${x.cls ? ' ' + x.cls : ''}">${x.text}</div>`).join('')}</td></tr>`;
       }
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
-        const units = ensureUnitVouchers(line);
+        const units = voucherDisplayUnits(line);
         units.forEach((unitFields, i) => {
           const vh = unitFields.filter(f => f.label || f.value).map(f => {
             const line = `${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}`;
             return f.emph ? `<span style="font-weight:800; font-size:13px;">${line}</span>` : line;
           }).join('<br>');
-          if(vh) tableRows += `<tr class="pr-item-subrow"><td colspan="4"><div class="pr-voucher"><b>${t.voucherHeader}${line.qty > 1 ? ' — Unit ' + (i + 1) : ''}</b><br>${vh}</div></td></tr>`;
+          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' — Unit ' + (i + 1) : '');
+          if(vh) tableRows += `<tr class="pr-item-subrow"><td colspan="4"><div class="pr-voucher"><b>${t.voucherHeader}${unitSuffix}</b><br>${vh}</div></td></tr>`;
         });
       }
     });
