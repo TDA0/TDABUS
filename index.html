@@ -365,50 +365,67 @@
   .search-box{ margin-bottom:10px; }
 
   .catalog-picker{
-    max-height:240px;
+    max-height:340px;
     overflow-y:auto;
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:8px;
+    padding:10px;
     border:1px solid var(--line);
     border-radius:var(--radius);
     background:var(--paper-card);
     box-shadow:var(--shadow);
     margin-bottom:16px;
+    align-content:start;
+  }
+  @media (min-width:520px){
+    .catalog-picker{ grid-template-columns:repeat(3, 1fr); }
   }
   .pick-cat-label{
+    grid-column:1 / -1;
     font-size:12.5px;
     font-weight:700;
     color:var(--ink-soft);
-    padding:10px 12px 4px;
+    padding:8px 2px 0;
     background:none;
     text-transform:uppercase;
     letter-spacing:0.4px;
   }
+  .pick-cat-label:first-child{ padding-top:2px; }
   .pick-row{
+    position:relative;
     display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:10px 12px;
-    border-bottom:1px solid var(--line);
+    flex-direction:column;
+    justify-content:center;
+    gap:2px;
+    min-height:64px;
+    padding:10px 30px 10px 12px;
+    border:1.5px solid var(--line);
+    border-radius:var(--radius-sm);
     cursor:pointer;
-    transition:background .1s ease;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    transition:background .1s ease, border-color .1s ease, transform .06s ease;
   }
-  .pick-row:last-child{ border-bottom:none; }
-  .pick-row:active{ background:var(--cedar-soft); }
+  .pick-row:active{ background:var(--cedar-soft); border-color:var(--cedar); transform:scale(0.97); }
   .pick-row-left{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .pick-thumb{ width:34px; height:34px; border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid var(--line); }
-  .pick-name{ font-size:15.5px; font-weight:600; }
-  .pick-price{ font-size:13px; color:var(--ink-soft); margin-top:1px; }
+  .pick-thumb{ width:30px; height:30px; border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid var(--line); }
+  .pick-name{ font-size:14.5px; font-weight:700; line-height:1.25; overflow-wrap:break-word; }
+  .pick-price{ font-size:12.5px; color:var(--ink-soft); margin-top:1px; font-weight:600; }
   .pick-plus{
-    font-size:19px;
+    position:absolute;
+    top:8px; right:8px;
+    font-size:17px;
     color:#fff;
     background:var(--cedar);
-    width:24px; height:24px;
-    line-height:24px;
+    width:22px; height:22px;
+    line-height:22px;
     text-align:center;
     border-radius:999px;
     font-weight:700;
     flex-shrink:0;
   }
-  .pick-row.just-added{ background:var(--success-soft); }
+  .pick-row.just-added{ background:var(--success-soft); border-color:var(--success); }
 
   .cat-chips{
     display:flex;
@@ -438,6 +455,47 @@
     background:var(--cedar);
     border-color:var(--cedar);
   }
+
+  /* Sticky POS-style cart bar — stays pinned to the bottom of the screen
+     while browsing the catalog so the running total and a fast path to
+     checkout are always visible without scrolling. */
+  .cart-bar{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:560px;
+    box-sizing:border-box;
+    z-index:60;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--ink);
+    color:#fff;
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-radius:16px 16px 0 0;
+    box-shadow:0 -4px 18px rgba(23,25,35,0.22);
+  }
+  @media (min-width:700px){ .cart-bar{ max-width:680px; } }
+  .cart-bar-info{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .cart-bar-count{ font-size:12px; font-weight:600; color:#C7C9D6; }
+  .cart-bar-total{ font-size:19px; font-weight:800; letter-spacing:-0.01em; }
+  .cart-bar-btn{
+    flex-shrink:0;
+    background:var(--cedar);
+    color:#fff;
+    border:none;
+    font-family:'Inter', sans-serif;
+    font-size:14.5px;
+    font-weight:700;
+    padding:11px 18px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .cart-bar-btn:active{ background:var(--cedar-dark); }
+  body.cart-bar-visible .app{ padding-bottom:78px; }
 
   /* Filter panel — used in the invoice history modal search/filter controls */
   .filter-panel{
@@ -565,6 +623,19 @@
   .line-price{ font-size:14px; color:var(--ink-soft); margin-left:auto; text-align:right; }
   .line-price b{ color:var(--ink); font-size:15.5px; }
   .note-input{ font-size:15px; }
+  .line-more-toggle{
+    background:none; border:none; color:var(--ink-faint); font-size:12.5px; font-weight:600;
+    cursor:pointer; padding:2px 4px; display:flex; align-items:center; gap:3px;
+  }
+  .line-more-toggle .chev{ font-size:10px; transition:transform .12s ease; }
+  .line-item.expanded .line-more-toggle .chev{ transform:rotate(180deg); }
+  .line-more{ display:none; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
+  .line-item.expanded .line-more{ display:block; }
+  .line-more-badges{ display:flex; gap:6px; flex-wrap:wrap; margin-top:2px; }
+  .line-more-badge{
+    font-size:11px; font-weight:600; color:var(--ink-soft); background:var(--bg);
+    border:1px solid var(--line-strong); border-radius:999px; padding:2px 8px;
+  }
 
   .client-box{
     border:1px solid var(--line);
@@ -1607,6 +1678,31 @@
       </div>
     </div>
 
+    <div class="search-block" id="productSearchCard">
+      <h3>📦 Product sales &amp; profit by day / month / year</h3>
+      <div class="search-mode-row">
+        <input type="text" id="searchProductInput" list="productSearchDatalist" placeholder="Search a product...">
+        <datalist id="productSearchDatalist"></datalist>
+      </div>
+      <div class="search-mode-row">
+        <select id="searchProductMode">
+          <option value="day">Day</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+        </select>
+        <input type="date" id="searchProductDay" style="flex:1;">
+        <input type="month" id="searchProductMonth" style="flex:1; display:none;">
+        <input type="number" id="searchProductYear" placeholder="e.g. 2026" style="flex:1; display:none;">
+      </div>
+      <button class="btn full small" id="searchProductBtn">🔍 Search</button>
+      <div class="search-result" id="searchProductResult">
+        <div class="r-label" id="searchProductResultLabel"></div>
+        <div class="sr-profit" id="searchProductResultProfit">$0.00</div>
+        <div class="sr-meta" id="searchProductResultMeta"></div>
+        <div id="searchProductResultList" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
     <div class="collapse-block" id="balanceLogBlock" style="margin-top:16px;">
       <button type="button" class="collapse-toggle" id="balanceLogToggle">
         <span>💰 <span id="balanceLogToggleLabel">Balance changes</span></span>
@@ -1694,6 +1790,14 @@
     </div>
   </section>
 
+</div>
+
+<div class="cart-bar" id="cartBar" style="display:none;">
+  <div class="cart-bar-info">
+    <span class="cart-bar-count" id="cartBarCount">0 items</span>
+    <span class="cart-bar-total" id="cartBarTotal">$0.00</span>
+  </div>
+  <button type="button" class="cart-bar-btn" id="cartBarCheckoutBtn">Checkout ▾</button>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -1926,6 +2030,10 @@
   // Which category chip is selected on the Sale tab's product picker (POS-style
   // filter). null means "All". Purely a UI filter, not persisted.
   let activeCatalogCategory = null;
+  // Which cart lines have their discount/note/cost panel expanded, keyed by
+  // productId. Lines that already have a note or custom cost auto-expand
+  // regardless of this set (see renderInvoice).
+  const expandedLineIds = new Set();
 
   const I18N = {
     en: {
@@ -3902,6 +4010,7 @@
       $('#totalsCard').style.display = 'none';
       $('#customerDetailsBlock').style.display = 'none';
       $('#previewBlock').style.display = 'none';
+      updateCartBar();
       return;
     }
     hint.style.display = 'none';
@@ -3918,16 +4027,24 @@
       const lineDiscount = getLineDiscount(line);
 
       const el = document.createElement('div');
-      el.className = 'line-item';
+      // Lines with a note or a custom cost already set start expanded so
+      // existing data is never hidden by surprise; everything else starts
+      // collapsed to keep the cart fast to scan while adding items.
+      const hasMoreData = !!line.note || line.costOverride !== null;
+      el.className = 'line-item' + (expandedLineIds.has(line.productId + '') || hasMoreData ? ' expanded' : '');
       const unitCost = getLineUnitCost(p, line);
       const effCostMode = getLineCostMode(p, line);
       const costCurrency = line.costCurrency === 'LBP' ? 'LBP' : 'USD';
       const costDisplayVal = costCurrency === 'LBP' ? Math.round(unitCost * state.rate.value) : unitCost;
+      const badges = [];
+      if(line.note) badges.push('📝 ' + line.note);
       el.innerHTML = `
         <div class="line-top">
-          <div class="line-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}${lineDiscount ? '<span class="discount-badge">🏷️ ' + escapeHtml(discountSummaryText(line)) + '</span>' : ''}</div>
+          <div>
+            <div class="line-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}${lineDiscount ? '<span class="discount-badge">🏷️ ' + escapeHtml(discountSummaryText(line)) + '</span>' : ''}</div>
+            ${badges.length ? '<div class="line-more-badges">' + badges.map(b => '<span class="line-more-badge">' + escapeHtml(b) + '</span>').join('') + '</div>' : ''}
+          </div>
           <div class="line-top-actions">
-            <button class="mini-btn discount-btn" type="button">🏷️ discount</button>
             <button class="remove-line">remove</button>
           </div>
         </div>
@@ -3942,7 +4059,6 @@
             ${fmtUsd(lineTotalUsd)}<br><b>${fmtLbp(lineTotalUsd * state.rate.value)}</b>
           </div>
         </div>
-        <input type="text" class="note-input" placeholder="Note for this item (e.g. size, color)" value="${escapeHtml(line.note)}">
         ${p.type === 'voucher' ? `
         <div class="voucher-summary">
           ${ensureUnitVouchers(line).map((unitFields, i) => `
@@ -3956,20 +4072,29 @@
           `).join('')}
         </div>
         ` : ''}
-        <div class="add-row-inline" style="margin-top:6px;">
-          <input type="text" inputmode="decimal" class="cost-input" placeholder="Cost price for this sale" value="${costDisplayVal ? formatNumberString(costCurrency==='LBP' ? String(costDisplayVal) : costDisplayVal.toFixed(2)) : ''}" style="flex:1;">
-          <select class="cost-currency-select" style="flex:0 0 80px;">
-            <option value="USD" ${costCurrency==='USD'?'selected':''}>USD</option>
-            <option value="LBP" ${costCurrency==='LBP'?'selected':''}>LBP</option>
-          </select>
+        <button type="button" class="line-more-toggle">
+          <span class="chev">▾</span> discount, note &amp; cost
+        </button>
+        <div class="line-more">
+          <div class="action-row" style="margin-bottom:8px;">
+            <button class="mini-btn discount-btn" type="button" style="flex:1;">🏷️ discount</button>
+          </div>
+          <input type="text" class="note-input" placeholder="Note for this item (e.g. size, color)" value="${escapeHtml(line.note)}">
+          <div class="add-row-inline" style="margin-top:6px;">
+            <input type="text" inputmode="decimal" class="cost-input" placeholder="Cost price for this sale" value="${costDisplayVal ? formatNumberString(costCurrency==='LBP' ? String(costDisplayVal) : costDisplayVal.toFixed(2)) : ''}" style="flex:1;">
+            <select class="cost-currency-select" style="flex:0 0 80px;">
+              <option value="USD" ${costCurrency==='USD'?'selected':''}>USD</option>
+              <option value="LBP" ${costCurrency==='LBP'?'selected':''}>LBP</option>
+            </select>
+          </div>
+          <div class="add-row-inline" style="margin-top:6px;">
+            <select class="cost-mode-select" style="flex:1;">
+              <option value="perUnit" ${effCostMode==='perUnit'?'selected':''}>Cost × quantity</option>
+              <option value="flat" ${effCostMode==='flat'?'selected':''}>Cost × 1 (flat)</option>
+            </select>
+          </div>
+          <div class="product-prices" style="margin-top:2px;">Cost · not shown on customer invoice</div>
         </div>
-        <div class="add-row-inline" style="margin-top:6px;">
-          <select class="cost-mode-select" style="flex:1;">
-            <option value="perUnit" ${effCostMode==='perUnit'?'selected':''}>Cost × quantity</option>
-            <option value="flat" ${effCostMode==='flat'?'selected':''}>Cost × 1 (flat)</option>
-          </select>
-        </div>
-        <div class="product-prices" style="margin-top:2px;">Cost · not shown on customer invoice</div>
       `;
       el.querySelector('.remove-line').addEventListener('click', () => removeLine(p.id));
       el.querySelector('.discount-btn').addEventListener('click', () => editLineDiscount(p.id));
@@ -3978,6 +4103,11 @@
       el.querySelector('.qty-controls input').addEventListener('change', (e) => setQty(p.id, e.target.value));
       attachThousandsFormatting(el.querySelector('.qty-controls input'));
       el.querySelector('.note-input').addEventListener('input', (e) => setNote(p.id, e.target.value));
+      el.querySelector('.line-more-toggle').addEventListener('click', () => {
+        const id = line.productId + '';
+        if(el.classList.contains('expanded')){ el.classList.remove('expanded'); expandedLineIds.delete(id); }
+        else { el.classList.add('expanded'); expandedLineIds.add(id); }
+      });
       const editVoucherBtns = el.querySelectorAll('.edit-voucher-btn');
       editVoucherBtns.forEach(btn => btn.addEventListener('click', () => editVoucherDetails(p.id, parseInt(btn.dataset.unitIdx, 10))));
       const costInput = el.querySelector('.cost-input');
@@ -4018,6 +4148,7 @@
 
     $('#grandUsd').textContent = fmtUsd(nums.grandTotal);
     $('#grandLbp').textContent = fmtLbp(nums.grandTotal * state.rate.value);
+    updateCartBar(nums);
 
     if(!state.paymentStatus) state.paymentStatus = 'paid';
     const receivedInput = $('#amountReceived');
@@ -4076,6 +4207,24 @@
     const remaining = nums.grandTotal - receivedVal;
     const isTip = remaining < 0 && state.overpaymentMode === 'tip';
     $('#remainingBalance').innerHTML = (remaining > 0 ? 'owes <b>' + fmtUsd(remaining) + '</b> (' + fmtLbp(remaining * state.rate.value) + ')' : remaining < 0 ? (isTip ? 'tip <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')' : 'credit <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')') : '<b>$0.00</b> (0 LBP)');
+  }
+
+  // Keeps the sticky bottom cart bar in sync with the current invoice, so
+  // the running total and a one-tap way to jump to checkout stay visible
+  // the whole time someone is browsing/adding products.
+  function updateCartBar(nums){
+    const bar = $('#cartBar');
+    if(!bar) return;
+    if(state.lines.length === 0 || $('#tab-invoice').classList.contains('active') === false){
+      bar.style.display = 'none';
+      document.body.classList.remove('cart-bar-visible');
+      return;
+    }
+    const itemCount = state.lines.reduce((sum, l) => sum + (parseFloat(l.qty) || 0), 0);
+    $('#cartBarCount').textContent = itemCount + (itemCount === 1 ? ' item' : ' items');
+    if(nums) $('#cartBarTotal').textContent = fmtUsd(nums.grandTotal);
+    bar.style.display = 'flex';
+    document.body.classList.add('cart-bar-visible');
   }
 
   function renderInvoiceIfNeeded(){
@@ -4300,7 +4449,13 @@
       const ok = await confirmModal('Start a new invoice? Current items will be cleared.');
       if(!ok) return;
     }
+    // Make sure the invoice being left behind is actually recorded — otherwise
+    // starting a new invoice without ever copying/printing/sending the old one
+    // would silently drop it from "Old invoices" and skip the balance updates
+    // (minus cost of goods, plus amount received) that happen on finalize.
+    finalizeSaleIfNeeded();
     state.lines = [];
+    expandedLineIds.clear();
     state.invoiceDiscount = { mode: 'none', value: 0 };
     state.finalizedThisInvoice = false;
     state.paymentStatus = 'paid';
@@ -4346,6 +4501,7 @@
     renderReportsOutstanding();
     renderTopPerformers();
     renderSearchClientFilter();
+    renderProductSearchDatalist();
     renderCalendar();
 
     const historyEl = $('#salesHistory');
@@ -5408,6 +5564,111 @@
     $('#searchResult').classList.add('show');
   }
 
+  // ---------- Reports: product sales & profit search ----------
+  function renderProductSearchDatalist(){
+    const list = $('#productSearchDatalist');
+    if(!list) return;
+    const current = $('#searchProductInput') ? $('#searchProductInput').value : '';
+    // De-dupe by name (case-insensitive) — several products can share a
+    // display name across categories, and search matches by name anyway.
+    const seen = new Set();
+    const names = [];
+    state.products.forEach(p => {
+      const key = p.name.toLowerCase();
+      if(seen.has(key)) return;
+      seen.add(key);
+      names.push(p.name);
+    });
+    names.sort((a, b) => a.localeCompare(b));
+    list.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">`).join('');
+    if(current) $('#searchProductInput').value = current;
+  }
+
+  function updateSearchProductInputsVisibility(){
+    const mode = $('#searchProductMode').value;
+    $('#searchProductDay').style.display = mode === 'day' ? '' : 'none';
+    $('#searchProductMonth').style.display = mode === 'month' ? '' : 'none';
+    $('#searchProductYear').style.display = mode === 'year' ? '' : 'none';
+  }
+
+  function runProductReportSearch(){
+    const typed = ($('#searchProductInput').value || '').trim();
+    if(!typed){ alertBanner('Type or pick a product to search.'); return; }
+    const query = typed.toLowerCase();
+
+    // Prefer an exact name match (case-insensitive); if nothing matches
+    // exactly, fall back to a "contains" match so partial typing still
+    // finds something instead of silently coming back empty.
+    const exactExists = state.products.some(p => p.name.toLowerCase() === query);
+    const matchesName = (name) => {
+      const n = (name || '').toLowerCase();
+      return exactExists ? n === query : n.includes(query);
+    };
+
+    const mode = $('#searchProductMode').value;
+    let sales, label;
+
+    if(mode === 'day'){
+      const val = $('#searchProductDay').value;
+      if(!val){ alertBanner('Pick a day to search.'); return; }
+      const [y, m, day] = val.split('-').map(Number);
+      sales = state.sales.filter(s => {
+        const d = new Date(s.date);
+        return d.getFullYear()===y && d.getMonth()===m-1 && d.getDate()===day;
+      });
+      const d = new Date(y, m-1, day);
+      label = d.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    } else if(mode === 'month'){
+      const val = $('#searchProductMonth').value;
+      if(!val){ alertBanner('Pick a month to search.'); return; }
+      const [y, m] = val.split('-').map(Number);
+      sales = state.sales.filter(s => {
+        const d = new Date(s.date);
+        return d.getFullYear()===y && d.getMonth()===m-1;
+      });
+      const d = new Date(y, m-1, 1);
+      label = d.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    } else {
+      const val = parseInt($('#searchProductYear').value);
+      if(!val || val < 1970){ alertBanner('Enter a valid year.'); return; }
+      sales = state.sales.filter(s => new Date(s.date).getFullYear() === val);
+      label = String(val);
+    }
+
+    // Only sales finalized after itemized breakdowns were added carry an
+    // `items` array — older ones can't be searched per-product.
+    const itemizedSales = sales.filter(s => Array.isArray(s.items));
+    const anyItemizedEver = state.sales.some(s => Array.isArray(s.items));
+
+    let qty = 0, revenue = 0, profit = 0;
+    const matchingSales = [];
+    itemizedSales.forEach(s => {
+      const hits = s.items.filter(it => matchesName(it.name));
+      if(hits.length === 0) return;
+      matchingSales.push(s);
+      hits.forEach(it => {
+        qty += it.qty || 0;
+        revenue += it.revenueUsd || 0;
+        profit += it.profitUsd || 0;
+      });
+    });
+
+    $('#searchProductResultLabel').textContent = label + ' · ' + typed;
+    $('#searchProductResultProfit').textContent = fmtUsd(profit);
+    $('#searchProductResultMeta').textContent = `${qty} sold · rev ${fmtUsd(revenue)} · ${matchingSales.length} invoice${matchingSales.length===1?'':'s'}`;
+
+    const listEl = $('#searchProductResultList');
+    listEl.innerHTML = '';
+    if(matchingSales.length === 0){
+      listEl.innerHTML = anyItemizedEver
+        ? '<div class="empty-hint" style="border:none; padding:8px;">No sales of this product in that period.</div>'
+        : '<div class="empty-hint" style="border:none; padding:8px;">No itemized sales yet — this only counts invoices made after per-product tracking was added.</div>';
+    } else {
+      [...matchingSales].sort((a,b) => b.date - a.date).forEach(s => renderSaleRow(listEl, s));
+    }
+    $('#searchProductResult').classList.add('show');
+  }
+
   // ---------- Settings (header/footer/logo/printer) ----------
   function renderSettingsTab(){
     const s = state.invoiceSettings;
@@ -5999,7 +6260,13 @@
       $('#tab-' + tab.dataset.tab).classList.add('active');
       if(tab.dataset.tab === 'reports') renderReports();
       if(tab.dataset.tab === 'settings') renderSettingsTab();
+      updateCartBar();
     });
+  });
+
+  $('#cartBarCheckoutBtn').addEventListener('click', () => {
+    const target = $('#totalsCard');
+    if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   // ---------- Wire up ----------
@@ -6093,7 +6360,10 @@
   updateOverpaymentModeUI();
   $('#searchMode').addEventListener('change', updateSearchInputsVisibility);
   $('#searchReportsBtn').addEventListener('click', runReportSearch);
+  $('#searchProductMode').addEventListener('change', updateSearchProductInputsVisibility);
+  $('#searchProductBtn').addEventListener('click', runProductReportSearch);
   updateSearchInputsVisibility();
+  updateSearchProductInputsVisibility();
   attachThousandsFormatting($('#amountReceived'));
   attachThousandsFormatting($('#newClientBalance'));
 
