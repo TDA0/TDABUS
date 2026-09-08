@@ -1860,11 +1860,14 @@
   async function apiFetch(path, options = {}){
     const res = await fetch(API_BASE + path, {
       ...options,
-      // keepalive lets this request keep running in the background even if
-      // the page is being closed/navigated away from right after it fires —
-      // needed for the closing-tab safety net further down, so an in-flight
-      // save isn't just aborted along with the page.
-      keepalive: true,
+      // NOTE: keepalive was previously set to true here, but Chrome enforces
+      // a hard 64KB request-body cap for keepalive requests — any request
+      // over that limit fails instantly with a generic "TypeError: Failed to
+      // fetch", no server involvement at all. That silently broke every save
+      // of a large record (e.g. an invoice with an embedded logo image),
+      // while small saves (like the balance) kept working, which is exactly
+      // what made this bug so confusing to track down. Dropped it entirely;
+      // the closing-tab safety net below no longer depends on it.
       headers: {
         'Content-Type': 'application/json',
         ...(window.authToken ? { 'Authorization': 'Bearer ' + window.authToken } : {}),
