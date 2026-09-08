@@ -1149,6 +1149,9 @@
   .vf-actions-row button{ flex:1; }
   .vf-emph-toggle.active{ background:var(--brass-soft); color:var(--brass); border-color:var(--brass); font-weight:700; }
   .voucher-fields-empty{ font-size:13px; color:var(--ink-soft); font-style:italic; margin-bottom:8px; }
+  .cvf-row{ display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+  .cvf-row input{ margin-bottom:0; flex:1; min-width:0; }
+  .cvf-row .cvf-remove{ flex:0 0 auto; padding:6px 9px; font-size:12.5px; }
   .voucher-quick-add{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
   .voucher-quick-add .chip{
     font-family:'Inter', sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft);
@@ -1778,6 +1781,24 @@
     </div>
 
     <div class="settings-card">
+      <h3>💬 Message templates</h3>
+      <div class="settings-hint">The WhatsApp reminder, partial-payment, full-payment, receipt thank-you texts, the small connector words/labels used across the invoice (like "or" between USD and LBP), and the quick-add field names for voucher details (redeem code, expiry date, etc.). Edit each language separately — blank fields fall back to the default text.</div>
+      <div class="paper-btns" id="msgTemplateLangBtns" style="margin:10px 0 14px;">
+        <button type="button" class="btn small ghost" data-lang="en">English</button>
+        <button type="button" class="btn small ghost" data-lang="ar">العربية</button>
+      </div>
+      <div id="msgTemplateFields"></div>
+      <button class="btn ghost small" id="resetMsgTemplatesBtn" type="button" style="margin-top:4px;">↺ Reset this language to default</button>
+
+      <div style="margin-top:18px; padding-top:14px; border-top:1px dashed var(--line-strong);">
+        <span class="field-label" style="display:block; margin-bottom:4px;">🎟️ Custom voucher quick-add fields</span>
+        <div class="settings-hint" style="margin-top:0; margin-bottom:10px;">Extra quick-add fields you've typed while adding voucher details (e.g. "Mobile number"), plus any you add here. Give each one an English and an Arabic name so the chip shows in whichever language the invoice is in.</div>
+        <div id="customVoucherFieldsWrap"></div>
+        <button class="btn ghost small" id="addCustomVoucherFieldBtn" type="button">+ Add custom field</button>
+      </div>
+    </div>
+
+    <div class="settings-card">
       <h3>🖨️ Printer</h3>
       <span class="field-label">📏 Paper width</span>
       <div class="paper-btns" id="paperWidthBtns" style="margin-bottom:12px;">
@@ -2029,6 +2050,10 @@
     finalizedThisInvoice: false,
     paymentMethods: [],
     invoiceLang: 'en',
+    // Per-language overrides for the WhatsApp reminder/payment/thank-you
+    // texts (see MESSAGE_FIELD_GROUPS + getT()). Blank/missing keys fall
+    // back to the built-in I18N defaults.
+    messageTemplates: { en: {}, ar: {} },
     previewEdited: false,
     overpaymentMode: 'owe', // 'owe' = extra received is a credit owed back; 'tip' = extra is kept as a tip
     invoiceSettings: {
@@ -2053,6 +2078,9 @@
   // Which category chip is selected on the Sale tab's product picker (POS-style
   // filter). null means "All". Purely a UI filter, not persisted.
   let activeCatalogCategory = null;
+  // Which language's message templates are currently shown for editing in
+  // Settings → Message templates. Purely a UI selector, not persisted.
+  let msgTemplateEditLang = 'en';
   // Which cart lines have their discount/note/cost panel expanded, keyed by
   // productId. Lines that already have a note or custom cost auto-expand
   // regardless of this set (see renderInvoice).
@@ -2060,7 +2088,7 @@
 
   const I18N = {
     en: {
-      invoice: '*Invoice*',
+      invoice: 'Invoice',
       customer: 'Customer',
       itemsSubtotal: 'Items subtotal',
       subtotalAfterDiscount: 'Subtotal after discount',
@@ -2083,6 +2111,22 @@
       paymentMethods: 'Payment methods',
       dateLocale: 'en-US',
       orWord: 'or',
+      usdWord: 'USD',
+      discountTotal: 'Discount total',
+      freeWord: 'FREE',
+      percentOffFmt: '{v}% off',
+      newPriceFmt: 'new price {v}',
+      oneUnitSuffix: ' (1 unit)',
+      unitWord: 'Unit',
+      detailWord: 'Detail',
+      qfExpiryDate: 'Expiry date',
+      qfRedeemCode: 'Redeem code',
+      qfLink: 'Link',
+      qfUsername: 'Username',
+      qfPin: 'PIN',
+      qfEmail: 'Email',
+      qfPassword: 'Password',
+      qfUserId: 'User ID',
       reminderHi: 'Hi',
       reminderBody: 'Just a friendly reminder that you still have an outstanding balance of',
       reminderToPay: 'to pay.',
@@ -2102,7 +2146,7 @@
       thankYouPrint: 'Thank you for choosing TDA!'
     },
     ar: {
-      invoice: '*فاتورة*',
+      invoice: 'فاتورة',
       customer: 'الزبون',
       itemsSubtotal: 'مجموع الأصناف',
       subtotalAfterDiscount: 'المجموع بعد الخصم',
@@ -2125,6 +2169,22 @@
       paymentMethods: 'طرق الدفع',
       dateLocale: 'ar-LB',
       orWord: 'أو',
+      usdWord: 'دولار',
+      discountTotal: 'إجمالي الخصم',
+      freeWord: 'مجاناً',
+      percentOffFmt: 'خصم {v}%',
+      newPriceFmt: 'السعر الجديد {v}',
+      oneUnitSuffix: ' (لوحدة واحدة)',
+      unitWord: 'الوحدة',
+      detailWord: 'تفصيل',
+      qfExpiryDate: 'تاريخ الانتهاء',
+      qfRedeemCode: 'رمز الاسترداد',
+      qfLink: 'الرابط',
+      qfUsername: 'اسم المستخدم',
+      qfPin: 'الرقم السري (PIN)',
+      qfEmail: 'البريد الإلكتروني',
+      qfPassword: 'كلمة المرور',
+      qfUserId: 'رقم المستخدم',
       reminderHi: 'مرحباً',
       reminderBody: 'هذا تذكير ودّي بأنه لا يزال لديك رصيد مستحق قدره',
       reminderToPay: 'يرجى تسديده.',
@@ -2144,6 +2204,71 @@
       thankYouPrint: 'شكراً لاختياركم TDA!'
     }
   };
+
+  // Fields the user can customize under Settings → Message templates.
+  // Grouped for display; `key` matches the I18N property it overrides.
+  const MESSAGE_FIELD_GROUPS = [
+    { title: '⏰ Payment reminder', keys: [
+      { key: 'reminderHi', label: 'Greeting' },
+      { key: 'reminderBody', label: 'Reminder line (before the amount)' },
+      { key: 'reminderToPay', label: 'Closing phrase (after the amount)' },
+      { key: 'reminderQuestions', label: 'Questions line' },
+      { key: 'reminderThanks', label: 'Thanks line' }
+    ]},
+    { title: '💵 Partial payment received', keys: [
+      { key: 'partialHi', label: 'Greeting' },
+      { key: 'partialBody', label: '"Payment received" line' },
+      { key: 'partialRemaining', label: 'Remaining balance line' },
+      { key: 'partialThanks', label: 'Thanks line' }
+    ]},
+    { title: '🎉 Fully paid', keys: [
+      { key: 'fullHi', label: 'Greeting' },
+      { key: 'fullBody', label: '"Payment received in full" line' },
+      { key: 'fullSettled', label: '"Account settled" line' },
+      { key: 'fullOverCredit', label: 'Overpayment line (kept as credit)' },
+      { key: 'fullOverTip', label: 'Overpayment line (kept as tip)' },
+      { key: 'fullThanks', label: 'Thanks line' }
+    ]},
+    { title: '🧾 Receipt', keys: [
+      { key: 'thankYouPrint', label: 'Thank-you line (printed & digital receipts)' }
+    ]},
+    { title: '🔤 Invoice words & labels', keys: [
+      { key: 'orWord', short: true, label: 'Connector word between USD/LBP amounts (e.g. "or")' },
+      { key: 'usdWord', short: true, label: 'Word used for "USD" on the total line' },
+      { key: 'discountTotal', short: true, label: 'Label for the discount-total line' },
+      { key: 'freeWord', short: true, label: 'Label for a free item' },
+      { key: 'percentOffFmt', short: true, label: 'Percent-off format — keep {v} where the number goes' },
+      { key: 'newPriceFmt', short: true, label: 'New-price format — keep {v} where the amount goes' },
+      { key: 'oneUnitSuffix', short: true, label: 'Suffix shown when a discount applies to just one unit' },
+      { key: 'unitWord', short: true, label: 'Word for "Unit" (voucher items)' },
+      { key: 'detailWord', short: true, label: 'Fallback word for an unnamed voucher detail' },
+      { key: 'invoice', short: true, label: 'Word for "Invoice" (used as the header when no business name is set)' }
+    ]},
+    { title: '🎟️ Voucher quick-add fields', keys: [
+      { key: 'qfExpiryDate', short: true, label: 'Expiry date' },
+      { key: 'qfRedeemCode', short: true, label: 'Redeem code' },
+      { key: 'qfLink', short: true, label: 'Link' },
+      { key: 'qfUsername', short: true, label: 'Username' },
+      { key: 'qfPin', short: true, label: 'PIN' },
+      { key: 'qfEmail', short: true, label: 'Email' },
+      { key: 'qfPassword', short: true, label: 'Password' },
+      { key: 'qfUserId', short: true, label: 'User ID' }
+    ]}
+  ];
+
+  // Returns the I18N text object for a language with any saved
+  // customizations from Settings → Message templates layered on top.
+  // Falls back to the built-in default whenever a field is blank/unset.
+  function getT(lang){
+    const base = I18N[lang] || I18N[state.invoiceLang] || I18N.en;
+    const overrides = state.messageTemplates && state.messageTemplates[lang];
+    if(!overrides) return base;
+    const merged = Object.assign({}, base);
+    Object.keys(overrides).forEach(k => {
+      if(overrides[k]) merged[k] = overrides[k];
+    });
+    return merged;
+  }
 
   const $ = (sel) => document.querySelector(sel);
   const $all = (sel) => document.querySelectorAll(sel);
@@ -2451,7 +2576,7 @@
     }catch(e){ loadError = e; }
     try{
       const cvf = await window.storage.get('customVoucherFields');
-      if(cvf && cvf.value){ state.customVoucherFields = JSON.parse(cvf.value); }
+      if(cvf && cvf.value){ state.customVoucherFields = migrateCustomVoucherFields(JSON.parse(cvf.value)); }
     }catch(e){ loadError = e; }
     try{
       const inv = await window.storage.get('invoiceSettings');
@@ -2461,6 +2586,12 @@
         state.invoiceLang = parsed.lang === 'ar' ? 'ar' : 'en';
         if(parsed.invoiceSettings){
           state.invoiceSettings = Object.assign({}, state.invoiceSettings, parsed.invoiceSettings);
+        }
+        if(parsed.messageTemplates){
+          state.messageTemplates = {
+            en: Object.assign({}, state.messageTemplates.en, parsed.messageTemplates.en),
+            ar: Object.assign({}, state.messageTemplates.ar, parsed.messageTemplates.ar)
+          };
         }
       } else {
         // First run: seed with the example payment method so there's something to edit.
@@ -2706,7 +2837,7 @@
   }
   async function saveInvoiceSettings(){
     try{
-      await window.storage.set('invoiceSettings', JSON.stringify({ paymentMethods: state.paymentMethods, lang: state.invoiceLang, invoiceSettings: state.invoiceSettings }));
+      await window.storage.set('invoiceSettings', JSON.stringify({ paymentMethods: state.paymentMethods, lang: state.invoiceLang, invoiceSettings: state.invoiceSettings, messageTemplates: state.messageTemplates }));
       alertBanner('Settings saved.');
     }
     catch(e){ console.error(e); alertBanner('Could not save invoice settings: ' + e.message); }
@@ -3392,7 +3523,7 @@
   }
 
   function buildReminderText(client, lang){
-    const t = I18N[lang] || I18N[state.invoiceLang] || I18N.en;
+    const t = getT(lang);
     const amountUsd = fmtUsd(client.balanceUsd);
     const amountLbp = fmtLbp(client.balanceUsd * state.rate.value);
     const lines = [];
@@ -3439,9 +3570,9 @@
   }
 
   function buildPartialPaymentText(client, paidUsd, remainingUsd, lang){
-    const t = I18N[lang] || I18N[state.invoiceLang] || I18N.en;
-    const paidLine = `${fmtUsd(paidUsd)} / ${fmtLbp(paidUsd * state.rate.value)}`;
-    const remainingLine = `${fmtUsd(remainingUsd)} / ${fmtLbp(remainingUsd * state.rate.value)}`;
+    const t = getT(lang);
+    const paidLine = `${fmtUsd(paidUsd)} ${t.orWord} ${fmtLbp(paidUsd * state.rate.value)}`;
+    const remainingLine = `${fmtUsd(remainingUsd)} ${t.orWord} ${fmtLbp(remainingUsd * state.rate.value)}`;
     const lines = [];
     lines.push(`👋 ${t.partialHi} ${client.name},`);
     lines.push('');
@@ -3453,15 +3584,15 @@
   }
 
   function buildFullPaymentText(client, paidUsd, lang, extraUsd, tipMode){
-    const t = I18N[lang] || I18N[state.invoiceLang] || I18N.en;
-    const paidLine = `${fmtUsd(paidUsd)} / ${fmtLbp(paidUsd * state.rate.value)}`;
+    const t = getT(lang);
+    const paidLine = `${fmtUsd(paidUsd)} ${t.orWord} ${fmtLbp(paidUsd * state.rate.value)}`;
     const lines = [];
     lines.push(`👋 ${t.fullHi} ${client.name},`);
     lines.push('');
     lines.push(`✅ ${t.fullBody} ${paidLine} 💵`);
     lines.push(t.fullSettled);
     if(extraUsd > 0.004){
-      const extraLine = `${fmtUsd(extraUsd)} / ${fmtLbp(extraUsd * state.rate.value)}`;
+      const extraLine = `${fmtUsd(extraUsd)} ${t.orWord} ${fmtLbp(extraUsd * state.rate.value)}`;
       lines.push(tipMode ? `🙏 ${t.fullOverTip} ${extraLine} 💛` : `📌 ${t.fullOverCredit} ${extraLine}`);
     }
     lines.push('');
@@ -3795,32 +3926,71 @@
     renderInvoice();
   }
 
-  const VOUCHER_QUICK_FIELDS = ['Expiry date', 'Redeem code', 'Link', 'Username', 'PIN', 'Email', 'Password', 'User ID'];
+  // Built-in quick-add labels, localized to whichever language the invoice
+  // is currently being written in (state.invoiceLang) — so composing a sale
+  // for an Arabic-speaking customer offers "رمز الاسترداد" etc. directly,
+  // instead of always showing the English names. Customizable per language
+  // under Settings → Message templates → Voucher quick-add fields.
+  function voucherQuickFieldDefaults(lang){
+    const t = getT(lang || state.invoiceLang);
+    return [t.qfExpiryDate, t.qfRedeemCode, t.qfLink, t.qfUsername, t.qfPin, t.qfEmail, t.qfPassword, t.qfUserId];
+  }
 
-  // Built-in quick fields plus any custom field labels the user has typed
-  // before (remembered in state.customVoucherFields), so a one-off field like
-  // "Mobile number" becomes a tappable chip on future sales instead of having
-  // to be retyped every time.
-  function getVoucherQuickFields(){
+  // Old versions of the app remembered custom quick-add fields as plain
+  // strings (whatever language the person happened to type). Upgrade those
+  // to {id, en, ar} objects so each custom field can carry both names, same
+  // as the built-in fields do. Already-upgraded entries pass through as-is.
+  const ARABIC_CHARS = /[\u0600-\u06FF]/;
+  function migrateCustomVoucherFields(list){
+    if(!Array.isArray(list)) return [];
+    return list.map(item => {
+      if(typeof item === 'string'){
+        return ARABIC_CHARS.test(item)
+          ? { id: uid(), en: '', ar: item }
+          : { id: uid(), en: item, ar: '' };
+      }
+      return { id: item.id || uid(), en: item.en || '', ar: item.ar || '' };
+    });
+  }
+
+  // The display name for one custom field in a given invoice language: its
+  // own name in that language if set, otherwise whichever name it does have.
+  function customFieldLabel(entry, lang){
+    return (entry[lang] || entry.en || entry.ar || '').trim();
+  }
+
+  // Built-in quick fields plus any custom fields the user has added or typed
+  // before (remembered in state.customVoucherFields), localized to whichever
+  // language the invoice is currently being written in, so a one-off field
+  // like "Mobile number" becomes a tappable chip on future sales instead of
+  // having to be retyped every time.
+  function getVoucherQuickFields(lang){
+    lang = lang || state.invoiceLang;
     const learned = state.customVoucherFields || [];
-    const merged = VOUCHER_QUICK_FIELDS.slice();
-    learned.forEach(label => {
-      if(!merged.some(m => m.toLowerCase() === label.toLowerCase())) merged.push(label);
+    const merged = voucherQuickFieldDefaults(lang);
+    learned.forEach(entry => {
+      const label = customFieldLabel(entry, lang);
+      if(label && !merged.some(m => m.toLowerCase() === label.toLowerCase())) merged.push(label);
     });
     return merged;
   }
 
+  // Learns a brand-new field label typed directly while editing voucher
+  // details (not added via Settings). Guesses which language slot it belongs
+  // in from its characters, and only fills in the other name if the person
+  // later adds it in Settings → Voucher quick-add fields.
   function rememberVoucherFieldLabels(cleanedFields){
     const known = getVoucherQuickFields().map(l => l.toLowerCase());
     let changed = false;
     cleanedFields.forEach(f => {
       if(f.label && !known.includes(f.label.toLowerCase())){
-        state.customVoucherFields.push(f.label);
+        const entry = ARABIC_CHARS.test(f.label) ? { id: uid(), en: '', ar: f.label } : { id: uid(), en: f.label, ar: '' };
+        state.customVoucherFields.push(entry);
         known.push(f.label.toLowerCase());
         changed = true;
       }
     });
-    if(changed) saveCustomVoucherFields();
+    if(changed){ saveCustomVoucherFields(); renderCustomVoucherFieldsList(); }
   }
 
   // Dynamic "extra details" editor for a single unit of a line: unit fields are
@@ -3984,12 +4154,16 @@
     const total = scope === 'oneUnit' ? price * (qty - 1) + discountedUnit : discountedUnit * qty;
     return { total, original, discountAmount: Math.max(0, original - total), unitEffective: discountedUnit };
   }
-  function discountSummaryText(line){
+  function discountSummaryText(line, lang){
     const d = getLineDiscount(line);
     if(!d) return '';
-    const scopeText = (d.scope === 'oneUnit' && line.qty > 1) ? ' (1 unit)' : '';
-    if(d.mode === 'free') return `FREE${scopeText}`;
-    return d.mode === 'percent' ? `${d.value}% off${scopeText}` : `new price ${fmtUsd(d.value)}${scopeText}`;
+    // Defaults to plain English (matches the always-English cart-editing UI);
+    // pass `lang` explicitly to localize (used for the WhatsApp invoice text).
+    const tt = lang ? getT(lang) : I18N.en;
+    const scopeText = (d.scope === 'oneUnit' && line.qty > 1) ? tt.oneUnitSuffix : '';
+    if(d.mode === 'free') return `${tt.freeWord}${scopeText}`;
+    if(d.mode === 'percent') return tt.percentOffFmt.replace('{v}', d.value) + scopeText;
+    return tt.newPriceFmt.replace('{v}', fmtUsd(d.value)) + scopeText;
   }
   async function editLineDiscount(productId){
     const line = state.lines.find(l => l.productId === productId);
@@ -4503,7 +4677,7 @@
   function buildInvoiceText(withEmojis){
     if(withEmojis === undefined) withEmojis = true; // default on: this text is mainly used for the WhatsApp preview
     const em = (e) => withEmojis ? (e + ' ') : '';
-    const t = I18N[state.invoiceLang] || I18N.en;
+    const t = getT(state.invoiceLang);
     const s = state.invoiceSettings;
     const customer = $('#customerName').value.trim();
     const now = getInvoiceDateTime();
@@ -4530,18 +4704,18 @@
       lines.push(`${itemMarker(lineNo)} ${productDisplayName(p)} ${fmtUsd(p.priceUsd)} ×${line.qty}`);
       if(line.note.trim()) lines.push(`   ${em('📝')}${t.note}: ${line.note.trim()}`);
       if(getLineDiscount(line)){
-        lines.push(`   ${em('🏷️')}${discountSummaryText(line)} ~${fmtUsd(amt.original)}~`);
+        lines.push(`   ${em('🏷️')}${discountSummaryText(line, state.invoiceLang)} ~${fmtUsd(amt.original)}~`);
       }
-      lines.push(`   ${fmtUsd(lineTotal)} Or ${fmtLbp(lineTotal * state.rate.value)}`);
+      lines.push(`   ${fmtUsd(lineTotal)} ${t.orWord} ${fmtLbp(lineTotal * state.rate.value)}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
         const units = voucherDisplayUnits(line);
         units.forEach((unitFields, i) => {
           if(!unitFields.length) return;
-          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' — Unit ' + (i + 1) : '');
+          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' — ' + t.unitWord + ' ' + (i + 1) : '');
           lines.push(`   ${em('🎟️')}${t.voucherHeader}${unitSuffix}`);
           unitFields.forEach(f => {
             if(f.label || f.value){
-              const detailLine = `${f.label || 'Detail'}: ${f.value}`;
+              const detailLine = `${f.label || t.detailWord}: ${f.value}`;
               lines.push(`      ${f.emph ? '*' + detailLine + '*' : detailLine}`);
             }
           });
@@ -4552,13 +4726,13 @@
     lines.push('———————————');
     lines.push(`${t.itemsSubtotal} : ${fmtUsd(nums.originalSubtotalUsd)} ${t.orWord} ${fmtLbp(nums.originalSubtotalUsd * state.rate.value)}`);
     if(nums.totalDiscountUsd > 0.004){
-      lines.push(`${em('🏷️')}Discount total: −${fmtUsd(nums.totalDiscountUsd)} _(${fmtLbp(nums.totalDiscountUsd * state.rate.value)})_`);
+      lines.push(`${em('🏷️')}${t.discountTotal}: −${fmtUsd(nums.totalDiscountUsd)} _(${fmtLbp(nums.totalDiscountUsd * state.rate.value)})_`);
     }
     if(nums.includeBalance && nums.prevBalance !== 0){
       lines.push(`${em('📌')}${t.previousBalance}: ${fmtUsd(nums.prevBalance)} _(${fmtLbp(nums.prevBalance * state.rate.value)})_`);
     }
     lines.push('');
-    lines.push(`*${em('💰')}${t.totalDue.toUpperCase()}: ${fmtUsd(nums.grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
+    lines.push(`*${em('💰')}${t.totalDue.toUpperCase()}: ${fmtUsd(nums.grandTotal).replace('$', '')} ${t.usdWord} ${t.orWord} ${fmtLbp(nums.grandTotal * state.rate.value)}*`);
 
     const received = getAmountReceivedUsd();
     if(s.showPaymentStatus !== false && !isNaN(received)){
@@ -4573,7 +4747,7 @@
     }
 
     lines.push('');
-    lines.push(`${em('💱')}${t.rate}: 1 USD = ${fmtLbp(state.rate.value)}`);
+    lines.push(`${em('💱')}${t.rate}: 1 ${t.usdWord} = ${fmtLbp(state.rate.value)}`);
 
     const activeMethods = state.paymentMethods.filter(m => m.enabled);
     if(activeMethods.length > 0){
@@ -5220,7 +5394,7 @@
   // totals-only summary.
   function buildFallbackReceiptHtml(s){
     const set = state.invoiceSettings;
-    const t = I18N[state.invoiceLang] || I18N.en;
+    const t = getT(state.invoiceLang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
@@ -5264,7 +5438,7 @@
   }
 
   function buildFallbackReceiptText(s){
-    const t = I18N[state.invoiceLang] || I18N.en;
+    const t = getT(state.invoiceLang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
@@ -5308,7 +5482,7 @@
   // LBP" total as a live invoice would print today.
   function buildThermalSegmentsFromSale(s){
     const set = state.invoiceSettings;
-    const t = I18N[state.invoiceLang] || I18N.en;
+    const t = getT(state.invoiceLang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
@@ -6102,7 +6276,104 @@
     preview.innerHTML = s.logo ? `<img src="${s.logo}" alt="logo">` : '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg>';
     $all('#paperWidthBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.width !== String(s.paperWidth)));
     $all('#printerConnBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.conn !== s.printerConnection));
+    renderMessageTemplateFields();
+    renderCustomVoucherFieldsList();
     updateBtStatusUI();
+  }
+
+  // Lists every custom voucher quick-add field with an English and an Arabic
+  // name input side by side, so the person can fill in whichever is missing
+  // (or add a brand-new field here directly, without typing it on an invoice
+  // first). Both names are shown at once — unlike the built-in message
+  // templates above, this isn't split by a language toggle.
+  function renderCustomVoucherFieldsList(){
+    const wrap = $('#customVoucherFieldsWrap');
+    if(!wrap) return;
+    const fields = state.customVoucherFields || [];
+    if(fields.length === 0){
+      wrap.innerHTML = '<div class="voucher-fields-empty">No custom fields yet.</div>';
+      return;
+    }
+    wrap.innerHTML = fields.map((f, i) => `
+      <div class="cvf-row" data-idx="${i}">
+        <input type="text" class="cvf-en" placeholder="English name" value="${escapeHtml(f.en)}">
+        <input type="text" class="cvf-ar" dir="rtl" placeholder="الاسم بالعربية" value="${escapeHtml(f.ar)}">
+        <button type="button" class="mini-btn danger cvf-remove" title="Remove">✕</button>
+      </div>`).join('');
+    wrap.querySelectorAll('.cvf-row').forEach(row => {
+      const idx = parseInt(row.dataset.idx, 10);
+      row.querySelector('.cvf-en').addEventListener('input', (e) => {
+        state.customVoucherFields[idx].en = e.target.value;
+        scheduleSaveCustomVoucherFields();
+      });
+      row.querySelector('.cvf-ar').addEventListener('input', (e) => {
+        state.customVoucherFields[idx].ar = e.target.value;
+        scheduleSaveCustomVoucherFields();
+      });
+      row.querySelector('.cvf-remove').addEventListener('click', () => {
+        state.customVoucherFields.splice(idx, 1);
+        renderCustomVoucherFieldsList();
+        saveCustomVoucherFields();
+      });
+    });
+  }
+
+  let cvfSaveTimer = null;
+  function scheduleSaveCustomVoucherFields(){
+    clearTimeout(cvfSaveTimer);
+    cvfSaveTimer = setTimeout(saveCustomVoucherFields, 400);
+  }
+
+  function renderMessageTemplateFields(){
+    const lang = msgTemplateEditLang;
+    $all('#msgTemplateLangBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.lang !== lang));
+    const defaults = I18N[lang] || I18N.en;
+    const overrides = (state.messageTemplates && state.messageTemplates[lang]) || {};
+    const wrap = $('#msgTemplateFields');
+    wrap.innerHTML = '';
+    wrap.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    MESSAGE_FIELD_GROUPS.forEach(group => {
+      const groupEl = document.createElement('div');
+      groupEl.style.marginTop = '14px';
+      const heading = document.createElement('div');
+      heading.className = 'field-label';
+      heading.style.marginBottom = '6px';
+      heading.textContent = group.title;
+      groupEl.appendChild(heading);
+      group.keys.forEach(f => {
+        const field = document.createElement('div');
+        field.className = 'modal-field';
+        const label = document.createElement('span');
+        label.className = 'field-label';
+        label.style.fontWeight = '400';
+        label.style.fontSize = '12.5px';
+        label.style.color = 'var(--ink-faint)';
+        label.textContent = f.label;
+        const el = document.createElement(f.short ? 'input' : 'textarea');
+        if(f.short){
+          el.type = 'text';
+        } else {
+          el.rows = 2;
+          el.className = 'preview-box';
+          el.style.maxHeight = 'none';
+        }
+        el.style.marginBottom = '0';
+        el.placeholder = defaults[f.key] || '';
+        el.value = overrides[f.key] || '';
+        el.dataset.key = f.key;
+        el.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        el.addEventListener('input', () => {
+          if(!state.messageTemplates[lang]) state.messageTemplates[lang] = {};
+          state.messageTemplates[lang][f.key] = el.value;
+          scheduleSaveSettings();
+        });
+        el.addEventListener('blur', flushSettingsSave);
+        field.appendChild(label);
+        field.appendChild(el);
+        groupEl.appendChild(field);
+      });
+      wrap.appendChild(groupEl);
+    });
   }
 
   function updateBtStatusUI(){
@@ -6176,6 +6447,28 @@
       renderSettingsTab();
       saveInvoiceSettings();
     });
+  });
+
+  $all('#msgTemplateLangBtns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      flushSettingsSave();
+      msgTemplateEditLang = btn.dataset.lang;
+      renderMessageTemplateFields();
+    });
+  });
+  $('#addCustomVoucherFieldBtn').addEventListener('click', () => {
+    state.customVoucherFields.push({ id: uid(), en: '', ar: '' });
+    renderCustomVoucherFieldsList();
+    const rows = $all('#customVoucherFieldsWrap .cvf-en');
+    const last = rows[rows.length - 1];
+    if(last) last.focus();
+  });
+  $('#resetMsgTemplatesBtn').addEventListener('click', () => {
+    const ok = confirm('Reset all ' + (msgTemplateEditLang === 'ar' ? 'Arabic' : 'English') + ' message templates to the default text?');
+    if(!ok) return;
+    state.messageTemplates[msgTemplateEditLang] = {};
+    renderMessageTemplateFields();
+    saveInvoiceSettings();
   });
 
   async function connectBluetoothPrinter(){
@@ -6388,7 +6681,7 @@
   // ESC/POS centering/bold rather than faking it with spaces alone.
   function buildThermalReceiptSegments(){
     const s = state.invoiceSettings;
-    const t = I18N[state.invoiceLang] || I18N.en;
+    const t = getT(state.invoiceLang);
     const nums = computeInvoiceNumbers();
     const customer = $('#customerName').value.trim();
     const now = getInvoiceDateTime();
@@ -6514,7 +6807,7 @@
   // ---------- Print (system dialog or direct Bluetooth) ----------
   function buildPrintReceiptHtml(){
     const s = state.invoiceSettings;
-    const t = I18N[state.invoiceLang] || I18N.en;
+    const t = getT(state.invoiceLang);
     const nums = computeInvoiceNumbers();
     const customer = $('#customerName').value.trim();
     const now = getInvoiceDateTime();
