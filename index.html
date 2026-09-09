@@ -1195,7 +1195,7 @@
     body > *:not(#printArea){ display:none !important; }
     #printArea{
       display:block !important;
-      font-family:'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, monospace;
+      font-family:'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
       background:#171923;
       color:#E4E4E7;
       width:100%;
@@ -3537,27 +3537,81 @@
     return lines.join('\n');
   }
 
-  // Shared sender used by the reminder / partial-payment / full-payment
-  // messages: opens WhatsApp with the text prefilled if a phone number is on
-  // file, otherwise copies the text to the clipboard as a fallback.
-  async function sendClientWhatsapp(client, text, fallbackMsg){
-    const phoneDigits = client.phone ? client.phone.replace(/[^0-9]/g, '') : '';
-    if(phoneDigits){
-      const url = 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(text);
-      window.open(url, '_blank');
-    } else {
-      try{
-        await navigator.clipboard.writeText(text);
-      }catch(e){
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
-      alertBanner(fallbackMsg);
+  // Builds the same {text, align, bold} segment list buildThermalReceiptSegments()
+  // makes for invoices, but for a short title + free-text message instead of
+  // a full receipt, so it goes through the exact same ESC/POS path.
+  function buildThermalMessageSegments(title, text){
+    const W = state.invoiceSettings.paperWidth === '58' ? 32 : 48;
+    const segments = [];
+    const seg = (t, opts) => segments.push(Object.assign({ text: t, align:'left', bold:false }, opts || {}));
+    seg((title.toUpperCase()), { align:'center', bold:true });
+    seg('-'.repeat(W));
+    text.split('\n').forEach(line => seg(line));
+    return segments;
+  }
+
+  // Prints a short block of plain text (a client message). Sends it to the
+  // connected Bluetooth receipt printer when that's what Settings → Printer
+  // is set to (same as invoices); otherwise falls back to the system print
+  // dialog, which is also how a WiFi printer is used (pick it from that
+  // dialog — see Settings → Printer connection).
+  async function printMessageText(title, text){
+    if(state.invoiceSettings.printerConnection === 'bluetooth' && btCharacteristic){
+      const segments = buildThermalMessageSegments(title, text);
+      const ok = await printToBluetoothPrinter(segments);
+      if(ok) alertBanner('Sent to printer.');
+      return;
     }
+    applyPrintPageStyle();
+    const html = `<div class="pr-center"><div class="pr-title">${escapeHtml(title)}</div></div>`
+      + `<div class="pr-hr"></div>`
+      + `<div class="pr-footer" style="text-align:left; white-space:pre-wrap;">${escapeHtml(text)}</div>`;
+    $('#printArea').innerHTML = html;
+    window.print();
+  }
+
+  // Shared preview used by the reminder / partial-payment / full-payment
+  // messages: shows the text with buttons to copy it, print it, or (when the
+  // client has a phone number on file) open WhatsApp with it prefilled.
+  // Stays open until the person closes it, so they can copy AND print the
+  // same message if they want.
+  function showMessagePreviewModal(title, text, phone){
+    return new Promise((resolve) => {
+      const phoneDigits = phone ? phone.replace(/[^0-9]/g, '') : '';
+      modalBox.innerHTML = `
+        <h3>${escapeHtml(title)}</h3>
+        <textarea class="preview-box" id="msgPreviewBox" rows="10" readonly>${escapeHtml(text)}</textarea>
+        <div class="modal-actions" style="flex-wrap:wrap;">
+          <button type="button" class="btn ghost" id="msgCloseBtn">Close</button>
+          <button type="button" class="btn ghost" id="msgPrintBtn">🖨️ Print</button>
+          <button type="button" class="btn ghost" id="msgCopyBtn">📋 Copy</button>
+          ${phoneDigits ? '<button type="button" class="btn" id="msgWhatsappBtn">💬 WhatsApp</button>' : ''}
+        </div>`;
+      modalOverlay.classList.add('show');
+      $('#msgCloseBtn').addEventListener('click', () => { closeModal(); resolve(); });
+      $('#msgPrintBtn').addEventListener('click', () => { printMessageText(title, text); });
+      $('#msgCopyBtn').addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(text);
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        alertBanner('Copied — paste it wherever you like.');
+      });
+      if(phoneDigits){
+        $('#msgWhatsappBtn').addEventListener('click', () => {
+          const url = 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(text);
+          window.open(url, '_blank');
+          closeModal();
+          resolve();
+        });
+      }
+    });
   }
 
   async function sendPaymentReminder(clientId){
@@ -3566,7 +3620,7 @@
     const lang = await chooseLanguageModal('🌐 Send this reminder in which language?');
     if(!lang) return;
     const text = buildReminderText(c, lang);
-    await sendClientWhatsapp(c, text, 'No phone number on file — reminder copied, paste it wherever you like.');
+    await showMessagePreviewModal('Payment reminder — ' + c.name, text, c.phone);
   }
 
   function buildPartialPaymentText(client, paidUsd, remainingUsd, lang){
@@ -3627,7 +3681,7 @@
     renderClientSelect();
     renderInvoiceIfNeeded();
     const text = buildPartialPaymentText(c, paid, c.balanceUsd, lang);
-    await sendClientWhatsapp(c, text, 'Payment confirmation copied, paste it wherever you like.');
+    await showMessagePreviewModal('Payment confirmation — ' + c.name, text, c.phone);
   }
 
   // Marks the client's balance as fully settled and sends a WhatsApp
@@ -3673,7 +3727,7 @@
     renderClientSelect();
     renderInvoiceIfNeeded();
     const text = buildFullPaymentText(c, paid, lang, extraUsd, tipMode);
-    await sendClientWhatsapp(c, text, 'Thank-you message copied, paste it wherever you like.');
+    await showMessagePreviewModal('Thank-you message — ' + c.name, text, c.phone);
   }
 
   function addClient(){
