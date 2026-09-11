@@ -1410,6 +1410,7 @@
     <button class="tab" data-tab="clients">👥 Clients</button>
     <button class="tab" data-tab="reports">📊 Reports</button>
     <button class="tab" data-tab="settings">⚙️ Settings</button>
+    <button class="tab" data-tab="admin" id="adminTabBtn" style="display:none;">🛡️ Admin</button>
   </div>
 
   <!-- INVOICE TAB -->
@@ -1819,6 +1820,25 @@
     </div>
   </section>
 
+  <!-- ADMIN TAB (hidden entirely for non-admins; adminTabBtn stays display:none for them too) -->
+  <section class="section" id="tab-admin">
+    <div class="settings-card">
+      <h3>🛡️ Admin panel</h3>
+      <div class="settings-hint" style="margin-top:0;">Only visible to admin accounts. Shows everyone who has signed up for this app.</div>
+      <div class="clients-summary" id="adminStatsRow" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="settings-card">
+      <div class="search-box" style="margin-bottom:0;">
+        <span class="field-label">🔍 Search users by email</span>
+        <input type="text" id="adminUserSearch" placeholder="Search...">
+      </div>
+      <button class="icon-btn" id="adminRefreshBtn" type="button" style="margin-top:10px;">🔄 refresh</button>
+      <div class="modal-error" id="adminUsersError" style="margin-top:10px;"></div>
+      <div class="client-grid" id="adminUserList" style="margin-top:14px;"></div>
+    </div>
+  </section>
+
 </div>
 
 <div class="cart-bar" id="cartBar" style="display:none;">
@@ -1902,6 +1922,9 @@
     }
     return res.json();
   }
+  // Exposed so the main app script (a separate, non-module <script> block)
+  // can call other Worker routes too, like /api/admin/users.
+  window.apiFetch = apiFetch;
 
   // ---- Guest storage: everything stays in this browser's localStorage,
   // no Worker/D1 involved. Same get/set/delete/list shape as the real API,
@@ -1954,10 +1977,38 @@
   const authError = document.getElementById('authError');
   const guestBadge = document.getElementById('guestBadge');
 
+  // ---- Admin tab visibility ----
+  // window.isAdminUser is read by the main app script when the Admin tab
+  // is clicked. Guests never get admin access (there's no server account).
+  window.isAdminUser = false;
+  function applyAdminVisibility(isAdmin){
+    window.isAdminUser = !!isAdmin;
+    const btn = document.getElementById('adminTabBtn');
+    if(btn) btn.style.display = window.isAdminUser ? '' : 'none';
+    if(!window.isAdminUser && btn && btn.classList.contains('active')){
+      // If admin status was revoked mid-session and that tab is somehow
+      // still active, fall back to the Invoice tab instead of leaving a blank pane.
+      const invoiceTab = document.querySelector('.tab[data-tab="invoice"]');
+      if(invoiceTab) invoiceTab.click();
+    }
+  }
+  // Called on every app load (fresh login/signup, or restoring a saved
+  // token) so admin status is always current, not just cached from login.
+  async function refreshAdminStatus(){
+    if(window.guestMode){ applyAdminVisibility(false); return; }
+    try{
+      const me = await apiFetch('/api/me');
+      applyAdminVisibility(me && me.isAdmin);
+    }catch(e){
+      applyAdminVisibility(false);
+    }
+  }
+
   function showApp(){
     loginOverlay.style.display = 'none';
     appRoot.style.display = '';
     guestBadge.style.display = window.guestMode ? 'inline-block' : 'none';
+    refreshAdminStatus();
     window.dispatchEvent(new Event('firebase-ready'));
   }
   function showLogin(){
@@ -7030,9 +7081,75 @@
       $('#tab-' + tab.dataset.tab).classList.add('active');
       if(tab.dataset.tab === 'reports') renderReports();
       if(tab.dataset.tab === 'settings') renderSettingsTab();
+      if(tab.dataset.tab === 'admin') renderAdminTab();
       updateCartBar();
     });
   });
+
+  // ---------- Admin panel (admins only — see /api/me and /api/admin/users) ----------
+  let adminUsersCache = [];
+
+  function renderAdminStats(users){
+    const el = $('#adminStatsRow');
+    if(!el) return;
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const newThisWeek = users.filter(u => u.created_at >= weekAgo).length;
+    el.innerHTML = `
+      <div class="client-stat"><div class="cs-label">Total users</div><div class="cs-value">${users.length}</div></div>
+      <div class="client-stat credit"><div class="cs-label">New this week</div><div class="cs-value">${newThisWeek}</div></div>
+    `;
+  }
+
+  function renderAdminUserList(){
+    const list = $('#adminUserList');
+    if(!list) return;
+    const q = ($('#adminUserSearch').value || '').trim().toLowerCase();
+    const filtered = q ? adminUsersCache.filter(u => u.email.toLowerCase().includes(q)) : adminUsersCache;
+    if(filtered.length === 0){
+      list.innerHTML = `<div class="settings-hint" style="margin:0;">No users found.</div>`;
+      return;
+    }
+    list.innerHTML = filtered.map(u => {
+      const initial = (u.email || '?').charAt(0).toUpperCase();
+      const joined = u.created_at ? new Date(u.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
+      const lastActive = u.last_active ? new Date(u.last_active).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : 'never';
+      return `
+        <div class="client-card">
+          <div class="client-card-top">
+            <div class="client-avatar" style="background:${avatarColor(u.email || '')};">${escapeHtml(initial)}</div>
+            <div class="client-card-info">
+              <div class="client-name">${escapeHtml(u.email)}</div>
+              <div class="client-phone">joined ${joined}</div>
+            </div>
+          </div>
+          <div class="client-balance-row">
+            <span class="client-balance-pill settled">${u.record_count || 0} records saved</span>
+            <span class="client-balance-sub">last active ${lastActive}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function renderAdminTab(){
+    const errEl = $('#adminUsersError');
+    errEl.classList.remove('show');
+    errEl.textContent = '';
+    $('#adminUserList').innerHTML = `<div class="settings-hint" style="margin:0;">Loading users…</div>`;
+    try{
+      const data = await window.apiFetch('/api/admin/users');
+      adminUsersCache = (data && data.users) || [];
+      renderAdminStats(adminUsersCache);
+      renderAdminUserList();
+    }catch(e){
+      adminUsersCache = [];
+      $('#adminUserList').innerHTML = '';
+      errEl.textContent = e.message || 'Failed to load users.';
+      errEl.classList.add('show');
+    }
+  }
+  $('#adminUserSearch').addEventListener('input', renderAdminUserList);
+  $('#adminRefreshBtn').addEventListener('click', renderAdminTab);
 
   $('#cartBarCheckoutBtn').addEventListener('click', () => {
     const target = $('#totalsCard');
