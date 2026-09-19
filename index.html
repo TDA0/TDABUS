@@ -502,15 +502,6 @@
   .btn.ghost:active{ background:var(--line); }
   .btn.full{ width:100%; }
   .btn.small{ padding:8px 10px; font-size:13.5px; border-radius:8px; }
-  .status-btns{ display:flex; gap:6px; }
-  .status-btns button{ flex:1; }
-  .status-btns button:disabled{ opacity:.4; cursor:not-allowed; }
-  .walkin-hint{
-    display:flex; align-items:center; justify-content:space-between; gap:8px 10px; flex-wrap:wrap;
-    margin-top:8px; padding:9px 12px; font-size:13px; line-height:1.4;
-    color:var(--ink-soft); background:var(--brass-soft); border-radius:var(--radius-sm);
-  }
-  .walkin-hint .mini-btn{ background:#fff; border-color:var(--line-strong); color:var(--ink); }
 
   .empty-hint{
     font-size:15px;
@@ -534,78 +525,505 @@
 
   .search-box{ margin-bottom:10px; }
 
+  /* ==========================================================
+     Invoice tab
+     Same visual language as Catalog and Clients: white cards on the
+     grey canvas, one indigo accent, amber only for discounts, and
+     red/green only where a payment needs it.
+
+     Phones: one column, a floating order bar at the bottom.
+     Wide screens: two panes, products on the left and a sticky
+     receipt on the right so the total is always in view.
+
+     Every grid track is minmax(0, …) and every text block can
+     shrink or wrap, so a long product name or a big amount can
+     never push the page wider than the screen.
+     ========================================================== */
+  #tab-invoice svg{
+    flex-shrink:0; stroke:currentColor; fill:none;
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  }
+  #tab-invoice button:focus-visible,
+  #tab-invoice .pick-row:focus-visible,
+  #tab-invoice input[type="checkbox"]:focus-visible,
+  .cart-bar-btn:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+
+  .inv-head{ margin:0 0 14px; }
+  .inv-head h2{ font-size:24px; }
+  .inv-subtitle{
+    margin:4px 0 0; font-size:13.5px; line-height:1.4;
+    color:var(--ink-soft); font-weight:500;
+  }
+
+  .inv-layout{
+    display:grid; grid-template-columns:minmax(0, 1fr);
+    gap:22px; align-items:start;
+  }
+  .inv-browse, .inv-order{ min-width:0; }
+  @media (min-width:1024px){
+    .inv-layout{ grid-template-columns:minmax(0, 1fr) 400px; gap:24px; }
+    .inv-order{
+      position:sticky; top:16px;
+      max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px);
+      overflow-y:auto; overscroll-behavior:contain;
+      padding:1px 2px 2px 1px;
+    }
+  }
+  @media (min-width:1400px){
+    .inv-layout{ grid-template-columns:minmax(0, 1fr) 440px; gap:28px; }
+  }
+
+  /* ---------- Browse: search, category chips, product cards ---------- */
+  .inv-find{ padding:0 0 10px; }
+  @media (min-width:1024px){
+    .inv-find{
+      position:sticky; top:0; z-index:20; padding:2px 0 12px;
+      background:linear-gradient(to bottom, var(--bg) 86%, rgba(244,245,250,0));
+    }
+  }
+  .inv-search{ position:relative; }
+  .inv-search > svg{
+    position:absolute; left:14px; top:50%; width:18px; height:18px; margin-top:-9px;
+    color:var(--ink-faint); pointer-events:none;
+  }
+  .inv-search input{
+    height:48px; padding:0 42px 0 42px; border-radius:12px;
+    border-color:var(--line); box-shadow:var(--shadow);
+  }
+  .inv-search input:focus{ border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  .inv-search input:placeholder-shown{ padding-right:12px; }
+  .inv-search-clear{
+    position:absolute; right:6px; top:50%; width:36px; height:36px; margin-top:-18px;
+    display:grid; place-items:center; padding:0;
+    border:0; border-radius:9px; background:none; color:var(--ink-soft); cursor:pointer;
+  }
+  .inv-search-clear[hidden]{ display:none; }
+  .inv-search-clear svg{ width:16px; height:16px; stroke-width:2.2; }
+
+  #tab-invoice .cat-chips{
+    display:flex; gap:6px; margin-top:10px; padding:2px 1px 2px;
+    overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  #tab-invoice .cat-chips::-webkit-scrollbar{ display:none; }
+  #tab-invoice .cat-chip{ min-height:36px; padding:0 14px; }
+  @media (min-width:700px){
+    #tab-invoice .cat-chips{ flex-wrap:wrap; overflow:visible; }
+  }
+
   .catalog-picker{
-    max-height:340px;
-    overflow-y:auto;
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:8px;
-    padding:10px;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    background:var(--paper-card);
-    box-shadow:var(--shadow);
-    margin-bottom:16px;
+    display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px;
     align-content:start;
+    max-height:clamp(240px, 52vh, 460px);
+    overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+    padding:2px 2px 28px; margin-bottom:6px;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+    mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
   }
   @media (min-width:520px){
-    .catalog-picker{ grid-template-columns:repeat(3, 1fr); }
+    .catalog-picker{ grid-template-columns:repeat(auto-fill, minmax(156px, 1fr)); gap:10px; }
+  }
+  @media (min-width:1024px){
+    .catalog-picker{ max-height:none; overflow:visible; padding:2px 0 24px; margin-bottom:0; -webkit-mask-image:none; mask-image:none; }
   }
   .pick-cat-label{
-    grid-column:1 / -1;
-    font-size:12.5px;
-    font-weight:700;
-    color:var(--ink-soft);
-    padding:8px 2px 0;
-    background:none;
-    text-transform:uppercase;
-    letter-spacing:0.4px;
+    grid-column:1 / -1; padding:10px 2px 0;
+    font-size:13px; font-weight:700; color:var(--ink-soft); overflow-wrap:anywhere;
   }
   .pick-cat-label:first-child{ padding-top:2px; }
+
   .pick-row{
     position:relative;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:2px;
-    min-height:64px;
-    padding:10px 30px 10px 12px;
-    border:1.5px solid var(--line);
-    border-radius:var(--radius-sm);
-    cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-    user-select:none;
-    transition:background .1s ease, border-color .1s ease, transform .06s ease;
+    display:flex; flex-direction:column; justify-content:space-between; gap:10px;
+    min-width:0; min-height:88px; padding:12px;
+    background:var(--paper-card); border:1px solid var(--line); border-radius:12px;
+    box-shadow:0 1px 2px rgba(23,25,35,0.04);
+    cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+    transition:border-color .12s ease, background .12s ease, box-shadow .12s ease, transform .06s ease;
   }
-  .pick-row:active{ background:var(--cedar-soft); border-color:var(--cedar); transform:scale(0.97); }
-  .pick-row-left{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .pick-thumb{ width:30px; height:30px; border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid var(--line); }
-  .pick-name{ font-size:14.5px; font-weight:700; line-height:1.25; overflow-wrap:break-word; }
-  .pick-price{ font-size:12.5px; color:var(--ink-soft); margin-top:1px; font-weight:600; }
-  .pick-plus{
-    position:absolute;
-    top:8px; right:8px;
-    font-size:17px;
-    color:#fff;
-    background:var(--cedar);
-    width:22px; height:22px;
-    line-height:22px;
-    text-align:center;
-    border-radius:999px;
-    font-weight:700;
-    flex-shrink:0;
+  @media (hover:hover){
+    .pick-row:hover{ border-color:var(--cedar); box-shadow:0 6px 16px rgba(79,70,229,0.12); }
   }
+  .pick-row:active{ transform:scale(0.98); background:var(--cedar-soft); border-color:var(--cedar); }
+  .pick-row.in-cart{ border-color:#C9CDFB; background:#F8F8FF; }
   .pick-row.just-added{ background:var(--success-soft); border-color:var(--success); }
-
-  .cat-chips{
-    display:flex;
-    gap:6px;
-    overflow-x:auto;
-    padding:2px 2px 10px;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
+  .pick-row-left{ display:flex; align-items:flex-start; gap:10px; min-width:0; padding-right:28px; }
+  .pick-thumb{
+    width:34px; height:34px; border-radius:9px; object-fit:cover;
+    border:1px solid var(--line); flex:0 0 auto;
   }
-  .cat-chips::-webkit-scrollbar{ display:none; }
+  .pick-name{
+    min-width:0; font-size:14.5px; font-weight:600; line-height:1.3; overflow-wrap:anywhere;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .pick-name .voucher-badge{ margin-left:5px; vertical-align:1px; }
+  .pick-price{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:1px 8px;
+    font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums;
+  }
+  .pick-price b{ font-size:14.5px; font-weight:700; color:var(--ink); }
+  .pick-plus{
+    position:absolute; top:10px; right:10px;
+    min-width:24px; height:24px; padding:0 6px;
+    display:grid; place-items:center; border-radius:999px;
+    background:var(--cedar-soft); color:var(--cedar);
+    font-size:16px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums;
+  }
+  .pick-row.in-cart .pick-plus{ background:var(--cedar); color:#fff; font-size:12.5px; }
+  .pick-empty{
+    grid-column:1 / -1; padding:30px 16px; text-align:center;
+    font-size:14.5px; line-height:1.45; color:var(--ink-soft);
+    background:var(--paper-card); border:1.5px dashed var(--line-strong); border-radius:var(--radius);
+    overflow-wrap:anywhere;
+  }
+
+  /* ---------- Order: header, receipt card ---------- */
+  .inv-order-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin:0 2px 10px;
+  }
+  .inv-order-head h3{ font-size:18px; }
+  .inv-count{
+    padding:4px 11px; border-radius:999px; white-space:nowrap;
+    background:var(--cedar-soft); color:var(--cedar);
+    font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums;
+  }
+  .inv-order-tools{ display:flex; align-items:center; gap:8px; }
+  .inv-clear{
+    display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 12px 0 10px;
+    background:#fff; border:1px solid #F6CBCB; border-radius:999px; cursor:pointer;
+    font:700 13px/1 'Inter', sans-serif; color:var(--danger);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .inv-clear[hidden]{ display:none; }
+  .inv-clear svg{ width:15px; height:15px; }
+  .inv-clear:active{ background:#FDEDED; }
+  @media (hover:hover){ .inv-clear:hover{ background:#FDEDED; } }
+  @media (pointer:coarse){ .inv-clear{ min-height:40px; } }
+  .inv-count.is-empty{ background:var(--line); color:var(--ink-soft); }
+
+  .inv-receipt{
+    margin-bottom:14px; overflow:hidden;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  #lineItems{ padding:0 16px; }
+  #lineItems:empty{ display:none; }
+
+  .inv-empty{ padding:34px 20px 36px; text-align:center; }
+  .inv-empty-icon{
+    width:48px; height:48px; margin:0 auto 12px;
+    display:grid; place-items:center;
+    border-radius:14px; background:var(--cedar-soft); color:var(--cedar);
+  }
+  .inv-empty-icon svg{ width:24px; height:24px; stroke-width:1.9; }
+  .inv-empty strong{ display:block; font-size:16px; font-weight:700; }
+  .inv-empty span{
+    display:block; max-width:30ch; margin:4px auto 0;
+    font-size:14px; line-height:1.45; color:var(--ink-soft);
+  }
+
+  /* ---------- One line on the receipt ---------- */
+  .line-item{ padding:14px 0; border-bottom:1px solid var(--line); }
+  .line-item:last-child{ border-bottom:0; }
+  .line-top{ display:flex; align-items:flex-start; gap:10px; }
+  .line-thumb{
+    width:40px; height:40px; border-radius:10px; object-fit:cover;
+    border:1px solid var(--line); flex:0 0 auto;
+  }
+  .line-main{ flex:1 1 auto; min-width:0; }
+  .line-name{ font-size:15.5px; font-weight:700; line-height:1.3; overflow-wrap:anywhere; }
+  .line-unit{ margin-top:2px; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .discount-badge{
+    display:inline-block; margin-left:6px; padding:2px 8px; border-radius:999px;
+    background:var(--brass-soft); color:#B45309;
+    font-size:12px; font-weight:700; vertical-align:1px;
+  }
+  .line-more-badges{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .line-more-badge{
+    max-width:100%; padding:2px 9px; border-radius:999px; overflow-wrap:anywhere;
+    background:var(--bg); border:1px solid var(--line-strong);
+    font-size:12px; font-weight:600; color:var(--ink-soft);
+  }
+  .remove-line{
+    flex:0 0 auto; width:36px; height:36px; margin:-6px -8px 0 0;
+    display:grid; place-items:center; padding:0;
+    border:0; border-radius:10px; background:none; color:var(--ink-faint); cursor:pointer;
+    transition:background .12s ease, color .12s ease;
+  }
+  .remove-line svg{ width:18px; height:18px; }
+  .remove-line:active{ background:#FDEDED; color:#B91C1C; }
+  @media (hover:hover){ .remove-line:hover{ background:#FDEDED; color:#B91C1C; } }
+  @media (pointer:coarse){ .remove-line{ width:40px; height:40px; } }
+
+  .qty-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-top:10px;
+  }
+  .qty-controls{
+    display:inline-flex; align-items:center; gap:2px; flex:0 0 auto;
+    padding:3px; background:var(--bg); border:1px solid var(--line); border-radius:12px;
+  }
+  .qty-controls button{
+    width:36px; height:36px; padding:0; display:grid; place-items:center;
+    border:0; border-radius:9px; background:#fff; color:var(--ink); cursor:pointer;
+    box-shadow:0 1px 2px rgba(23,25,35,0.1);
+    -webkit-tap-highlight-color:transparent;
+    transition:background .1s ease, transform .06s ease;
+  }
+  .qty-controls button svg{ width:16px; height:16px; stroke-width:2.4; }
+  .qty-controls button:active{ background:var(--cedar-soft); color:var(--cedar); transform:scale(0.95); }
+  .qty-controls input{
+    width:52px; height:36px; padding:0; text-align:center;
+    border:0; border-radius:8px; background:transparent;
+    font-size:16px; font-weight:700; font-variant-numeric:tabular-nums;
+  }
+  .qty-controls input:focus{ background:#fff; box-shadow:0 0 0 2px var(--cedar); }
+  @media (pointer:coarse){
+    .qty-controls button{ width:40px; height:40px; }
+    .qty-controls input{ height:40px; }
+  }
+  .line-price{ min-width:0; text-align:right; font-variant-numeric:tabular-nums; }
+  .line-price-original{ display:block; font-size:12.5px; color:var(--ink-faint); text-decoration:line-through; }
+  .lp-usd{ display:block; font-size:17px; font-weight:800; letter-spacing:-0.01em; overflow-wrap:anywhere; }
+  .lp-lbp{ display:block; margin-top:1px; font-size:12.5px; font-weight:500; color:var(--ink-soft); overflow-wrap:anywhere; }
+
+  #tab-invoice .voucher-summary{ margin-top:10px; padding:10px 12px; border-radius:12px; font-size:14px; }
+  #tab-invoice .voucher-toggle-row{ align-items:flex-start; line-height:1.35; margin-bottom:4px; }
+  #tab-invoice .voucher-toggle-row input[type="checkbox"]{ margin:1px 0 0; }
+
+  .line-more-toggle{
+    display:inline-flex; align-items:center; gap:5px;
+    min-height:32px; margin:8px 0 0 -4px; padding:6px 6px 6px 4px;
+    background:none; border:0; border-radius:8px; cursor:pointer;
+    font:600 13px/1 'Inter', sans-serif; color:var(--ink-soft);
+  }
+  .line-more-toggle svg{ width:14px; height:14px; stroke-width:2.4; transition:transform .15s ease; }
+  .line-item.expanded .line-more-toggle svg{ transform:rotate(180deg); }
+  @media (hover:hover){ .line-more-toggle:hover{ color:var(--ink); background:var(--bg); } }
+  .line-more{
+    display:none; margin-top:8px; padding:12px;
+    background:var(--bg); border:1px solid var(--line); border-radius:12px;
+  }
+  .line-item.expanded .line-more{ display:block; }
+  .lm-field + .lm-field{ margin-top:12px; }
+  .lm-cap{ display:block; margin:0 0 6px; font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .lm-foot{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; margin-top:12px; }
+  .lm-foot .mini-btn{
+    min-height:36px; padding:0 12px; background:#fff; border-color:var(--line-strong); color:var(--ink);
+  }
+  .lm-hint{ font-size:12.5px; line-height:1.35; color:var(--ink-faint); }
+  #tab-invoice .line-more input,
+  #tab-invoice .line-more select{ background:#fff; }
+
+  /* ---------- Totals ---------- */
+  .totals-card{ padding:16px; border-top:1.5px dashed var(--line-strong); background:var(--paper-card); }
+  .totals-row{
+    display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    padding:4px 0; font-size:14.5px; font-variant-numeric:tabular-nums;
+  }
+  .totals-row > :first-child{ flex:0 0 auto; }
+  .totals-row > :last-child{ min-width:0; text-align:right; overflow-wrap:anywhere; }
+  .totals-row b{ font-weight:700; color:var(--ink); }
+  .totals-row.sub{ font-size:13.5px; color:var(--ink-soft); }
+  #discountSummaryRow{ color:#B45309; }
+  .inv-discount-btn{
+    display:block; width:100%; min-height:42px; margin:10px 0 4px; padding:8px 12px;
+    background:none; border:1.5px dashed var(--line-strong); border-radius:10px;
+    color:var(--cedar); font:700 14px/1.25 'Inter', sans-serif; cursor:pointer;
+    overflow-wrap:anywhere; transition:background .12s ease, border-color .12s ease;
+  }
+  .inv-discount-btn:active{ background:var(--cedar-soft); border-color:var(--cedar); }
+  @media (hover:hover){ .inv-discount-btn:hover{ background:var(--cedar-soft); border-color:var(--cedar); } }
+  .totals-row.grand{
+    align-items:flex-end; margin-top:12px; padding:14px 0 0;
+    border-top:1px solid var(--line);
+  }
+  .grand-label{ padding-bottom:5px; font-size:15px; font-weight:700; color:var(--ink-soft); }
+  .grand-amts{ min-width:0; text-align:right; }
+  .grand-usd{
+    display:block; font-size:clamp(28px, 8vw, 34px); font-weight:800;
+    letter-spacing:-0.03em; line-height:1.05; color:var(--ink); overflow-wrap:anywhere;
+  }
+  .grand-lbp{ display:block; margin-top:5px; font-size:14px; font-weight:600; color:var(--ink-soft); overflow-wrap:anywhere; }
+
+  .inv-sect{ margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+  .inv-label{ display:block; margin:0 0 7px; font-size:13px; font-weight:600; color:var(--ink-soft); }
+  .inv-label small{ display:block; margin-top:2px; font-size:12.5px; font-weight:500; color:var(--ink-faint); }
+  .inv-label-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:7px; }
+  .inv-label-row .inv-label{ margin:0; }
+  .inv-label-row .mini-btn{ min-height:32px; padding:0 10px; }
+
+  /* Segmented controls (payment status, overpayment, language) */
+  .status-btns{
+    display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0, 1fr); gap:4px;
+    padding:4px; background:var(--bg); border:1px solid var(--line); border-radius:12px;
+  }
+  .status-btns .btn{
+    min-height:40px; padding:8px 6px; border:0; border-radius:9px;
+    background:transparent; color:var(--ink-soft);
+    font-size:14px; font-weight:600; line-height:1.2; white-space:normal; text-wrap:balance;
+    transition:background .12s ease, color .12s ease, box-shadow .12s ease;
+  }
+  .status-btns .btn:active{ transform:none; }
+  .status-btns .btn:not(.ghost){ background:var(--cedar); color:#fff; font-weight:700; box-shadow:0 3px 8px rgba(79,70,229,0.25); }
+  .status-btns .btn[data-status="paid"]:not(.ghost){ background:var(--success); box-shadow:0 3px 8px rgba(5,150,105,0.25); }
+  .status-btns .btn[data-status="partial"]:not(.ghost){ background:var(--brass); box-shadow:0 3px 8px rgba(217,119,6,0.25); }
+  .status-btns .btn[data-status="unpaid"]:not(.ghost){ background:var(--danger); box-shadow:0 3px 8px rgba(220,38,38,0.25); }
+  .status-btns .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  @media (hover:hover){ .status-btns .btn.ghost:not(:disabled):hover{ background:#fff; color:var(--ink); } }
+
+  .walkin-hint{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 10px;
+    margin-top:10px; padding:10px 12px; border-radius:10px;
+    font-size:13px; line-height:1.4; color:#8A4B05; background:var(--brass-soft);
+  }
+  .walkin-hint span{ flex:1 1 180px; min-width:0; }
+  .walkin-hint .mini-btn{ min-height:36px; padding:0 12px; background:#fff; border-color:var(--line-strong); color:var(--ink); }
+
+  .inv-check{
+    display:flex; align-items:center; gap:10px; margin-top:12px;
+    font-size:13.5px; line-height:1.35; color:var(--ink-soft);
+  }
+  .inv-check label{ cursor:pointer; min-width:0; }
+  #tab-invoice input[type="checkbox"]{
+    flex:0 0 auto; width:18px; height:18px; margin:0; padding:0;
+    accent-color:var(--cedar); cursor:pointer;
+  }
+
+  #tab-invoice .money{ display:flex; gap:8px; }
+  #tab-invoice .money input{ flex:1 1 auto; min-width:0; }
+  #tab-invoice .money select{ flex:0 0 96px; width:96px; }
+
+  .inv-remaining{ margin-top:16px; padding:10px 14px; background:var(--bg); border-radius:12px; }
+  .inv-remaining .totals-row{ padding:3px 0; }
+  #remainingBalance{ font-weight:600; }
+  #remainingBalance b{ font-weight:800; }
+  #remainingBalance.owes, #remainingBalance.owes b{ color:var(--burgundy); }
+  #remainingBalance.credit, #remainingBalance.credit b{ color:var(--success); }
+  #remainingBalance.tip, #remainingBalance.tip b{ color:#B45309; }
+
+  /* ---------- Customer & payment details ---------- */
+  #tab-invoice .collapse-block{ margin-bottom:14px; }
+  #tab-invoice .collapse-toggle{ min-height:54px; padding:0 16px; font-size:15px; text-align:left; }
+  #tab-invoice .collapse-toggle:active{ background:var(--bg); }
+  @media (hover:hover){ #tab-invoice .collapse-toggle:hover{ background:var(--bg); } }
+  #tab-invoice .collapse-toggle .chev{ display:grid; place-items:center; width:20px; height:20px; color:var(--ink-faint); }
+  #tab-invoice .collapse-toggle .chev svg{ width:18px; height:18px; }
+  #tab-invoice .collapse-body{ padding:2px 16px 16px; border-top:1px solid var(--line); }
+  .inv-field{ margin-top:14px; }
+  .inv-field-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; }
+  #tab-invoice input[type="date"],
+  #tab-invoice input[type="time"]{
+    min-width:0; max-width:100%; min-height:44px; -webkit-appearance:none; appearance:none;
+  }
+  .inv-hint{ margin:6px 0 0; font-size:12.5px; line-height:1.4; color:var(--ink-faint); }
+
+  .client-box{
+    margin-top:14px; padding:12px 14px;
+    background:var(--cedar-soft); border:1px solid #DDE0FF; border-radius:12px;
+  }
+  .balance-line{
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 12px;
+    font-size:14px; font-weight:600;
+  }
+  .balance-line b{ color:var(--burgundy); font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+  .client-box .inv-check{ margin-top:10px; color:var(--ink); }
+
+  .inv-pm{ margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+  #paymentMethodsList .empty-hint{ margin-bottom:10px; padding:16px 14px; font-size:13.5px; border-radius:12px; }
+  .pm-row{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .pm-row:last-child{ border-bottom:0; }
+  .pm-row .pm-info{ flex:1 1 auto; min-width:0; }
+  .pm-row .pm-label{ font-size:15px; font-weight:600; overflow-wrap:anywhere; }
+  .pm-row .pm-value{ margin-top:1px; font-size:13.5px; color:var(--ink-soft); overflow-wrap:anywhere; }
+  .pm-row .product-actions{ gap:6px; }
+  .pm-row .mini-btn{ min-height:34px; padding:0 10px; background:#fff; border-color:var(--line-strong); color:var(--ink); }
+  .pm-row .mini-btn.danger{ background:#FDEDED; border-color:#F6CBCB; color:var(--danger); }
+  .pm-add{ display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-top:8px; }
+  .pm-add .btn{ grid-column:1 / -1; min-height:44px; }
+
+  /* ---------- Send / print ---------- */
+  .inv-send{
+    padding:16px; background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .inv-send-head{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    gap:10px 12px; margin-bottom:14px;
+  }
+  .inv-send-head h3{ font-size:17px; }
+  .inv-send-head .status-btns{ grid-auto-columns:minmax(72px, auto); }
+  #tab-invoice .preview-box{
+    min-height:180px; max-height:300px; margin:0 0 10px; padding:14px;
+    background:#FAFAFD; border:1px solid var(--line-strong); border-radius:12px;
+    font-size:13.5px; line-height:1.6;
+  }
+  #tab-invoice .preview-box:focus{ border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  .inv-regen{
+    display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 10px 0 6px;
+    background:none; border:0; border-radius:9px; cursor:pointer;
+    font:600 13px/1 'Inter', sans-serif; color:var(--ink-soft);
+  }
+  .inv-regen svg{ width:15px; height:15px; }
+  @media (hover:hover){ .inv-regen:hover{ background:var(--bg); color:var(--ink); } }
+  .inv-actions{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; margin-top:8px; }
+  .inv-actions .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    min-width:0; min-height:48px; padding:0 12px;
+    font-size:15px; line-height:1.2; white-space:normal;
+  }
+  .inv-actions .btn svg{ width:18px; height:18px; }
+  .inv-actions #copyBtn, .inv-actions #completeSaleBtn{ grid-column:1 / -1; }
+  .inv-actions #copyBtn{ min-height:52px; font-size:16px; box-shadow:0 6px 16px rgba(79,70,229,0.25); }
+  .inv-reset{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; min-height:44px; margin-top:8px; padding:0 12px;
+    background:none; border:0; border-radius:10px; cursor:pointer;
+    font:600 14px/1.2 'Inter', sans-serif; color:var(--ink-soft);
+  }
+  .inv-reset svg{ width:16px; height:16px; }
+  .inv-reset:active{ background:var(--bg); color:var(--ink); }
+  @media (hover:hover){ .inv-reset:hover{ background:var(--bg); color:var(--ink); } }
+  .copied-msg{ min-height:18px; margin-top:4px; text-align:center; font-size:13.5px; font-weight:600; color:var(--success); }
+
+  /* ---------- Floating order bar (phones and tablets) ---------- */
+  .cart-bar{
+    position:fixed; left:50%; bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+    transform:translateX(-50%);
+    width:calc(100% - 24px); max-width:536px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:9px 9px 9px 18px;
+    background:var(--ink); color:#fff; border-radius:18px;
+    box-shadow:0 12px 32px rgba(23,25,35,0.3), 0 2px 6px rgba(23,25,35,0.16);
+  }
+  @media (min-width:700px){ .cart-bar{ max-width:656px; } }
+  @media (min-width:1024px){ .cart-bar{ display:none !important; } }
+  .cart-bar-info{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .cart-bar-count{ font-size:12.5px; font-weight:600; color:#C7C9D6; }
+  .cart-bar-total{ font-size:20px; font-weight:800; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+  .cart-bar-btn{
+    display:inline-flex; align-items:center; gap:8px; flex:0 0 auto;
+    min-height:46px; padding:0 18px;
+    background:var(--cedar); color:#fff; border:0; border-radius:12px; cursor:pointer;
+    font:700 15px/1 'Inter', sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .cart-bar-btn svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .cart-bar-btn:active{ background:var(--cedar-dark); }
+  body.cart-bar-visible .app{ padding-bottom:96px; }
+  @media (min-width:1024px){ body.cart-bar-visible .app{ padding-bottom:72px; } }
+
+  @media (max-width:380px){
+    .totals-card, .inv-send{ padding:14px; }
+    #lineItems{ padding:0 14px; }
+    #tab-invoice .collapse-toggle{ padding:0 14px; }
+    #tab-invoice .collapse-body{ padding:2px 14px 14px; }
+    .status-btns .btn{ font-size:13px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    #tab-invoice *, .cart-bar *{ transition:none !important; }
+  }
+
   .cat-chip{
     flex-shrink:0;
     font-family:'Inter', sans-serif;
@@ -626,46 +1044,6 @@
     border-color:var(--cedar);
   }
 
-  /* Sticky POS-style cart bar — stays pinned to the bottom of the screen
-     while browsing the catalog so the running total and a fast path to
-     checkout are always visible without scrolling. */
-  .cart-bar{
-    position:fixed;
-    left:50%;
-    bottom:0;
-    transform:translateX(-50%);
-    width:100%;
-    max-width:560px;
-    box-sizing:border-box;
-    z-index:60;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    background:var(--ink);
-    color:#fff;
-    padding:12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
-    border-radius:16px 16px 0 0;
-    box-shadow:0 -4px 18px rgba(23,25,35,0.22);
-  }
-  @media (min-width:700px){ .cart-bar{ max-width:680px; } }
-  .cart-bar-info{ display:flex; flex-direction:column; gap:1px; min-width:0; }
-  .cart-bar-count{ font-size:12px; font-weight:600; color:#C7C9D6; }
-  .cart-bar-total{ font-size:19px; font-weight:800; letter-spacing:-0.01em; }
-  .cart-bar-btn{
-    flex-shrink:0;
-    background:var(--cedar);
-    color:#fff;
-    border:none;
-    font-family:'Inter', sans-serif;
-    font-size:14.5px;
-    font-weight:700;
-    padding:11px 18px;
-    border-radius:999px;
-    cursor:pointer;
-  }
-  .cart-bar-btn:active{ background:var(--cedar-dark); }
-  body.cart-bar-visible .app{ padding-bottom:78px; }
 
   /* Filter panel — used in the invoice history modal search/filter controls */
   .filter-panel{
@@ -728,135 +1106,6 @@
   .collapse-body{ padding:0 15px 14px; }
   .collapse-body.collapsed{ display:none; }
 
-  .line-item{
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    background:var(--paper-card);
-    box-shadow:var(--shadow);
-    padding:12px 14px;
-    margin-bottom:10px;
-  }
-  .line-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:8px;
-    gap:8px;
-  }
-  .line-name{ font-size:16.5px; font-weight:700; }
-  .line-top-actions{ display:flex; gap:6px; flex-shrink:0; }
-  .discount-badge{
-    display:inline-block; font-size:11.5px; font-weight:700; color:var(--brass);
-    background:var(--brass-soft); padding:2px 7px; border-radius:999px; margin-left:6px;
-    letter-spacing:0.1px; vertical-align:middle;
-  }
-  .line-price-original{
-    display:block; font-size:12.5px; color:var(--ink-faint); text-decoration:line-through;
-  }
-  .remove-line{
-    background:#FDEDED; border:none; color:var(--danger);
-    font-size:12.5px; font-weight:600; cursor:pointer;
-    padding:4px 9px; border-radius:7px;
-  }
-  .qty-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:8px;
-  }
-  .qty-controls{
-    display:flex;
-    align-items:center;
-    border:1.5px solid var(--line-strong);
-    border-radius:999px;
-    overflow:hidden;
-  }
-  .qty-controls button{
-    background:var(--bg);
-    border:none;
-    width:28px; height:28px;
-    font-size:17.5px;
-    cursor:pointer;
-    color:var(--cedar);
-    font-weight:700;
-  }
-  .qty-controls input{
-    width:36px;
-    text-align:center;
-    border:none;
-    border-left:1.5px solid var(--line-strong);
-    border-right:1.5px solid var(--line-strong);
-    border-radius:0;
-    padding:5px 0;
-  }
-  .qty-controls input:focus{ box-shadow:none; }
-  .line-price{ font-size:14px; color:var(--ink-soft); margin-left:auto; text-align:right; }
-  .line-price b{ color:var(--ink); font-size:15.5px; }
-  .note-input{ font-size:15px; }
-  .line-more-toggle{
-    background:none; border:none; color:var(--ink-faint); font-size:12.5px; font-weight:600;
-    cursor:pointer; padding:2px 4px; display:flex; align-items:center; gap:3px;
-  }
-  .line-more-toggle .chev{ font-size:10px; transition:transform .12s ease; }
-  .line-item.expanded .line-more-toggle .chev{ transform:rotate(180deg); }
-  .line-more{ display:none; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
-  .line-item.expanded .line-more{ display:block; }
-  .line-more-badges{ display:flex; gap:6px; flex-wrap:wrap; margin-top:2px; }
-  .line-more-badge{
-    font-size:11px; font-weight:600; color:var(--ink-soft); background:var(--bg);
-    border:1px solid var(--line-strong); border-radius:999px; padding:2px 8px;
-  }
-
-  .client-box{
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    background:var(--cedar-soft);
-    padding:12px 14px;
-    margin-bottom:14px;
-  }
-  .balance-line{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:15px;
-    padding:6px 0;
-  }
-  .balance-line b{ color:var(--burgundy); }
-  .checkbox-row{
-    display:flex;
-    align-items:center;
-    gap:7px;
-    font-size:13.5px;
-    color:var(--ink-soft);
-    margin-top:4px;
-  }
-  .checkbox-row input[type="checkbox"]{ width:auto; accent-color:var(--cedar); }
-
-  .totals-card{
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:16px 16px;
-    margin:16px 0;
-    background:var(--paper-card);
-    box-shadow:var(--shadow);
-  }
-  .totals-row{
-    display:flex;
-    justify-content:space-between;
-    font-size:16px;
-    padding:4px 0;
-  }
-  .totals-row.usd b{ color:var(--brass); }
-  .totals-row.lbp b{ color:var(--burgundy); }
-  .totals-row.grand{
-    border-top:1px dashed var(--line-strong);
-    margin-top:8px;
-    padding-top:10px;
-    font-size:24px;
-    font-weight:800;
-  }
-  .totals-row.grand b{ font-size:26px; }
-  .totals-row.sub{ font-size:14px; color:var(--ink-soft); }
 
   .preview-box{
     background:var(--bg);
@@ -877,32 +1126,6 @@
     outline:none;
   }
   .preview-box[dir="rtl"]{ text-align:right; font-family:'Inter', 'Menlo', monospace; }
-  .pm-row{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 0;
-    border-bottom:1px solid var(--line);
-    font-size:15.5px;
-  }
-  .pm-row:last-child{ border-bottom:none; }
-  .pm-row .pm-info{ flex:1; }
-  .pm-row .pm-label{ font-weight:600; }
-  .pm-row .pm-value{ color:var(--ink-soft); font-size:14px; }
-
-  .action-row{
-    display:flex;
-    gap:8px;
-    margin-bottom:8px;
-  }
-  .copied-msg{
-    font-size:13.5px;
-    color:var(--success);
-    font-weight:600;
-    text-align:center;
-    margin-top:4px;
-    min-height:14px;
-  }
 
   /* Clients tab */
   .clients-summary{
@@ -2393,9 +2616,213 @@
   .print-preview-paper .pr-grand > span:last-child{ text-align:right; }
   .print-preview-paper .pr-footer{ font-size:14px; font-weight:600; text-align:center; margin-top:12px; white-space:pre-wrap; color:#E4E4E7; }
   .print-preview-paper .pr-thankyou{ font-size:15px; text-align:center; margin-top:14px; font-weight:500; letter-spacing:0.2px; color:#E4E4E7; }
+
+  /* ==========================================================
+     Admin tab, banned screen and "viewing as" bar
+     ========================================================== */
+  #tab-admin svg, .ad-sheet svg, .banned-box svg, .imp-bar svg{
+    flex-shrink:0; stroke:currentColor; fill:none;
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  }
+  .ad-head{ margin:0 0 14px; }
+  .ad-head h2{ font-size:24px; }
+  .ad-subtitle{ margin:4px 0 0; font-size:13.5px; line-height:1.4; color:var(--ink-soft); font-weight:500; }
+
+  .ad-kpis{
+    display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));
+    margin:0 0 14px; overflow:hidden;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  @media (min-width:700px){ .ad-kpis{ grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+  .ad-kpi{ min-width:0; padding:14px 16px; border-top:1px solid var(--line); }
+  .ad-kpi:nth-child(-n+2){ border-top:0; }
+  .ad-kpi:nth-child(even){ border-left:1px solid var(--line); }
+  @media (min-width:700px){
+    .ad-kpi{ border-top:0; padding:16px 20px; }
+    .ad-kpi + .ad-kpi{ border-left:1px solid var(--line); }
+  }
+  .ad-kpi-label{ display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--ink-soft); }
+  .ad-kpi-label i{ width:8px; height:8px; border-radius:50%; background:var(--cedar); flex:0 0 auto; }
+  .ad-kpi.banned .ad-kpi-label i{ background:var(--danger); }
+  .ad-kpi.active .ad-kpi-label i{ background:var(--success); }
+  .ad-kpi.newu .ad-kpi-label i{ background:var(--brass); }
+  .ad-kpi-value{ margin-top:6px; font-size:clamp(22px, 5vw, 28px); font-weight:800; letter-spacing:-0.02em; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .ad-kpi.banned .ad-kpi-value{ color:var(--danger); }
+
+  .ad-tools{ display:grid; grid-template-columns:minmax(0, 1fr); gap:10px; margin-bottom:12px; }
+  @media (min-width:900px){
+    .ad-tools{ grid-template-columns:minmax(240px, 380px) minmax(0, 1fr); align-items:center; gap:14px; }
+  }
+  .ad-search{ position:relative; }
+  .ad-search > svg{ position:absolute; left:14px; top:50%; width:18px; height:18px; margin-top:-9px; color:var(--ink-faint); pointer-events:none; }
+  .ad-search input{ height:48px; padding:0 14px 0 42px; border-radius:12px; border-color:var(--line); box-shadow:var(--shadow); }
+  .ad-search input:focus{ border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  .ad-chips{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; padding:2px 1px; -webkit-overflow-scrolling:touch; }
+  .ad-chips::-webkit-scrollbar{ display:none; }
+  .ad-chips .cat-chip{ min-height:36px; padding:0 14px; }
+  .ad-listbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 2px 8px; min-height:36px; }
+  .ad-count{ font-size:13px; color:var(--ink-soft); font-weight:600; }
+  .ad-ctrls{ display:flex; align-items:center; gap:6px; }
+  .ad-sort{ width:auto; min-height:36px; padding:0 30px 0 12px; font-size:14px; font-weight:600; border-radius:10px; }
+  .ad-refresh{
+    flex:0 0 auto; width:36px; height:36px; display:grid; place-items:center; padding:0;
+    background:#fff; border:1.5px solid var(--line-strong); border-radius:10px; color:var(--ink-soft); cursor:pointer;
+  }
+  .ad-refresh svg{ width:16px; height:16px; }
+  .ad-refresh:active{ background:var(--bg); }
+  @media (hover:hover){ .ad-refresh:hover{ color:var(--ink); background:var(--bg); } }
+  .ad-refresh.spin svg{ animation:adspin .7s linear infinite; }
+  @keyframes adspin{ to{ transform:rotate(360deg); } }
+
+  /* User list: one card of rows on phones, a proper table from 900px */
+  .ad-table{ background:var(--paper-card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .ad-thead{ display:none; }
+  .ad-row{
+    display:flex; align-items:center; gap:12px; width:100%; min-width:0; padding:12px 12px 12px 14px;
+    background:none; border:0; border-top:1px solid var(--line); text-align:left; cursor:pointer;
+    font:inherit; color:inherit; -webkit-tap-highlight-color:transparent;
+  }
+  .ad-row:first-child{ border-top:0; }
+  .ad-row:active{ background:var(--bg); }
+  .ad-row:focus-visible{ outline:2px solid var(--cedar); outline-offset:-2px; }
+  .ad-row.is-banned{ background:#FFFAFA; }
+  .ad-avatar{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; display:grid; place-items:center; color:#fff; font-weight:800; font-size:15px; }
+  .ad-c-user{ display:flex; align-items:center; gap:12px; flex:1 1 auto; min-width:0; }
+  .ad-user-main{ min-width:0; flex:1 1 auto; }
+  .ad-user-name{ display:flex; align-items:center; flex-wrap:wrap; gap:4px 6px; font-size:15px; font-weight:700; line-height:1.3; }
+  .ad-email{ min-width:0; overflow-wrap:anywhere; }
+  .ad-user-sub{ display:flex; flex-wrap:wrap; gap:2px 12px; margin-top:3px; font-size:12.5px; color:var(--ink-soft); line-height:1.35; }
+  .ad-user-sub span{ white-space:nowrap; }
+  .ad-user-sub .warn{ color:#B91C1C; font-weight:600; white-space:normal; }
+  .ad-c-status, .ad-c-rec, .ad-c-joined, .ad-c-active{ display:none; }
+  .ad-tag{ padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:700; white-space:nowrap; background:var(--cedar-soft); color:var(--cedar); }
+  .ad-tag.banned{ background:#FDEDED; color:#B91C1C; }
+  .ad-tag.you{ background:var(--success-soft); color:#047857; }
+  .ad-tag.ok{ background:var(--success-soft); color:#047857; }
+  .ad-chev{ width:18px; height:18px; color:var(--ink-faint); flex:0 0 auto; }
+  .ad-pill-sub{ display:block; margin-top:3px; font-size:12px; color:var(--ink-soft); }
+  @media (min-width:900px){
+    .ad-thead, .ad-row{
+      display:grid; align-items:center; column-gap:16px; padding:0 16px 0 18px;
+      grid-template-columns:minmax(0, 2.6fr) minmax(0, 1.1fr) 84px minmax(0, 1fr) minmax(0, 1fr) 18px;
+    }
+    .ad-thead{ min-height:44px; background:var(--bg); border-bottom:1px solid var(--line); font-size:12.5px; font-weight:700; color:var(--ink-soft); }
+    .ad-thead .num, .ad-c-rec{ text-align:right; }
+    .ad-row{ min-height:68px; }
+    .ad-row:hover{ background:#F8F8FF; }
+    .ad-row.is-banned:hover{ background:#FFF3F3; }
+    .ad-c-status, .ad-c-rec, .ad-c-joined, .ad-c-active{ display:block; min-width:0; font-size:14px; }
+    .ad-c-rec{ font-weight:700; font-variant-numeric:tabular-nums; }
+    .ad-c-joined, .ad-c-active{ color:var(--ink-soft); }
+    .ad-c-joined, .ad-thead span:nth-child(4){ padding-left:14px; }
+    .ad-user-sub{ display:none; }
+    .ad-tag.banned.m{ display:none; }
+  }
+  .ad-empty{ padding:36px 16px; text-align:center; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+  .ad-empty b{ display:block; margin-bottom:4px; color:var(--ink); font-size:16px; }
+  .ad-empty .btn{ margin-top:14px; }
+  .ad-skel{ display:flex; align-items:center; gap:12px; padding:14px; border-top:1px solid var(--line); }
+  .ad-skel:first-child{ border-top:0; }
+  .ad-skel i{ display:block; border-radius:8px; background:linear-gradient(90deg, var(--line) 25%, #F3F4F9 50%, var(--line) 75%); background-size:200% 100%; animation:adshim 1.3s linear infinite; }
+  .ad-skel .c{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; }
+  .ad-skel .l{ height:12px; margin:4px 0; }
+  @keyframes adshim{ to{ background-position:-200% 0; } }
+  @media (prefers-reduced-motion:reduce){ .ad-skel i, .ad-refresh.spin svg{ animation:none; } }
+
+  /* Manage-user dialog */
+  .ad-sheet-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .ad-sheet-head .ad-avatar{ width:48px; height:48px; font-size:17px; }
+  .ad-sheet-title{ min-width:0; }
+  .ad-sheet-title strong{ display:block; font-size:16.5px; font-weight:800; overflow-wrap:anywhere; letter-spacing:-0.01em; }
+  .ad-sheet-title .ad-tags{ display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+  .ad-ban-box{ margin:0 0 14px; padding:12px 14px; background:#FDEDED; border:1px solid #F6CBCB; border-radius:12px; font-size:14px; line-height:1.45; color:#7F1D1D; }
+  .ad-ban-box b{ display:block; margin-bottom:2px; color:#B91C1C; }
+  .ad-ban-box span{ display:block; overflow-wrap:anywhere; }
+  .ad-facts{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px 14px; margin:0 0 16px; padding:12px 14px; background:var(--bg); border-radius:12px; }
+  .ad-facts div{ min-width:0; }
+  .ad-facts dt{ font-size:12px; font-weight:600; color:var(--ink-faint); }
+  .ad-facts dd{ margin:2px 0 0; font-size:14px; font-weight:600; overflow-wrap:anywhere; }
+  .ad-actions{ display:flex; flex-direction:column; gap:8px; }
+  .ad-act{
+    display:flex; align-items:center; gap:12px; width:100%; min-height:52px; padding:8px 14px;
+    background:#fff; border:1px solid var(--line-strong); border-radius:12px; cursor:pointer;
+    font:600 15px/1.25 'Inter', sans-serif; color:var(--ink); text-align:left;
+  }
+  .ad-act svg{ width:19px; height:19px; color:var(--cedar); }
+  .ad-act small{ display:block; margin-top:1px; font-size:12.5px; font-weight:500; color:var(--ink-soft); }
+  .ad-act:active{ background:var(--bg); }
+  @media (hover:hover){ .ad-act:hover:not(:disabled){ background:var(--bg); } }
+  .ad-act.danger{ color:#B91C1C; border-color:#F6CBCB; }
+  .ad-act.danger svg{ color:#B91C1C; }
+  .ad-act:disabled{ opacity:.45; cursor:not-allowed; }
+  .ad-close{ width:100%; margin-top:12px; }
+  .ad-lead{ margin:-8px 0 14px; font-size:14px; line-height:1.5; color:var(--ink-soft); overflow-wrap:anywhere; }
+  .ad-form textarea{
+    width:100%; min-height:88px; padding:10px 12px; resize:vertical;
+    font:16px/1.4 'Inter', sans-serif; color:var(--ink);
+    border:1.5px solid var(--line-strong); border-radius:var(--radius-sm); background:#fff;
+  }
+  .ad-form textarea:focus{ outline:none; border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  .ad-durations{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; }
+  .ad-dur{
+    min-height:42px; padding:6px 4px; background:#fff; border:1.5px solid var(--line-strong); border-radius:10px;
+    font:600 14px/1.2 'Inter', sans-serif; color:var(--ink-soft); cursor:pointer;
+  }
+  .ad-dur.on{ background:var(--cedar-soft); border-color:var(--cedar); color:var(--cedar); }
+  .ad-dur.on.forever{ background:#FDEDED; border-color:var(--danger); color:#B91C1C; }
+  .ad-form input[type="datetime-local"]{ margin-top:8px; min-height:44px; -webkit-appearance:none; appearance:none; }
+  .ad-form input[hidden]{ display:none; }
+  .ad-preview{ margin-top:8px; font-size:13.5px; font-weight:600; color:var(--ink-soft); }
+  .btn.danger-btn{ background:var(--danger); border-color:var(--danger); }
+  .btn.danger-btn:active{ background:#B91C1C; }
+  .btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+  /* Banned screen: shows only a label, the reason and the period */
+  .banned-overlay{
+    display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px 16px;
+    background:radial-gradient(circle at 20% 15%, #FDEDED 0%, var(--bg) 55%);
+  }
+  .banned-box{
+    width:100%; max-width:380px; padding:30px 26px; text-align:center;
+    background:var(--paper-card); border:1px solid #F6CBCB; border-radius:22px;
+    box-shadow:0 20px 50px rgba(185,28,28,0.1);
+  }
+  .banned-icon{ width:56px; height:56px; margin:0 auto 14px; display:grid; place-items:center; border-radius:16px; background:#FDEDED; color:#B91C1C; }
+  .banned-icon svg{ width:28px; height:28px; }
+  .banned-box h1{ font-size:24px; color:#B91C1C; }
+  .banned-facts{ margin:20px 0 22px; text-align:left; display:flex; flex-direction:column; gap:10px; }
+  .banned-facts div{ padding:12px 14px; background:var(--bg); border-radius:12px; }
+  .banned-facts dt{ font-size:12.5px; font-weight:600; color:var(--ink-faint); }
+  .banned-facts dd{ margin:3px 0 0; font-size:15.5px; font-weight:600; line-height:1.4; overflow-wrap:anywhere; white-space:pre-wrap; }
+
+  /* "Viewing as" bar while an admin is inside a user's account */
+  .imp-bar{
+    display:none; position:sticky; top:0; z-index:1200; min-height:44px;
+    align-items:center; justify-content:space-between; gap:10px; padding:6px 14px;
+    background:var(--brass); color:#fff; font-size:13.5px; font-weight:600;
+  }
+  .imp-bar span{ min-width:0; overflow-wrap:anywhere; }
+  .imp-bar button{
+    flex:0 0 auto; min-height:32px; padding:0 12px; background:#fff; color:#8A4B05;
+    border:0; border-radius:999px; font:700 13px/1 'Inter', sans-serif; cursor:pointer;
+  }
+  body.impersonating .imp-bar{ display:flex; }
+  body.impersonating .catalog-toolbar,
+  body.impersonating .cl-bar-wrap,
+  body.impersonating .settings-nav,
+  body.impersonating .inv-find{ top:44px; }
+  @media (min-width:1024px){
+    body.impersonating .inv-order{ top:60px; max-height:calc(100vh - 76px); max-height:calc(100dvh - 76px); }
+  }
 </style>
 </head>
 <body>
+
+<div class="imp-bar" id="impBar" role="status">
+  <span id="impBarText">Viewing as a user</span>
+  <button type="button" id="impBarExit">Return to admin</button>
+</div>
 
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
@@ -2418,6 +2845,18 @@
     <div class="login-divider">OR</div>
     <button type="button" class="guest-btn" id="guestBtn">🚶 Continue as guest</button>
     <div class="field-label" style="margin-top:10px; text-align:center; font-weight:500; text-transform:none; font-size:11px;">Guest data stays on this device only — sign up anytime to sync it across devices.</div>
+  </div>
+</div>
+
+<div class="banned-overlay" id="bannedOverlay" role="alert">
+  <div class="banned-box">
+    <div class="banned-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <h1>You are banned</h1>
+    <dl class="banned-facts">
+      <div><dt>Reason</dt><dd id="bannedReason"></dd></div>
+      <div><dt>Period</dt><dd id="bannedPeriod"></dd></div>
+    </dl>
+    <button type="button" class="btn ghost full" id="bannedBackBtn">Back to sign in</button>
   </div>
 </div>
 
@@ -2469,141 +2908,197 @@
   </div>
 
   <!-- INVOICE TAB -->
-  <section class="section active" id="tab-invoice">
-    <div class="search-box">
-      <span class="field-label">🛒 Add products</span>
-      <input type="text" id="productSearch" placeholder="Search catalog...">
-    </div>
-    <div class="cat-chips" id="catChips"></div>
-    <div class="catalog-picker" id="catalogPicker"></div>
-
-    <div id="lineItems"></div>
-    <div class="empty-hint" id="noLinesHint">No items added yet. Tap a product above to add it.</div>
-
-    <div class="totals-card" id="totalsCard" style="display:none;">
-      <div class="totals-row sub" id="discountSummaryRow" style="display:none;"><span>🏷️ Discount total</span><span id="discountSummaryLine">−$0.00</span></div>
-      <div class="totals-row usd"><span>💵 Items subtotal (USD)</span><b id="totalUsd">$0.00</b></div>
-      <div class="totals-row lbp sub"><span>💱 Items subtotal (LBP)</span><span id="totalLbp">0 LBP</span></div>
-      <div class="action-row" style="margin-top:6px;">
-        <button type="button" class="btn ghost small full" id="invoiceDiscountBtn">🏷️ Whole-invoice discount</button>
-      </div>
-      <div class="totals-row sub" id="prevBalanceRow" style="display:none;"><span>📌 Previous balance</span><span id="prevBalanceLine">$0.00</span></div>
-      <div class="totals-row grand"><span>💰 Total:</span><b><span id="grandUsd">$0.00</span> USD or <span id="grandLbp">0 LBP</span></b></div>
-
-      <div class="field-block" style="margin-top:10px;">
-        <span class="field-label">💳 Payment status</span>
-        <div class="status-btns" id="paymentStatusBtns">
-          <button type="button" class="btn small" data-status="paid">✅ Paid</button>
-          <button type="button" class="btn small ghost" data-status="partial">🕓 Partial</button>
-          <button type="button" class="btn small ghost" data-status="unpaid">❌ Not paid</button>
-        </div>
-        <div class="walkin-hint" id="walkInPayHint" style="display:none;">
-          <span>Walk-in customers must pay in full. To leave a balance, choose a client first.</span>
-          <button type="button" class="mini-btn" id="walkInPickClientBtn">👤 Choose client</button>
-        </div>
-        <div class="checkbox-row" style="margin-top:8px;">
-          <input type="checkbox" id="showPaymentStatusChk" checked>
-          <label for="showPaymentStatusChk">👁️ Show payment status on invoice</label>
-        </div>
-      </div>
-      <div class="field-block" style="margin-top:8px;">
-        <span class="field-label">💵 Amount received now</span>
-        <div class="add-row-inline">
-          <input type="text" inputmode="decimal" id="amountReceived" style="flex:1;">
-          <select id="amountReceivedCurrency" style="flex:0 0 84px;">
-            <option value="USD">USD</option>
-            <option value="LBP">LBP</option>
-          </select>
-        </div>
-      </div>
-      <div class="field-block" id="overpaymentModeBlock" style="margin-top:8px;">
-        <span class="field-label">💵 If they pay more than the total</span>
-        <div class="status-btns" id="overpaymentModeBtns">
-          <button type="button" class="btn small" data-mode="owe">📌 Rest = owed to them</button>
-          <button type="button" class="btn small ghost" data-mode="tip">💸 Rest = tip</button>
-        </div>
-      </div>
-      <div class="totals-row sub"><span>Remaining balance after payment</span><b id="remainingBalance">$0.00</b></div>
-      <div class="totals-row sub"><span>Rate used</span><span id="rateUsedLine">—</span></div>
+  <section class="section active" id="tab-invoice" aria-labelledby="invoiceTitle">
+    <div class="inv-head">
+      <h2 id="invoiceTitle">New invoice</h2>
+      <p class="inv-subtitle">Tap products to build the order, then copy, send or print it.</p>
     </div>
 
-    <div class="collapse-block" id="customerDetailsBlock" style="display:none;">
-      <button type="button" class="collapse-toggle" id="customerDetailsToggle">
-        <span>🧑‍💼 Customer &amp; payment details</span>
-        <span class="chev" id="customerDetailsChev">▾</span>
-      </button>
-      <div class="collapse-body collapsed" id="customerDetailsBody">
-        <div class="field-block">
-          <span class="field-label">👤 Client</span>
-          <select id="clientSelect">
-            <option value="">Walk-in (no account)</option>
-          </select>
-        </div>
-        <div class="field-block">
-          <span class="field-label">📝 Customer name on receipt</span>
-          <input type="text" id="customerName" placeholder="Customer name">
-        </div>
-
-        <div class="field-block">
-          <span class="field-label">🕒 Invoice date &amp; time</span>
-          <div class="search-mode-row" style="margin-bottom:0;">
-            <input type="date" id="invoiceDateInput" style="flex:1.3;">
-            <input type="time" id="invoiceTimeInput" step="1" style="flex:1;">
-            <button type="button" class="mini-btn" id="invoiceDateNowBtn">⏱️ Now</button>
+    <div class="inv-layout">
+      <div class="inv-browse">
+        <div class="inv-find">
+          <div class="inv-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="productSearch" placeholder="Search products" aria-label="Search products" autocomplete="off" enterkeyhint="search">
+            <button type="button" class="inv-search-clear" id="productSearchClear" aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
           </div>
-          <div class="settings-hint">Defaults to now — change this to log an old sale on its real date.</div>
+          <div class="cat-chips" id="catChips"></div>
         </div>
+        <div class="catalog-picker" id="catalogPicker"></div>
+      </div>
 
-        <div class="client-box" id="clientBalanceBox" style="display:none;">
-          <div class="balance-line">
-            <span id="clientPrevBalanceLabel">Balance owed before this sale</span>
-            <b id="clientPrevBalance">$0.00</b>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="includeBalanceChk" checked>
-            <label for="includeBalanceChk" id="includeBalanceChkLabel">Add this balance to the invoice total</label>
+      <aside class="inv-order" id="invOrder" aria-label="Current order">
+        <div class="inv-order-head">
+          <h3>Order</h3>
+          <div class="inv-order-tools">
+            <button type="button" class="inv-clear" id="clearInvoiceBtn" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              Clear
+            </button>
+            <span class="inv-count is-empty" id="invOrderCount" role="status">No items</span>
           </div>
         </div>
 
-        <div class="field-block" id="paymentMethodsBlock">
-          <span class="field-label">📱 Payment methods (shown on invoice)</span>
-          <div id="paymentMethodsList"></div>
-          <div class="add-row" style="border-top:none; padding-top:0;">
-            <input type="text" id="newPmLabel" placeholder="e.g. Whish">
-            <input type="text" id="newPmValue" placeholder="e.g. 70817032">
-            <button class="btn small" id="addPmBtn">➕ Add payment method</button>
+        <div class="inv-receipt">
+          <div id="lineItems"></div>
+          <div class="inv-empty" id="noLinesHint">
+            <div class="inv-empty-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+            <strong>No items yet</strong>
+            <span>Tap a product to add it to this invoice.</span>
+          </div>
+
+          <div class="totals-card" id="totalsCard" style="display:none;">
+            <div class="totals-row"><span>Subtotal</span><b id="totalUsd">$0.00</b></div>
+            <div class="totals-row sub"><span>In Lebanese pounds</span><span id="totalLbp">0 LBP</span></div>
+            <div class="totals-row sub" id="discountSummaryRow" style="display:none;"><span>Discounts</span><span id="discountSummaryLine">−$0.00</span></div>
+            <div class="totals-row sub" id="prevBalanceRow" style="display:none;"><span>Previous balance</span><span id="prevBalanceLine">$0.00</span></div>
+            <button type="button" class="inv-discount-btn" id="invoiceDiscountBtn">Add invoice discount</button>
+
+            <div class="totals-row grand">
+              <span class="grand-label">Total</span>
+              <div class="grand-amts">
+                <b class="grand-usd" id="grandUsd">$0.00</b>
+                <span class="grand-lbp">or <span id="grandLbp">0 LBP</span></span>
+              </div>
+            </div>
+
+            <div class="inv-sect">
+              <span class="inv-label" id="payStatusLabel">Payment status</span>
+              <div class="status-btns" id="paymentStatusBtns" role="group" aria-labelledby="payStatusLabel">
+                <button type="button" class="btn small" data-status="paid" aria-pressed="true">Paid</button>
+                <button type="button" class="btn small ghost" data-status="partial" aria-pressed="false">Partial</button>
+                <button type="button" class="btn small ghost" data-status="unpaid" aria-pressed="false">Not paid</button>
+              </div>
+              <div class="walkin-hint" id="walkInPayHint" style="display:none;">
+                <span>Walk-in customers must pay in full. To leave a balance, choose a client first.</span>
+                <button type="button" class="mini-btn" id="walkInPickClientBtn">Choose client</button>
+              </div>
+              <div class="inv-check">
+                <input type="checkbox" id="showPaymentStatusChk" checked>
+                <label for="showPaymentStatusChk">Show payment status on the invoice</label>
+              </div>
+            </div>
+
+            <div class="inv-sect">
+              <label class="inv-label" for="amountReceived">Amount received now</label>
+              <div class="money">
+                <input type="text" inputmode="decimal" id="amountReceived">
+                <select id="amountReceivedCurrency" aria-label="Currency received">
+                  <option value="USD">USD</option>
+                  <option value="LBP">LBP</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="inv-sect" id="overpaymentModeBlock">
+              <span class="inv-label" id="overpayLabel">If they pay more than the total</span>
+              <div class="status-btns" id="overpaymentModeBtns" role="group" aria-labelledby="overpayLabel">
+                <button type="button" class="btn small" data-mode="owe" aria-pressed="true">Rest is owed to them</button>
+                <button type="button" class="btn small ghost" data-mode="tip" aria-pressed="false">Rest is a tip</button>
+              </div>
+            </div>
+
+            <div class="inv-remaining">
+              <div class="totals-row"><span>Balance after payment</span><span id="remainingBalance">$0.00</span></div>
+              <div class="totals-row sub"><span>Rate used</span><span id="rateUsedLine">—</span></div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="field-block" id="previewBlock" style="display:none;">
-      <span class="field-label">🌐 Invoice language</span>
-      <div class="status-btns" id="invoiceLangBtns">
-        <button type="button" class="btn small" data-lang="en">English</button>
-        <button type="button" class="btn small ghost" data-lang="ar">العربية</button>
-      </div>
-      <span class="field-label" style="margin-top:10px;">👀 Invoice preview — edit freely, this is exactly what gets copied</span>
-      <textarea class="preview-box" id="previewBox" rows="14"></textarea>
-      <div class="action-row">
-        <button class="btn ghost full" id="regenPreviewBtn">🔄 Regenerate from items</button>
-      </div>
-      <div class="action-row">
-        <button class="btn full" id="copyBtn">📋 Copy invoice</button>
-      </div>
-      <div class="action-row">
-        <button class="btn ghost full" id="whatsappBtn">💬 Open in WhatsApp</button>
-      </div>
-      <div class="action-row">
-        <button class="btn ghost full" id="printBtn">🖨️ Print invoice</button>
-      </div>
-      <div class="action-row">
-        <button class="btn ghost full" id="completeSaleBtn">✅ Complete sale (no receipt needed)</button>
-      </div>
-      <div class="action-row">
-        <button class="btn ghost full" id="resetBtn">🆕 Start new invoice</button>
-      </div>
-      <div class="copied-msg" id="copiedMsg"></div>
+        <div class="collapse-block" id="customerDetailsBlock" style="display:none;">
+          <button type="button" class="collapse-toggle" id="customerDetailsToggle" aria-expanded="false" aria-controls="customerDetailsBody">
+            <span>Customer &amp; payment details</span>
+            <span class="chev" id="customerDetailsChev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+          </button>
+          <div class="collapse-body collapsed" id="customerDetailsBody">
+            <div class="inv-field">
+              <label class="inv-label" for="clientSelect">Client</label>
+              <select id="clientSelect">
+                <option value="">Walk-in (no account)</option>
+              </select>
+            </div>
+            <div class="inv-field">
+              <label class="inv-label" for="customerName">Customer name on receipt</label>
+              <input type="text" id="customerName" placeholder="Customer name" autocomplete="off">
+            </div>
+
+            <div class="client-box" id="clientBalanceBox" style="display:none;">
+              <div class="balance-line">
+                <span id="clientPrevBalanceLabel">Balance owed before this sale</span>
+                <b id="clientPrevBalance">$0.00</b>
+              </div>
+              <div class="inv-check">
+                <input type="checkbox" id="includeBalanceChk" checked>
+                <label for="includeBalanceChk" id="includeBalanceChkLabel">Add this balance to the invoice total</label>
+              </div>
+            </div>
+
+            <div class="inv-field">
+              <div class="inv-label-row">
+                <span class="inv-label">Invoice date and time</span>
+                <button type="button" class="mini-btn" id="invoiceDateNowBtn">Set to now</button>
+              </div>
+              <div class="inv-field-grid">
+                <input type="date" id="invoiceDateInput" aria-label="Invoice date">
+                <input type="time" id="invoiceTimeInput" step="1" aria-label="Invoice time">
+              </div>
+              <p class="inv-hint">Defaults to now. Change it to log an old sale on its real date.</p>
+            </div>
+
+            <div class="inv-pm" id="paymentMethodsBlock">
+              <span class="inv-label">Payment methods shown on the invoice</span>
+              <div id="paymentMethodsList"></div>
+              <div class="pm-add">
+                <input type="text" id="newPmLabel" placeholder="Name (Whish)" aria-label="Payment method name" autocomplete="off">
+                <input type="text" id="newPmValue" placeholder="Number" aria-label="Payment method number or details" autocomplete="off">
+                <button type="button" class="btn ghost small" id="addPmBtn">Add payment method</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="inv-send" id="previewBlock" style="display:none;">
+          <div class="inv-send-head">
+            <h3>Send or print</h3>
+            <div class="status-btns" id="invoiceLangBtns" role="group" aria-label="Invoice language">
+              <button type="button" class="btn small" data-lang="en" aria-pressed="true">English</button>
+              <button type="button" class="btn small ghost" data-lang="ar" aria-pressed="false">العربية</button>
+            </div>
+          </div>
+          <label class="inv-label" for="previewBox">Message preview<small>Edit freely. This is exactly what gets copied.</small></label>
+          <textarea class="preview-box" id="previewBox" rows="12"></textarea>
+          <button type="button" class="inv-regen" id="regenPreviewBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            Regenerate from items
+          </button>
+
+          <div class="inv-actions">
+            <button type="button" class="btn" id="copyBtn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              Copy invoice
+            </button>
+            <button type="button" class="btn ghost" id="whatsappBtn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+              WhatsApp
+            </button>
+            <button type="button" class="btn ghost" id="printBtn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+              Print
+            </button>
+            <button type="button" class="btn ghost" id="completeSaleBtn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              Complete sale without a receipt
+            </button>
+          </div>
+          <button type="button" class="inv-reset" id="resetBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Start new invoice
+          </button>
+          <div class="copied-msg" id="copiedMsg" role="status" aria-live="polite"></div>
+        </div>
+      </aside>
     </div>
   </section>
 
@@ -3071,22 +3566,38 @@
   </section>
 
   <!-- ADMIN TAB (hidden entirely for non-admins; adminTabBtn stays display:none for them too) -->
-  <section class="section" id="tab-admin">
-    <div class="settings-card">
-      <h3>🛡️ Admin panel</h3>
-      <div class="settings-hint" style="margin-top:0;">Only visible to admin accounts. Shows everyone who has signed up for this app.</div>
-      <div class="clients-summary" id="adminStatsRow" style="margin-top:14px;"></div>
+  <section class="section" id="tab-admin" aria-labelledby="adminTitle">
+    <div class="ad-head">
+      <h2 id="adminTitle">Admin</h2>
+      <p class="ad-subtitle">Manage everyone who signed up: ban, sign in as them, reset passwords and more.</p>
     </div>
 
-    <div class="settings-card">
-      <div class="search-box" style="margin-bottom:0;">
-        <span class="field-label">🔍 Search users by email</span>
-        <input type="text" id="adminUserSearch" placeholder="Search...">
+    <div class="ad-kpis" id="adminStatsRow"></div>
+
+    <div class="ad-tools">
+      <div class="ad-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="adminUserSearch" placeholder="Search by email" aria-label="Search users by email" autocomplete="off">
       </div>
-      <button class="icon-btn" id="adminRefreshBtn" type="button" style="margin-top:10px;">🔄 refresh</button>
-      <div class="modal-error" id="adminUsersError" style="margin-top:10px;"></div>
-      <div class="client-grid" id="adminUserList" style="margin-top:14px;"></div>
+      <div class="ad-chips" id="adminFilterChips" role="group" aria-label="Filter users"></div>
     </div>
+
+    <div class="ad-listbar">
+      <span class="ad-count" id="adminCount" role="status" aria-live="polite"></span>
+      <div class="ad-ctrls">
+        <select class="ad-sort" id="adminSort" aria-label="Sort users">
+          <option value="newest">Newest</option>
+          <option value="active">Last active</option>
+          <option value="records">Most records</option>
+          <option value="email">Email A–Z</option>
+        </select>
+        <button type="button" class="ad-refresh" id="adminRefreshBtn" aria-label="Refresh users">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="ad-table" id="adminUserList"></div>
   </section>
 
 </div>
@@ -3096,7 +3607,7 @@
     <span class="cart-bar-count" id="cartBarCount">0 items</span>
     <span class="cart-bar-total" id="cartBarTotal">$0.00</span>
   </div>
-  <button type="button" class="cart-bar-btn" id="cartBarCheckoutBtn">Checkout ▾</button>
+  <button type="button" class="cart-bar-btn" id="cartBarCheckoutBtn">Checkout <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -3145,8 +3656,14 @@
   // has its own top-level scope, so plain `let` here would be invisible to
   // that later plain <script> block — that mismatch was the cause of the
   // "window.guestMode is not defined" / "Failed to fetch" errors.
-  window.authToken = localStorage.getItem(TOKEN_KEY) || null;
-  window.guestMode = localStorage.getItem(GUEST_KEY) === 'true';
+  // An admin who is "logging in as" a user keeps that user's token in
+  // sessionStorage only (this tab), so their own admin login in localStorage
+  // is never touched and closing the tab ends the impersonation.
+  const IMP_TOKEN_KEY = 'ledger_impersonate_token';
+  const IMP_EMAIL_KEY = 'ledger_impersonate_email';
+  const impToken = sessionStorage.getItem(IMP_TOKEN_KEY);
+  window.authToken = impToken || localStorage.getItem(TOKEN_KEY) || null;
+  window.guestMode = !impToken && localStorage.getItem(GUEST_KEY) === 'true';
 
   async function apiFetch(path, options = {}){
     const res = await fetch(API_BASE + path, {
@@ -3168,9 +3685,57 @@
     if(res.status === 404) return null;
     if(!res.ok){
       const body = await res.json().catch(() => ({}));
+      // A banned account gets a 403 with code "banned" from every route.
+      if(res.status === 403 && body && body.code === 'banned'){
+        const err = new Error(body.error || 'This account is banned.');
+        err.ban = body;
+        if(path !== '/api/login' && window.authToken) showBanned(body);
+        throw err;
+      }
       throw new Error(body.error || ('Request failed (' + res.status + ')'));
     }
     return res.json();
+  }
+
+  // ---- Banned screen: only a label, the reason and the period ----
+  function showBanned(info){
+    info = info || {};
+    window.authToken = null;
+    localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(IMP_TOKEN_KEY);
+    sessionStorage.removeItem(IMP_EMAIL_KEY);
+    document.body.classList.remove('impersonating');
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('appRoot').style.display = 'none';
+    document.getElementById('bannedReason').textContent = info.reason || 'No reason was given.';
+    let period = 'Permanent';
+    if(!info.forever && info.until){
+      const when = new Date(info.until).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
+      period = 'Until ' + when;
+    }
+    document.getElementById('bannedPeriod').textContent = period;
+    document.getElementById('bannedOverlay').style.display = 'flex';
+  }
+  window.showBanned = showBanned;
+
+  // ---- Admin "log in as user" ----
+  window.startImpersonation = function(token, email){
+    sessionStorage.setItem(IMP_TOKEN_KEY, token);
+    sessionStorage.setItem(IMP_EMAIL_KEY, email || 'a user');
+    location.reload();
+  };
+  function exitImpersonation(){
+    sessionStorage.removeItem(IMP_TOKEN_KEY);
+    sessionStorage.removeItem(IMP_EMAIL_KEY);
+    location.reload();
+  }
+  function renderImpBar(){
+    const on = !!sessionStorage.getItem(IMP_TOKEN_KEY);
+    document.body.classList.toggle('impersonating', on);
+    if(!on) return;
+    document.getElementById('impBarText').textContent = 'Viewing as ' + (sessionStorage.getItem(IMP_EMAIL_KEY) || 'a user') + '. Changes are saved to their account.';
+    document.getElementById('impBarExit').addEventListener('click', exitImpersonation);
+    document.getElementById('signOutBtn').textContent = '↩ return to admin';
   }
   // Exposed so the main app script (a separate, non-module <script> block)
   // can call other Worker routes too, like /api/admin/users.
@@ -3248,6 +3813,7 @@
     if(window.guestMode){ applyAdminVisibility(false); return; }
     try{
       const me = await apiFetch('/api/me');
+      window.currentUser = me || null;
       applyAdminVisibility(me && me.isAdmin);
     }catch(e){
       applyAdminVisibility(false);
@@ -3264,8 +3830,11 @@
   function showLogin(){
     loginOverlay.style.display = 'flex';
     appRoot.style.display = 'none';
+    document.getElementById('bannedOverlay').style.display = 'none';
   }
 
+  document.getElementById('bannedBackBtn').addEventListener('click', showLogin);
+  renderImpBar();
   if(window.authToken || window.guestMode) showApp(); else showLogin();
 
   function doLogin(){ document.getElementById('loginBtn').click(); }
@@ -3281,8 +3850,11 @@
       window.guestMode = false;
       localStorage.setItem(TOKEN_KEY, window.authToken);
       localStorage.removeItem(GUEST_KEY);
+      sessionStorage.removeItem(IMP_TOKEN_KEY);
+      sessionStorage.removeItem(IMP_EMAIL_KEY);
       showApp();
     }catch(e){
+      if(e.ban){ showBanned(e.ban); return; }
       authError.textContent = e.message;
       authError.classList.add('show');
     }
@@ -3322,6 +3894,7 @@
   });
 
   document.getElementById('signOutBtn').addEventListener('click', async () => {
+    if(sessionStorage.getItem(IMP_TOKEN_KEY)){ exitImpersonation(); return; }
     if(window.guestMode){
       const ok = confirm('Sign out of guest mode? Your guest data stays saved on this device unless you clear your browser storage.');
       if(!ok) return;
@@ -5762,6 +6335,8 @@
     const picker = $('#catalogPicker');
     const chipsBox = $('#catChips');
     const query = ($('#productSearch').value || '').toLowerCase();
+    const clearBtn = $('#productSearchClear');
+    if(clearBtn) clearBtn.hidden = !query;
 
     // Only categories that actually have products get a chip — no point
     // tapping into an empty one.
@@ -5813,26 +6388,86 @@
       products.forEach(p => {
         const row = document.createElement('div');
         row.className = 'pick-row';
+        row.dataset.pid = p.id;
+        row.setAttribute('role', 'button');
+        row.tabIndex = 0;
+        row.setAttribute('aria-label', 'Add ' + p.name + ', ' + fmtUsd(p.priceUsd));
         row.innerHTML = `
           <div class="pick-row-left">
             ${p.image ? `<img class="pick-thumb" src="${p.image}" alt="">` : ''}
-            <div style="min-width:0;">
-              <div class="pick-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
-              <div class="pick-price">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}</div>
-            </div>
+            <div class="pick-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
           </div>
-          <div class="pick-plus">+</div>`;
+          <div class="pick-price"><b>${fmtUsd(p.priceUsd)}</b><span>${fmtLbp(p.priceUsd * state.rate.value)}</span></div>
+          <span class="pick-plus" aria-hidden="true">+</span>`;
         row.addEventListener('click', () => {
           addLine(p.id);
           row.classList.add('just-added');
           setTimeout(() => row.classList.remove('just-added'), 250);
         });
+        row.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); row.click(); }
+        });
         picker.appendChild(row);
       });
     });
     if(!any){
-      picker.innerHTML = '<div class="empty-hint" style="border:none;">No products match. Add products in the Catalog tab.</div>';
+      const typed = ($('#productSearch').value || '').trim();
+      picker.innerHTML = typed
+        ? '<div class="pick-empty">No products match “' + escapeHtml(typed) + '”.</div>'
+        : '<div class="pick-empty">No products yet. Add some in the Catalog tab and they will show up here.</div>';
     }
+    syncPickerCounts();
+  }
+
+  // Shows how many of each product are already on the invoice, right on its
+  // card, so a tap gives clear feedback and nobody double-adds by accident.
+  function syncPickerCounts(){
+    const rows = $all('#catalogPicker .pick-row');
+    if(!rows.length) return;
+    const qtyById = {};
+    state.lines.forEach(l => {
+      const k = String(l.productId);
+      qtyById[k] = (qtyById[k] || 0) + (parseFloat(l.qty) || 0);
+    });
+    rows.forEach(row => {
+      const q = qtyById[row.dataset.pid] || 0;
+      row.classList.toggle('in-cart', q > 0);
+      const badge = row.querySelector('.pick-plus');
+      if(badge) badge.textContent = q > 0 ? q.toLocaleString('en-US') : '+';
+    });
+  }
+
+  function updateOrderHead(){
+    const el = $('#invOrderCount');
+    if(!el) return;
+    const n = state.lines.reduce((sum, l) => sum + (parseFloat(l.qty) || 0), 0);
+    el.textContent = n === 0 ? 'No items' : n.toLocaleString('en-US') + (n === 1 ? ' item' : ' items');
+    el.classList.toggle('is-empty', n === 0);
+    const clr = $('#clearInvoiceBtn');
+    if(clr) clr.hidden = state.lines.length === 0;
+  }
+
+  // Throws the current invoice away. Unlike "Start new invoice" this does NOT
+  // record a sale or touch any balances.
+  async function clearInvoice(){
+    if(state.lines.length === 0) return;
+    const ok = await confirmModal('Clear this invoice? All items will be removed and nothing will be saved.');
+    if(!ok) return;
+    state.lines = [];
+    expandedLineIds.clear();
+    state.invoiceDiscount = { mode: 'none', value: 0 };
+    state.finalizedThisInvoice = false;
+    state.paymentStatus = 'paid';
+    state.overpaymentMode = 'owe';
+    state.previewEdited = false;
+    $('#customerName').value = '';
+    $('#clientSelect').value = '';
+    $('#amountReceived').value = '';
+    $('#amountReceived').dataset.userEdited = 'false';
+    $('#amountReceivedCurrency').value = 'USD';
+    setInvoiceDateTimeToNow();
+    updateOverpaymentModeUI();
+    renderInvoice();
   }
 
   function addLine(productId){
@@ -6313,9 +6948,10 @@
           <div class="pm-value">${escapeHtml(m.value)}</div>
         </div>
         <div class="product-actions">
-          <button class="mini-btn" data-action="edit">✏️ Edit</button>
-          <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
+          <button type="button" class="mini-btn" data-action="edit">Edit</button>
+          <button type="button" class="mini-btn danger" data-action="delete">Delete</button>
         </div>`;
+      row.querySelector('input[type="checkbox"]').setAttribute('aria-label', 'Show ' + m.label + ' on the invoice');
       row.querySelector('input[type="checkbox"]').addEventListener('change', (e) => togglePaymentMethod(m.id, e.target.checked));
       row.querySelector('[data-action="edit"]').addEventListener('click', () => editPaymentMethod(m.id));
       row.querySelector('[data-action="delete"]').addEventListener('click', () => deletePaymentMethod(m.id));
@@ -6381,6 +7017,7 @@
     $all('#invoiceLangBtns button').forEach(b => {
       if(b.dataset.lang === state.invoiceLang) b.classList.remove('ghost');
       else b.classList.add('ghost');
+      b.setAttribute('aria-pressed', b.dataset.lang === state.invoiceLang ? 'true' : 'false');
     });
   }
 
@@ -6396,6 +7033,8 @@
     const container = $('#lineItems');
     const hint = $('#noLinesHint');
     container.innerHTML = '';
+    updateOrderHead();
+    syncPickerCounts();
 
     const client = getSelectedClient();
     const balBox = $('#clientBalanceBox');
@@ -6409,6 +7048,7 @@
       // away behind the collapsed details section.
       $('#customerDetailsBody').classList.remove('collapsed');
       $('#customerDetailsChev').classList.add('open');
+      $('#customerDetailsToggle').setAttribute('aria-expanded', 'true');
     } else {
       balBox.style.display = 'none';
     }
@@ -6445,26 +7085,28 @@
       const costCurrency = line.costCurrency === 'LBP' ? 'LBP' : 'USD';
       const costDisplayVal = costCurrency === 'LBP' ? Math.round(unitCost * state.rate.value) : unitCost;
       const badges = [];
-      if(line.note) badges.push('📝 ' + line.note);
+      if(line.note) badges.push('Note: ' + line.note);
+      const isOpen = el.classList.contains('expanded');
       el.innerHTML = `
         <div class="line-top">
-          <div>
-            <div class="line-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}${lineDiscount ? '<span class="discount-badge">🏷️ ' + escapeHtml(discountSummaryText(line)) + '</span>' : ''}</div>
+          ${p.image ? `<img class="line-thumb" src="${p.image}" alt="">` : ''}
+          <div class="line-main">
+            <div class="line-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}${lineDiscount ? '<span class="discount-badge">' + escapeHtml(discountSummaryText(line)) + '</span>' : ''}</div>
+            <div class="line-unit">${fmtUsd(p.priceUsd)} each</div>
             ${badges.length ? '<div class="line-more-badges">' + badges.map(b => '<span class="line-more-badge">' + escapeHtml(b) + '</span>').join('') + '</div>' : ''}
           </div>
-          <div class="line-top-actions">
-            <button class="remove-line">remove</button>
-          </div>
+          <button type="button" class="remove-line"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
         </div>
         <div class="qty-row">
           <div class="qty-controls">
-            <button data-act="minus">−</button>
-            <input type="text" value="${formatNumberString(String(line.qty))}" inputmode="numeric">
-            <button data-act="plus">+</button>
+            <button type="button" data-act="minus" aria-label="Decrease quantity"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+            <input type="text" value="${formatNumberString(String(line.qty))}" inputmode="numeric" aria-label="Quantity">
+            <button type="button" data-act="plus" aria-label="Increase quantity"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
           </div>
           <div class="line-price">
             ${lineDiscount ? '<span class="line-price-original">' + fmtUsd(lineAmt.original) + '</span>' : ''}
-            ${fmtUsd(lineTotalUsd)}<br><b>${fmtLbp(lineTotalUsd * state.rate.value)}</b>
+            <span class="lp-usd">${fmtUsd(lineTotalUsd)}</span>
+            <span class="lp-lbp">${fmtLbp(lineTotalUsd * state.rate.value)}</span>
           </div>
         </div>
         ${p.type === 'voucher' ? `
@@ -6479,37 +7121,47 @@
             <div class="voucher-unit" data-unit-idx="${i}">
               <div class="voucher-unit-head">
                 <span>${line.voucherShared ? 'Details (all ' + line.qty + ' units)' : (line.qty > 1 ? 'Unit ' + (i + 1) : 'Details')}</span>
-                <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${i}">✏️ edit</button>
+                <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${i}">Edit</button>
               </div>
               <div class="voucher-unit-body">${unitFields.length ? unitFields.map(f => f.emph ? `<span class="vf-emph-line">${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}</span><br>` : `${escapeHtml(f.label || 'Detail')}: <b>${escapeHtml(f.value)}</b><br>`).join('') : `<span class="v-empty">No details entered yet.</span>`}</div>
             </div>
           `).join('')}
         </div>
         ` : ''}
-        <button type="button" class="line-more-toggle">
-          <span class="chev">▾</span> discount, note &amp; cost
+        <button type="button" class="line-more-toggle" aria-expanded="${isOpen}">
+          Discount, note &amp; cost
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="line-more">
-          <div class="action-row" style="margin-bottom:8px;">
-            <button class="mini-btn discount-btn" type="button" style="flex:1;">🏷️ discount</button>
+          <div class="lm-field">
+            <span class="lm-cap">Note for this item</span>
+            <input type="text" class="note-input" placeholder="e.g. size, color" aria-label="Note for this item" autocomplete="off">
           </div>
-          <input type="text" class="note-input" placeholder="Note for this item (e.g. size, color)" value="${escapeHtml(line.note)}">
-          <div class="add-row-inline" style="margin-top:6px;">
-            <input type="text" inputmode="decimal" class="cost-input" placeholder="Cost price for this sale" value="${costDisplayVal ? formatNumberString(costCurrency==='LBP' ? String(costDisplayVal) : costDisplayVal.toFixed(2)) : ''}" style="flex:1;">
-            <select class="cost-currency-select" style="flex:0 0 80px;">
-              <option value="USD" ${costCurrency==='USD'?'selected':''}>USD</option>
-              <option value="LBP" ${costCurrency==='LBP'?'selected':''}>LBP</option>
-            </select>
+          <div class="lm-field">
+            <span class="lm-cap">Cost price for this sale</span>
+            <div class="money">
+              <input type="text" inputmode="decimal" class="cost-input" placeholder="Optional" aria-label="Cost price for this sale" value="${costDisplayVal ? formatNumberString(costCurrency==='LBP' ? String(costDisplayVal) : costDisplayVal.toFixed(2)) : ''}">
+              <select class="cost-currency-select" aria-label="Cost currency">
+                <option value="USD" ${costCurrency==='USD'?'selected':''}>USD</option>
+                <option value="LBP" ${costCurrency==='LBP'?'selected':''}>LBP</option>
+              </select>
+            </div>
           </div>
-          <div class="add-row-inline" style="margin-top:6px;">
-            <select class="cost-mode-select" style="flex:1;">
+          <div class="lm-field">
+            <span class="lm-cap">Cost applies</span>
+            <select class="cost-mode-select" aria-label="How the cost is applied">
               <option value="perUnit" ${effCostMode==='perUnit'?'selected':''}>Cost × quantity</option>
               <option value="flat" ${effCostMode==='flat'?'selected':''}>Cost × 1 (flat)</option>
             </select>
           </div>
-          <div class="product-prices" style="margin-top:2px;">Cost · not shown on customer invoice</div>
+          <div class="lm-foot">
+            <button class="mini-btn discount-btn" type="button">${lineDiscount ? 'Edit discount' : 'Add discount'}</button>
+            <span class="lm-hint">Cost isn't shown on the customer invoice.</span>
+          </div>
         </div>
       `;
+      el.querySelector('.remove-line').setAttribute('aria-label', 'Remove ' + p.name);
+      el.querySelector('.note-input').value = line.note || '';
       el.querySelector('.remove-line').addEventListener('click', () => removeLine(p.id));
       el.querySelector('.discount-btn').addEventListener('click', () => editLineDiscount(p.id));
       el.querySelector('[data-act="minus"]').addEventListener('click', () => changeQty(p.id, -1));
@@ -6521,6 +7173,7 @@
         const id = line.productId + '';
         if(el.classList.contains('expanded')){ el.classList.remove('expanded'); expandedLineIds.delete(id); }
         else { el.classList.add('expanded'); expandedLineIds.add(id); }
+        el.querySelector('.line-more-toggle').setAttribute('aria-expanded', el.classList.contains('expanded') ? 'true' : 'false');
       });
       const editVoucherBtns = el.querySelectorAll('.edit-voucher-btn');
       editVoucherBtns.forEach(btn => btn.addEventListener('click', () => editVoucherDetails(p.id, parseInt(btn.dataset.unitIdx, 10))));
@@ -6549,9 +7202,9 @@
     const invDiscBtn = $('#invoiceDiscountBtn');
     const invDisc = state.invoiceDiscount;
     if(invDisc && invDisc.mode !== 'none'){
-      invDiscBtn.textContent = '🏷️ Invoice discount: ' + (invDisc.mode === 'free' ? '🎁 FREE' : invDisc.mode === 'percent' ? invDisc.value + '% off' : 'new total ' + fmtUsd(invDisc.value)) + ' (edit)';
+      invDiscBtn.textContent = 'Invoice discount: ' + (invDisc.mode === 'free' ? 'free' : invDisc.mode === 'percent' ? invDisc.value + '% off' : 'new total ' + fmtUsd(invDisc.value)) + ' (edit)';
     } else {
-      invDiscBtn.textContent = '🏷️ Whole-invoice discount';
+      invDiscBtn.textContent = 'Add invoice discount';
     }
 
     const prevRow = $('#prevBalanceRow');
@@ -6600,6 +7253,7 @@
     $all('#paymentStatusBtns button').forEach(b => {
       if(b.dataset.status === state.paymentStatus) b.classList.remove('ghost');
       else b.classList.add('ghost');
+      b.setAttribute('aria-pressed', b.dataset.status === state.paymentStatus ? 'true' : 'false');
       const locked = walkIn && b.dataset.status !== 'paid';
       b.disabled = locked;
       b.title = locked ? 'Walk-in customers must pay in full' : '';
@@ -6619,6 +7273,7 @@
     $all('#overpaymentModeBtns button').forEach(b => {
       if(b.dataset.mode === state.overpaymentMode) b.classList.remove('ghost');
       else b.classList.add('ghost');
+      b.setAttribute('aria-pressed', b.dataset.mode === state.overpaymentMode ? 'true' : 'false');
     });
   }
 
@@ -6635,6 +7290,7 @@
     const remaining = nums.grandTotal - receivedVal;
     const isTip = remaining < 0 && state.overpaymentMode === 'tip';
     $('#remainingBalance').innerHTML = (remaining > 0 ? 'owes <b>' + fmtUsd(remaining) + '</b> (' + fmtLbp(remaining * state.rate.value) + ')' : remaining < 0 ? (isTip ? 'tip <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')' : 'credit <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')') : '<b>$0.00</b> (0 LBP)');
+    $('#remainingBalance').className = remaining > 0.004 ? 'owes' : (remaining < -0.004 ? (isTip ? 'tip' : 'credit') : 'settled');
   }
 
   // Keeps the sticky bottom cart bar in sync with the current invoice, so
@@ -9127,6 +9783,7 @@
       flushSettingsSave();
       $all('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
+      if(tab.scrollIntoView) tab.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
       $all('.section').forEach(s => s.classList.remove('active'));
       $('#tab-' + tab.dataset.tab).classList.add('active');
       if(tab.dataset.tab === 'clients') renderClientList();
@@ -9137,69 +9794,392 @@
     });
   });
 
-  // ---------- Admin panel (admins only — see /api/me and /api/admin/users) ----------
+  // ---------- Admin panel (admins only) ----------
+  // Talks to the Worker's /api/admin/users routes (see worker-admin-additions.js).
   let adminUsersCache = [];
+  const adminView = { filter: 'all', sort: 'newest' };
+
+  const AD_ICON = {
+    login:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>',
+    ban:    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>',
+    unban:  '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+    edit:   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    key:    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>',
+    trash:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
+    chev:   '<svg class="ad-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>'
+  };
+
+  const adKey = (u) => (u.id !== undefined && u.id !== null) ? u.id : u.email;
+  const adBanned = (u) => !!(u.ban_forever || (u.ban_until && u.ban_until > Date.now()));
+  function adIsSelf(u){
+    const me = window.currentUser || {};
+    const sameEmail = me.email && u.email && String(me.email).toLowerCase() === String(u.email).toLowerCase();
+    const sameId = me.id !== undefined && me.id !== null && me.id === u.id;
+    return !!(sameEmail || sameId);
+  }
+  function adFmt(ms, withTime){
+    if(!ms) return '—';
+    return new Date(ms).toLocaleString('en-US', withTime
+      ? { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }
+      : { month:'short', day:'numeric', year:'numeric' });
+  }
+  function adLeft(ms){
+    const diff = ms - Date.now();
+    if(diff <= 0) return 'ended';
+    const mins = Math.round(diff / 60000);
+    if(mins < 60) return mins + ' min left';
+    const hrs = Math.round(mins / 60);
+    if(hrs < 48) return hrs + ' h left';
+    return Math.round(hrs / 24) + ' days left';
+  }
+  const adPeriod = (u) => u.ban_forever ? 'Permanent' : 'Until ' + adFmt(u.ban_until, true) + ' (' + adLeft(u.ban_until) + ')';
 
   function renderAdminStats(users){
     const el = $('#adminStatsRow');
     if(!el) return;
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const newThisWeek = users.filter(u => u.created_at >= weekAgo).length;
+    const banned = users.filter(adBanned).length;
     el.innerHTML = `
-      <div class="client-stat"><div class="cs-label">Total users</div><div class="cs-value">${users.length}</div></div>
-      <div class="client-stat credit"><div class="cs-label">New this week</div><div class="cs-value">${newThisWeek}</div></div>
-    `;
+      <div class="ad-kpi"><div class="ad-kpi-label"><i></i>Total users</div><div class="ad-kpi-value">${users.length}</div></div>
+      <div class="ad-kpi active"><div class="ad-kpi-label"><i></i>Active</div><div class="ad-kpi-value">${users.length - banned}</div></div>
+      <div class="ad-kpi banned"><div class="ad-kpi-label"><i></i>Banned</div><div class="ad-kpi-value">${banned}</div></div>
+      <div class="ad-kpi newu"><div class="ad-kpi-label"><i></i>New this week</div><div class="ad-kpi-value">${users.filter(u => u.created_at >= weekAgo).length}</div></div>`;
   }
 
   function renderAdminUserList(){
     const list = $('#adminUserList');
     if(!list) return;
     const q = ($('#adminUserSearch').value || '').trim().toLowerCase();
-    const filtered = q ? adminUsersCache.filter(u => u.email.toLowerCase().includes(q)) : adminUsersCache;
-    if(filtered.length === 0){
-      list.innerHTML = `<div class="settings-hint" style="margin:0;">No users found.</div>`;
+    const counts = {
+      all: adminUsersCache.length,
+      active: adminUsersCache.filter(u => !adBanned(u)).length,
+      banned: adminUsersCache.filter(adBanned).length,
+      admins: adminUsersCache.filter(u => u.is_admin).length
+    };
+    const chips = $('#adminFilterChips');
+    chips.innerHTML = '';
+    [['all','All'],['active','Active'],['banned','Banned'],['admins','Admins']].forEach(([key, label]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cat-chip' + (adminView.filter === key ? ' active' : '');
+      b.textContent = label + ' ' + counts[key];
+      b.setAttribute('aria-pressed', adminView.filter === key ? 'true' : 'false');
+      b.addEventListener('click', () => { adminView.filter = key; renderAdminUserList(); });
+      chips.appendChild(b);
+    });
+
+    let rows = adminUsersCache.filter(u => {
+      if(q && !(u.email || '').toLowerCase().includes(q)) return false;
+      if(adminView.filter === 'active') return !adBanned(u);
+      if(adminView.filter === 'banned') return adBanned(u);
+      if(adminView.filter === 'admins') return !!u.is_admin;
+      return true;
+    });
+    const sorters = {
+      newest: (a, b) => (b.created_at || 0) - (a.created_at || 0),
+      active: (a, b) => (b.last_active || 0) - (a.last_active || 0),
+      records: (a, b) => (b.record_count || 0) - (a.record_count || 0),
+      email: (a, b) => (a.email || '').localeCompare(b.email || '')
+    };
+    rows = rows.slice().sort(sorters[adminView.sort] || sorters.newest);
+
+    $('#adminCount').textContent = rows.length === adminUsersCache.length
+      ? rows.length + (rows.length === 1 ? ' user' : ' users')
+      : rows.length + ' of ' + adminUsersCache.length + ' users';
+
+    if(rows.length === 0){
+      list.innerHTML = `<div class="ad-empty"><b>${adminUsersCache.length ? 'No matching users' : 'No users yet'}</b>${adminUsersCache.length ? 'Try a different search or filter.' : 'People who sign up will show up here.'}</div>`;
       return;
     }
-    list.innerHTML = filtered.map(u => {
+    const head = `<div class="ad-thead" aria-hidden="true"><span>User</span><span>Status</span><span class="num">Records</span><span>Joined</span><span>Last active</span><span></span></div>`;
+    list.innerHTML = head + rows.map(u => {
+      const banned = adBanned(u);
       const initial = (u.email || '?').charAt(0).toUpperCase();
-      const joined = u.created_at ? new Date(u.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
-      const lastActive = u.last_active ? new Date(u.last_active).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : 'never';
+      const sub = banned
+        ? `<span class="warn">${escapeHtml(adPeriod(u))}</span>`
+        : `<span>${u.record_count || 0} records</span><span>Joined ${adFmt(u.created_at)}</span><span>Active ${u.last_active ? adFmt(u.last_active) : 'never'}</span>`;
+      const status = banned
+        ? `<span class="ad-tag banned">Banned</span><span class="ad-pill-sub">${u.ban_forever ? 'Permanent' : escapeHtml(adLeft(u.ban_until))}</span>`
+        : `<span class="ad-tag ok">Active</span>`;
       return `
-        <div class="client-card">
-          <div class="client-card-top">
-            <div class="client-avatar" style="background:${avatarColor(u.email || '')};">${escapeHtml(initial)}</div>
-            <div class="client-card-info">
-              <div class="client-name">${escapeHtml(u.email)}</div>
-              <div class="client-phone">joined ${joined}</div>
-            </div>
-          </div>
-          <div class="client-balance-row">
-            <span class="client-balance-pill settled">${u.record_count || 0} records saved</span>
-            <span class="client-balance-sub">last active ${lastActive}</span>
-          </div>
-        </div>
-      `;
+        <button type="button" class="ad-row${banned ? ' is-banned' : ''}" data-key="${encodeURIComponent(String(adKey(u)))}">
+          <span class="ad-c-user">
+            <span class="ad-avatar" style="background:${avatarColor(u.email || '')};">${escapeHtml(initial)}</span>
+            <span class="ad-user-main">
+              <span class="ad-user-name"><span class="ad-email">${escapeHtml(u.email || '')}</span>${u.is_admin ? '<span class="ad-tag">Admin</span>' : ''}${adIsSelf(u) ? '<span class="ad-tag you">You</span>' : ''}${banned ? '<span class="ad-tag banned m">Banned</span>' : ''}</span>
+              <span class="ad-user-sub">${sub}</span>
+            </span>
+          </span>
+          <span class="ad-c-status">${status}</span>
+          <span class="ad-c-rec">${u.record_count || 0}</span>
+          <span class="ad-c-joined">${adFmt(u.created_at)}</span>
+          <span class="ad-c-active">${u.last_active ? adFmt(u.last_active) : 'Never'}</span>
+          ${AD_ICON.chev}
+        </button>`;
     }).join('');
+    list.querySelectorAll('.ad-row').forEach(btn => {
+      btn.addEventListener('click', () => adOpenSheet(decodeURIComponent(btn.dataset.key)));
+    });
   }
 
   async function renderAdminTab(){
-    const errEl = $('#adminUsersError');
-    errEl.classList.remove('show');
-    errEl.textContent = '';
-    $('#adminUserList').innerHTML = `<div class="settings-hint" style="margin:0;">Loading users…</div>`;
+    const list = $('#adminUserList');
+    const spin = $('#adminRefreshBtn');
+    if(spin) spin.classList.add('spin');
+    if(!adminUsersCache.length){
+      list.innerHTML = [0,1,2,3,4].map(() => `<div class="ad-skel"><i class="c"></i><div style="flex:1;"><i class="l" style="width:55%"></i><i class="l" style="width:35%"></i></div></div>`).join('');
+    }
     try{
       const data = await window.apiFetch('/api/admin/users');
+      if(data === null) throw new Error('Your Worker does not have the admin routes yet. Add them from worker-admin-additions.js, then try again.');
       adminUsersCache = (data && data.users) || [];
       renderAdminStats(adminUsersCache);
       renderAdminUserList();
     }catch(e){
       adminUsersCache = [];
-      $('#adminUserList').innerHTML = '';
-      errEl.textContent = e.message || 'Failed to load users.';
-      errEl.classList.add('show');
+      renderAdminStats([]);
+      $('#adminFilterChips').innerHTML = '';
+      $('#adminCount').textContent = '';
+      list.innerHTML = `<div class="ad-empty"><b>Could not load users</b>${escapeHtml(e.message || 'Something went wrong.')}<br><button type="button" class="btn ghost small" id="adminRetryBtn">Try again</button></div>`;
+      $('#adminRetryBtn').addEventListener('click', renderAdminTab);
+    }finally{
+      if(spin) spin.classList.remove('spin');
     }
   }
+
+  async function adCall(u, suffix, method, body){
+    const path = '/api/admin/users/' + encodeURIComponent(String(adKey(u))) + (suffix ? '/' + suffix : '');
+    const res = await window.apiFetch(path, { method, body: body ? JSON.stringify(body) : undefined });
+    if(res === null) throw new Error('Your Worker does not support this admin action yet. Add the routes from worker-admin-additions.js.');
+    return res;
+  }
+  const adFind = (key) => adminUsersCache.find(x => String(adKey(x)) === String(key));
+
+  // ----- Manage-user dialog -----
+  function adOpenSheet(key){
+    const u = adFind(key);
+    if(!u) return;
+    const banned = adBanned(u), self = adIsSelf(u), isAdmin = !!u.is_admin;
+    const act = (id, icon, title, sub, opts) => `
+      <button type="button" class="ad-act${opts && opts.danger ? ' danger' : ''}" data-act="${id}" ${opts && opts.disabled ? 'disabled' : ''}>
+        ${icon}<span>${title}<small>${sub}</small></span>
+      </button>`;
+    modalBox.innerHTML = `
+      <div class="ad-sheet">
+        <div class="ad-sheet-head">
+          <span class="ad-avatar" style="background:${avatarColor(u.email || '')};">${escapeHtml((u.email || '?').charAt(0).toUpperCase())}</span>
+          <div class="ad-sheet-title">
+            <strong>${escapeHtml(u.email || '')}</strong>
+            <div class="ad-tags">${isAdmin ? '<span class="ad-tag">Admin</span>' : ''}${self ? '<span class="ad-tag you">You</span>' : ''}${banned ? '<span class="ad-tag banned">Banned</span>' : ''}</div>
+          </div>
+        </div>
+        ${banned ? `<div class="ad-ban-box"><b>Banned · ${escapeHtml(adPeriod(u))}</b><span>${escapeHtml(u.ban_reason || 'No reason given.')}</span></div>` : ''}
+        <dl class="ad-facts">
+          <div><dt>Joined</dt><dd>${adFmt(u.created_at, true)}</dd></div>
+          <div><dt>Last active</dt><dd>${u.last_active ? adFmt(u.last_active, true) : 'Never'}</dd></div>
+          <div><dt>Records saved</dt><dd>${u.record_count || 0}</dd></div>
+          <div><dt>Role</dt><dd>${isAdmin ? 'Admin' : 'User'}</dd></div>
+        </dl>
+        <div class="ad-actions">
+          ${act('impersonate', AD_ICON.login, 'Log in as this user', self ? 'This is your own account' : banned ? 'Unban them first' : 'Open their account without a password', { disabled: self || banned })}
+          ${banned
+            ? act('unban', AD_ICON.unban, 'Unban account', 'Restore access right now')
+              + act('ban', AD_ICON.edit, 'Change ban', 'Update the reason or the period')
+            : act('ban', AD_ICON.ban, 'Ban account', self ? 'This is your own account' : isAdmin ? 'Remove admin rights first' : 'Block access with a reason and a period', { danger: true, disabled: self || isAdmin })}
+          ${act('password', AD_ICON.key, 'Reset password', self ? 'This is your own account' : 'Set a new password for them', { disabled: self })}
+          ${act('role', AD_ICON.shield, isAdmin ? 'Remove admin rights' : 'Make admin', self ? 'This is your own account' : isAdmin ? 'They will become a regular user' : 'Give them access to this panel', { disabled: self })}
+          ${act('delete', AD_ICON.trash, 'Delete account', self ? 'This is your own account' : isAdmin ? 'Remove admin rights first' : 'Permanently remove them and their data', { danger: true, disabled: self || isAdmin })}
+        </div>
+        <button type="button" class="btn ghost ad-close" id="adClose">Close</button>
+      </div>`;
+    modalOverlay.classList.add('show');
+    $('#adClose').addEventListener('click', closeModal);
+    modalBox.querySelectorAll('.ad-act:not(:disabled)').forEach(btn => {
+      btn.addEventListener('click', () => adRunAction(btn.dataset.act, u));
+    });
+  }
+
+  async function adRunAction(action, u){
+    try{
+      if(action === 'ban'){ adOpenBanForm(u); return; }
+      if(action === 'password'){ adOpenPasswordForm(u); return; }
+      if(action === 'delete'){ adOpenDeleteForm(u); return; }
+      if(action === 'impersonate'){
+        const ok = await confirmModal('Sign in as ' + u.email + '? You will see and can change their data. Use the orange bar at the top to return to your admin account.');
+        if(!ok){ adOpenSheet(adKey(u)); return; }
+        const res = await adCall(u, 'impersonate', 'POST');
+        if(!res.token) throw new Error('The server did not return a sign-in token.');
+        window.startImpersonation(res.token, res.email || u.email);
+        return;
+      }
+      if(action === 'unban'){
+        const ok = await confirmModal('Unban ' + u.email + '? They can sign in again straight away.');
+        if(!ok){ adOpenSheet(adKey(u)); return; }
+        await adCall(u, 'unban', 'POST');
+        alertBanner('Account unbanned.');
+      }
+      if(action === 'role'){
+        const makeAdmin = !u.is_admin;
+        const ok = await confirmModal(makeAdmin ? 'Make ' + u.email + ' an admin? They will be able to manage every account.' : 'Remove admin rights from ' + u.email + '?');
+        if(!ok){ adOpenSheet(adKey(u)); return; }
+        await adCall(u, 'admin', 'POST', { isAdmin: makeAdmin });
+        alertBanner(makeAdmin ? 'They are now an admin.' : 'Admin rights removed.');
+      }
+      await renderAdminTab();
+    }catch(e){
+      alertBanner(e.message || 'That did not work.');
+      await renderAdminTab();
+    }
+  }
+
+  function adOpenBanForm(u){
+    const DUR = { '1h': 3600e3, '1d': 86400e3, '7d': 7 * 86400e3, '30d': 30 * 86400e3 };
+    const OPTS = [['1h','1 hour'],['1d','1 day'],['7d','7 days'],['30d','30 days'],['custom','Pick date'],['forever','Forever']];
+    let sel = '7d';
+    modalBox.innerHTML = `
+      <form class="ad-form" id="adBanForm" novalidate>
+        <h3>${adBanned(u) ? 'Change ban' : 'Ban account'}</h3>
+        <p class="ad-lead">${escapeHtml(u.email || '')} will only see a banned screen with your reason and the period. They cannot sign in until it ends.</p>
+        <div class="modal-field">
+          <label class="field-label" for="adBanReason">Reason (shown to them)</label>
+          <textarea id="adBanReason" maxlength="300" placeholder="e.g. Sharing your login with other people"></textarea>
+        </div>
+        <div class="modal-field">
+          <span class="field-label">Period</span>
+          <div class="ad-durations" id="adDurations" role="group" aria-label="Ban period">
+            ${OPTS.map(([k, label]) => `<button type="button" class="ad-dur${k === 'forever' ? ' forever' : ''}${k === sel ? ' on' : ''}" data-d="${k}" aria-pressed="${k === sel}">${label}</button>`).join('')}
+          </div>
+          <input type="datetime-local" id="adBanCustom" aria-label="Ban ends on" hidden>
+          <div class="ad-preview" id="adBanPreview"></div>
+        </div>
+        <div class="modal-error" id="adBanError"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="adBanBack">Back</button>
+          <button type="submit" class="btn danger-btn" id="adBanGo">${adBanned(u) ? 'Save ban' : 'Ban account'}</button>
+        </div>
+      </form>`;
+    modalOverlay.classList.add('show');
+    const custom = $('#adBanCustom'), preview = $('#adBanPreview'), errBox = $('#adBanError');
+    const period = () => {
+      if(sel === 'forever') return { forever: true, until: null };
+      if(sel === 'custom'){ const t = Date.parse(custom.value); return isNaN(t) ? null : { forever: false, until: t }; }
+      return { forever: false, until: Date.now() + DUR[sel] };
+    };
+    const refresh = () => {
+      custom.hidden = sel !== 'custom';
+      modalBox.querySelectorAll('.ad-dur').forEach(b => { b.classList.toggle('on', b.dataset.d === sel); b.setAttribute('aria-pressed', b.dataset.d === sel ? 'true' : 'false'); });
+      const p = period();
+      preview.textContent = !p ? 'Choose an end date and time.' : p.forever ? 'Permanent. Only an admin can lift it.' : 'Ends ' + adFmt(p.until, true);
+    };
+    modalBox.querySelectorAll('.ad-dur').forEach(b => b.addEventListener('click', () => { sel = b.dataset.d; refresh(); }));
+    custom.addEventListener('input', refresh);
+    refresh();
+    $('#adBanBack').addEventListener('click', () => adOpenSheet(adKey(u)));
+    $('#adBanForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errBox.classList.remove('show');
+      const reason = $('#adBanReason').value.trim();
+      const p = period();
+      const fail = (m) => { errBox.textContent = m; errBox.classList.add('show'); };
+      if(!reason) return fail('Write a reason so they know why.');
+      if(!p) return fail('Choose when the ban ends.');
+      if(!p.forever && p.until <= Date.now()) return fail('The end date must be in the future.');
+      const go = $('#adBanGo');
+      go.disabled = true;
+      try{
+        await adCall(u, 'ban', 'POST', { reason, until: p.until, forever: p.forever });
+        closeModal();
+        alertBanner('Account banned.');
+        await renderAdminTab();
+      }catch(err){
+        go.disabled = false;
+        fail(err.message || 'Could not ban this account.');
+      }
+    });
+    setTimeout(() => { const r = $('#adBanReason'); if(r) r.focus(); }, 30);
+  }
+
+  function adOpenPasswordForm(u){
+    modalBox.innerHTML = `
+      <form class="ad-form" id="adPwForm" novalidate>
+        <h3>Reset password</h3>
+        <p class="ad-lead">Set a new password for ${escapeHtml(u.email || '')}. Tell them what it is, and ask them to keep it private.</p>
+        <div class="modal-field">
+          <label class="field-label" for="adPwInput">New password (at least 6 characters)</label>
+          <input type="text" id="adPwInput" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="modal-error" id="adPwError"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="adPwBack">Back</button>
+          <button type="submit" class="btn" id="adPwGo">Set password</button>
+        </div>
+      </form>`;
+    modalOverlay.classList.add('show');
+    $('#adPwBack').addEventListener('click', () => adOpenSheet(adKey(u)));
+    $('#adPwForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pw = $('#adPwInput').value;
+      const errBox = $('#adPwError');
+      errBox.classList.remove('show');
+      if(pw.length < 6){ errBox.textContent = 'Use at least 6 characters.'; errBox.classList.add('show'); return; }
+      $('#adPwGo').disabled = true;
+      try{
+        await adCall(u, 'password', 'POST', { password: pw });
+        closeModal();
+        alertBanner('Password updated.');
+      }catch(err){
+        $('#adPwGo').disabled = false;
+        errBox.textContent = err.message || 'Could not change the password.';
+        errBox.classList.add('show');
+      }
+    });
+    setTimeout(() => { const i = $('#adPwInput'); if(i) i.focus(); }, 30);
+  }
+
+  function adOpenDeleteForm(u){
+    modalBox.innerHTML = `
+      <form class="ad-form" id="adDelForm" novalidate>
+        <h3>Delete account</h3>
+        <p class="ad-lead">This permanently removes ${escapeHtml(u.email || '')} and everything they saved. It cannot be undone.</p>
+        <div class="modal-field">
+          <label class="field-label" for="adDelInput">Type their email to confirm</label>
+          <input type="text" id="adDelInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${escapeHtml(u.email || '')}">
+        </div>
+        <div class="modal-error" id="adDelError"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="adDelBack">Back</button>
+          <button type="submit" class="btn danger-btn" id="adDelGo">Delete account</button>
+        </div>
+      </form>`;
+    modalOverlay.classList.add('show');
+    $('#adDelBack').addEventListener('click', () => adOpenSheet(adKey(u)));
+    $('#adDelForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = $('#adDelError');
+      errBox.classList.remove('show');
+      if($('#adDelInput').value.trim().toLowerCase() !== String(u.email || '').toLowerCase()){
+        errBox.textContent = 'That does not match their email.';
+        errBox.classList.add('show');
+        return;
+      }
+      $('#adDelGo').disabled = true;
+      try{
+        await adCall(u, '', 'DELETE');
+        closeModal();
+        alertBanner('Account deleted.');
+        await renderAdminTab();
+      }catch(err){
+        $('#adDelGo').disabled = false;
+        errBox.textContent = err.message || 'Could not delete this account.';
+        errBox.classList.add('show');
+      }
+    });
+    setTimeout(() => { const i = $('#adDelInput'); if(i) i.focus(); }, 30);
+  }
+
   $('#adminUserSearch').addEventListener('input', renderAdminUserList);
+  $('#adminSort').addEventListener('change', (e) => { adminView.sort = e.target.value; renderAdminUserList(); });
   $('#adminRefreshBtn').addEventListener('click', renderAdminTab);
 
   $('#cartBarCheckoutBtn').addEventListener('click', () => {
@@ -9242,6 +10222,12 @@
   $('#withdrawFundsBtn').addEventListener('click', withdrawFunds);
   $('#refreshRateBtn').addEventListener('click', refreshRate);
   $('#productSearch').addEventListener('input', renderCatalogPicker);
+  $('#productSearchClear').addEventListener('click', () => {
+    const box = $('#productSearch');
+    box.value = '';
+    renderCatalogPicker();
+    box.focus();
+  });
   $('#catalogSearch').addEventListener('input', renderCategories);
   $('#customerName').addEventListener('input', renderPreviewOnly);
   $('#invoiceDateInput').addEventListener('change', renderPreviewOnly);
@@ -9251,6 +10237,7 @@
   $('#copyBtn').addEventListener('click', copyInvoice);
   $('#whatsappBtn').addEventListener('click', openWhatsapp);
   $('#resetBtn').addEventListener('click', resetInvoice);
+  $('#clearInvoiceBtn').addEventListener('click', clearInvoice);
   $('#completeSaleBtn').addEventListener('click', completeSale);
 
   // Safety net: if the tab is closed, refreshed, or navigated away from
@@ -9307,6 +10294,7 @@
   $('#walkInPickClientBtn').addEventListener('click', () => {
     $('#customerDetailsBody').classList.remove('collapsed');
     $('#customerDetailsChev').classList.add('open');
+    $('#customerDetailsToggle').setAttribute('aria-expanded', 'true');
     const sel = $('#clientSelect');
     sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
     sel.focus();
@@ -9322,8 +10310,9 @@
     renderPreviewOnly();
   });
   $('#customerDetailsToggle').addEventListener('click', () => {
-    $('#customerDetailsBody').classList.toggle('collapsed');
+    const nowCollapsed = $('#customerDetailsBody').classList.toggle('collapsed');
     $('#customerDetailsChev').classList.toggle('open');
+    $('#customerDetailsToggle').setAttribute('aria-expanded', nowCollapsed ? 'false' : 'true');
   });
   $('#balanceLogToggle').addEventListener('click', () => {
     const collapsed = $('#balanceLogBody').classList.toggle('collapsed');
