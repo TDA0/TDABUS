@@ -2508,8 +2508,14 @@
 
   /* Print-only receipt (hidden on screen, shown when printing) */
   #printArea{ display:none; }
+  #reportPrintArea{ display:none; }
   @media print{
-    body > *:not(#printArea){ display:none !important; }
+    /* #printArea / #reportPrintArea live inside #appRoot (not directly under
+       <body>), so hiding "everything under body except them" also hid their
+       own parent — which hid them too, producing a blank printout/PDF.
+       Hide appRoot's siblings, then hide appRoot's *other* children instead. */
+    body > *:not(#appRoot){ display:none !important; }
+    #appRoot > *:not(#printArea):not(#reportPrintArea){ display:none !important; }
     #printArea{
       display:block !important;
       font-family:'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
@@ -2556,6 +2562,136 @@
     #printArea .pr-grand > span:last-child{ text-align:right; }
     #printArea .pr-footer{ font-size:14px; font-weight:600; text-align:center; margin-top:12px; white-space:pre-wrap; color:#E4E4E7; }
     #printArea .pr-thankyou{ font-size:15px; text-align:center; margin-top:14px; font-weight:500; letter-spacing:0.2px; color:#E4E4E7; }
+
+    /* A4 business report (day/month/year), printed from the Reports tab.
+       Uses the .rp2- classes defined below, which are plain (non-print-scoped)
+       so the exact same markup renders in the on-screen preview too. */
+    #reportPrintArea{
+      display:block !important;
+      font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background:#fff;
+      color:#171923;
+      width:100%;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+    }
+    /* Fixed-position elements repeat on every printed page — this is what
+       makes the watermark appear on each A4 sheet of a multi-page report,
+       not just the first. Page numbers are NOT done this way — each one needs
+       different text, so paginateReportForPrint() gives every printed page its
+       own "Page X of N" footer instead. */
+    .rp2-watermark{ position:fixed !important; }
+    table.rp2-table{ page-break-inside:auto; }
+    table.rp2-table tr{ page-break-inside:avoid; break-inside:avoid; }
+    .rp2-header, .rp2-summary, .rp2-insights{ page-break-inside:avoid; break-inside:avoid; }
+
+    /* Two leaks from the rest of the app were pushing report content off its
+       page and wrecking the page count:
+       1) #printArea (the receipt area) is force-shown above — with its dark
+          background and 20px padding — even when it's empty, so it printed as a
+          ~10mm black bar at the top of page 1 and shifted everything down.
+          Hide it whenever it has nothing in it.
+       2) body's screen-only 40px bottom padding adds a blank trailing page
+          after the last sheet. Drop it while a report is what's being printed. */
+    #printArea:empty{ display:none !important; }
+    body:has(#reportPrintArea:not(:empty)){ padding-bottom:0 !important; }
+  }
+
+  /* Business report content (A4 print + on-screen preview share these classes) */
+  .rp2-page{ position:relative; min-height:269mm; }
+  .rp2-watermark{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-32deg);
+    font-size:130px; font-weight:800; letter-spacing:8px; color:rgba(79,70,229,0.06);
+    white-space:nowrap; pointer-events:none; user-select:none; z-index:0;
+  }
+  .rp2-content{ position:relative; z-index:1; }
+  .rp2-topbar{ height:6px; border-radius:4px; margin-bottom:22px; background:linear-gradient(90deg,#4338CA,#6366F1 55%,#A5B4FC); }
+  .rp2-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding-bottom:18px; margin-bottom:4px; border-bottom:1.5px solid #171923; }
+  .rp2-header-left{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .rp2-logo{ max-height:50px; max-width:140px; object-fit:contain; flex:none; }
+  .rp2-header-text h1{ font-size:19px; margin:0 0 3px; font-weight:800; letter-spacing:-0.01em; }
+  .rp2-header-text p{ margin:0; font-size:11.5px; color:#6B7080; }
+  .rp2-header-right{ text-align:right; flex:none; }
+  .rp2-eyebrow{
+    display:inline-flex; align-items:center; gap:5px; font-size:9.5px; font-weight:800;
+    letter-spacing:1.2px; text-transform:uppercase; color:#4338CA; background:#EEF0FF;
+    padding:4px 10px 4px 9px; border-radius:999px; margin-bottom:7px;
+  }
+  .rp2-eyebrow::before{ content:''; width:5px; height:5px; border-radius:50%; background:#4F46E5; }
+  .rp2-period{ font-size:16px; font-weight:800; letter-spacing:-0.01em; }
+  .rp2-generated{ font-size:10px; color:#9AA0AF; margin-top:4px; font-weight:500; }
+  .rp2-generated + .rp2-generated{ margin-top:2px; }
+
+  .rp2-summary{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin:22px 0 14px; }
+  .rp2-stat{
+    position:relative; border:1px solid #EAEBF2; border-radius:12px;
+    padding:13px 13px 12px; background:#FAFAFD; overflow:hidden;
+  }
+  .rp2-stat::before{ content:''; position:absolute; left:0; top:0; right:0; height:3px; background:#4F46E5; }
+  .rp2-stat.neg::before{ background:#DC2626; }
+  .rp2-stat-head{ display:flex; align-items:center; gap:7px; margin-bottom:9px; }
+  .rp2-stat-icon{
+    width:22px; height:22px; flex:none; border-radius:7px; display:grid; place-items:center;
+    background:#EEF0FF; color:#4F46E5;
+  }
+  .rp2-stat-icon svg{ width:12.5px; height:12.5px; }
+  .rp2-stat.tone-amber .rp2-stat-icon{ background:#FEF3E2; color:#D97706; }
+  .rp2-stat.tone-green .rp2-stat-icon{ background:#E7F7F1; color:#059669; }
+  .rp2-stat.tone-red .rp2-stat-icon{ background:#FDECEC; color:#DC2626; }
+  .rp2-label{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.6px; color:#9AA0AF; font-weight:700; }
+  .rp2-val{ font-size:17px; font-weight:800; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
+  .rp2-val.neg{ color:#DC2626; }
+
+  /* Insights ribbon: small at-a-glance facts derived from the period's data */
+  .rp2-insights{
+    display:flex; flex-wrap:wrap; gap:0; margin:0 0 22px; border:1px solid #EAEBF2;
+    border-radius:12px; overflow:hidden; background:#fff;
+  }
+  .rp2-insight{
+    flex:1 1 0; min-width:120px; padding:10px 14px; display:flex; align-items:center; gap:9px;
+    border-right:1px solid #EAEBF2;
+  }
+  .rp2-insight:last-child{ border-right:none; }
+  .rp2-insight-icon{
+    width:26px; height:26px; flex:none; border-radius:8px; display:grid; place-items:center;
+    background:#F4F5FA; color:#6B7080;
+  }
+  .rp2-insight-icon svg{ width:14px; height:14px; }
+  .rp2-insight-text{ min-width:0; }
+  .rp2-insight-label{ font-size:8.8px; text-transform:uppercase; letter-spacing:0.5px; color:#9AA0AF; font-weight:700; margin-bottom:2px; }
+  .rp2-insight-val{ font-size:12.5px; font-weight:700; color:#171923; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rp2-insight-sub{ font-size:10px; color:#9AA0AF; font-weight:500; }
+
+  .rp2-section-label{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:#6B7080; margin:20px 0 9px; display:flex; align-items:center; gap:8px; }
+  .rp2-section-label::after{ content:''; flex:1; height:1px; background:#EAEBF2; }
+  .rp2-table-wrap{ border:1px solid #EAEBF2; border-radius:12px; overflow:hidden; }
+  table.rp2-table{ width:100%; border-collapse:collapse; font-size:11.5px; }
+  table.rp2-table thead th{ text-align:left; background:#F4F5FA; border-bottom:1.5px solid #DEE0EA; padding:9px 10px; font-size:9.5px; text-transform:uppercase; letter-spacing:0.5px; color:#6B7080; font-weight:700; }
+  table.rp2-table td{ border-bottom:1px solid #EAEBF2; padding:8px 10px; vertical-align:top; }
+  table.rp2-table tbody tr:last-child td{ border-bottom:none; }
+  table.rp2-table tbody tr:nth-child(even){ background:#FAFBFD; }
+  table.rp2-table td.rp2-num, table.rp2-table th.rp2-num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  table.rp2-table td.rp2-profit-neg{ color:#DC2626; font-weight:700; }
+  table.rp2-table tfoot td{ border-top:2px solid #171923; border-bottom:none; font-weight:800; padding:10px 10px 9px; background:#F4F5FA; }
+  .rp2-empty{ text-align:center; color:#9AA0AF; padding:36px 0; font-size:13px; border:1.5px dashed #DEE0EA; border-radius:12px; }
+  .rp2-footer{ margin-top:26px; padding-top:12px; border-top:1px solid #EAEBF2; display:flex; justify-content:space-between; gap:10px; font-size:10px; color:#9AA0AF; }
+  .rp2-footer b{ color:#6B7080; }
+
+  /* Paged report (print only): paginateReportForPrint() splits the report into
+     fixed-height A4 "sheets" — one per printed page — and pins a "Page X of N"
+     footer to the bottom of each sheet. Because every sheet is an explicit
+     page (forced break after it), the number is always on the page it names. */
+  .rp2-page.rp2-paged{ min-height:0; }
+  .rp2-sheet{
+    position:relative; z-index:1; height:267mm; /* A4 minus 2x14mm margins = 269mm, less 2mm slack */
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  .rp2-sheet:not(:last-child){ break-after:page; page-break-after:always; }
+  .rp2-sheet-body{ display:flow-root; }
+  .rp2-pagenum{
+    position:absolute; left:0; right:0; bottom:0; text-align:center;
+    font-size:9.5px; font-weight:600; letter-spacing:0.04em; color:#9AA0AF;
+    padding-top:5px; border-top:1px solid #EAEBF2;
   }
 
   /* Print preview modal — on-screen rendering of the exact receipt before printing */
@@ -2616,6 +2752,28 @@
     flex:none;
   }
   .print-preview-actions .btn{ flex:1; }
+
+  /* Report preview modal — light A4-paper look, distinct from the dark
+     thermal receipt preview above. Reuses .print-preview-actions for buttons. */
+  .report-preview-overlay{
+    display:none; position:fixed; inset:0; background:rgba(23,22,31,0.55);
+    z-index:1100; align-items:center; justify-content:center; padding:16px;
+  }
+  .report-preview-overlay.show{ display:flex; }
+  .report-preview-box{
+    background:var(--paper-card); width:100%; max-width:820px; max-height:92vh;
+    border-radius:var(--radius); box-shadow:0 20px 60px rgba(23,25,35,0.3);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .report-preview-scroll{ overflow:auto; padding:20px; background:#E4E5EC; flex:1; }
+  .report-preview-paper{
+    background:#fff; margin:0 auto; padding:14mm; width:210mm; min-height:297mm;
+    max-width:100%; box-shadow:0 2px 16px rgba(0,0,0,0.15); border-radius:2px; overflow:hidden;
+  }
+  @media (max-width:600px){
+    .report-preview-scroll{ padding:10px; }
+    .report-preview-paper{ width:100%; min-height:0; padding:14px 12px; }
+  }
 
   /* Reuse the receipt's print styling so the preview matches the printout —
      dark/monospace theme for the on-screen preview only; actual paper
@@ -3304,6 +3462,25 @@
 
     <div class="rp-layout">
       <div class="rp-main">
+        <div class="rp-card search-block rp-export" id="reportExportCard">
+          <div class="rp-card-head">
+            <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h9l3 3v4"/><rect x="3" y="13" width="18" height="8" rx="1.5"/><path d="M7 21v-4M7 9V2h9l3 3v4"/><path d="M8 17h2M8 19h5"/></svg></span>
+            <h3>Print &amp; PDF report</h3>
+          </div>
+          <div class="rp-form">
+            <select id="reportExportMode" aria-label="Report period">
+              <option value="day">Daily report</option>
+              <option value="month" selected>Monthly report</option>
+              <option value="year">Yearly report</option>
+            </select>
+            <input type="date" id="reportExportDay" aria-label="Day" style="display:none;">
+            <input type="month" id="reportExportMonth" aria-label="Month">
+            <input type="number" id="reportExportYear" aria-label="Year" placeholder="e.g. 2026" inputmode="numeric" style="display:none;">
+            <button class="btn full rp-submit" id="reportExportPreviewBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h12v7"/><rect x="4" y="9" width="16" height="8" rx="1.5"/><path d="M6 17v5h12v-5"/></svg>Preview, print or save PDF</button>
+          </div>
+          <p class="rp-hint">Opens an A4-ready report — print it on paper, or choose "Save as PDF" in the print dialog to download it.</p>
+        </div>
+
         <div class="rp-card search-block rp-cal" id="calendarCard">
           <div class="rp-card-head">
             <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg></span>
@@ -3686,6 +3863,24 @@
     <div class="print-preview-actions">
       <button type="button" class="btn ghost" id="printPreviewCancelBtn">Cancel</button>
       <button type="button" class="btn" id="printPreviewPrintBtn">🖨️ Print</button>
+    </div>
+  </div>
+</div>
+
+<div id="reportPrintArea"></div>
+
+<div class="report-preview-overlay" id="reportPreviewOverlay">
+  <div class="report-preview-box">
+    <div class="print-preview-header">
+      <h3>Report preview</h3>
+      <button type="button" class="icon-btn" id="reportPreviewCloseBtn">✕</button>
+    </div>
+    <div class="report-preview-scroll">
+      <div class="report-preview-paper" id="reportPreviewPaper"></div>
+    </div>
+    <div class="print-preview-actions">
+      <button type="button" class="btn ghost" id="reportPreviewCancelBtn">Cancel</button>
+      <button type="button" class="btn" id="reportPreviewPrintBtn">🖨️ Print / Save PDF</button>
     </div>
   </div>
 </div>
@@ -4226,7 +4421,15 @@
     edit: '<svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',
     trash: '<svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg>',
     up: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>',
-    down: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
+    down: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
+    revenue: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5.5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"/></svg>',
+    cost: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.8 12 21.4 2.6 12a2 2 0 0 1 0-2.8L9.7 2H12"/><circle cx="16" cy="6" r="1.5"/><path d="M12 2h9v9"/></svg>',
+    profit: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9.5 10.5 13.5 14.5 21 7"/><path d="M15 7h6v6"/></svg>',
+    margin: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5-14 14"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
+    tip: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 9 9l-7 1 5 5-1.5 7L12 18l6.5 4L17 15l5-5-7-1z"/></svg>',
+    invoiceCount: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17H6z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>',
+    calendarStar: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="m12 12.5 1 2 2.2.3-1.6 1.5.4 2.2-2-1.1-2 1.1.4-2.2-1.6-1.5 2.2-.3z"/></svg>',
+    userStar: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20a7 7 0 0 1 9-6.7"/><circle cx="10" cy="8" r="4"/><path d="m18 12.5 1 2 2.2.3-1.6 1.5.4 2.2-2-1.1-2 1.1.4-2.2-1.6-1.5 2.2-.3z"/></svg>'
   };
 
   // ---------- Number formatting (thousands separators, incl. live in inputs) ----------
@@ -9064,6 +9267,374 @@
     $('#searchResult').classList.add('show');
   }
 
+  // ---------- Reports: printable A4 report (day/month/year) ----------
+  function updateReportExportInputsVisibility(){
+    const mode = $('#reportExportMode').value;
+    $('#reportExportDay').style.display = mode === 'day' ? '' : 'none';
+    $('#reportExportMonth').style.display = mode === 'month' ? '' : 'none';
+    $('#reportExportYear').style.display = mode === 'year' ? '' : 'none';
+  }
+
+  function initReportExportDefaults(){
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    if(!$('#reportExportDay').value) $('#reportExportDay').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+    if(!$('#reportExportMonth').value) $('#reportExportMonth').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}`;
+    if(!$('#reportExportYear').value) $('#reportExportYear').value = String(now.getFullYear());
+  }
+
+  // Gathers totals + the matching invoices for the chosen day/month/year.
+  // Mirrors the filtering in runReportSearch() above, but for the whole
+  // business (no client filter) and returns structured data instead of
+  // writing straight into the DOM.
+  function buildBusinessReportData(mode){
+    let matches, label;
+    if(mode === 'day'){
+      const val = $('#reportExportDay').value;
+      if(!val){ alertBanner('Pick a day first.'); return null; }
+      const [y, m, day] = val.split('-').map(Number);
+      matches = state.sales.filter(s => {
+        const d = new Date(s.date);
+        return d.getFullYear()===y && d.getMonth()===m-1 && d.getDate()===day;
+      });
+      label = new Date(y, m-1, day).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    } else if(mode === 'month'){
+      const val = $('#reportExportMonth').value;
+      if(!val){ alertBanner('Pick a month first.'); return null; }
+      const [y, m] = val.split('-').map(Number);
+      matches = state.sales.filter(s => {
+        const d = new Date(s.date);
+        return d.getFullYear()===y && d.getMonth()===m-1;
+      });
+      label = new Date(y, m-1, 1).toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    } else {
+      const val = parseInt($('#reportExportYear').value);
+      if(!val || val < 1970){ alertBanner('Enter a valid year.'); return null; }
+      matches = state.sales.filter(s => new Date(s.date).getFullYear() === val);
+      label = String(val);
+    }
+    matches = [...matches].sort((a, b) => a.date - b.date);
+    const revenue = matches.reduce((sum, s) => sum + s.revenueUsd, 0);
+    const cost = matches.reduce((sum, s) => sum + (s.costUsd || 0), 0);
+    const profit = matches.reduce((sum, s) => sum + s.profitUsd, 0);
+    const tips = matches.reduce((sum, s) => sum + (s.tipUsd || 0), 0);
+    // The USD→LBP rate moves over time, so each invoice keeps the rate that
+    // was actually in effect when it was made (older sales fall back to the
+    // current rate — see the same s.rateUsed || state.rate.value pattern
+    // used when reprinting old invoices).
+    const rates = matches.map(s => s.rateUsed || state.rate.value);
+    const rateMin = rates.length ? Math.min(...rates) : state.rate.value;
+    const rateMax = rates.length ? Math.max(...rates) : state.rate.value;
+
+    // ---- Extra at-a-glance insights (useful, low-clutter additions) ----
+    const avgRevenue = matches.length ? revenue / matches.length : 0;
+    const marginPct = revenue > 0.004 ? (profit / revenue) * 100 : null;
+
+    // Best client by profit over this period (walk-ins pooled together,
+    // same grouping the on-screen Top performers list uses).
+    let topClient = null;
+    if(matches.length){
+      const clientMap = new Map();
+      matches.forEach(s => {
+        const key = s.clientId || '__walkin';
+        const cur = clientMap.get(key) || { name: s.clientId ? s.customerName : 'Walk-in (no account)', profit: 0, count: 0 };
+        cur.profit += s.profitUsd;
+        cur.count += 1;
+        if(s.clientId){
+          const client = state.clients.find(c => c.id === s.clientId);
+          if(client) cur.name = client.name;
+        }
+        clientMap.set(key, cur);
+      });
+      const ranked = [...clientMap.values()].sort((a, b) => b.profit - a.profit);
+      if(ranked.length) topClient = ranked[0];
+    }
+
+    // Busiest single day by revenue — only meaningful once a period spans
+    // more than one day (skip for the day report itself).
+    let busiestDay = null;
+    if(mode !== 'day' && matches.length){
+      const dayMap = new Map();
+      matches.forEach(s => {
+        const d = new Date(s.date);
+        const key = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+        const cur = dayMap.get(key) || { date: d, revenue: 0, count: 0 };
+        cur.revenue += s.revenueUsd;
+        cur.count += 1;
+        dayMap.set(key, cur);
+      });
+      const rankedDays = [...dayMap.values()].sort((a, b) => b.revenue - a.revenue);
+      if(rankedDays.length) busiestDay = rankedDays[0];
+    }
+
+    return { mode, label, sales: matches, revenue, cost, profit, tips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay };
+  }
+
+  function buildBusinessReportHtml(data){
+    const s = state.invoiceSettings;
+    const generated = new Date().toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
+    const periodNoun = data.mode === 'day' ? 'Daily report' : data.mode === 'month' ? 'Monthly report' : 'Yearly report';
+    const businessName = s.headerTitle || 'Business report';
+
+    let html = '<div class="rp2-page">';
+    html += '<div class="rp2-watermark">TDA</div>';
+    html += '<div class="rp2-content">';
+    html += '<div class="rp2-topbar"></div>';
+
+    html += '<div class="rp2-header">';
+    html += '<div class="rp2-header-left">';
+    if(s.logo) html += `<img class="rp2-logo" src="${s.logo}" alt="logo">`;
+    html += '<div class="rp2-header-text">';
+    html += `<h1>${escapeHtml(businessName)}</h1>`;
+    const subBits = [s.headerSubtitle, s.address, s.phone].filter(Boolean).map(escapeHtml);
+    if(subBits.length) html += `<p>${subBits.join(' · ')}</p>`;
+    html += '</div></div>';
+    html += '<div class="rp2-header-right">';
+    html += `<div class="rp2-eyebrow">${escapeHtml(periodNoun)}</div>`;
+    html += `<div class="rp2-period">${escapeHtml(data.label)}</div>`;
+    html += `<div class="rp2-generated">Generated ${escapeHtml(generated)}</div>`;
+    const rateLine = data.rateMin === data.rateMax
+      ? `1 USD = ${Math.round(data.rateMin).toLocaleString('en-US')} LBP`
+      : `1 USD = ${Math.round(data.rateMin).toLocaleString('en-US')}–${Math.round(data.rateMax).toLocaleString('en-US')} LBP`;
+    html += `<div class="rp2-generated">${escapeHtml(rateLine)}</div>`;
+    html += '</div>';
+    html += '</div>';
+
+    const profitNeg = data.profit < -0.004;
+    html += '<div class="rp2-summary">';
+    html += `<div class="rp2-stat"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.revenue}</span><span class="rp2-label">Revenue</span></div><div class="rp2-val">${fmtUsd(data.revenue)}</div></div>`;
+    html += `<div class="rp2-stat tone-amber"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.cost}</span><span class="rp2-label">Cost</span></div><div class="rp2-val">${fmtUsd(data.cost)}</div></div>`;
+    html += `<div class="rp2-stat${profitNeg ? ' tone-red neg' : ' tone-green'}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.profit}</span><span class="rp2-label">Profit</span></div><div class="rp2-val${profitNeg ? ' neg' : ''}">${fmtUsd(data.profit)}</div></div>`;
+    const marginText = data.marginPct === null ? '—' : (data.marginPct < 0 ? '-' : '') + Math.abs(data.marginPct).toFixed(1) + '%';
+    html += `<div class="rp2-stat${data.marginPct !== null && data.marginPct < 0 ? ' tone-red neg' : ''}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.margin}</span><span class="rp2-label">Margin</span></div><div class="rp2-val${data.marginPct !== null && data.marginPct < 0 ? ' neg' : ''}">${escapeHtml(marginText)}</div></div>`;
+    html += '</div>';
+
+    // ---- Insights ribbon ----
+    html += '<div class="rp2-insights">';
+    html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.invoiceCount}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Invoices</div><div class="rp2-insight-val">${data.sales.length}</div></div></div>`;
+    html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.revenue}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Avg / invoice</div><div class="rp2-insight-val">${fmtUsd(data.avgRevenue)}</div></div></div>`;
+    if(data.tips > 0.004){
+      html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.tip}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Tips</div><div class="rp2-insight-val">${fmtUsd(data.tips)}</div></div></div>`;
+    }
+    if(data.busiestDay){
+      const bd = data.busiestDay.date.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+      html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.calendarStar}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Busiest day</div><div class="rp2-insight-val" title="${escapeHtml(bd)}">${escapeHtml(bd)}</div><div class="rp2-insight-sub">${fmtUsd(data.busiestDay.revenue)}</div></div></div>`;
+    }
+    if(data.topClient && data.topClient.profit > 0.004){
+      html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.userStar}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Top client</div><div class="rp2-insight-val" title="${escapeHtml(data.topClient.name)}">${escapeHtml(data.topClient.name)}</div><div class="rp2-insight-sub">${fmtUsd(data.topClient.profit)} profit</div></div></div>`;
+    }
+    html += '</div>';
+
+    html += `<div class="rp2-section-label">Invoices (${data.sales.length})</div>`;
+    if(data.sales.length === 0){
+      html += '<div class="rp2-empty">No invoices in this period.</div>';
+    } else {
+      html += '<div class="rp2-table-wrap"><table class="rp2-table"><thead><tr><th>Date</th><th>Customer</th><th class="rp2-num">Revenue</th><th class="rp2-num">Cost</th><th class="rp2-num">Profit</th><th class="rp2-num">Tip</th><th class="rp2-num">Rate (LBP)</th></tr></thead><tbody>';
+      data.sales.forEach(sale => {
+        const d = new Date(sale.date);
+        let dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year: data.mode === 'year' ? undefined : (data.mode === 'month' ? 'numeric' : undefined) });
+        if(data.mode === 'day') dateStr += ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+        const rate = sale.rateUsed || state.rate.value;
+        const rowProfitNeg = sale.profitUsd < -0.004;
+        html += `<tr><td>${escapeHtml(dateStr)}</td><td>${escapeHtml(sale.customerName || 'Walk-in')}</td><td class="rp2-num">${fmtUsd(sale.revenueUsd)}</td><td class="rp2-num">${fmtUsd(sale.costUsd || 0)}</td><td class="rp2-num${rowProfitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(sale.profitUsd)}</td><td class="rp2-num">${sale.tipUsd ? fmtUsd(sale.tipUsd) : '—'}</td><td class="rp2-num">${Math.round(rate).toLocaleString('en-US')}</td></tr>`;
+      });
+      html += `</tbody><tfoot><tr><td colspan="2">Total</td><td class="rp2-num">${fmtUsd(data.revenue)}</td><td class="rp2-num">${fmtUsd(data.cost)}</td><td class="rp2-num${profitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(data.profit)}</td><td class="rp2-num">${data.tips ? fmtUsd(data.tips) : '—'}</td><td class="rp2-num">—</td></tr></tfoot></table></div>`;
+    }
+
+    html += `<div class="rp2-footer"><span><b>${escapeHtml(businessName)}</b> · ${escapeHtml(periodNoun)}</span><span>Generated ${escapeHtml(generated)}</span></div>`;
+    html += '</div></div>';
+    return html;
+  }
+
+  // Sets an A4 @page size just for this report print (the receipt print
+  // path sets its own narrower @page via applyPrintPageStyle(), reusing
+  // the same <style> tag — only one of the two ever runs right before print).
+  function applyReportPrintPageStyle(){
+    let styleTag = document.getElementById('printPageStyle');
+    if(!styleTag){
+      styleTag = document.createElement('style');
+      styleTag.id = 'printPageStyle';
+      document.head.appendChild(styleTag);
+    }
+    styleTag.textContent = `@page{ size:A4; margin:14mm; } #reportPrintArea{ max-width:182mm; margin:0 auto; }`;
+  }
+
+  // ---------- Report preview modal ----------
+  const reportPreviewOverlay = $('#reportPreviewOverlay');
+  function closeReportPreview(){
+    reportPreviewOverlay.classList.remove('show');
+    $('#reportPreviewPaper').innerHTML = '';
+  }
+  reportPreviewOverlay.addEventListener('click', (e) => { if(e.target === reportPreviewOverlay) closeReportPreview(); });
+
+  function showReportPreview(html){
+    return new Promise((resolve) => {
+      $('#reportPreviewPaper').innerHTML = html;
+      reportPreviewOverlay.classList.add('show');
+      const closeBtn = $('#reportPreviewCloseBtn');
+      const cancelBtn = $('#reportPreviewCancelBtn');
+      const printBtn = $('#reportPreviewPrintBtn');
+      const cleanup = () => {
+        closeBtn.removeEventListener('click', onCancel);
+        cancelBtn.removeEventListener('click', onCancel);
+        printBtn.removeEventListener('click', onPrint);
+      };
+      const onCancel = () => { cleanup(); closeReportPreview(); resolve(false); };
+      const onPrint = () => { cleanup(); closeReportPreview(); resolve(true); };
+      closeBtn.addEventListener('click', onCancel);
+      cancelBtn.addEventListener('click', onCancel);
+      printBtn.addEventListener('click', onPrint);
+    });
+  }
+
+  // Physical CSS units are fixed by spec (1in = 96px, so 1mm = 96/25.4px)
+  // regardless of screen resolution, which is what makes it safe to
+  // pre-compute page breaks in JS rather than needing a real paged-media
+  // renderer.
+  const REPORT_MM_PX = 96 / 25.4;
+  // One printed A4 page fits 297 - 2x14mm (the @page margin in
+  // applyReportPrintPageStyle) = 269mm. Each sheet is 2mm shorter than that so
+  // sub-pixel rounding can never push a sheet onto an extra blank page.
+  const REPORT_SHEET_HEIGHT_MM = 267;
+  const REPORT_PAGENUM_BAND_MM = 9; // strip at the bottom of each sheet kept free for "Page X of N"
+
+  // Splits the report into one fixed-height "sheet" per printed page and
+  // stamps each with "Page X of N".
+  //
+  // The old approach positioned markers at multiples of the page height
+  // inside one long flow. But the browser breaks pages at *row* boundaries
+  // (rows never split), so every page ends a little early and the real page
+  // breaks drift away from those multiples: numbers landed on the wrong
+  // sheet, the count was too low, and a stray blank last page appeared.
+  // Here we do the pagination ourselves: rows are packed onto sheets using
+  // their real measured heights, each sheet is followed by a forced page
+  // break, and its number lives inside it — so it can't drift.
+  //
+  // `area` must be laid out (rendered, at the final print width) when this runs.
+  function paginateReportForPrint(area){
+    const page = area.querySelector('.rp2-page');
+    const content = page && page.querySelector('.rp2-content');
+    if(!content) return;
+
+    const capacity = (REPORT_SHEET_HEIGHT_MM - REPORT_PAGENUM_BAND_MM) * REPORT_MM_PX;
+
+    const table = content.querySelector('table.rp2-table');
+    const tableWrap = table ? table.closest('.rp2-table-wrap') : null;
+    const footer = content.querySelector('.rp2-footer');
+    // Everything except the table and the closing footer: topbar, header,
+    // summary, insights, section label (or the "no invoices" notice).
+    const headBlocks = Array.from(content.children).filter(el => el !== tableWrap && el !== footer);
+
+    // Measure the table BEFORE moving anything out of it.
+    const rows = table ? Array.from(table.tBodies[0].rows) : [];
+    const rowH = rows.map(r => r.getBoundingClientRect().height);
+    const thead = table ? table.tHead : null;
+    const tfoot = table ? table.tFoot : null;
+    const tableW = table ? table.getBoundingClientRect().width : 0;
+    // Each sheet gets its own table, so pin the column widths (as %) to
+    // what the full table used — otherwise every page could size its
+    // columns differently.
+    const colPct = thead ? Array.from(thead.rows[0].cells).map(c => (c.getBoundingClientRect().width / tableW) * 100) : [];
+
+    const makeTable = () => {
+      const wrap = document.createElement('div');
+      wrap.className = 'rp2-table-wrap';
+      const t = document.createElement('table');
+      t.className = 'rp2-table';
+      t.style.tableLayout = 'fixed';
+      const cg = document.createElement('colgroup');
+      colPct.forEach(pct => { const col = document.createElement('col'); col.style.width = pct + '%'; cg.appendChild(col); });
+      t.appendChild(cg);
+      t.appendChild(thead.cloneNode(true));
+      const tbody = document.createElement('tbody');
+      t.appendChild(tbody);
+      wrap.appendChild(t);
+      return { wrap, table: t, tbody };
+    };
+
+    const sheets = [];
+    const newSheet = () => {
+      const sheet = document.createElement('div');
+      sheet.className = 'rp2-sheet';
+      const body = document.createElement('div');
+      body.className = 'rp2-sheet-body';
+      sheet.appendChild(body);
+      page.appendChild(sheet); // has to be in the document so its height can be measured
+      sheets.push(sheet);
+      return body;
+    };
+
+    if(!table){
+      const body = newSheet();
+      headBlocks.forEach(el => body.appendChild(el));
+      if(footer) body.appendChild(footer);
+    } else {
+      let next = 0; // index of the first row not placed on a sheet yet
+      let first = true;
+      while(next < rows.length){
+        const body = newSheet();
+        if(first) headBlocks.forEach(el => body.appendChild(el));
+        first = false;
+        const t = makeTable();
+        body.appendChild(t.wrap);
+
+        // Estimate how many rows fit from their measured heights...
+        const room = capacity - body.offsetHeight;
+        let count = 0, used = 0;
+        while(next + count < rows.length && used + rowH[next + count] <= room){ used += rowH[next + count]; count++; }
+        if(count === 0) count = 1; // always make progress
+        for(let i = 0; i < count; i++) t.tbody.appendChild(rows[next + i]);
+
+        // ...the last sheet also carries the totals row and footer.
+        let isLast = next + count >= rows.length;
+        if(isLast){ t.table.appendChild(tfoot); if(footer) body.appendChild(footer); }
+
+        // ...then check against the real layout and move rows to the next
+        // sheet until it truly fits.
+        while(body.offsetHeight > capacity && t.tbody.rows.length > 1){
+          t.tbody.removeChild(t.tbody.lastElementChild);
+          if(isLast){ t.table.removeChild(tfoot); if(footer) body.removeChild(footer); isLast = false; }
+        }
+        next += t.tbody.rows.length;
+      }
+    }
+
+    content.remove();
+    page.classList.add('rp2-paged');
+    sheets.forEach((sheet, i) => {
+      const marker = document.createElement('div');
+      marker.className = 'rp2-pagenum';
+      marker.textContent = `Page ${i + 1} of ${sheets.length}`;
+      sheet.appendChild(marker);
+    });
+  }
+
+  async function previewAndPrintBusinessReport(){
+    const mode = $('#reportExportMode').value;
+    const data = buildBusinessReportData(mode);
+    if(!data) return;
+    const html = buildBusinessReportHtml(data);
+    const confirmed = await showReportPreview(html);
+    if(!confirmed) return;
+    applyReportPrintPageStyle();
+    // A previously printed receipt is left sitting in #printArea; clear it so
+    // it can't end up on (or push content around in) the report.
+    $('#printArea').innerHTML = '';
+    const area = $('#reportPrintArea');
+    area.innerHTML = html;
+    // Briefly render off-screen at the exact print width so real layout
+    // heights are available to measure, then split the report into pages
+    // (each with its own "Page X of N") before handing off to the browser's
+    // print / Save-as-PDF dialog. Wait for web fonts first: they change
+    // text metrics, and therefore row heights.
+    area.style.cssText = 'display:block; position:fixed; left:-99999px; top:0; width:182mm; visibility:hidden;';
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    paginateReportForPrint(area);
+    area.style.cssText = '';
+    window.print();
+  }
+
   // ---------- Reports: product sales & profit search ----------
   function renderProductSearchDatalist(){
     const list = $('#productSearchDatalist');
@@ -10511,6 +11082,10 @@
   $('#searchProductBtn').addEventListener('click', runProductReportSearch);
   updateSearchInputsVisibility();
   updateSearchProductInputsVisibility();
+  $('#reportExportMode').addEventListener('change', updateReportExportInputsVisibility);
+  $('#reportExportPreviewBtn').addEventListener('click', previewAndPrintBusinessReport);
+  initReportExportDefaults();
+  updateReportExportInputsVisibility();
   attachThousandsFormatting($('#amountReceived'));
 
   $('#slimInvoicesBtn').addEventListener('click', async () => {
