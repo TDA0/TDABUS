@@ -183,155 +183,269 @@
   .section{ display:none; }
   .section.active{ display:block; }
 
-  /* Catalog tab header */
+  /* ==========================================================
+     Catalog tab
+     ========================================================== */
+  #tab-catalog svg{ flex-shrink:0; }
+
   .catalog-head{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    margin-bottom:0; flex-wrap:wrap;
+    display:flex; align-items:flex-end; justify-content:space-between;
+    flex-wrap:wrap; gap:8px 16px; margin:0 0 6px;
   }
-  .catalog-head-text{ min-width:0; flex:1 1 200px; }
-  .catalog-head h2{ font-size:21px; }
-  .catalog-head .catalog-subtitle{
-    font-size:12.5px; color:var(--ink-soft); font-weight:500;
-    margin-top:3px;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  .catalog-head-text{ min-width:0; flex:1 1 220px; }
+  .catalog-head h2{ font-size:24px; }
+  .catalog-subtitle{
+    margin:4px 0 0; font-size:13.5px; line-height:1.4;
+    color:var(--ink-soft); font-weight:500;
   }
 
-  /* Sticky toolbar: search + "add top-level category" always stay reachable
-     at the top, so adding a category never requires scrolling the list. */
+  /* Sticky toolbar: search and "New category" stay one tap away while the
+     list scrolls. The add form opens inside it, so it never needs scrolling to. */
   .catalog-toolbar{
     position:sticky; top:0; z-index:20;
-    display:flex; flex-direction:column; gap:12px;
-    background:var(--bg);
     padding:8px 0 14px;
-    margin:0 0 4px;
+    background:linear-gradient(to bottom, var(--bg) 82%, rgba(244,245,250,0));
   }
   .catalog-toolbar-card{
-    border:1px solid var(--line); border-radius:var(--radius);
-    background:var(--paper-card); box-shadow:var(--shadow);
-    padding:14px;
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
   }
-  .catalog-toolbar .search-box{ margin-bottom:0; }
-  .catalog-add-label{
-    font-size:12px; font-weight:700; color:var(--ink-soft);
-    text-transform:uppercase; letter-spacing:0.4px;
-    margin:12px 0 6px;
-    display:block;
+  .catalog-bar{ display:flex; align-items:center; gap:8px; padding:8px; }
+  .catalog-search{ position:relative; flex:1 1 auto; min-width:0; }
+  .catalog-search > svg{
+    position:absolute; left:13px; top:50%; width:18px; height:18px; margin-top:-9px;
+    stroke:var(--ink-faint); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+    pointer-events:none;
   }
-  .catalog-toolbar .add-category{ margin-top:0; }
-  @media (min-width:640px){
-    .catalog-toolbar-card{ padding:16px; }
+  .catalog-search input{
+    height:44px; padding:0 38px 0 40px;
+    background:var(--bg); border-color:transparent; border-radius:10px;
+  }
+  .catalog-search input:focus{ background:#fff; border-color:var(--cedar); }
+  .catalog-search input:placeholder-shown{ padding-right:12px; }
+  .catalog-search-clear{
+    position:absolute; right:5px; top:50%; width:34px; height:34px; margin-top:-17px;
+    display:grid; place-items:center; padding:0;
+    border:0; border-radius:8px; background:none; color:var(--ink-soft); cursor:pointer;
+  }
+  .catalog-search-clear[hidden]{ display:none; }
+  .catalog-search-clear svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; }
+
+  .catalog-new-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    height:44px; padding:0 14px; border-radius:10px; flex:0 0 auto;
+  }
+  .catalog-new-btn svg{
+    width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.4;
+    stroke-linecap:round; stroke-linejoin:round; transition:transform .15s ease;
+  }
+  .catalog-new-btn[aria-expanded="true"] svg{ transform:rotate(45deg); }
+  .catalog-new-btn .lbl-long{ display:none; }
+  @media (min-width:520px){
+    .catalog-new-btn{ padding:0 18px; }
+    .catalog-new-btn .lbl-long{ display:inline; }
+    .catalog-new-btn .lbl-short{ display:none; }
   }
 
-  /* Reflow lists/cards into columns once there's room, without touching JS */
-  @media (min-width:900px){
-    #categoryList{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
-    #categoryList .category{ margin-bottom:0; }
+  .catalog-add-panel{ padding:12px 12px 14px; border-top:1px solid var(--line); }
+  .catalog-add-status{ margin:8px 0 0; min-height:0; font-size:13px; font-weight:600; color:var(--success); }
+  .catalog-add-status:empty{ display:none; }
+  .fld-cap{ display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:var(--ink-soft); }
+  .fld-cap small{ margin-left:4px; font-size:12.5px; font-weight:500; color:var(--ink-faint); }
+  .fld-hint{ font-size:12.5px; line-height:1.4; color:var(--ink-faint); }
+  .add-category{ display:flex; gap:8px; }
+  .add-category input{ flex:1 1 auto; min-width:0; }
+  .add-category .btn{ flex:0 0 auto; padding:0 18px; }
+  .catalog-add-panel .add-category{ max-width:520px; }
+
+  /* Category list: cards are dealt into independent columns (see
+     renderCategories), so opening one card only pushes down the cards
+     below it in its own column instead of leaving gaps in a grid row. */
+  #categoryList{ display:flex; align-items:flex-start; gap:16px; }
+  .cat-col{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:12px; }
+  @media (min-width:700px){ .cat-col{ gap:16px; } }
+
+  .catalog-empty{
+    flex:1 1 100%;
+    text-align:center; padding:44px 20px;
+    background:var(--paper-card);
+    border:1.5px dashed var(--line-strong);
+    border-radius:var(--radius);
   }
-  @media (min-width:1300px){
-    #categoryList{ grid-template-columns:1fr 1fr 1fr; }
+  .catalog-empty-icon{
+    width:48px; height:48px; margin:0 auto 14px;
+    display:grid; place-items:center;
+    border-radius:14px; background:var(--cedar-soft); color:var(--cedar);
   }
-  @media (min-width:1700px){
-    #categoryList{ grid-template-columns:repeat(4, 1fr); }
-  }
+  .catalog-empty-icon svg{ width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  .catalog-empty h3{ font-size:17px; }
+  .catalog-empty p{ margin:6px auto 18px; max-width:36ch; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+  .catalog-empty .btn{ display:inline-flex; align-items:center; justify-content:center; gap:7px; height:44px; padding:0 18px; }
+  .catalog-empty .btn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
 
   /* Category card */
   .category{
-    margin-bottom:12px;
+    min-width:0;
+    background:var(--paper-card);
     border:1px solid var(--line);
     border-radius:var(--radius);
-    background:var(--paper-card);
     box-shadow:var(--shadow);
-    overflow:hidden;
-    transition:box-shadow .15s ease;
   }
-  .category:hover{ box-shadow:0 8px 22px rgba(23,25,35,0.1); }
-  .category-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    padding:14px 16px;
-    background:none;
-    cursor:pointer;
-    gap:6px 8px;
+  .category.is-open{ border-color:var(--line-strong); }
+  .category-head{ display:flex; align-items:center; gap:2px; padding:6px 8px 6px 6px; }
+  .category-title{
+    flex:1 1 auto; min-width:0; margin:0;
+    font-size:inherit; font-weight:inherit; letter-spacing:normal;
+  }
+  .category-toggle{
+    width:100%; display:flex; align-items:center; gap:12px;
+    padding:8px; border:0; border-radius:10px; background:none;
+    color:inherit; font:inherit; text-align:left; cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
     transition:background .12s ease;
   }
-  .category-head:hover{ background:var(--bg); }
-  .category-head-left{ display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 100%; }
-  .category-head-left h3{
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:normal;
-    word-break:break-word;
-    min-width:0;
+  .category-toggle:active{ background:var(--bg); }
+  @media (hover:hover){ .category-toggle:hover{ background:var(--bg); } }
+  .cat-chev{ flex:0 0 auto; display:grid; place-items:center; color:var(--ink-soft); transition:transform .15s ease; }
+  .cat-chev svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .category-toggle[aria-expanded="true"] .cat-chev{ transform:rotate(180deg); }
+  .cat-tile{
+    flex:0 0 auto; width:40px; height:40px;
+    display:grid; place-items:center; overflow:hidden;
+    border-radius:11px; font-size:16px; font-weight:800;
+    background:hsl(var(--h, 239) 85% 95%);
+    color:hsl(var(--h, 239) 55% 38%);
   }
-  .cat-thumb{
-    width:32px; height:32px; border-radius:9px; object-fit:cover; flex-shrink:0;
-    border:1px solid var(--line);
+  .cat-tile.has-img{ border:1px solid var(--line); background:var(--bg); }
+  .cat-tile img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cat-info{ min-width:0; flex:1 1 auto; }
+  .cat-name{
+    display:block; font-size:16px; font-weight:700; line-height:1.3;
+    letter-spacing:-0.01em; color:var(--ink); overflow-wrap:anywhere;
   }
-  .cat-chev{
-    color:var(--ink-faint);
-    font-size:12px;
-    flex-shrink:0;
-    transition:transform .15s ease;
-    display:inline-block;
-  }
-  .cat-chev.open{ transform:rotate(180deg); }
-  .category-head h3{ font-size:17px; font-weight:700; }
-  .category-head .count{
-    font-size:12px; font-weight:700; color:var(--ink-soft); white-space:nowrap;
-    background:var(--bg); border-radius:999px; padding:4px 10px;
-  }
-  .category-head-right{ display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:auto; }
-  .category-body{ padding:4px 16px 16px; border-top:1px dashed var(--line); }
-  .category-body.collapsed{ display:none; }
-  .cat-section-label{
-    font-size:12px;
-    font-weight:700;
-    color:var(--ink-faint);
-    text-transform:uppercase;
-    letter-spacing:0.4px;
-    margin:12px 0 6px;
-  }
-  .add-product-toggle{
-    background:var(--cedar-soft);
-    color:var(--cedar);
-    border:none;
-    border-radius:var(--radius-sm);
-    font-family:'Inter', sans-serif;
-    font-size:14px;
-    font-weight:700;
-    padding:10px 12px;
-    width:100%;
-    cursor:pointer;
-    margin-top:10px;
-    transition:background .12s ease;
-  }
-  .add-product-toggle:hover{ background:#E3E6FF; }
+  .cat-meta{ display:block; margin-top:2px; font-size:12.5px; font-weight:500; color:var(--ink-soft); }
+  .category-actions{ display:flex; flex:0 0 auto; }
 
+  .ic-btn{
+    width:36px; height:36px; display:inline-grid; place-items:center; padding:0;
+    border:0; border-radius:10px; background:none; color:var(--ink-soft); cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .12s ease, color .12s ease;
+  }
+  .ic-btn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .ic-btn:active{ background:var(--line); }
+  .ic-btn.danger{ color:#C8434A; }
+  .ic-btn.danger:active{ background:#FDEDED; }
+  @media (hover:hover){
+    .ic-btn:hover{ background:var(--bg); color:var(--ink); }
+    .ic-btn.danger:hover{ background:#FDEDED; color:#B91C1C; }
+  }
+  @media (pointer:coarse){ .ic-btn{ width:40px; height:40px; } }
+
+  .category-body{ padding:0 14px 14px; border-top:1px solid var(--line); }
+  .category-body.collapsed{ display:none; }
+
+  .cat-actions-row{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(152px, 1fr));
+    gap:8px; margin-top:14px;
+  }
+  .soft-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    min-height:42px; padding:8px 8px; border:0; border-radius:10px;
+    background:var(--cedar-soft); color:var(--cedar);
+    font:700 13.5px/1.2 'Inter', sans-serif; cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .12s ease, color .12s ease;
+  }
+  .soft-btn svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  @media (hover:hover){ .soft-btn:hover{ background:#E3E6FF; } }
+  .soft-btn[aria-expanded="true"]{ background:var(--cedar); color:#fff; }
+  @media (hover:hover){ .soft-btn[aria-expanded="true"]:hover{ background:var(--cedar-dark); } }
+
+  /* Inline add forms */
+  .cat-form{
+    display:flex; flex-direction:column; gap:12px;
+    margin-top:10px; padding:12px;
+    background:var(--bg); border:1px solid var(--line); border-radius:12px;
+  }
+  .cat-form .fld{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .cat-form .fld-cap{ margin:0; }
+  .fld-pair{ display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:12px; }
+  .money{ display:flex; gap:6px; }
+  .money input{ flex:1 1 auto; min-width:0; }
+  .money select{ flex:0 0 84px; width:84px; padding-left:10px; padding-right:6px; }
+  .cat-form .voucher-toggle-row{ align-items:flex-start; gap:10px; line-height:1.4; cursor:pointer; }
+  .cat-form .voucher-toggle-row small{ display:block; margin-top:1px; font-size:12.5px; color:var(--ink-faint); }
+  .cat-form input[type="checkbox"]{ flex:0 0 auto; width:18px; height:18px; margin:1px 0 0; padding:0; }
+  .form-actions{ display:flex; gap:8px; justify-content:flex-end; }
+  .form-actions .btn{ flex:1 1 0; height:44px; padding:0 16px; }
+  @media (min-width:480px){ .form-actions .btn{ flex:0 0 auto; min-width:120px; } }
+
+  /* Sections inside a category */
+  .cat-section{ margin-top:18px; }
+  .cat-section-label{
+    display:flex; align-items:center; gap:8px; margin:0 0 2px;
+    font-size:13px; font-weight:700; color:var(--ink-soft);
+  }
+  .cat-count{
+    min-width:22px; padding:1px 7px; border-radius:999px; text-align:center;
+    background:var(--bg); color:var(--ink-soft); font-size:12px; font-weight:700;
+  }
+  .cat-empty-note{ margin:14px 2px 2px; font-size:13.5px; color:var(--ink-soft); }
+
+  .prod-list{ display:flex; flex-direction:column; }
   .product-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:10px 6px;
-    border-bottom:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    gap:8px;
-    transition:background .12s ease;
+    display:flex; align-items:center; gap:12px;
+    padding:10px 0; border-bottom:1px solid var(--line);
   }
-  .product-row:hover{ background:var(--bg); }
-  .product-row:last-child{ border-bottom:none; }
-  .product-row-left{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .product-thumb{
-    width:38px; height:38px; border-radius:9px; object-fit:cover; flex-shrink:0;
-    border:1px solid var(--line);
+  .product-row:last-child{ border-bottom:0; padding-bottom:2px; }
+  .prod-tile{
+    flex:0 0 auto; width:40px; height:40px;
+    display:grid; place-items:center; overflow:hidden;
+    border-radius:10px; background:var(--bg); border:1px solid var(--line); color:var(--ink-faint);
   }
-  .product-name{ font-size:16px; font-weight:600; }
+  .prod-tile img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .prod-tile svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .product-info{ min-width:0; flex:1 1 auto; }
+  .product-name{ font-size:15px; font-weight:600; line-height:1.3; overflow-wrap:anywhere; }
+  .prod-meta{
+    display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px;
+    margin-top:4px; font-size:13px; color:var(--ink-soft);
+  }
+  .prod-usd{ font-size:14px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .prod-lbp{ font-variant-numeric:tabular-nums; }
+  .prod-margin{
+    padding:2px 8px; border-radius:999px; white-space:nowrap;
+    background:var(--success-soft); color:#047857; font-size:12px; font-weight:700;
+  }
+  .prod-margin.neg{ background:#FDEDED; color:#B91C1C; }
+
+  /* Subcategories nest inside their parent as quieter cards */
+  .subcat-list{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+  .category.is-sub{ background:#FAFAFD; border-radius:12px; box-shadow:none; }
+  .category.is-sub .category-head{ padding:4px 6px 4px 4px; }
+  .category.is-sub .cat-tile{ width:34px; height:34px; border-radius:9px; font-size:14px; }
+  .category.is-sub .cat-name{ font-size:15px; }
+  .category.is-sub .category-body{ padding:0 10px 12px; }
+  .category.is-sub .cat-section{ margin-top:14px; }
+
+  @media (max-width:380px){
+    .category-toggle{ gap:8px; padding:8px 4px; }
+    .cat-tile{ width:36px; height:36px; }
+    .ic-btn{ width:36px; height:36px; }
+    .category-body{ padding:0 12px 12px; }
+  }
+
+  #tab-catalog button:focus-visible,
+  #tab-catalog input[type="checkbox"]:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+  @media (prefers-reduced-motion:reduce){
+    #tab-catalog *{ transition:none !important; }
+  }
+
   .product-prices{ font-size:13.5px; color:var(--ink-soft); margin-top:2px; }
   .product-actions{ display:flex; gap:4px; flex-shrink:0; }
-  .product-row .product-actions .mini-btn{ background:#fff; border-color:var(--line); }
-  .product-row .product-actions .mini-btn:hover{ background:var(--bg); border-color:var(--line-strong); }
-  .product-row .product-actions .mini-btn.danger:hover{ background:#FDEDED; }
   .mini-btn{
     background:var(--bg);
     border:1px solid transparent;
@@ -353,13 +467,6 @@
     border-top:1px dashed var(--line-strong);
   }
   .add-row-inline{ display:flex; gap:6px; }
-  .category-body .add-row{
-    background:var(--bg);
-    border:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    padding:12px;
-    margin-top:10px;
-  }
   input, select{
     font-family:'Inter', sans-serif;
     font-size:16px;
@@ -404,19 +511,6 @@
     color:var(--ink-soft); background:var(--brass-soft); border-radius:var(--radius-sm);
   }
   .walkin-hint .mini-btn{ background:#fff; border-color:var(--line-strong); color:var(--ink); }
-
-  .add-category{
-    display:flex;
-    gap:6px;
-    margin-top:4px;
-  }
-  .category-body .add-category{
-    background:var(--bg);
-    border:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    padding:9px;
-    margin-top:12px;
-  }
 
   .empty-hint{
     font-size:15px;
@@ -941,289 +1035,853 @@
   .add-client-card h3{ font-size:16px; margin-bottom:12px; }
 
 
-  /* Clients toolbar: add button, search, sort, filters, view toggle */
-  .clients-head{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    margin-bottom:16px; flex-wrap:wrap;
+  /* ==========================================================
+     Clients tab
+     Same visual language as the Catalog tab: quiet white cards,
+     one indigo accent, red/green only where a balance needs it.
+     Every grid track is minmax(0, …) and every text block can
+     shrink, so a long name or a big amount can never push the
+     layout wider than the screen.
+     ========================================================== */
+  #tab-clients svg, .cl-sheet svg{
+    flex-shrink:0; stroke:currentColor; fill:none;
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
   }
-  .clients-head-text{ min-width:0; flex:1 1 200px; }
-  .clients-head h2{ font-size:21px; }
-  .clients-head .clients-subtitle{
-    font-size:12.5px; color:var(--ink-soft); font-weight:500;
-    margin-top:3px;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  .cl-ico{ width:18px; height:18px; }
+
+  .cl-head{ margin:0 0 14px; }
+  .cl-head h2{ font-size:24px; }
+  .cl-subtitle{
+    margin:4px 0 0; font-size:13.5px; line-height:1.4;
+    color:var(--ink-soft); font-weight:500;
   }
-  .clients-head .btn{ flex-shrink:0; }
-  .clients-toolbar{
-    border:1px solid var(--line); border-radius:var(--radius);
-    background:var(--paper-card); box-shadow:var(--shadow);
-    padding:14px; margin-bottom:16px;
-    display:flex; flex-direction:column; gap:11px;
+
+  /* Balance overview: one card, three figures */
+  .cl-overview{
+    display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));
+    position:relative; z-index:21; /* keeps its shadow above the sticky bar's backdrop */
+    margin:0 0 6px; overflow:hidden;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
   }
-  .clients-toolbar-row{ display:flex; gap:8px; align-items:stretch; }
-  .clients-toolbar-row select{ flex:1; min-width:0; }
+  .cl-kpi{ min-width:0; padding:16px 20px; }
+  .cl-kpi + .cl-kpi{ border-left:1px solid var(--line); }
+  .cl-kpi-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:13px; font-weight:600; color:var(--ink-soft);
+  }
+  .cl-kpi-label i{
+    flex:0 0 auto; width:8px; height:8px; border-radius:50%;
+    background:var(--cedar);
+  }
+  .cl-kpi.owed .cl-kpi-label i{ background:var(--burgundy); }
+  .cl-kpi.credit .cl-kpi-label i{ background:var(--success); }
+  .cl-kpi-value{
+    margin-top:6px; font-size:clamp(20px, 2.6vw, 26px); font-weight:800;
+    line-height:1.15; letter-spacing:-0.02em; color:var(--ink);
+    font-variant-numeric:tabular-nums; overflow-wrap:anywhere;
+  }
+  .cl-kpi.owed .cl-kpi-value{ color:var(--burgundy); }
+  .cl-kpi.credit .cl-kpi-value{ color:var(--success); }
+  .cl-kpi-sub{
+    margin-top:3px; font-size:12.5px; line-height:1.35; font-weight:500;
+    color:var(--ink-faint); font-variant-numeric:tabular-nums;
+  }
+  @media (max-width:559px){
+    .cl-overview{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    .cl-kpi{ padding:14px; }
+    .cl-kpi-value{ font-size:clamp(18px, 5.4vw, 22px); }
+    .cl-kpi.count{
+      grid-column:1 / -1; display:flex; align-items:center;
+      justify-content:space-between; gap:12px; padding:12px 14px;
+      border-left:0; border-top:1px solid var(--line);
+    }
+    .cl-kpi.count .cl-kpi-value{ margin:0; font-size:18px; }
+    .cl-kpi.count .cl-kpi-sub{ display:none; }
+  }
+
+  /* Sticky search + add: always one tap away while the list scrolls */
+  .cl-bar-wrap{
+    position:sticky; top:0; z-index:20;
+    padding:8px 0 12px;
+    background:linear-gradient(to bottom, var(--bg) 82%, rgba(244,245,250,0));
+  }
+  .cl-bar{
+    display:flex; align-items:center; gap:8px; padding:8px;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .cl-search{ position:relative; flex:1 1 auto; min-width:0; }
+  .cl-search > svg{
+    position:absolute; left:13px; top:50%; width:18px; height:18px;
+    margin-top:-9px; stroke:var(--ink-faint); pointer-events:none;
+  }
+  .cl-search input{
+    height:44px; padding:0 40px 0 40px;
+    background:var(--bg); border-color:transparent; border-radius:10px;
+  }
+  .cl-search input:focus{ background:#fff; border-color:var(--cedar); }
+  .cl-search input:placeholder-shown{ padding-right:12px; }
+  .cl-search-clear{
+    position:absolute; right:5px; top:50%; width:34px; height:34px;
+    margin-top:-17px; display:grid; place-items:center; padding:0;
+    border:0; border-radius:8px; background:none;
+    color:var(--ink-soft); cursor:pointer;
+  }
+  .cl-search-clear[hidden]{ display:none; }
+  .cl-search-clear svg{ width:16px; height:16px; stroke-width:2.2; }
+  .cl-add-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    height:44px; padding:0 14px; border-radius:10px; flex:0 0 auto;
+  }
+  .cl-add-btn svg{ width:18px; height:18px; stroke-width:2.4; }
+  .cl-add-btn .lbl-long{ display:none; }
+  @media (min-width:520px){
+    .cl-add-btn{ padding:0 18px; }
+    .cl-add-btn .lbl-long{ display:inline; }
+    .cl-add-btn .lbl-short{ display:none; }
+  }
+
+  /* Filters, sort and layout */
+  .cl-filters{ display:flex; flex-direction:column; gap:10px; margin:0 0 14px; }
+  .cl-chips{
+    display:flex; gap:8px; overflow-x:auto;
+    margin:0 -16px; padding:2px 16px 4px;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .cl-chips::-webkit-scrollbar{ display:none; }
+  .cl-chip{
+    flex:0 0 auto; display:inline-flex; align-items:center; gap:8px;
+    height:38px; padding:0 8px 0 14px; border-radius:999px;
+    border:1px solid var(--line-strong); background:var(--paper-card);
+    color:var(--ink-soft); font:600 13.5px/1 'Inter', sans-serif;
+    white-space:nowrap; cursor:pointer;
+    transition:background .12s ease, color .12s ease, border-color .12s ease;
+  }
+  .cl-chip .n{
+    min-width:22px; padding:3px 7px; border-radius:999px; text-align:center;
+    background:var(--bg); color:var(--ink-soft);
+    font-size:12px; font-weight:700; font-variant-numeric:tabular-nums;
+  }
+  @media (hover:hover){ .cl-chip:not(.active):hover{ border-color:var(--cedar); color:var(--cedar); } }
+  .cl-chip.active{ background:var(--cedar); border-color:var(--cedar); color:#fff; }
+  .cl-chip.active .n{ background:rgba(255,255,255,0.22); color:#fff; }
+
+  .cl-controls{ display:flex; align-items:center; gap:8px; }
+  .cl-select{ position:relative; flex:1 1 auto; min-width:0; max-width:340px; }
+  .cl-select select{
+    height:44px; padding:0 40px 0 14px; font-size:16px; font-weight:600;
+    -webkit-appearance:none; appearance:none;
+    text-overflow:ellipsis; cursor:pointer;
+  }
+  .cl-select > svg{
+    position:absolute; right:14px; top:50%; width:16px; height:16px;
+    margin-top:-8px; stroke:var(--ink-soft); pointer-events:none;
+  }
   .view-toggle{
-    display:flex; flex-shrink:0;
-    border:1.5px solid var(--line-strong); border-radius:var(--radius-sm); overflow:hidden;
-    background:var(--bg);
+    display:inline-flex; flex:0 0 auto; gap:2px; padding:3px;
+    background:var(--paper-card); border:1.5px solid var(--line-strong);
+    border-radius:var(--radius-sm);
   }
   .view-toggle button{
-    border:none; background:transparent; color:var(--ink-soft);
-    font-family:inherit; font-size:14px; font-weight:600;
-    padding:0 13px; cursor:pointer; white-space:nowrap;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    height:34px; min-width:38px; padding:0 10px; border:0; border-radius:7px;
+    background:none; color:var(--ink-soft);
+    font:600 13.5px/1 'Inter', sans-serif; cursor:pointer;
     transition:background .12s ease, color .12s ease;
   }
-  .view-toggle button + button{ border-left:1.5px solid var(--line-strong); }
-  .view-toggle button.active{ background:var(--cedar); color:#fff; }
-  .cl-chips{ display:flex; flex-wrap:wrap; gap:6px; }
-  .cl-chip{
-    font-family:inherit; font-size:13.5px; font-weight:600;
-    padding:6px 13px; border-radius:999px; cursor:pointer;
-    border:1.5px solid var(--line-strong); background:#fff; color:var(--ink-soft);
-    transition:background .12s ease, border-color .12s ease, color .12s ease;
+  .view-toggle button svg{ width:17px; height:17px; }
+  .view-toggle button span{ display:none; }
+  .view-toggle button.active{ background:var(--cedar-soft); color:var(--cedar); }
+  @media (min-width:480px){
+    .view-toggle button{ padding:0 12px; }
+    .view-toggle button span{ display:inline; }
   }
-  .cl-chip:hover{ border-color:var(--cedar); color:var(--cedar); }
-  .cl-chip .n{ margin-left:6px; font-weight:700; opacity:.65; }
-  .cl-chip.active{ background:var(--cedar); border-color:var(--cedar); color:#fff; }
-  .cl-chip.active .n{ opacity:.85; }
-  .clients-count-row{
+
+  .cl-count-row{
     display:flex; align-items:center; justify-content:space-between;
-    gap:8px; flex-wrap:wrap; font-size:13px; color:var(--ink-soft);
+    flex-wrap:wrap; gap:4px 12px;
+    font-size:13.5px; font-weight:500; color:var(--ink-soft);
   }
-  .clients-count-row .count-actions{ display:flex; gap:6px; flex-wrap:wrap; }
-  .client-meta{
-    font-size:12px; color:var(--ink-faint); margin-top:2px;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-  }
-  .client-card.owes{ border-left:3px solid var(--burgundy); }
-  .client-card.credit{ border-left:3px solid var(--success); }
-  .client-card.just-added{ animation:clientFlash 1.8s ease-out 1; }
-  @keyframes clientFlash{
-    0%{ box-shadow:0 0 0 4px var(--cedar-soft); border-color:var(--cedar); }
-    100%{ box-shadow:var(--shadow); }
-  }
-  @media (prefers-reduced-motion:reduce){
-    .client-card{ transition:none; }
-    .client-card:hover{ transform:none; }
-    .client-card.just-added{ animation:none; border-color:var(--cedar); }
-  }
-  /* Compact list layout: one row per client, tap a row to reveal its buttons */
-  .client-grid.compact{ grid-template-columns:1fr; gap:8px; }
-  .client-card.compact{
-    flex-direction:row; flex-wrap:wrap; align-items:center;
-    gap:8px 12px; padding:11px 15px; cursor:pointer;
-  }
-  .client-card.compact:hover{ transform:none; box-shadow:0 4px 14px rgba(23,25,35,0.09); }
-  .client-card.compact .client-card-top{ flex:1 1 200px; }
-  .client-card.compact .client-avatar{ width:36px; height:36px; font-size:13px; }
-  .client-card.compact .client-balance-row{ flex:0 0 auto; flex-wrap:nowrap; padding-top:0; }
-  .client-card.compact .client-actions{ display:none; flex:1 0 100%; cursor:default; }
-  .client-card.compact.open .client-actions{ display:grid; }
-  .client-chev{ color:var(--ink-faint); font-size:13px; transition:transform .15s ease; }
-  .client-card.compact.open .client-chev{ transform:rotate(180deg); }
-
-  @media (max-width:359px){
-    .clients-toolbar-row{ flex-wrap:wrap; }
-    .clients-toolbar-row select{ flex:1 1 100%; }
-    .view-toggle{ flex:1 1 100%; }
-    .view-toggle button{ flex:1; padding:9px 4px; }
-  }
-
-  /* Reports tab */
-  .report-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
-    margin-bottom:18px;
-  }
-  @media (min-width:700px){
-    .report-grid{ gap:12px; }
-    .report-card{ padding:18px 10px; }
-    .report-card .r-profit{ font-size:23px; }
-  }
-  .report-card{
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    background:var(--paper-card);
-    box-shadow:var(--shadow);
-    padding:14px 8px;
-    text-align:center;
-  }
-  .report-card .r-label{ font-size:12px; color:var(--ink-soft); font-weight:600; text-transform:lowercase; }
-  .report-card .r-profit{ font-family:'Inter', sans-serif; font-size:19px; font-weight:800; letter-spacing:-0.02em; color:var(--success); margin:6px 0 3px; }
-  .report-card .r-rev{ font-size:11px; color:var(--ink-faint); }
-  .report-card .r-tip{ font-size:11px; color:var(--brass); margin-top:1px; }
-  .history-item{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:space-between;
-    padding:12px 13px;
-    margin-bottom:8px;
-    border:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    background:var(--paper-card);
-    font-size:13.5px;
-    transition:border-color .12s ease;
-  }
-  .history-item:last-child{ margin-bottom:0; }
-  .history-item .h-left{ color:var(--ink-soft); line-height:1.5; }
-  .history-item .h-right{ text-align:right; }
-  .history-item .h-right b{ color:var(--success); }
-  .history-item{ align-items:center; }
-  .history-item .h-actions{ display:flex; gap:4px; flex-wrap:wrap; flex-shrink:0; margin-left:8px; }
-  .history-item .h-lang{ display:flex; gap:4px; flex-basis:100%; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line-strong); }
-  .history-item .h-lang-btn{ background:#fff; border-color:var(--line); }
-  .history-item .h-lang-btn.active{ background:var(--cedar); border-color:var(--cedar); color:#fff; }
-  @media (max-width:479px){
-    .history-item .h-actions{ flex-basis:100%; justify-content:flex-end; margin-left:0; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line-strong); }
-  }
-  .sale-status-pill{
-    display:inline-block;
-    font-size:11px;
-    font-weight:700;
-    padding:3px 9px;
-    border-radius:999px;
-    margin-top:5px;
-  }
-  .sale-status-pill.paid{ background:var(--success-soft); color:var(--success); }
-  .sale-status-pill.partial{ background:var(--brass-soft); color:var(--brass); }
-  .sale-status-pill.unpaid{ background:#FDEDED; color:var(--burgundy); }
-  .sale-status-pill.credit{ background:var(--cedar-soft); color:var(--cedar); }
-  .sale-status-pill.tip{ background:var(--brass-soft); color:var(--brass); margin-left:5px; }
-
-  /* Search block (Reports) */
-  .search-block{
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    background:var(--paper-card);
-    box-shadow:var(--shadow);
-    padding:14px 16px;
-    margin-bottom:16px;
-  }
-  .search-block h3{ font-size:16px; margin-bottom:10px; }
-  .search-mode-row{ display:flex; gap:6px; margin-bottom:8px; }
-  .search-mode-row select{ width:auto; flex:0 0 110px; }
-  .search-inputs{ display:flex; gap:6px; margin-bottom:8px; }
-  .search-inputs > *{ flex:1; }
-  .search-result{
-    display:none;
-    border-top:1px dashed var(--line-strong);
-    margin-top:8px;
-    padding-top:12px;
-  }
-  .search-result.show{ display:block; }
-  .search-result .sr-profit{ font-family:'Inter', sans-serif; font-size:23.5px; font-weight:800; letter-spacing:-0.02em; color:var(--success); }
-  .search-result .sr-meta{ font-size:13px; color:var(--ink-soft); margin-top:2px; }
-
-  /* Month-over-month comparison (Reports) */
-  .compare-row{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin:12px 0 4px;
-  }
-  .trend-pill{
-    flex:1;
-    min-width:150px;
-    border:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    background:var(--paper-card);
-    box-shadow:var(--shadow);
-    padding:9px 12px;
-    font-size:12.5px;
-    color:var(--ink-soft);
-  }
-  .trend-pill b{ font-size:14px; color:var(--ink); }
-  .trend-pill .trend-up{ color:var(--success); font-weight:700; }
-  .trend-pill .trend-down{ color:var(--burgundy); font-weight:700; }
-  .trend-pill .trend-flat{ color:var(--ink-faint); font-weight:700; }
-
-  /* Top clients / products & debtors (Reports) */
-  .top-perf-col{ margin-top:14px; }
-  .top-perf-col:first-of-type{ margin-top:12px; }
-  .top-perf-label{ font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:8px; }
-  .top-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    padding:8px 0;
-    border-bottom:1px solid var(--line);
-  }
-  .top-row:last-child{ border-bottom:none; }
-  .top-row .top-rank{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:20px; height:20px; border-radius:50%;
-    background:var(--cedar-soft); color:var(--cedar-dark);
-    font-size:11px; font-weight:800; flex-shrink:0; margin-right:8px;
-  }
-  .top-row .top-name{ font-size:13.5px; font-weight:600; color:var(--ink); }
-  .top-row .top-sub{ font-size:11.5px; color:var(--ink-faint); }
-  .top-row .top-value{ font-size:13.5px; font-weight:800; color:var(--ink); white-space:nowrap; }
-  .debtor-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    padding:7px 0;
-    border-bottom:1px solid var(--line);
-  }
-  .debtor-row:last-child{ border-bottom:none; }
-  .debtor-row .top-name{ font-size:13.5px; font-weight:600; color:var(--ink); }
-  .debtor-row .top-value{ font-size:13.5px; font-weight:800; color:var(--burgundy); }
-
-  /* Profit calendar (Reports) */
-  .cal-nav{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:12px;
-  }
-  .cal-nav-label{ font-size:16px; font-weight:800; letter-spacing:-0.01em; }
-  .cal-nav .icon-btn{
-    padding:5px 13px;
-    font-size:18px;
-    font-weight:700;
-    line-height:1;
-    border-radius:999px;
-  }
-  .cal-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    border-top:1px solid var(--line);
-    border-left:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    overflow:hidden;
-  }
-  .cal-cell{
-    border-right:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    padding:8px 7px;
-    min-height:54px;
-    cursor:pointer;
+  .cl-count-actions{ display:flex; flex-wrap:wrap; gap:2px; margin-left:auto; }
+  .cl-link{
+    display:inline-flex; align-items:center; gap:6px; height:36px;
+    padding:0 10px; border:0; border-radius:9px; background:none;
+    color:var(--cedar); font:600 13.5px/1 'Inter', sans-serif; cursor:pointer;
     transition:background .12s ease;
   }
-  .cal-cell:hover{ background:var(--bg); }
-  .cal-cell.empty{ cursor:default; background:var(--bg); }
-  .cal-cell.empty:hover{ background:var(--bg); }
-  .cal-cell.today{ background:var(--cedar-soft); }
-  .cal-day-num{ font-size:13px; color:var(--ink-soft); font-weight:600; }
-  .cal-day-amt{ font-size:11.5px; font-weight:800; margin-top:4px; line-height:1.3; }
-  .cal-day-amt.pos{ color:var(--success); }
-  .cal-day-amt.neg{ color:var(--burgundy); }
-  .cal-total-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-top:12px;
-    padding-top:10px;
-    border-top:1px dashed var(--line-strong);
-    font-size:14.5px;
+  .cl-link.muted{ color:var(--ink-soft); }
+  .cl-link svg{ width:16px; height:16px; }
+  @media (hover:hover){ .cl-link:hover{ background:var(--cedar-soft); } .cl-link.muted:hover{ background:var(--line); } }
+
+  @media (min-width:820px){
+    .cl-filters{ flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; }
+    .cl-chips{ flex:1 1 auto; flex-wrap:wrap; overflow:visible; margin:0; padding:0; min-width:0; }
+    .cl-controls{ flex:0 0 auto; margin-left:auto; }
+    .cl-select{ width:230px; flex:0 0 230px; }
+    .cl-count-row{ flex:1 0 100%; }
   }
-  .cal-total-row b{ font-family:'Inter', sans-serif; font-size:18px; color:var(--cedar); letter-spacing:-0.01em; }
-  .cal-grid.year-grid{ grid-template-columns:repeat(3, 1fr); }
-  .cal-grid.year-grid .cal-cell{ min-height:64px; display:flex; flex-direction:column; justify-content:center; }
-  #calDayList .history-item:last-child{ border-bottom:none; }
+  @media (min-width:820px) and (max-width:1199px){
+    /* keep chips and controls on one line: icon-only layout switch */
+    .view-toggle button span{ display:none; }
+  }
+  @media (min-width:700px) and (max-width:819px){
+    .cl-chips{ flex-wrap:wrap; overflow:visible; margin:0; padding:0; }
+  }
+
+  /* Card grid */
+  .cl-list{
+    display:grid; align-items:stretch; gap:12px; margin-bottom:16px;
+    grid-template-columns:repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  }
+  @media (min-width:700px){ .cl-list{ gap:16px; } }
+  .cl-list.is-empty{ display:block; }
+
+  .cl-card{
+    display:flex; flex-direction:column; gap:14px; min-width:0; padding:16px;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .cl-card-head{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .cl-card-head .ic-btn{ margin-right:-6px; align-self:flex-start; }
+
+  .cl-avatar{
+    flex:0 0 auto; width:44px; height:44px; display:grid; place-items:center;
+    border-radius:50%; font-size:15px; font-weight:800; letter-spacing:0.2px;
+    background:hsl(var(--h, 239) 85% 94%);
+    color:hsl(var(--h, 239) 55% 34%);
+  }
+  .cl-id{ flex:1 1 auto; min-width:0; }
+  .cl-name{
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+    overflow:hidden; margin:0; font-size:16px; font-weight:700;
+    line-height:1.3; letter-spacing:-0.01em; color:var(--ink);
+    overflow-wrap:anywhere;
+  }
+  .cl-sub{
+    display:flex; align-items:center; gap:6px; margin-top:2px; min-width:0;
+    font-size:13px; line-height:1.35; color:var(--ink-soft);
+  }
+  .cl-sub svg{ width:13px; height:13px; }
+  .cl-sub span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cl-sub.faint{ color:var(--ink-faint); }
+
+  .cl-balance{
+    display:flex; flex-direction:column; gap:3px; padding:12px 14px;
+    border-radius:12px; background:var(--bg);
+  }
+  .cl-bal-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:13px; font-weight:600; color:var(--ink-soft);
+  }
+  .cl-bal-label i{ width:8px; height:8px; border-radius:50%; background:var(--ink-faint); flex:0 0 auto; }
+  .owes .cl-bal-label i{ background:var(--burgundy); }
+  .credit .cl-bal-label i{ background:var(--success); }
+  .cl-bal-line{
+    display:flex; align-items:baseline; justify-content:space-between;
+    flex-wrap:wrap; gap:2px 12px;
+  }
+  .cl-bal-amt{
+    font-size:24px; font-weight:800; line-height:1.15; letter-spacing:-0.02em;
+    font-variant-numeric:tabular-nums; overflow-wrap:anywhere;
+  }
+  .owes .cl-bal-amt{ color:var(--burgundy); }
+  .credit .cl-bal-amt{ color:var(--success); }
+  .cl-bal-lbp{ font-size:13px; font-weight:500; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+  .cl-balance.settled{
+    flex-direction:row; align-items:center; gap:8px;
+    font-size:14px; font-weight:600; color:var(--ink-soft);
+  }
+  .cl-balance.settled svg{ width:18px; height:18px; color:var(--success); }
+
+  .cl-bottom{ display:flex; flex-direction:column; gap:14px; margin-top:auto; }
+  .cl-meta{
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:2px 12px;
+    margin:0; font-size:13px; line-height:1.4; color:var(--ink-soft);
+  }
+  .cl-foot{ display:grid; grid-template-columns:auto minmax(0, 1fr); gap:8px; }
+  .cl-foot > :only-child{ grid-column:1 / -1; }
+  .cl-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    min-width:0; min-height:42px; padding:8px 14px; border:0; border-radius:10px;
+    font:700 14px/1.2 'Inter', sans-serif; text-align:center; cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .12s ease, color .12s ease;
+  }
+  .cl-btn svg{ width:16px; height:16px; }
+  .cl-btn.soft{ background:var(--cedar-soft); color:var(--cedar); }
+  .cl-btn.solid{ background:var(--cedar); color:#fff; }
+  @media (hover:hover){
+    .cl-btn.soft:hover{ background:#E3E6FF; }
+    .cl-btn.solid:hover{ background:var(--cedar-dark); }
+  }
+
+  /* Compact list: one table-like card, one row per client */
+  .cl-list.is-list{
+    display:block; gap:0; overflow:hidden;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .cl-row{
+    display:grid; grid-template-columns:auto minmax(0, 1fr) auto auto;
+    align-items:center; gap:12px; width:100%; padding:12px 14px;
+    border:0; border-bottom:1px solid var(--line); background:transparent;
+    color:inherit; font:inherit; text-align:left; cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .12s ease;
+  }
+  .cl-row:last-child{ border-bottom:0; }
+  .cl-row:active{ background:var(--bg); }
+  @media (hover:hover){ .cl-row:hover{ background:var(--bg); } }
+  .cl-row .cl-avatar{ width:40px; height:40px; font-size:14px; }
+  .cl-row .cl-name{
+    display:block; -webkit-line-clamp:unset;
+    font-size:15px; white-space:nowrap; text-overflow:ellipsis;
+  }
+  .cl-row-meta{ display:none; min-width:0; font-size:13px; line-height:1.4; color:var(--ink-soft); }
+  .cl-row-meta span{ display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cl-row-bal{ display:flex; flex-direction:column; align-items:flex-end; gap:1px; min-width:0; }
+  .cl-row-amt{ font-size:15px; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .owes .cl-row-amt{ color:var(--burgundy); }
+  .credit .cl-row-amt{ color:var(--success); }
+  .settled .cl-row-amt{ color:var(--ink-faint); font-weight:700; }
+  .cl-row-lbl{ font-size:12.5px; font-weight:600; color:var(--ink-soft); white-space:nowrap; }
+  .cl-chev{ display:grid; place-items:center; color:var(--ink-faint); }
+  .cl-chev svg{ width:16px; height:16px; }
+  @media (min-width:700px){
+    .cl-row{ grid-template-columns:auto minmax(0, 1.5fr) minmax(0, 1fr) minmax(110px, auto) auto; gap:16px; padding:12px 18px; }
+    .cl-row-meta{ display:block; }
+  }
+
+  .cl-card.just-added, .cl-row.just-added{ animation:clFlash 1.8s ease-out 1; }
+  @keyframes clFlash{
+    0%{ box-shadow:0 0 0 4px var(--cedar-soft); border-color:var(--cedar); background-color:var(--cedar-soft); }
+    100%{ box-shadow:var(--shadow); }
+  }
+
+  /* Empty and no-result states */
+  .cl-empty{
+    text-align:center; padding:44px 20px; background:var(--paper-card);
+    border:1.5px dashed var(--line-strong); border-radius:var(--radius);
+  }
+  .cl-empty-icon{
+    width:48px; height:48px; margin:0 auto 14px; display:grid; place-items:center;
+    border-radius:14px; background:var(--cedar-soft); color:var(--cedar);
+  }
+  .cl-empty-icon svg{ width:24px; height:24px; stroke-width:1.9; }
+  .cl-empty h3{ font-size:17px; }
+  .cl-empty p{ margin:6px auto 18px; max-width:38ch; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+  .cl-empty .btn{ display:inline-flex; align-items:center; justify-content:center; gap:7px; height:44px; padding:0 18px; }
+  .cl-empty .btn svg{ width:18px; height:18px; stroke-width:2.4; }
+
+  /* Action sheet: bottom sheet on phones, centred dialog from 560px */
+  .cl-sheet-overlay{
+    position:fixed; inset:0; z-index:900; display:flex;
+    align-items:flex-end; justify-content:center;
+    background:rgba(23,22,31,0.5); backdrop-filter:blur(2px);
+  }
+  .cl-sheet-overlay[hidden]{ display:none; }
+  .cl-sheet{
+    display:flex; flex-direction:column; width:100%; max-width:480px;
+    max-height:min(88vh, 720px); outline:none;
+    background:var(--paper-card); border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 30px rgba(23,25,35,0.15);
+    animation:clSheetUp .22s ease-out;
+  }
+  @keyframes clSheetUp{ from{ transform:translateY(24px); opacity:0; } to{ transform:none; opacity:1; } }
+  .cl-sheet-grab{ flex:0 0 auto; width:38px; height:4px; margin:8px auto 0; border-radius:999px; background:var(--line-strong); }
+  @media (min-width:560px){
+    .cl-sheet-overlay{ align-items:center; padding:24px; }
+    .cl-sheet{ border-radius:16px; box-shadow:0 20px 60px rgba(23,25,35,0.25); animation-name:clSheetPop; }
+    .cl-sheet-grab{ display:none; }
+  }
+  @keyframes clSheetPop{ from{ transform:scale(.97); opacity:0; } to{ transform:none; opacity:1; } }
+  .cl-sheet-head{
+    flex:0 0 auto; display:flex; align-items:center; gap:12px;
+    padding:14px 10px 14px 18px; border-bottom:1px solid var(--line);
+  }
+  .cl-sheet-head .cl-id{ flex:1 1 auto; }
+  .cl-sheet-head .cl-name{ font-size:17px; }
+  .cl-sheet-status{ margin-top:2px; font-size:13.5px; font-weight:600; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .cl-sheet-status.owes{ color:var(--burgundy); }
+  .cl-sheet-status.credit{ color:var(--success); }
+  .cl-sheet-body{ flex:1 1 auto; overflow-y:auto; padding:8px 8px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .cl-sheet-group + .cl-sheet-group{ margin-top:6px; padding-top:6px; border-top:1px solid var(--line); }
+  .cl-sheet-label{ padding:10px 12px 4px; font-size:13px; font-weight:700; color:var(--ink-soft); }
+  .cl-act{
+    display:flex; align-items:center; gap:14px; width:100%; min-height:58px;
+    padding:10px 12px; border:0; border-radius:12px; background:none;
+    color:var(--ink); font:inherit; text-align:left; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; transition:background .12s ease;
+  }
+  .cl-act:active{ background:var(--bg); }
+  @media (hover:hover){ .cl-act:hover{ background:var(--bg); } }
+  .cl-act-ico{
+    flex:0 0 auto; width:40px; height:40px; display:grid; place-items:center;
+    border-radius:11px; background:var(--cedar-soft); color:var(--cedar);
+  }
+  .cl-act-ico svg{ width:19px; height:19px; }
+  .cl-act-text{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .cl-act-title{ font-size:15px; font-weight:700; line-height:1.3; }
+  .cl-act-desc{ font-size:13px; font-weight:500; line-height:1.35; color:var(--ink-soft); }
+  .cl-act.danger .cl-act-title{ color:#B91C1C; }
+  .cl-act.danger .cl-act-ico{ background:#FDEDED; color:#C8434A; }
+
+  /* Keyboard focus and reduced motion */
+  #tab-clients button:focus-visible,
+  #tab-clients select:focus-visible,
+  .cl-sheet button:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+  .cl-row:focus-visible, .cl-act:focus-visible{ outline-offset:-2px; }
+  @media (prefers-reduced-motion:reduce){
+    #tab-clients *, .cl-sheet, .cl-sheet *{ transition:none !important; }
+    .cl-sheet{ animation:none; }
+    .cl-card.just-added, .cl-row.just-added{ animation:none; border-color:var(--cedar); }
+    .client-card{ transition:none; }
+    .client-card:hover{ transform:none; }
+  }
+
+  /* ==========================================================
+     Reports tab
+     Same visual language as Clients and Catalog: quiet white
+     cards, one indigo accent, green / red only where money
+     needs it. Every grid track is minmax(0, …) and every text
+     block can shrink, so a long name or a big amount can never
+     push the layout wider than the screen.
+     ========================================================== */
+  #tab-reports svg{
+    flex-shrink:0; stroke:currentColor; fill:none;
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  }
+  .rp-i{
+    width:15px; height:15px; flex-shrink:0; stroke:currentColor; fill:none;
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  }
+
+  .rp-head{ margin:0 0 14px; }
+  .rp-head h2{ font-size:24px; }
+  .rp-sub{
+    margin:4px 0 0; font-size:13.5px; line-height:1.4;
+    color:var(--ink-soft); font-weight:500;
+  }
+
+  /* Profit summary: one card, three periods.
+     Phone: stacked rows (label left, amount right). Tablet up: three columns. */
+  .report-grid{
+    display:grid; grid-template-columns:minmax(0, 1fr);
+    margin:0 0 10px; overflow:hidden;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .report-card{
+    min-width:0; padding:14px 16px;
+    display:grid; grid-template-columns:minmax(0, 1fr) auto;
+    grid-template-areas:"label profit" "sub profit";
+    column-gap:12px; row-gap:3px; align-items:center;
+  }
+  .report-card + .report-card{ border-top:1px solid var(--line); }
+  .report-card .r-label{
+    grid-area:label; font-size:13px; font-weight:600; color:var(--ink-soft);
+  }
+  .report-card .r-profit{
+    grid-area:profit; text-align:right; margin:0;
+    font-size:clamp(20px, 6vw, 24px); font-weight:800; line-height:1.15;
+    letter-spacing:-0.02em; color:var(--success);
+    font-variant-numeric:tabular-nums; overflow-wrap:anywhere;
+  }
+  .report-card .r-profit.neg{ color:var(--burgundy); }
+  .report-card .r-sub{
+    grid-area:sub; display:flex; flex-wrap:wrap; gap:1px 12px;
+    font-size:12.5px; line-height:1.4; color:var(--ink-faint); font-weight:500;
+    font-variant-numeric:tabular-nums;
+  }
+  @media (min-width:640px){
+    .report-grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); }
+    .report-card{
+      padding:18px 20px; align-items:start; row-gap:0;
+      grid-template-columns:minmax(0, 1fr);
+      grid-template-areas:"label" "profit" "sub";
+    }
+    .report-card + .report-card{ border-top:0; border-left:1px solid var(--line); }
+    .report-card .r-profit{
+      text-align:left; margin:6px 0 8px;
+      font-size:clamp(22px, 2.9vw, 28px);
+    }
+  }
+
+  .rp-note{
+    display:flex; align-items:flex-start; gap:8px;
+    margin:0 2px 14px; font-size:12.5px; line-height:1.5;
+    color:var(--ink-faint); font-weight:500;
+  }
+  .rp-note svg{ width:15px; height:15px; margin-top:2px; }
+
+  /* This month vs last month */
+  .compare-row{
+    display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px; margin:0 0 14px;
+  }
+  .trend-pill{
+    min-width:0; padding:13px 14px;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .trend-label{ font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .trend-main b{
+    display:block; margin-top:7px;
+    font-size:clamp(17px, 4.6vw, 20px); font-weight:800; line-height:1.2; letter-spacing:-0.02em;
+    color:var(--ink); font-variant-numeric:tabular-nums; overflow-wrap:anywhere;
+  }
+  .trend-foot{ display:flex; align-items:center; flex-wrap:wrap; gap:5px 8px; margin-top:8px; }
+  .trend-badge{
+    display:inline-flex; align-items:center; gap:3px;
+    font-size:12px; font-weight:700; line-height:1;
+    padding:4px 8px; border-radius:999px; white-space:nowrap;
+  }
+  .trend-badge svg{ width:11px; height:11px; stroke-width:3; }
+  .trend-badge.trend-up{ color:var(--success); background:var(--success-soft); }
+  .trend-badge.trend-down{ color:var(--burgundy); background:#FDEDED; }
+  .trend-badge.trend-flat{ color:var(--ink-soft); background:var(--bg); }
+  .trend-prev{ font-size:12px; color:var(--ink-faint); font-weight:500; font-variant-numeric:tabular-nums; }
+  @media (max-width:339px){ .compare-row{ grid-template-columns:minmax(0, 1fr); } }
+
+  /* Page layout: single column on phones and tablets, two balanced
+     columns on desktop. On small screens the wrappers dissolve and
+     `order` keeps the reading order (calendar, balances, top lists, search). */
+  .rp-layout{ display:flex; flex-direction:column; gap:14px; }
+  .rp-main, .rp-side{ display:contents; }
+  .rp-cal{ order:1; } .rp-out{ order:2; } .rp-top{ order:3; }
+  .rp-csearch{ order:4; } .rp-psearch{ order:5; }
+  @media (min-width:1024px){
+    .rp-layout{
+      display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr);
+      gap:16px; align-items:start;
+    }
+    .rp-main, .rp-side{ display:flex; flex-direction:column; gap:16px; min-width:0; }
+  }
+
+  /* Cards */
+  .rp-card{
+    container-type:inline-size;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:16px; min-width:0;
+  }
+  @media (min-width:700px){ .rp-card{ padding:20px; } }
+  .rp-card-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .rp-card-head h3{ font-size:16px; line-height:1.25; }
+  .rp-card-ico{
+    flex:0 0 auto; width:34px; height:34px; display:grid; place-items:center;
+    border-radius:10px; background:var(--cedar-soft); color:var(--cedar);
+  }
+  .rp-card-ico svg{ width:18px; height:18px; }
+  .rp-hint{ margin:8px 0 0; font-size:12.5px; line-height:1.45; color:var(--ink-faint); font-weight:500; }
+  .rp-empty{
+    padding:14px 4px; font-size:13.5px; line-height:1.45;
+    color:var(--ink-soft); text-align:center;
+  }
+
+  /* Segmented control (calendar view, top-list period) */
+  #tab-reports .rp-seg{
+    display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0, 1fr);
+    gap:2px; padding:3px; margin-bottom:14px;
+    background:var(--bg); border-radius:12px;
+  }
+  #tab-reports .rp-seg .cat-chip{
+    min-height:36px; padding:0 6px; border:0; border-radius:9px;
+    background:transparent; color:var(--ink-soft);
+    font-size:13.5px; text-align:center;
+  }
+  #tab-reports .rp-seg .cat-chip.active{
+    background:#fff; color:var(--ink);
+    box-shadow:0 1px 2px rgba(23,25,35,0.08), 0 1px 5px rgba(23,25,35,0.06);
+  }
+  @media (hover:hover){
+    #tab-reports .rp-seg .cat-chip:not(.active):hover{ color:var(--ink); }
+  }
+
+  /* Profit calendar */
+  .cal-nav{
+    display:grid; grid-template-columns:auto minmax(0, 1fr) auto;
+    align-items:center; gap:8px; margin-bottom:12px;
+  }
+  .cal-nav-label{
+    text-align:center; font-size:16px; font-weight:700; letter-spacing:-0.01em;
+    overflow-wrap:anywhere;
+  }
+  #tab-reports .cal-nav .icon-btn{
+    width:40px; height:40px; padding:0; display:grid; place-items:center;
+    border-radius:12px; background:var(--paper-card); color:var(--ink);
+  }
+  .cal-nav .icon-btn svg{ width:18px; height:18px; }
+  @media (hover:hover){ .cal-nav .icon-btn:hover{ background:var(--bg); } }
+
+  .cal-weekdays{
+    display:grid; grid-template-columns:repeat(7, minmax(0, 1fr));
+    gap:4px; margin-bottom:4px;
+  }
+  .cal-weekdays span{
+    text-align:center; font-size:12px; font-weight:600;
+    color:var(--ink-faint); padding:2px 0;
+  }
+  .cal-grid{
+    container-type:inline-size;
+    display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:4px;
+  }
+  .cal-grid.year-grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; }
+  @media (min-width:600px){
+    .cal-grid.year-grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
+  }
+  .cal-cell{
+    appearance:none; -webkit-appearance:none;
+    min-width:0; min-height:54px; margin:0; padding:6px 5px 6px 6px;
+    display:flex; flex-direction:column; align-items:flex-start; gap:3px;
+    font:inherit; color:inherit; text-align:left;
+    background:var(--bg); border:1px solid transparent; border-radius:10px;
+    cursor:pointer; -webkit-tap-highlight-color:transparent;
+    transition:border-color .12s ease, background-color .12s ease;
+  }
+  @media (min-width:700px){ .cal-cell{ min-height:62px; padding:8px 8px 8px 9px; } }
+  .cal-grid.year-grid .cal-cell{ min-height:72px; padding:10px 12px; justify-content:center; gap:4px; }
+  @media (hover:hover){ .cal-cell:not(.empty):hover{ border-color:var(--line-strong); } }
+  .cal-cell:focus-visible{ outline:2px solid var(--cedar); outline-offset:1px; }
+  .cal-cell.empty{ background:transparent; cursor:default; pointer-events:none; }
+  .cal-cell.has-sales.pos{ background:var(--success-soft); }
+  .cal-cell.has-sales.neg{ background:#FDEDED; }
+  @supports (background:color-mix(in srgb, red 10%, white)){
+    .cal-cell.has-sales.pos{ background:color-mix(in srgb, #059669 calc(8% + var(--heat, 0) * 26%), #fff); }
+    .cal-cell.has-sales.neg{ background:color-mix(in srgb, #DC2626 calc(8% + var(--heat, 0) * 22%), #fff); }
+  }
+  .cal-cell.today{ box-shadow:inset 0 0 0 2px var(--cedar); }
+  .cal-day-num{ font-size:12.5px; font-weight:600; line-height:1.2; color:var(--ink-soft); }
+  .cal-cell.has-sales .cal-day-num{ color:var(--ink); }
+  .cal-cell.today .cal-day-num{ color:var(--cedar-dark); font-weight:800; }
+  .cal-grid.year-grid .cal-day-num{ font-size:14px; }
+  .cal-day-amt{
+    max-width:100%; overflow:hidden; white-space:nowrap;
+    font-size:11.5px; font-weight:800; line-height:1.2; letter-spacing:-0.01em;
+    font-variant-numeric:tabular-nums;
+  }
+  .cal-day-amt.pos{ color:#065F46; }
+  .cal-day-amt.neg{ color:#991B1B; }
+  .cal-grid.year-grid .cal-day-amt{ font-size:14px; }
+  .cal-day-amt .amt-short{ display:none; }
+  @container (max-width:520px){
+    .cal-grid:not(.year-grid) .cal-day-amt{ font-size:10.5px; }
+    .cal-grid:not(.year-grid) .amt-full{ display:none; }
+    .cal-grid:not(.year-grid) .amt-short{ display:inline; }
+    .cal-grid:not(.year-grid) .cal-cell{ padding:5px 3px 5px 5px; min-height:50px; }
+  }
+  .cal-total-row{
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    margin-top:14px; padding-top:12px; border-top:1px solid var(--line);
+    font-size:14px; font-weight:600; color:var(--ink-soft);
+  }
+  .cal-total-row b{
+    font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  #calDayList{ min-width:0; }
+
+  /* Outstanding balances */
+  #outstandingCard .clients-summary{
+    display:grid; grid-template-columns:minmax(0, 1fr); gap:0; margin:0 0 16px;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:12px; overflow:hidden;
+  }
+  #outstandingCard .client-stat{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 14px; text-align:left;
+    background:none; border:0; border-radius:0; box-shadow:none;
+  }
+  #outstandingCard .client-stat::before{ display:none; }
+  #outstandingCard .client-stat + .client-stat{ border-top:1px solid var(--line); }
+  #outstandingCard .client-stat .cs-label{
+    font-size:13px; font-weight:600; color:var(--ink-soft);
+    text-transform:none; letter-spacing:0;
+  }
+  #outstandingCard .client-stat .cs-value{
+    margin:0; font-size:17px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere;
+  }
+  @container (min-width:440px){
+    #outstandingCard .clients-summary{ grid-template-columns:repeat(3, minmax(0, 1fr)); }
+    #outstandingCard .client-stat{ flex-direction:column; align-items:flex-start; gap:5px; padding:14px 16px; }
+    #outstandingCard .client-stat + .client-stat{ border-top:0; border-left:1px solid var(--line); }
+    #outstandingCard .client-stat .cs-value{ font-size:20px; }
+  }
+
+  .top-perf-cols{ display:grid; grid-template-columns:minmax(0, 1fr); gap:22px; }
+  @container (min-width:560px){ .top-perf-cols{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:32px; } }
+  .top-perf-col{ min-width:0; }
+  .top-perf-label{ font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:4px; }
+
+  .top-row, .debtor-row{
+    display:grid; grid-template-columns:auto minmax(0, 1fr) minmax(5.4em, auto);
+    align-items:center; gap:12px; padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .top-row:last-child, .debtor-row:last-child{ border-bottom:0; padding-bottom:0; }
+  .top-rank{
+    width:24px; height:24px; display:grid; place-items:center; border-radius:50%;
+    background:var(--cedar-soft); color:var(--cedar-dark);
+    font-size:12px; font-weight:800;
+  }
+  .rp-avatar{
+    width:32px; height:32px; display:grid; place-items:center; border-radius:50%;
+    background:var(--cedar-soft); color:var(--cedar-dark);
+    font-size:13px; font-weight:800;
+  }
+  .top-main{ min-width:0; }
+  .top-name{
+    display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    font-size:14px; font-weight:600; color:var(--ink);
+  }
+  .top-sub{ display:block; margin-top:1px; font-size:12px; color:var(--ink-faint); font-weight:500; font-variant-numeric:tabular-nums; }
+  .top-bar{ height:4px; margin-top:7px; border-radius:99px; background:var(--bg); overflow:hidden; }
+  .top-bar i{ display:block; height:100%; border-radius:99px; background:var(--cedar); opacity:.55; }
+  .top-value{ font-size:14px; font-weight:800; color:var(--ink); white-space:nowrap; text-align:right; font-variant-numeric:tabular-nums; }
+  .debtor-row .top-value{ color:var(--burgundy); }
+
+  /* Search forms */
+  .rp-form{ display:grid; gap:10px; }
+  .rp-form-row{ display:grid; grid-template-columns:minmax(96px, 128px) minmax(0, 1fr); gap:8px; }
+  #tab-reports .rp-form select,
+  #tab-reports .rp-form input{
+    min-width:0; height:46px; padding:0 12px;
+    background:var(--bg); border:1.5px solid transparent; border-radius:10px;
+  }
+  #tab-reports .rp-form select{
+    -webkit-appearance:none; appearance:none; padding-right:36px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239AA0AF' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 11px center; background-size:16px;
+  }
+  #tab-reports .rp-form input[type="date"],
+  #tab-reports .rp-form input[type="month"]{ -webkit-appearance:none; appearance:none; text-align:left; }
+  #tab-reports .rp-form select:focus,
+  #tab-reports .rp-form input:focus{ background-color:#fff; border-color:var(--cedar); }
+  #tab-reports .rp-submit{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    min-height:46px; font-size:15px; border-radius:10px;
+  }
+  #tab-reports .rp-submit svg{ width:17px; height:17px; }
+  @media (hover:hover){ #tab-reports .rp-submit:hover{ background:var(--cedar-dark); } }
+  #tab-reports .rp-submit:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+
+  .search-result{ display:none; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+  .search-result.show{ display:block; }
+  .search-result .sr-label{ font-size:13px; font-weight:600; color:var(--ink-soft); overflow-wrap:anywhere; }
+  .search-result .sr-profit{
+    margin-top:4px; font-size:clamp(24px, 7vw, 30px); font-weight:800; line-height:1.15;
+    letter-spacing:-0.02em; color:var(--success); font-variant-numeric:tabular-nums;
+    overflow-wrap:anywhere;
+  }
+  .search-result .sr-profit.neg{ color:var(--burgundy); }
+  .search-result .sr-meta{ margin-top:3px; font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .search-result .sr-list{ margin-top:14px; }
+
+  /* Collapsible history blocks */
+  #tab-reports .collapse-block{ margin:14px 0 0; }
+  #tab-reports .rp-layout + .collapse-block{ margin-top:16px; }
+  #tab-reports .collapse-toggle{
+    gap:12px; min-height:60px; padding:12px 16px; font-size:15px; text-align:left;
+  }
+  #tab-reports .collapse-toggle:focus-visible{ outline:2px solid var(--cedar); outline-offset:-2px; }
+  @media (hover:hover){ #tab-reports .collapse-toggle:hover{ background:var(--bg); } }
+  .rp-toggle-title{ display:flex; align-items:center; gap:12px; min-width:0; }
+  #tab-reports .collapse-toggle .chev{ width:18px; height:18px; color:var(--ink-faint); }
+  #tab-reports .collapse-body{ padding:4px 16px 16px; border-top:1px solid var(--line); }
+  @media (min-width:700px){ #tab-reports .collapse-body{ padding:6px 20px 20px; } }
+  .rp-tools{ display:flex; justify-content:flex-end; margin:10px 0; }
+  #tab-reports .rp-link-btn{
+    display:inline-flex; align-items:center; gap:7px; min-height:36px; padding:0 12px;
+    border:0; border-radius:9px; background:var(--cedar-soft); color:var(--cedar-dark);
+    font-family:inherit; font-size:13px; font-weight:700; cursor:pointer;
+  }
+  #tab-reports .rp-link-btn:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+  @media (hover:hover){ #tab-reports .rp-link-btn:hover{ background:#E2E6FF; } }
+  .rp-notice{
+    display:flex; align-items:flex-start; gap:9px; margin-bottom:10px; padding:10px 12px;
+    background:var(--brass-soft); border-radius:var(--radius-sm);
+    color:#92400E; font-size:13px; line-height:1.45; font-weight:600;
+  }
+  .rp-notice svg{ width:16px; height:16px; margin-top:1px; }
+
+  /* Invoice and balance rows — used on this tab and in the history dialogs */
+  .history-item{
+    display:grid; grid-template-columns:minmax(0, 1fr) auto;
+    align-items:start; gap:10px 14px;
+    padding:13px 14px; margin-bottom:8px;
+    border:1px solid var(--line); border-radius:12px;
+    background:var(--paper-card); font-size:13.5px;
+  }
+  .history-item:last-child{ margin-bottom:0; }
+  .history-item .h-left{ min-width:0; line-height:1.4; }
+  .history-item .h-title{ font-size:14.5px; font-weight:700; color:var(--ink); overflow-wrap:anywhere; }
+  .history-item .h-date{ margin-top:2px; font-size:12.5px; font-weight:500; color:var(--ink-faint); }
+  .history-item .h-right{ text-align:right; line-height:1.4; font-variant-numeric:tabular-nums; }
+  .history-item .h-amt{ font-size:15px; font-weight:800; letter-spacing:-0.01em; color:var(--success); }
+  .history-item .h-amt.neg{ color:var(--burgundy); }
+  .history-item .h-amt-label{ margin-right:6px; font-size:12px; font-weight:600; letter-spacing:0; color:var(--ink-faint); }
+  .history-item .h-sub{ margin-top:2px; font-size:12.5px; font-weight:500; color:var(--ink-faint); }
+  .history-item{ container-type:inline-size; }
+  .history-item .h-foot{
+    grid-column:1 / -1; display:flex; flex-wrap:wrap; align-items:center;
+    justify-content:space-between; gap:8px 10px;
+    padding-top:11px; border-top:1px solid var(--line);
+  }
+  .history-item .h-lang{ order:1; }
+  .history-item .h-manage{ order:2; display:flex; gap:6px; margin-left:auto; }
+  .history-item .h-send{ order:3; display:flex; gap:6px; flex:1 1 100%; }
+  .history-item .h-send .mini-btn{ flex:1 1 0; }
+  @container (min-width:440px){
+    .history-item .h-send{ order:2; flex:0 0 auto; }
+    .history-item .h-send .mini-btn{ flex:0 0 auto; }
+    .history-item .h-manage{ order:3; }
+  }
+  .history-item .mini-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    min-height:34px; padding:0 11px; border:0; border-radius:9px;
+    background:var(--bg); color:var(--ink);
+    font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .history-item .mini-btn.danger{ background:#FDEDED; color:var(--danger); }
+  .history-item .mini-btn.icon-only{ width:36px; padding:0; }
+  .history-item .mini-btn.icon-only .rp-i{ width:16px; height:16px; }
+  .history-item .mini-btn:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+  @media (hover:hover){
+    .history-item .mini-btn:hover{ background:var(--line); }
+    .history-item .mini-btn.danger:hover{ background:#FAD9D9; }
+  }
+  .history-item .h-lang{
+    display:inline-flex; gap:2px; padding:2px; background:var(--bg); border-radius:10px;
+  }
+  .history-item .h-lang-btn{ min-height:30px; padding:0 12px; background:transparent; color:var(--ink-soft); }
+  .history-item .h-lang-btn.active{ background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(23,25,35,0.1); }
+  @media (min-width:1024px){
+    #salesHistoryBody .history-item, #balanceLogBody .history-item{
+      grid-template-columns:minmax(0, 1fr) auto auto; align-items:center; gap:10px 22px;
+    }
+    #salesHistoryBody .h-foot, #balanceLogBody .h-foot{
+      grid-column:auto; padding-top:0; border-top:0; justify-content:flex-end;
+    }
+  }
+
+  .sale-status-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    margin:8px 6px 0 0; padding:5px 10px; border-radius:999px;
+    font-size:12px; font-weight:600; line-height:1;
+  }
+  .sale-status-pill::before{
+    content:''; width:6px; height:6px; border-radius:50%; background:currentColor;
+  }
+  .sale-status-pill.paid{ background:var(--success-soft); color:var(--success); }
+  .sale-status-pill.partial{ background:var(--brass-soft); color:#B45309; }
+  .sale-status-pill.unpaid{ background:#FDEDED; color:var(--burgundy); }
+  .sale-status-pill.credit{ background:var(--cedar-soft); color:var(--cedar-dark); }
+  .sale-status-pill.tip{ background:var(--brass-soft); color:#B45309; }
+
+  @media (prefers-reduced-motion:reduce){
+    #tab-reports *, .history-item *{ transition:none !important; }
+  }
 
   /* Modal */
   .modal-overlay{
@@ -1950,24 +2608,36 @@
   </section>
 
   <!-- CATALOG TAB -->
-  <section class="section" id="tab-catalog">
-    <div class="catalog-toolbar">
-      <div class="catalog-head">
-        <div class="catalog-head-text">
-          <h2>📦 Catalog</h2>
-          <div class="catalog-subtitle">Categories, subcategories &amp; products</div>
-        </div>
+  <section class="section" id="tab-catalog" aria-labelledby="catalogTitle">
+    <div class="catalog-head">
+      <div class="catalog-head-text">
+        <h2 id="catalogTitle">Catalog</h2>
+        <p class="catalog-subtitle" id="catalogStats">Categories, subcategories &amp; products</p>
       </div>
+    </div>
 
+    <div class="catalog-toolbar">
       <div class="catalog-toolbar-card">
-        <div class="search-box">
-          <span class="field-label">🔍 Search catalog</span>
-          <input type="text" id="catalogSearch" placeholder="Search categories or products...">
+        <div class="catalog-bar">
+          <div class="catalog-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="catalogSearch" placeholder="Search catalog" aria-label="Search categories and products" autocomplete="off" enterkeyhint="search">
+            <button type="button" class="catalog-search-clear" id="catalogSearchClear" aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <button type="button" class="btn catalog-new-btn" id="catalogNewToggle" aria-expanded="false" aria-controls="catalogAddPanel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <span class="lbl-long">New category</span><span class="lbl-short">New</span>
+          </button>
         </div>
-        <span class="catalog-add-label">➕ New top-level category</span>
-        <div class="add-category">
-          <input type="text" id="newCategoryName" placeholder="New category name">
-          <button class="btn" id="addCategoryBtn">➕ Add</button>
+        <div class="catalog-add-panel" id="catalogAddPanel" hidden>
+          <label class="fld-cap" for="newCategoryName">Name of the new top-level category</label>
+          <div class="add-category">
+            <input type="text" id="newCategoryName" placeholder="e.g. Drinks" autocomplete="off">
+            <button type="button" class="btn" id="addCategoryBtn">Add</button>
+          </div>
+          <p class="catalog-add-status" id="catalogAddStatus" role="status" aria-live="polite"></p>
         </div>
       </div>
     </div>
@@ -1976,204 +2646,267 @@
   </section>
 
   <!-- CLIENTS TAB -->
-  <section class="section" id="tab-clients">
-    <div class="clients-head">
-      <div class="clients-head-text">
-        <h2>👥 Clients</h2>
-        <div class="clients-subtitle">Balances, reminders &amp; payment history</div>
-      </div>
-      <button type="button" class="btn" id="addClientTopBtn">➕ Add client</button>
+  <section class="section" id="tab-clients" aria-labelledby="clientsTitle">
+    <div class="cl-head">
+      <h2 id="clientsTitle">Clients</h2>
+      <p class="cl-subtitle">Balances, reminders &amp; payment history</p>
     </div>
 
-    <div class="clients-summary" id="clientsSummary"></div>
+    <div class="cl-overview" id="clientsSummary"></div>
 
-    <div class="clients-toolbar" id="clientsToolbar">
-      <input type="text" id="clientSearch" placeholder="🔍 Search by name or phone..." aria-label="Search clients">
-      <div class="clients-toolbar-row">
-        <select id="clientSort" aria-label="Sort clients">
-          <optgroup label="By name">
-            <option value="name-asc">Name: A → Z</option>
-            <option value="name-desc">Name: Z → A</option>
-          </optgroup>
-          <optgroup label="By balance">
-            <option value="owed-asc">Least owed → most owed</option>
-            <option value="owed-desc">Most owed → least owed</option>
-          </optgroup>
-          <optgroup label="By date added">
-            <option value="newest">Newest added first</option>
-            <option value="oldest">Oldest added first</option>
-          </optgroup>
-          <optgroup label="By activity">
-            <option value="recent">Latest purchase first</option>
-            <option value="stale">Oldest purchase first</option>
-            <option value="buyers">Biggest buyers first</option>
-          </optgroup>
-        </select>
+    <div class="cl-bar-wrap" id="clientsBar">
+      <div class="cl-bar">
+        <div class="cl-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="clientSearch" placeholder="Search name or phone" aria-label="Search clients by name or phone" autocomplete="off" enterkeyhint="search">
+          <button type="button" class="cl-search-clear" id="clientSearchClear" aria-label="Clear search" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <button type="button" class="btn cl-add-btn" id="addClientTopBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          <span class="lbl-long">Add client</span><span class="lbl-short">Add</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="cl-filters" id="clientsToolbar">
+      <div class="cl-chips" id="clientFilterChips" role="group" aria-label="Filter clients"></div>
+      <div class="cl-controls">
+        <div class="cl-select">
+          <select id="clientSort" aria-label="Sort clients">
+            <optgroup label="By name">
+              <option value="name-asc">Name: A to Z</option>
+              <option value="name-desc">Name: Z to A</option>
+            </optgroup>
+            <optgroup label="By balance">
+              <option value="owed-asc">Least owed first</option>
+              <option value="owed-desc">Most owed first</option>
+            </optgroup>
+            <optgroup label="By date added">
+              <option value="newest">Newest added first</option>
+              <option value="oldest">Oldest added first</option>
+            </optgroup>
+            <optgroup label="By activity">
+              <option value="recent">Latest purchase first</option>
+              <option value="stale">Oldest purchase first</option>
+              <option value="buyers">Biggest buyers first</option>
+            </optgroup>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
         <div class="view-toggle" role="group" aria-label="List layout">
-          <button type="button" data-view="cards" title="Cards">▦ Cards</button>
-          <button type="button" data-view="list" title="Compact list">☰ List</button>
+          <button type="button" data-view="cards" title="Cards" aria-label="Card view">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+            <span>Cards</span>
+          </button>
+          <button type="button" data-view="list" title="Compact list" aria-label="List view">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            <span>List</span>
+          </button>
         </div>
       </div>
-      <div class="cl-chips" id="clientFilterChips"></div>
-      <div class="clients-count-row">
-        <span id="clientCount"></span>
-        <span class="count-actions">
-          <button type="button" class="mini-btn" id="clientResetBtn" style="display:none;">✖ Clear filters</button>
-          <button type="button" class="mini-btn" id="copyOwedBtn">📋 Copy owed list</button>
+      <div class="cl-count-row">
+        <span id="clientCount" role="status" aria-live="polite"></span>
+        <span class="cl-count-actions">
+          <button type="button" class="cl-link muted" id="clientResetBtn" style="display:none;">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>Clear filters
+          </button>
+          <button type="button" class="cl-link" id="copyOwedBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>Copy owed list
+          </button>
         </span>
       </div>
     </div>
 
-    <div class="client-grid" id="clientList"></div>
+    <div class="cl-list" id="clientList"></div>
   </section>
 
   <!-- REPORTS TAB -->
-  <section class="section" id="tab-reports">
-    <div class="report-grid">
+  <section class="section" id="tab-reports" aria-labelledby="reportsTitle">
+    <div class="rp-head">
+      <h2 id="reportsTitle">Reports</h2>
+      <p class="rp-sub">Profit, balances and invoice history</p>
+    </div>
+
+    <div class="report-grid" role="group" aria-label="Profit summary">
       <div class="report-card">
-        <div class="r-label">today</div>
+        <div class="r-label">Profit today</div>
         <div class="r-profit" id="profitToday">$0.00</div>
-        <div class="r-rev" id="revToday">rev $0.00</div>
-        <div class="r-tip" id="tipToday">tips $0.00</div>
+        <div class="r-sub"><span class="r-rev" id="revToday">Revenue $0.00</span><span class="r-tip" id="tipToday">Tips $0.00</span></div>
       </div>
       <div class="report-card">
-        <div class="r-label">this month</div>
+        <div class="r-label">Profit this month</div>
         <div class="r-profit" id="profitMonth">$0.00</div>
-        <div class="r-rev" id="revMonth">rev $0.00</div>
-        <div class="r-tip" id="tipMonth">tips $0.00</div>
+        <div class="r-sub"><span class="r-rev" id="revMonth">Revenue $0.00</span><span class="r-tip" id="tipMonth">Tips $0.00</span></div>
       </div>
       <div class="report-card">
-        <div class="r-label">this year</div>
+        <div class="r-label">Profit this year</div>
         <div class="r-profit" id="profitYear">$0.00</div>
-        <div class="r-rev" id="revYear">rev $0.00</div>
-        <div class="r-tip" id="tipYear">tips $0.00</div>
+        <div class="r-sub"><span class="r-rev" id="revYear">Revenue $0.00</span><span class="r-tip" id="tipYear">Tips $0.00</span></div>
       </div>
     </div>
-    <div class="field-label">profit = selling price − cost price, on completed invoices (tips shown separately, not included in profit). LBP figures use today's rate.</div>
+    <p class="rp-note">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg>
+      <span>Profit is selling price minus cost price on completed invoices. Tips are shown separately and aren't included in profit.</span>
+    </p>
 
     <div class="compare-row" id="momCompareRow"></div>
 
-    <div class="search-block" id="calendarCard">
-      <h3>📅 Profit calendar</h3>
-      <div class="chips-wrap" id="calModeChips" style="margin-bottom:10px;">
-        <button type="button" class="cat-chip" data-calmode="day">Day</button>
-        <button type="button" class="cat-chip active" data-calmode="month">Month</button>
-        <button type="button" class="cat-chip" data-calmode="year">Year</button>
-        <button type="button" class="cat-chip" data-calmode="years">Years</button>
+    <div class="rp-layout">
+      <div class="rp-main">
+        <div class="rp-card search-block rp-cal" id="calendarCard">
+          <div class="rp-card-head">
+            <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg></span>
+            <h3>Profit calendar</h3>
+          </div>
+          <div class="rp-seg" id="calModeChips" role="group" aria-label="Calendar view">
+            <button type="button" class="cat-chip" data-calmode="day" aria-pressed="false">Day</button>
+            <button type="button" class="cat-chip active" data-calmode="month" aria-pressed="true">Month</button>
+            <button type="button" class="cat-chip" data-calmode="year" aria-pressed="false">Year</button>
+            <button type="button" class="cat-chip" data-calmode="years" aria-pressed="false">Years</button>
+          </div>
+          <div class="cal-nav">
+            <button type="button" class="icon-btn" id="calPrevBtn" aria-label="Previous"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div class="cal-nav-label" id="calNavLabel" aria-live="polite">—</div>
+            <button type="button" class="icon-btn" id="calNextBtn" aria-label="Next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="cal-weekdays" id="calWeekdays" aria-hidden="true"></div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div id="calDayList" style="display:none;"></div>
+          <div class="cal-total-row">
+            <span>Total profit</span>
+            <b id="calTotalValue">$0.00</b>
+          </div>
+          <p class="rp-hint" id="calHint">Select a day to see its invoices.</p>
+        </div>
+
+        <div class="rp-card search-block rp-csearch">
+          <div class="rp-card-head">
+            <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+            <h3>Client profit &amp; loss</h3>
+          </div>
+          <div class="rp-form">
+            <select id="searchClientFilter" aria-label="Client">
+              <option value="">All clients</option>
+              <option value="__walkin">Walk-in (no account)</option>
+            </select>
+            <div class="rp-form-row">
+              <select id="searchMode" aria-label="Search by">
+                <option value="day">Day</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+              </select>
+              <input type="date" id="searchDay" aria-label="Day">
+              <input type="month" id="searchMonth" aria-label="Month" style="display:none;">
+              <input type="number" id="searchYear" aria-label="Year" placeholder="e.g. 2026" inputmode="numeric" style="display:none;">
+            </div>
+            <button class="btn full rp-submit" id="searchReportsBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search</button>
+          </div>
+          <div class="search-result" id="searchResult">
+            <div class="sr-label" id="searchResultLabel"></div>
+            <div class="sr-profit" id="searchResultProfit">$0.00</div>
+            <div class="sr-meta" id="searchResultMeta"></div>
+            <div class="sr-list" id="searchResultList"></div>
+          </div>
+        </div>
+
+        <div class="rp-card search-block rp-psearch" id="productSearchCard">
+          <div class="rp-card-head">
+            <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+            <h3>Product sales &amp; profit</h3>
+          </div>
+          <div class="rp-form">
+            <input type="text" id="searchProductInput" list="productSearchDatalist" placeholder="Search a product" aria-label="Product" autocomplete="off">
+            <datalist id="productSearchDatalist"></datalist>
+            <div class="rp-form-row">
+              <select id="searchProductMode" aria-label="Search by">
+                <option value="day">Day</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+              </select>
+              <input type="date" id="searchProductDay" aria-label="Day">
+              <input type="month" id="searchProductMonth" aria-label="Month" style="display:none;">
+              <input type="number" id="searchProductYear" aria-label="Year" placeholder="e.g. 2026" inputmode="numeric" style="display:none;">
+            </div>
+            <button class="btn full rp-submit" id="searchProductBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search</button>
+          </div>
+          <div class="search-result" id="searchProductResult">
+            <div class="sr-label" id="searchProductResultLabel"></div>
+            <div class="sr-profit" id="searchProductResultProfit">$0.00</div>
+            <div class="sr-meta" id="searchProductResultMeta"></div>
+            <div class="sr-list" id="searchProductResultList"></div>
+          </div>
+        </div>
       </div>
-      <div class="cal-nav">
-        <button type="button" class="icon-btn" id="calPrevBtn">‹</button>
-        <div class="cal-nav-label" id="calNavLabel">—</div>
-        <button type="button" class="icon-btn" id="calNextBtn">›</button>
+
+      <div class="rp-side">
+        <div class="rp-card search-block rp-out" id="outstandingCard">
+          <div class="rp-card-head">
+            <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V21"/><circle cx="9.5" cy="8" r="3.5"/><path d="M21 21v-1.5a4 4 0 0 0-3-3.87M16 4.13a3.5 3.5 0 0 1 0 6.75"/></svg></span>
+            <h3>Outstanding balances</h3>
+          </div>
+          <div class="clients-summary" id="reportsClientsSummary"></div>
+          <div id="topDebtorsList"></div>
+        </div>
+
+        <div class="rp-card search-block rp-top" id="topPerformersCard">
+          <div class="rp-card-head">
+            <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></span>
+            <h3>Top clients &amp; products</h3>
+          </div>
+          <div class="rp-seg" id="topPeriodChips" role="group" aria-label="Period">
+            <button type="button" class="cat-chip active" data-period="all" aria-pressed="true">All time</button>
+            <button type="button" class="cat-chip" data-period="year" aria-pressed="false">This year</button>
+            <button type="button" class="cat-chip" data-period="month" aria-pressed="false">This month</button>
+          </div>
+          <div class="top-perf-cols">
+            <div class="top-perf-col">
+              <div class="top-perf-label">Top clients by profit</div>
+              <div id="topClientsList"></div>
+            </div>
+            <div class="top-perf-col">
+              <div class="top-perf-label">Top products by revenue</div>
+              <div id="topProductsList"></div>
+              <p class="rp-hint" id="topProductsHint" style="display:none;">Only counts invoices made after this feature was added.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="cal-grid" id="calGrid"></div>
-      <div id="calDayList" style="display:none;"></div>
-      <div class="cal-total-row">
-        <span>Total:</span>
-        <b id="calTotalValue">$0.00</b>
-      </div>
-      <div class="field-label" style="margin-top:6px;" id="calHint">Tap a day to view it.</div>
     </div>
 
-    <div class="search-block" id="outstandingCard">
-      <h3>👥 Outstanding balances</h3>
-      <div class="clients-summary" id="reportsClientsSummary"></div>
-      <div id="topDebtorsList"></div>
-    </div>
-
-    <div class="search-block" id="topPerformersCard">
-      <h3>🏆 Top clients &amp; products</h3>
-      <div class="chips-wrap" id="topPeriodChips">
-        <button type="button" class="cat-chip active" data-period="all">All time</button>
-        <button type="button" class="cat-chip" data-period="year">This year</button>
-        <button type="button" class="cat-chip" data-period="month">This month</button>
-      </div>
-      <div class="top-perf-col">
-        <div class="top-perf-label">👤 Top clients (by profit)</div>
-        <div id="topClientsList"></div>
-      </div>
-      <div class="top-perf-col">
-        <div class="top-perf-label">📦 Top products (by revenue)</div>
-        <div id="topProductsList"></div>
-        <div class="field-label" id="topProductsHint" style="display:none;">Only counts invoices made after this feature was added.</div>
-      </div>
-    </div>
-
-    <div class="search-block">
-      <h3>🔍 Client profit &amp; loss by day / month / year</h3>
-      <div class="search-mode-row">
-        <select id="searchClientFilter" style="flex:1.3;">
-          <option value="">All clients</option>
-          <option value="__walkin">Walk-in (no account)</option>
-        </select>
-      </div>
-      <div class="search-mode-row">
-        <select id="searchMode">
-          <option value="day">Day</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-        </select>
-        <input type="date" id="searchDay" style="flex:1;">
-        <input type="month" id="searchMonth" style="flex:1; display:none;">
-        <input type="number" id="searchYear" placeholder="e.g. 2026" style="flex:1; display:none;">
-      </div>
-      <button class="btn full small" id="searchReportsBtn">🔍 Search</button>
-      <div class="search-result" id="searchResult">
-        <div class="r-label" id="searchResultLabel"></div>
-        <div class="sr-profit" id="searchResultProfit">$0.00</div>
-        <div class="sr-meta" id="searchResultMeta"></div>
-        <div id="searchResultList" style="margin-top:8px;"></div>
-      </div>
-    </div>
-
-    <div class="search-block" id="productSearchCard">
-      <h3>📦 Product sales &amp; profit by day / month / year</h3>
-      <div class="search-mode-row">
-        <input type="text" id="searchProductInput" list="productSearchDatalist" placeholder="Search a product...">
-        <datalist id="productSearchDatalist"></datalist>
-      </div>
-      <div class="search-mode-row">
-        <select id="searchProductMode">
-          <option value="day">Day</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-        </select>
-        <input type="date" id="searchProductDay" style="flex:1;">
-        <input type="month" id="searchProductMonth" style="flex:1; display:none;">
-        <input type="number" id="searchProductYear" placeholder="e.g. 2026" style="flex:1; display:none;">
-      </div>
-      <button class="btn full small" id="searchProductBtn">🔍 Search</button>
-      <div class="search-result" id="searchProductResult">
-        <div class="r-label" id="searchProductResultLabel"></div>
-        <div class="sr-profit" id="searchProductResultProfit">$0.00</div>
-        <div class="sr-meta" id="searchProductResultMeta"></div>
-        <div id="searchProductResultList" style="margin-top:8px;"></div>
-      </div>
-    </div>
-
-    <div class="collapse-block" id="balanceLogBlock" style="margin-top:16px;">
-      <button type="button" class="collapse-toggle" id="balanceLogToggle">
-        <span>💰 <span id="balanceLogToggleLabel">Balance changes</span></span>
-        <span class="chev" id="balanceLogChev">▾</span>
+    <div class="collapse-block" id="balanceLogBlock">
+      <button type="button" class="collapse-toggle" id="balanceLogToggle" aria-expanded="false" aria-controls="balanceLogBody">
+        <span class="rp-toggle-title">
+          <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></svg></span>
+          <span id="balanceLogToggleLabel">Balance changes</span>
+        </span>
+        <svg class="chev" id="balanceLogChev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <div class="collapse-body collapsed" id="balanceLogBody">
-        <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
-          <button class="mini-btn" id="viewBalanceLogHistoryBtn">🔍 Search all balance changes</button>
+        <div class="rp-tools">
+          <button type="button" class="mini-btn rp-link-btn" id="viewBalanceLogHistoryBtn"><svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search all balance changes</button>
         </div>
         <div id="balanceLogList"></div>
       </div>
     </div>
 
-    <div class="collapse-block" id="salesHistoryBlock" style="margin-top:16px;">
-      <button type="button" class="collapse-toggle" id="salesHistoryToggle">
-        <span>🧾 <span id="salesHistoryToggleLabel">Old invoices</span></span>
-        <span class="chev" id="salesHistoryChev">▾</span>
+    <div class="collapse-block" id="salesHistoryBlock">
+      <button type="button" class="collapse-toggle" id="salesHistoryToggle" aria-expanded="false" aria-controls="salesHistoryBody">
+        <span class="rp-toggle-title">
+          <span class="rp-card-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h12v19l-3-2-3 2-3-2-3 2v-19z"/><path d="M9 8h6M9 12h6"/></svg></span>
+          <span id="salesHistoryToggleLabel">Old invoices</span>
+        </span>
+        <svg class="chev" id="salesHistoryChev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <div class="collapse-body collapsed" id="salesHistoryBody">
-        <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
-          <button class="mini-btn" id="viewInvoiceHistoryBtn">📜 Search all invoices</button>
+        <div class="rp-tools">
+          <button type="button" class="mini-btn rp-link-btn" id="viewInvoiceHistoryBtn"><svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search all invoices</button>
         </div>
-        <div id="salesOfflineNotice" style="display:none; background:var(--brass-soft); border:1px solid var(--brass); color:var(--brass); border-radius:var(--radius-sm); padding:9px 12px; font-size:12.5px; font-weight:600; margin-bottom:8px;">⚠️ Couldn't reach the server — showing the last saved copy of your invoices from this device. Reload once you're back online to get the latest.</div>
+        <div class="rp-notice" id="salesOfflineNotice" style="display:none;">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
+          <span>Couldn't reach the server. Showing the last saved copy of your invoices from this device. Reload once you're back online to get the latest.</span>
+        </div>
         <div id="salesHistory"></div>
         <div class="empty-hint" id="noSalesHint" style="display:none;">No completed sales yet. Copy or share an invoice to log it here.</div>
       </div>
@@ -2851,6 +3584,17 @@
     const sign = n < 0 ? '-' : '';
     return sign + Math.round(Math.abs(n)).toLocaleString('en-US') + ' LBP';
   }
+
+  // Small stroke icons for the invoice / balance rows on the Reports tab
+  // (styled by .rp-i so they also render inside the history dialogs).
+  const RP_ICONS = {
+    print: '<svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6"/><path d="M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="7" rx="1"/></svg>',
+    chat: '<svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.7 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg>',
+    edit: '<svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',
+    trash: '<svg class="rp-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg>',
+    up: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>',
+    down: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
+  };
 
   // ---------- Number formatting (thousands separators, incl. live in inputs) ----------
   // Formats a (possibly partially-typed) numeric string with thousands
@@ -3554,7 +4298,7 @@
     const labelEl = $('#balanceLogToggleLabel');
     if(labelEl) labelEl.textContent = 'Balance changes' + (state.balanceLog.length ? ' (' + state.balanceLog.length + ')' : '');
     if(state.balanceLog.length === 0){
-      el.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No balance changes yet.</div>';
+      el.innerHTML = '<div class="rp-empty">No balance changes yet.</div>';
       return;
     }
     el.innerHTML = '';
@@ -3568,11 +4312,16 @@
     row.className = 'history-item';
     const positive = entry.delta > 0;
     row.innerHTML = `
-      <div class="h-left">${dateStr} · ${escapeHtml(entry.note)}</div>
-      <div class="h-right"><b style="color:${positive?'var(--cedar-dark)':'var(--burgundy)'}">${positive?'+':''}${fmtUsd(entry.delta)}</b></div>
-      <div class="h-actions">
-        <button class="mini-btn" data-action="edit">✏️ Edit</button>
-        <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
+      <div class="h-left">
+        <div class="h-title">${escapeHtml(entry.note)}</div>
+        <div class="h-date">${dateStr}</div>
+      </div>
+      <div class="h-right"><div class="h-amt${positive ? '' : ' neg'}">${positive?'+':''}${fmtUsd(entry.delta)}</div></div>
+      <div class="h-foot">
+        <div class="h-manage">
+          <button type="button" class="mini-btn icon-only" data-action="edit" aria-label="Edit balance change" title="Edit">${RP_ICONS.edit}</button>
+          <button type="button" class="mini-btn icon-only danger" data-action="delete" aria-label="Delete balance change" title="Delete">${RP_ICONS.trash}</button>
+        </div>
       </div>`;
     row.querySelector('[data-action="edit"]').addEventListener('click', () => editBalanceLogEntry(entry.id));
     row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteBalanceLogEntry(entry.id));
@@ -3683,21 +4432,155 @@
     return childCategories(cat.id).some(sub => categoryOrDescendantsMatch(sub, query));
   }
 
+  const CAT_ICONS = {
+    chevron: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    folderPlus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10v6M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>',
+    box: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>',
+    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>'
+  };
+  // A small, deliberate palette for category tiles that have no photo.
+  const CAT_TILE_HUES = [239, 172, 32, 340, 262, 199];
+
+  function catTileHue(id){
+    let h = 0;
+    const s = String(id);
+    for(let i = 0; i < s.length; i++){ h = (h * 31 + s.charCodeAt(i)) >>> 0; }
+    return CAT_TILE_HUES[h % CAT_TILE_HUES.length];
+  }
+  function catInitial(name){
+    const first = Array.from(String(name || '').trim())[0];
+    return first ? first.toUpperCase() : '?';
+  }
+
+  function updateCatalogStats(){
+    const el = $('#catalogStats');
+    if(!el) return;
+    const c = state.categories.length;
+    const p = state.products.length;
+    el.textContent = (c || p)
+      ? `${c} categor${c === 1 ? 'y' : 'ies'}, ${p} product${p === 1 ? '' : 's'}`
+      : 'Categories, subcategories & products';
+  }
+
+  // Opens/closes the "new top-level category" form that lives in the sticky toolbar.
+  function setCatalogAddPanel(open, focusInput){
+    const panel = $('#catalogAddPanel');
+    const btn = $('#catalogNewToggle');
+    if(!panel || !btn) return;
+    panel.hidden = !open;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if(!open){ const st = $('#catalogAddStatus'); if(st) st.textContent = ''; }
+    if(open && focusInput) $('#newCategoryName').focus();
+  }
+
+  // renderCategories() rebuilds the list, so put keyboard focus back where the
+  // person was working. keepScroll avoids the page jumping for plain buttons.
+  function focusInCategory(catId, selector, keepScroll){
+    const root = document.querySelector(`#categoryList .category[data-cat-id="${catId}"]`);
+    const target = root && root.querySelector(selector);
+    if(target) target.focus(keepScroll ? { preventScroll: true } : undefined);
+  }
+
+  // How many ~300px columns fit in the list. Adding a column needs a little
+  // slack (a scrollbar appearing must not flip the layout back and forth).
+  let catalogCols = 1;
+  function catalogColumnCount(){
+    const w = $('#categoryList').clientWidth;
+    if(!w) return catalogCols;               // tab hidden, keep what we had
+    const fit = (x) => Math.max(1, Math.floor((x + 16) / 316));
+    const now = fit(w);
+    if(now < catalogCols) return now;
+    const roomy = fit(w - 20);
+    return roomy > catalogCols ? roomy : catalogCols;
+  }
+  if('ResizeObserver' in window){
+    new ResizeObserver(() => {
+      const list = $('#categoryList');
+      if(list && list.clientWidth && state.categories.length && catalogColumnCount() !== catalogCols) renderCategories();
+    }).observe($('#categoryList'));
+  }
+
   function renderCategories(){
     const list = $('#categoryList');
-    const query = ($('#catalogSearch').value || '').trim().toLowerCase();
+    const searchInput = $('#catalogSearch');
+    const rawQuery = (searchInput.value || '').trim();
+    const query = rawQuery.toLowerCase();
     catalogSearchQuery = query;
+    updateCatalogStats();
+    $('#catalogSearchClear').hidden = !searchInput.value;
+
     if(state.categories.length === 0){
-      list.innerHTML = '<div class="empty-hint">No categories yet. Add one below to start building your catalog.</div>';
+      list.innerHTML = `
+        <div class="catalog-empty">
+          <div class="catalog-empty-icon">${CAT_ICONS.box}</div>
+          <h3>No categories yet</h3>
+          <p>Create your first category, then add products to it. Your products will appear on the Invoice tab.</p>
+          <button type="button" class="btn" data-action="new-category">${CAT_ICONS.plus} New category</button>
+        </div>`;
+      list.querySelector('[data-action="new-category"]').addEventListener('click', () => setCatalogAddPanel(true, true));
       return;
     }
     const topCats = childCategories(null).filter(cat => !query || categoryOrDescendantsMatch(cat, query));
     if(topCats.length === 0){
-      list.innerHTML = '<div class="empty-hint">No categories or products match your search.</div>';
+      list.innerHTML = `
+        <div class="catalog-empty">
+          <div class="catalog-empty-icon">${CAT_ICONS.search}</div>
+          <h3>No matches</h3>
+          <p>Nothing in your catalog matches “${escapeHtml(rawQuery)}”. Check the spelling or try a shorter word.</p>
+          <button type="button" class="btn ghost" data-action="clear-search">Clear search</button>
+        </div>`;
+      list.querySelector('[data-action="clear-search"]').addEventListener('click', () => {
+        searchInput.value = '';
+        renderCategories();
+        searchInput.focus();
+      });
       return;
     }
+    // Deal the cards into columns left to right so reading order stays natural.
+    const n = catalogColumnCount();
+    catalogCols = n;
     list.innerHTML = '';
-    topCats.forEach(cat => list.appendChild(buildCategoryNode(cat, 0, query)));
+    const cols = [];
+    for(let i = 0; i < n; i++){
+      const col = document.createElement('div');
+      col.className = 'cat-col';
+      list.appendChild(col);
+      cols.push(col);
+    }
+    topCats.forEach((cat, i) => cols[i % n].appendChild(buildCategoryNode(cat, 0, query)));
+  }
+
+  function buildProductRow(p){
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    const margin = p.priceUsd - (p.costUsd || 0);
+    const marginPill = p.costUsd
+      ? `<span class="prod-margin${margin < 0 ? ' neg' : ''}">Margin ${fmtUsd(margin)}${p.costMode === 'flat' ? ' (flat cost)' : ''}</span>`
+      : '';
+    row.innerHTML = `
+      <span class="prod-tile">${p.image ? `<img src="${p.image}" alt="">` : CAT_ICONS.box}</span>
+      <div class="product-info">
+        <div class="product-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
+        <div class="prod-meta">
+          <span class="prod-usd">${fmtUsd(p.priceUsd)}</span>
+          <span class="prod-lbp">${fmtLbp(p.priceUsd * state.rate.value)}</span>
+          ${marginPill}
+        </div>
+      </div>
+      <div class="product-actions">
+        <button type="button" class="ic-btn" data-action="edit" title="Edit product">${CAT_ICONS.edit}</button>
+        <button type="button" class="ic-btn danger" data-action="delete" title="Delete product">${CAT_ICONS.trash}</button>
+      </div>`;
+    const editBtn = row.querySelector('[data-action="edit"]');
+    const delBtn = row.querySelector('[data-action="delete"]');
+    editBtn.setAttribute('aria-label', 'Edit product ' + p.name);
+    delBtn.setAttribute('aria-label', 'Delete product ' + p.name);
+    editBtn.addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
+    delBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
+    return row;
   }
 
   function buildCategoryNode(cat, depth, query){
@@ -3705,176 +4588,222 @@
     const catNameMatches = query && cat.name.toLowerCase().includes(query);
     const products = state.products.filter(p => p.categoryId === cat.id && (!query || catNameMatches || p.name.toLowerCase().includes(query)));
     const subcats = childCategories(cat.id).filter(sub => !query || catNameMatches || categoryOrDescendantsMatch(sub, query));
-
-    const wrap = document.createElement('div');
-    wrap.className = 'category';
-    if(depth > 0) wrap.style.marginLeft = (depth * 14) + 'px';
+    const isSub = depth > 0;
 
     // Searching auto-expands anything that matched, so results are visible
     // without an extra tap; otherwise categories stay collapsed by default
     // until the person opens them, to keep the overview short and scannable.
     const isCollapsed = query ? false : (collapsedState[cat.id] === undefined ? true : collapsedState[cat.id]);
 
+    const wrap = document.createElement('div');
+    wrap.className = 'category' + (isSub ? ' is-sub' : '') + (isCollapsed ? '' : ' is-open');
+    wrap.dataset.catId = cat.id;
+
+    const bodyId = 'catbody-' + cat.id;
+    const metaParts = [`${products.length} item${products.length === 1 ? '' : 's'}`];
+    if(subcats.length) metaParts.push(`${subcats.length} subcategor${subcats.length === 1 ? 'y' : 'ies'}`);
+
+    // ----- Header: one big toggle button + separate edit/delete buttons -----
     const head = document.createElement('div');
     head.className = 'category-head';
-    let countLabel = `${products.length} item${products.length===1?'':'s'}`;
-    if(subcats.length) countLabel += ` · ${subcats.length} subcat${subcats.length===1?'':'s'}`;
     head.innerHTML = `
-      <div class="category-head-left">
-        <span class="cat-chev${isCollapsed ? '' : ' open'}">▾</span>
-        ${cat.image ? `<img class="cat-thumb" src="${cat.image}" alt="">` : ''}
-        <h3>${depth>0 ? '↳ ' : ''}${escapeHtml(cat.name)}</h3>
-      </div>
-      <div class="category-head-right">
-        <span class="count">${countLabel}</span>
-        <button class="mini-btn" data-action="rename" type="button">✏️ Edit</button>
-        <button class="mini-btn danger" data-action="delete" type="button">🗑️ Delete</button>
+      <h3 class="category-title">
+        <button type="button" class="category-toggle" aria-expanded="${isCollapsed ? 'false' : 'true'}" aria-controls="${bodyId}">
+          <span class="cat-chev">${CAT_ICONS.chevron}</span>
+          <span class="cat-tile${cat.image ? ' has-img' : ''}" style="--h:${catTileHue(cat.id)}">${cat.image ? `<img src="${cat.image}" alt="">` : escapeHtml(catInitial(cat.name))}</span>
+          <span class="cat-info">
+            <span class="cat-name">${escapeHtml(cat.name)}</span>
+            <span class="cat-meta">${metaParts.join(', ')}</span>
+          </span>
+        </button>
+      </h3>
+      <div class="category-actions">
+        <button type="button" class="ic-btn" data-action="rename" title="Edit category">${CAT_ICONS.edit}</button>
+        <button type="button" class="ic-btn danger" data-action="delete" title="Delete category">${CAT_ICONS.trash}</button>
       </div>`;
-    head.addEventListener('click', () => {
+    const renameBtn = head.querySelector('[data-action="rename"]');
+    const deleteBtn = head.querySelector('[data-action="delete"]');
+    renameBtn.setAttribute('aria-label', 'Edit category ' + cat.name);
+    deleteBtn.setAttribute('aria-label', 'Delete category ' + cat.name);
+    head.querySelector('.category-toggle').addEventListener('click', () => {
       if(catalogSearchQuery) return;
       const currentlyCollapsed = collapsedState[cat.id] === undefined ? true : collapsedState[cat.id];
       collapsedState[cat.id] = !currentlyCollapsed;
       renderCategories();
+      focusInCategory(cat.id, '.category-toggle', true);
     });
-    head.querySelector('[data-action="rename"]').addEventListener('click', (e) => { e.stopPropagation(); editCategory(cat.id); });
-    head.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteCategory(cat.id); });
+    renameBtn.addEventListener('click', (e) => { e.stopPropagation(); editCategory(cat.id); });
+    deleteBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteCategory(cat.id); });
 
     const body = document.createElement('div');
     body.className = 'category-body' + (isCollapsed ? ' collapsed' : '');
+    body.id = bodyId;
 
-    // Add a product directly inside this category (works at any depth).
-    // Placed first, right under the header, so opening a category never
-    // requires scrolling past its products to reach the add-product form.
-    const addToggleBtn = document.createElement('button');
-    addToggleBtn.type = 'button';
-    addToggleBtn.className = 'add-product-toggle';
-    const addFormOpen = !!addFormOpenState[cat.id];
-    addToggleBtn.textContent = addFormOpen ? '➖ Hide add product form' : '➕ Add product';
-    addToggleBtn.addEventListener('click', (e) => {
+    // ----- Quick actions, always first so they never need scrolling to -----
+    const addProdOpen = !!addFormOpenState[cat.id];
+    const addSubOpen = !!addSubFormOpenState[cat.id];
+    const actionsRow = document.createElement('div');
+    actionsRow.className = 'cat-actions-row';
+    actionsRow.innerHTML = `
+      <button type="button" class="soft-btn" data-role="add-product" aria-expanded="${addProdOpen}">${CAT_ICONS.plus} Add product</button>
+      <button type="button" class="soft-btn" data-role="add-sub" aria-expanded="${addSubOpen}">${CAT_ICONS.folderPlus} Add subcategory</button>`;
+    actionsRow.querySelector('[data-role="add-product"]').addEventListener('click', (e) => {
       e.stopPropagation();
       addFormOpenState[cat.id] = !addFormOpenState[cat.id];
       renderCategories();
+      if(addFormOpenState[cat.id]) focusInCategory(cat.id, '.new-prod-name');
+      else focusInCategory(cat.id, '[data-role="add-product"]', true);
     });
-    body.appendChild(addToggleBtn);
-
-    if(addFormOpen){
-      const addRow = document.createElement('div');
-      addRow.className = 'add-row';
-      addRow.innerHTML = `
-        <input type="text" placeholder="Product name" class="new-prod-name">
-        <input type="text" placeholder="🇱🇧 Arabic name (optional, shown when Arabic is selected)" class="new-prod-name-ar" dir="rtl">
-        <div class="add-row-inline">
-          <input type="text" inputmode="decimal" placeholder="Sell price" class="new-prod-price" style="flex:1;">
-          <select class="new-prod-currency" style="flex:0 0 80px;">
-            <option value="USD">USD</option>
-            <option value="LBP">LBP</option>
-          </select>
-        </div>
-        <div class="add-row-inline">
-          <input type="text" inputmode="decimal" placeholder="Cost price (optional)" class="new-prod-cost" style="flex:1;">
-          <select class="new-prod-cost-currency" style="flex:0 0 80px;">
-            <option value="USD">USD</option>
-            <option value="LBP">LBP</option>
-          </select>
-        </div>
-        <div class="add-row-inline">
-          <select class="new-prod-cost-mode" style="flex:1;">
-            <option value="perUnit">Cost × quantity</option>
-            <option value="flat">Cost × 1 (flat)</option>
-          </select>
-          <button class="btn small" type="button" style="flex:0 0 140px;">➕ Add product</button>
-        </div>
-        <label class="voucher-toggle-row">
-          <input type="checkbox" class="new-prod-voucher">
-          This item has extra details (login info, codes, links, etc. — filled in per sale, fields you choose)
-        </label>
-      `;
-      attachThousandsFormatting(addRow.querySelector('.new-prod-price'));
-      attachThousandsFormatting(addRow.querySelector('.new-prod-cost'));
-      addRow.querySelector('button').addEventListener('click', () => {
-        const nameInput = addRow.querySelector('.new-prod-name');
-        const nameArInput = addRow.querySelector('.new-prod-name-ar');
-        const priceInput = addRow.querySelector('.new-prod-price');
-        const currencySel = addRow.querySelector('.new-prod-currency');
-        const costInput = addRow.querySelector('.new-prod-cost');
-        const costCurrencySel = addRow.querySelector('.new-prod-cost-currency');
-        const costModeSel = addRow.querySelector('.new-prod-cost-mode');
-        const isVoucher = addRow.querySelector('.new-prod-voucher').checked;
-        addProduct(cat.id, nameInput.value, priceInput.value, currencySel.value, costInput.value, costModeSel.value, costCurrencySel.value, isVoucher, nameArInput.value);
-        addFormOpenState[cat.id] = false;
-      });
-      body.appendChild(addRow);
-    }
-
-    // Add a subcategory nested inside this category. Same toggle-button
-    // pattern as "Add product" — collapsed by default, tap to reveal —
-    // and placed at the top so it never requires scrolling to reach.
-    const addSubToggleBtn = document.createElement('button');
-    addSubToggleBtn.type = 'button';
-    addSubToggleBtn.className = 'add-product-toggle';
-    const addSubFormOpen = !!addSubFormOpenState[cat.id];
-    addSubToggleBtn.textContent = addSubFormOpen ? '➖ Hide add subcategory form' : '➕ Add subcategory';
-    addSubToggleBtn.addEventListener('click', (e) => {
+    actionsRow.querySelector('[data-role="add-sub"]').addEventListener('click', (e) => {
       e.stopPropagation();
       addSubFormOpenState[cat.id] = !addSubFormOpenState[cat.id];
       renderCategories();
+      if(addSubFormOpenState[cat.id]) focusInCategory(cat.id, '.new-subcat-name');
+      else focusInCategory(cat.id, '[data-role="add-sub"]', true);
     });
-    body.appendChild(addSubToggleBtn);
+    body.appendChild(actionsRow);
 
-    if(addSubFormOpen){
-      const addSubRow = document.createElement('div');
-      addSubRow.className = 'add-category';
-      addSubRow.innerHTML = `
-        <input type="text" placeholder="New subcategory name" class="new-subcat-name">
-        <button class="btn small" type="button">➕ Add</button>
-      `;
-      const subNameInput = addSubRow.querySelector('.new-subcat-name');
-      const doAddSub = () => {
-        addCategory(subNameInput.value, cat.id);
-        addSubFormOpenState[cat.id] = false;
-      };
-      addSubRow.querySelector('button').addEventListener('click', doAddSub);
-      subNameInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') doAddSub(); });
-      body.appendChild(addSubRow);
-    }
-
-    if(products.length){
-      const label = document.createElement('div');
-      label.className = 'cat-section-label';
-      label.textContent = '🛍️ Products';
-      body.appendChild(label);
-    }
-
-    products.forEach(p => {
-      const row = document.createElement('div');
-      row.className = 'product-row';
-      const margin = p.priceUsd - (p.costUsd||0);
-      row.innerHTML = `
-        <div class="product-row-left">
-          ${p.image ? `<img class="product-thumb" src="${p.image}" alt="">` : ''}
-          <div style="min-width:0;">
-            <div class="product-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
-            <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) + (p.costMode === 'flat' ? ' (cost flat)' : '') : ''}</div>
+    // ----- Add product form -----
+    if(addProdOpen){
+      const form = document.createElement('div');
+      form.className = 'cat-form';
+      form.innerHTML = `
+        <div class="fld">
+          <span class="fld-cap">Product name</span>
+          <input type="text" class="new-prod-name" placeholder="e.g. Coffee" aria-label="Product name" autocomplete="off">
+        </div>
+        <div class="fld">
+          <span class="fld-cap">Arabic name <small>optional</small></span>
+          <input type="text" class="new-prod-name-ar" dir="rtl" aria-label="Arabic name (optional)" autocomplete="off">
+          <span class="fld-hint">Shown on the invoice when its language is Arabic.</span>
+        </div>
+        <div class="fld-pair">
+          <div class="fld">
+            <span class="fld-cap">Sell price</span>
+            <div class="money">
+              <input type="text" inputmode="decimal" class="new-prod-price" placeholder="0.00" aria-label="Sell price" autocomplete="off">
+              <select class="new-prod-currency" aria-label="Sell price currency">
+                <option value="USD">USD</option>
+                <option value="LBP">LBP</option>
+              </select>
+            </div>
+          </div>
+          <div class="fld">
+            <span class="fld-cap">Cost price <small>optional</small></span>
+            <div class="money">
+              <input type="text" inputmode="decimal" class="new-prod-cost" placeholder="0.00" aria-label="Cost price (optional)" autocomplete="off">
+              <select class="new-prod-cost-currency" aria-label="Cost price currency">
+                <option value="USD">USD</option>
+                <option value="LBP">LBP</option>
+              </select>
+            </div>
           </div>
         </div>
-        <div class="product-actions">
-          <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
-          <button class="mini-btn danger" data-action="delete" data-id="${p.id}">🗑️ delete</button>
+        <div class="fld">
+          <span class="fld-cap">Cost applies</span>
+          <select class="new-prod-cost-mode" aria-label="How the cost applies">
+            <option value="perUnit">Cost × quantity</option>
+            <option value="flat">Cost × 1 (flat)</option>
+          </select>
+        </div>
+        <label class="voucher-toggle-row">
+          <input type="checkbox" class="new-prod-voucher">
+          <span>This item has extra details <small>Login info, codes, links, etc. Filled in per sale, with fields you choose.</small></span>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn ghost" data-action="cancel">Cancel</button>
+          <button type="button" class="btn" data-action="submit">Add product</button>
         </div>`;
-      row.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
-      row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
-      body.appendChild(row);
-    });
-    if(!products.length && !query){
-      const emptyHint = document.createElement('div');
-      emptyHint.className = 'product-prices';
-      emptyHint.style.padding = '4px 0 2px';
-      emptyHint.textContent = 'No products in this category yet.';
-      body.appendChild(emptyHint);
+      attachThousandsFormatting(form.querySelector('.new-prod-price'));
+      attachThousandsFormatting(form.querySelector('.new-prod-cost'));
+      const submitProduct = () => {
+        const ok = addProduct(
+          cat.id,
+          form.querySelector('.new-prod-name').value,
+          form.querySelector('.new-prod-price').value,
+          form.querySelector('.new-prod-currency').value,
+          form.querySelector('.new-prod-cost').value,
+          form.querySelector('.new-prod-cost-mode').value,
+          form.querySelector('.new-prod-cost-currency').value,
+          form.querySelector('.new-prod-voucher').checked,
+          form.querySelector('.new-prod-name-ar').value
+        );
+        // The list re-rendered with the form still open and empty, ready for the next product.
+        if(ok) focusInCategory(cat.id, '.new-prod-name');
+      };
+      form.querySelector('[data-action="submit"]').addEventListener('click', submitProduct);
+      form.querySelector('[data-action="cancel"]').addEventListener('click', () => {
+        addFormOpenState[cat.id] = false;
+        renderCategories();
+        focusInCategory(cat.id, '[data-role="add-product"]', true);
+      });
+      form.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type === 'text'){
+          e.preventDefault();
+          submitProduct();
+        }
+      });
+      body.appendChild(form);
     }
 
-    // Nested subcategories render recursively underneath.
-    subcats.forEach(sub => body.appendChild(buildCategoryNode(sub, depth + 1, query)));
+    // ----- Add subcategory form -----
+    if(addSubOpen){
+      const form = document.createElement('div');
+      form.className = 'cat-form';
+      form.innerHTML = `
+        <div class="fld">
+          <span class="fld-cap">Subcategory name</span>
+          <div class="add-category">
+            <input type="text" class="new-subcat-name" placeholder="e.g. Hot drinks" aria-label="Subcategory name" autocomplete="off">
+            <button type="button" class="btn">Add</button>
+          </div>
+        </div>`;
+      const subNameInput = form.querySelector('.new-subcat-name');
+      const doAddSub = () => {
+        if(!subNameInput.value.trim()){ subNameInput.focus(); return; }
+        addCategory(subNameInput.value, cat.id);
+        focusInCategory(cat.id, '.new-subcat-name');
+      };
+      form.querySelector('button').addEventListener('click', doAddSub);
+      subNameInput.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') doAddSub();
+        if(e.key === 'Escape'){
+          addSubFormOpenState[cat.id] = false;
+          renderCategories();
+          focusInCategory(cat.id, '[data-role="add-sub"]', true);
+        }
+      });
+      body.appendChild(form);
+    }
+
+    // ----- Products -----
+    if(products.length){
+      const sec = document.createElement('div');
+      sec.className = 'cat-section';
+      sec.innerHTML = `<div class="cat-section-label">Products <span class="cat-count">${products.length}</span></div>`;
+      const listEl = document.createElement('div');
+      listEl.className = 'prod-list';
+      products.forEach(p => listEl.appendChild(buildProductRow(p)));
+      sec.appendChild(listEl);
+      body.appendChild(sec);
+    } else if(!query){
+      const note = document.createElement('p');
+      note.className = 'cat-empty-note';
+      note.textContent = 'No products in this category yet.';
+      body.appendChild(note);
+    }
+
+    // ----- Nested subcategories, rendered recursively -----
+    if(subcats.length){
+      const sec = document.createElement('div');
+      sec.className = 'cat-section';
+      sec.innerHTML = `<div class="cat-section-label">Subcategories <span class="cat-count">${subcats.length}</span></div>`;
+      const listEl = document.createElement('div');
+      listEl.className = 'subcat-list';
+      subcats.forEach(sub => listEl.appendChild(buildCategoryNode(sub, depth + 1, query)));
+      sec.appendChild(listEl);
+      body.appendChild(sec);
+    }
 
     wrap.appendChild(head);
     wrap.appendChild(body);
@@ -3891,11 +4820,13 @@
   // category, or pass another category's id to create it as a subcategory.
   function addCategory(name, parentId){
     name = (name || '').trim();
-    if(!name) return;
-    state.categories.push({ id: uid(), name, parentId: parentId || null, image: null });
+    if(!name) return null;
+    const created = { id: uid(), name, parentId: parentId || null, image: null };
+    state.categories.push(created);
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
+    return created;
   }
 
   async function editCategory(catId){
@@ -3935,7 +4866,7 @@
     name = (name||'').trim();
     nameAr = (nameAr||'').trim();
     const price = parseFormattedNumber(priceRaw);
-    if(!name || isNaN(price) || price <= 0){ alertBanner('Enter a product name and a valid sell price.'); return; }
+    if(!name || isNaN(price) || price <= 0){ alertBanner('Enter a product name and a valid sell price.'); return false; }
     const priceUsd = currency === 'LBP' ? price / state.rate.value : price;
     let costUsd = 0;
     const costParsed = parseFormattedNumber(costRaw);
@@ -3947,6 +4878,7 @@
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
+    return true;
   }
 
   // Returns the product name to show to the customer for the given (or current)
@@ -4036,29 +4968,81 @@
     return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
   }
 
+  // ----- Clients page: icons, balance kinds, overview -----
+  const CL_ICONS = {
+    plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+    close: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+    more: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>',
+    chevronRight: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>',
+    phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+    users: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+    banknote: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
+    check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>',
+    checkCircle: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>',
+    heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>',
+    sliders: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>'
+  };
+  const CL_HUES = [239, 172, 32, 340, 262, 199];
+  function clHue(name){
+    let h = 0;
+    const s = String(name || '');
+    for(let i = 0; i < s.length; i++){ h = (h * 31 + s.charCodeAt(i)) >>> 0; }
+    return CL_HUES[h % CL_HUES.length];
+  }
+  // escapeHtml() leaves quotes alone, which is fine in text but not inside attributes.
+  function escAttr(s){
+    return escapeHtml(String(s == null ? '' : s)).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  // Leftover fractions of a cent (floating-point dust) count as settled, so nobody
+  // ever shows up as "owes $0.00".
+  function clBalanceKind(c){
+    const b = Number(c.balanceUsd) || 0;
+    return b > 0.004 ? 'owes' : b < -0.004 ? 'credit' : 'settled';
+  }
+
   function renderClientsSummary(){
     const el = $('#clientsSummary');
     if(!el) return;
-    if(state.clients.length === 0){ el.innerHTML = ''; return; }
-    const owedTotal = state.clients.reduce((s, c) => s + (c.balanceUsd > 0 ? c.balanceUsd : 0), 0);
-    const creditTotal = state.clients.reduce((s, c) => s + (c.balanceUsd < 0 ? -c.balanceUsd : 0), 0);
+    if(state.clients.length === 0){ el.innerHTML = ''; el.style.display = 'none'; return; }
+    el.style.display = '';
+    let owedTotal = 0, creditTotal = 0, open = 0;
+    state.clients.forEach(c => {
+      const k = clBalanceKind(c);
+      if(k === 'owes'){ owedTotal += c.balanceUsd; open++; }
+      else if(k === 'credit'){ creditTotal -= c.balanceUsd; open++; }
+    });
+    const rate = state.rate.value;
     el.innerHTML = `
-      <div class="client-stat"><div class="cs-label">Clients</div><div class="cs-value">${state.clients.length}</div></div>
-      <div class="client-stat owed"><div class="cs-label">They owe you</div><div class="cs-value">${fmtUsd(owedTotal)}</div></div>
-      <div class="client-stat credit"><div class="cs-label">You owe them</div><div class="cs-value">${fmtUsd(creditTotal)}</div></div>
-    `;
+      <div class="cl-kpi owed">
+        <div class="cl-kpi-label"><i></i>They owe you</div>
+        <div class="cl-kpi-value">${fmtUsd(owedTotal)}</div>
+        <div class="cl-kpi-sub">${fmtLbp(owedTotal * rate)}</div>
+      </div>
+      <div class="cl-kpi credit">
+        <div class="cl-kpi-label"><i></i>You owe them</div>
+        <div class="cl-kpi-value">${fmtUsd(creditTotal)}</div>
+        <div class="cl-kpi-sub">${fmtLbp(creditTotal * rate)}</div>
+      </div>
+      <div class="cl-kpi count">
+        <div class="cl-kpi-label"><i></i>Clients</div>
+        <div class="cl-kpi-value">${state.clients.length}</div>
+        <div class="cl-kpi-sub">${open ? open + ' with an open balance' : 'All settled up'}</div>
+      </div>`;
   }
 
   // ----- Clients list: sort / filter / layout -----
   const CLIENT_SORT_KEYS = ['name-asc','name-desc','owed-asc','owed-desc','newest','oldest','recent','stale','buyers'];
   const CLIENT_FILTERS = [
     { key:'all',     label:'All',        test: () => true },
-    { key:'owes',    label:'Owe me',     test: c => c.balanceUsd > 0 },
-    { key:'credit',  label:'I owe them', test: c => c.balanceUsd < 0 },
-    { key:'settled', label:'Settled',    test: c => c.balanceUsd === 0 },
+    { key:'owes',    label:'Owe me',     test: c => clBalanceKind(c) === 'owes' },
+    { key:'credit',  label:'I owe them', test: c => clBalanceKind(c) === 'credit' },
+    { key:'settled', label:'Settled',    test: c => clBalanceKind(c) === 'settled' },
     { key:'nophone', label:'No phone',   test: c => !(c.phone || '').trim() }
   ];
-  const openClientIds = new Set();   // compact-list rows the user has expanded
   let pendingClientHighlight = null; // id of a just-added client to scroll to
 
   function computeClientStats(){
@@ -4106,33 +5090,130 @@
     renderClientList();
   }
 
+  function clAvatarHtml(name){
+    return `<span class="cl-avatar" style="--h:${clHue(name)}" aria-hidden="true">${escapeHtml(getInitials(name))}</span>`;
+  }
+
+  // What each balance kind is called, in one place, so cards, rows and the sheet agree.
+  function clBalanceText(c){
+    const kind = clBalanceKind(c);
+    const usd = fmtUsd(Math.abs(c.balanceUsd));
+    const lbp = fmtLbp(Math.abs(c.balanceUsd) * state.rate.value);
+    if(kind === 'owes') return { kind, label:'Owes you', usd, lbp };
+    if(kind === 'credit') return { kind, label:'You owe them', usd, lbp };
+    return { kind, label:'All settled', usd:'', lbp:'' };
+  }
+
+  function clMetaParts(st){
+    return st
+      ? [`${st.count} sale${st.count === 1 ? '' : 's'}`, `Last purchase ${fmtClientDate(st.last)}`]
+      : ['No purchases yet'];
+  }
+
+  function clientCardHtml(c, st){
+    const b = clBalanceText(c);
+    const phone = (c.phone || '').trim();
+    const sub = phone
+      ? `<div class="cl-sub">${CL_ICONS.phone}<span>${escapeHtml(phone)}</span></div>`
+      : `<div class="cl-sub faint"><span>No phone number</span></div>`;
+    const balance = b.kind === 'settled'
+      ? `<div class="cl-balance settled">${CL_ICONS.checkCircle}All settled</div>`
+      : `<div class="cl-balance">
+           <div class="cl-bal-label"><i></i>${b.label}</div>
+           <div class="cl-bal-line"><span class="cl-bal-amt">${b.usd}</span><span class="cl-bal-lbp">${b.lbp}</span></div>
+         </div>`;
+    const foot = b.kind === 'owes'
+      ? `<button type="button" class="cl-btn soft" data-act="remind">${CL_ICONS.bell}Remind</button>
+         <button type="button" class="cl-btn solid" data-act="pay">Record payment</button>`
+      : b.kind === 'credit'
+        ? `<button type="button" class="cl-btn soft" data-act="settle">${CL_ICONS.check}Mark as settled</button>`
+        : `<button type="button" class="cl-btn soft" data-act="adjust">${CL_ICONS.sliders}Adjust balance</button>`;
+    return `
+      <article class="cl-card ${b.kind}" data-id="${escAttr(c.id)}">
+        <div class="cl-card-head">
+          ${clAvatarHtml(c.name)}
+          <div class="cl-id">
+            <h3 class="cl-name" title="${escAttr(c.name)}">${escapeHtml(c.name)}</h3>
+            ${sub}
+          </div>
+          <button type="button" class="ic-btn" data-act="menu" aria-haspopup="dialog" aria-label="All actions for ${escAttr(c.name)}" title="More actions">${CL_ICONS.more}</button>
+        </div>
+        ${balance}
+        <div class="cl-bottom">
+          <p class="cl-meta">${clMetaParts(st).map(t => `<span>${t}</span>`).join('')}</p>
+          <div class="cl-foot">${foot}</div>
+        </div>
+      </article>`;
+  }
+
+  function clientRowHtml(c, st){
+    const b = clBalanceText(c);
+    const phone = (c.phone || '').trim();
+    const meta = clMetaParts(st);
+    const sub = phone ? escapeHtml(phone) : 'No phone number';
+    return `
+      <button type="button" class="cl-row ${b.kind}" data-id="${escAttr(c.id)}" data-act="menu" aria-haspopup="dialog">
+        ${clAvatarHtml(c.name)}
+        <span class="cl-id">
+          <span class="cl-name" title="${escAttr(c.name)}">${escapeHtml(c.name)}</span>
+          <span class="cl-sub"><span>${sub}</span></span>
+        </span>
+        <span class="cl-row-meta">${meta.map(t => `<span>${t}</span>`).join('')}</span>
+        <span class="cl-row-bal">
+          <span class="cl-row-amt">${b.kind === 'settled' ? '$0.00' : b.usd}</span>
+          <span class="cl-row-lbl">${b.label}</span>
+        </span>
+        <span class="cl-chev">${CL_ICONS.chevronRight}</span>
+      </button>`;
+  }
+
+  function resetClientFilters(){
+    $('#clientSearch').value = '';
+    setClientView({ filter: 'all' });
+  }
+
   function renderClientList(){
     const list = $('#clientList');
     renderClientsSummary();
 
+    const hasClients = state.clients.length > 0;
+    const bar = $('#clientsBar');
     const toolbar = $('#clientsToolbar');
-    if(toolbar) toolbar.style.display = state.clients.length ? '' : 'none';
+    if(bar) bar.style.display = hasClients ? '' : 'none';
+    if(toolbar) toolbar.style.display = hasClients ? '' : 'none';
 
-    if(state.clients.length === 0){
-      list.className = 'client-grid';
-      list.innerHTML = '<div class="empty-hint">No clients yet. Tap “➕ Add client” at the top to start tracking balances they owe you.</div>';
+    if(!hasClients){
+      list.className = 'cl-list is-empty';
+      list.innerHTML = `
+        <div class="cl-empty">
+          <div class="cl-empty-icon">${CL_ICONS.users}</div>
+          <h3>No clients yet</h3>
+          <p>Add your first client to track what they owe you, send payment reminders and see their purchases.</p>
+          <button type="button" class="btn" data-act="add">${CL_ICONS.plus} Add client</button>
+        </div>`;
       return;
     }
 
     const view = state.clientView;
-    const compact = view.view === 'list';
-    list.className = 'client-grid' + (compact ? ' compact' : '');
+    const asList = view.view === 'list';
 
     // Keep the controls in sync with the saved choices.
     $('#clientSort').value = view.sort;
-    $all('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === view.view));
+    $all('.view-toggle button').forEach(b => {
+      const on = b.dataset.view === view.view;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     $('#clientFilterChips').innerHTML = CLIENT_FILTERS.map(f => {
       const n = state.clients.filter(f.test).length;
-      return `<button type="button" class="cl-chip${view.filter === f.key ? ' active' : ''}" data-filter="${f.key}" aria-pressed="${view.filter === f.key}">${f.label}<span class="n">${n}</span></button>`;
+      const on = view.filter === f.key;
+      return `<button type="button" class="cl-chip${on ? ' active' : ''}" data-filter="${f.key}" aria-pressed="${on}">${f.label}<span class="n">${n}</span></button>`;
     }).join('');
 
     const searchEl = $('#clientSearch');
     const term = searchEl ? searchEl.value.trim().toLowerCase() : '';
+    const clearBtn = $('#clientSearchClear');
+    if(clearBtn) clearBtn.hidden = !searchEl || !searchEl.value;
     const activeFilter = CLIENT_FILTERS.find(f => f.key === view.filter) || CLIENT_FILTERS[0];
     const stats = computeClientStats();
     const order = new Map(state.clients.map((c, i) => [c.id, i]));
@@ -4148,82 +5229,175 @@
     $('#clientResetBtn').style.display = filtersActive ? '' : 'none';
 
     if(shown.length === 0){
-      list.className = 'client-grid';
-      list.innerHTML = '<div class="empty-hint">No clients match your search or filter.</div>';
+      list.className = 'cl-list is-empty';
+      list.innerHTML = `
+        <div class="cl-empty">
+          <div class="cl-empty-icon">${CL_ICONS.search}</div>
+          <h3>No matching clients</h3>
+          <p>Try a different name or number, or clear the filters to see everyone.</p>
+          <button type="button" class="btn ghost" data-act="reset">Clear filters</button>
+        </div>`;
       return;
     }
 
-    list.innerHTML = '';
-    shown.forEach(c => {
-      const card = document.createElement('div');
-      const owes = c.balanceUsd > 0;
-      const credit = c.balanceUsd < 0;
-      const st = stats.get(c.id);
-      const meta = st
-        ? `🛒 ${st.count} sale${st.count === 1 ? '' : 's'} · last ${fmtClientDate(st.last)}`
-        : 'No purchases yet';
-      card.className = 'client-card ' + (owes ? 'owes' : credit ? 'credit' : 'settled')
-        + (compact ? ' compact' : '') + (compact && openClientIds.has(c.id) ? ' open' : '');
-      card.dataset.id = c.id;
-      card.innerHTML = `
-        <div class="client-card-top"${compact ? ` role="button" tabindex="0" aria-expanded="${openClientIds.has(c.id)}"` : ''}>
-          <div class="client-avatar" style="background:${avatarColor(c.name)}">${getInitials(c.name)}</div>
-          <div class="client-card-info">
-            <div class="client-name">${escapeHtml(c.name)}</div>
-            ${c.phone ? '<div class="client-phone">📱 ' + escapeHtml(c.phone) + '</div>' : ''}
-            <div class="client-meta">${meta}</div>
-          </div>
-        </div>
-        <div class="client-balance-row">
-          <span class="client-balance-pill ${owes ? 'owes' : credit ? 'credit' : 'settled'}">
-            ${owes ? '⬆ Owes ' + fmtUsd(c.balanceUsd) : credit ? '⬇ You owe ' + fmtUsd(-c.balanceUsd) : '✓ Settled up'}
-          </span>
-          ${c.balanceUsd !== 0 ? '<span class="client-balance-sub">' + fmtLbp(Math.abs(c.balanceUsd) * state.rate.value) + '</span>' : ''}
-          ${compact ? '<span class="client-chev" aria-hidden="true">▾</span>' : ''}
-        </div>
-        <div class="client-actions">
-          ${owes ? '<button class="mini-btn" data-action="remind">🔔 Remind</button>' : ''}
-          ${owes ? '<button class="mini-btn" data-action="partial">💵 Partial payment</button>' : ''}
-          ${owes ? '<button class="mini-btn" data-action="fullpayCredit">🎉 Full payment (extra = owed)</button>' : ''}
-          ${owes ? '<button class="mini-btn" data-action="fullpayTip">💸 Full payment (extra = tip)</button>' : ''}
-          ${c.balanceUsd !== 0 ? '<button class="mini-btn" data-action="settle">' + (owes ? '✅ Mark paid' : '✅ Settled') + '</button>' : ''}
-          <button class="mini-btn" data-action="adjust">⚖️ Adjust</button>
-          <button class="mini-btn" data-action="edit">✏️ Edit</button>
-          <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
-        </div>`;
-      if(compact){
-        const toggle = () => {
-          const open = card.classList.toggle('open');
-          if(open) openClientIds.add(c.id); else openClientIds.delete(c.id);
-          card.querySelector('.client-card-top').setAttribute('aria-expanded', open);
-        };
-        card.addEventListener('click', (e) => { if(!e.target.closest('.client-actions')) toggle(); });
-        card.querySelector('.client-card-top').addEventListener('keydown', (e) => {
-          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
-        });
-      }
-      if(owes){
-        card.querySelector('[data-action="remind"]').addEventListener('click', () => sendPaymentReminder(c.id));
-        card.querySelector('[data-action="partial"]').addEventListener('click', () => sendPartialPayment(c.id));
-        card.querySelector('[data-action="fullpayCredit"]').addEventListener('click', () => sendFullPayment(c.id, false));
-        card.querySelector('[data-action="fullpayTip"]').addEventListener('click', () => sendFullPayment(c.id, true));
-      }
-      if(c.balanceUsd !== 0){
-        card.querySelector('[data-action="settle"]').addEventListener('click', () => markClientPaid(c.id));
-      }
-      card.querySelector('[data-action="adjust"]').addEventListener('click', () => adjustClientBalance(c.id));
-      card.querySelector('[data-action="edit"]').addEventListener('click', () => editClient(c.id));
-      card.querySelector('[data-action="delete"]').addEventListener('click', () => deleteClient(c.id));
-      list.appendChild(card);
-    });
+    list.className = 'cl-list' + (asList ? ' is-list' : '');
+    list.innerHTML = shown.map(c => asList ? clientRowHtml(c, stats.get(c.id)) : clientCardHtml(c, stats.get(c.id))).join('');
 
     if(pendingClientHighlight){
       const el = list.querySelector('[data-id="' + pendingClientHighlight + '"]');
       pendingClientHighlight = null;
       if(el){
         el.classList.add('just-added');
-        el.scrollIntoView({ block:'center', behavior:'smooth' });
+        const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ block:'center', behavior: calm ? 'auto' : 'smooth' });
       }
+    }
+  }
+
+  // ----- Client action sheet -----
+  // Cards keep only the two things people do most (remind, record a payment);
+  // everything else lives here, with a plain-language line under each action.
+  let clSheetEl = null;
+  let clSheetClientId = null;
+  let clSheetReturnFocus = null;
+  let clSheetPrevOverflow = '';
+
+  function clientSheetGroups(c, mode){
+    const kind = clBalanceKind(c);
+    const I = CL_ICONS;
+    const pay = [
+      { act:'partial', icon:I.banknote, title:'Partial payment', desc:'They paid part of what they owe. Records it and prepares a confirmation message.' },
+      { act:'fullpayCredit', icon:I.checkCircle, title:'Full payment', desc:'Any extra they hand over becomes credit you owe them.' },
+      { act:'fullpayTip', icon:I.heart, title:'Full payment with tip', desc:'Any extra they hand over is kept as a tip.' },
+      { act:'settle', icon:I.check, title:'Mark as paid', desc:'Clears the balance without sending a message.' }
+    ];
+    if(mode === 'payment' && kind === 'owes') return [{ label:'Record a payment', items:pay }];
+    const groups = [];
+    if(kind === 'owes'){
+      groups.push({ label:'Follow up', items:[
+        { act:'remind', icon:I.bell, title:'Send reminder', desc:'Pick English or Arabic, then send it on WhatsApp or copy it.' }
+      ] });
+      groups.push({ label:'Record a payment', items:pay });
+    } else if(kind === 'credit'){
+      groups.push({ label:'Settle up', items:[
+        { act:'settle', icon:I.check, title:'Mark as settled', desc:'Confirm that you paid them what you owe.' }
+      ] });
+    }
+    groups.push({ label:'Manage', items:[
+      { act:'adjust', icon:I.sliders, title:'Adjust balance', desc:'Add to or reduce the balance, for example after a return or refund.' },
+      { act:'edit', icon:I.edit, title:'Edit details', desc:'Change the name, phone number or balance.' },
+      { act:'delete', icon:I.trash, title:'Delete client', desc:'Removes the client and their balance record.', danger:true }
+    ] });
+    return groups;
+  }
+
+  function runClientAction(act, id){
+    switch(act){
+      case 'remind':        return sendPaymentReminder(id);
+      case 'partial':       return sendPartialPayment(id);
+      case 'fullpayCredit': return sendFullPayment(id, false);
+      case 'fullpayTip':    return sendFullPayment(id, true);
+      case 'settle':        return markClientPaid(id);
+      case 'adjust':        return adjustClientBalance(id);
+      case 'edit':          return editClient(id);
+      case 'delete':        return deleteClient(id);
+    }
+  }
+
+  function ensureClientSheet(){
+    if(clSheetEl) return clSheetEl;
+    const el = document.createElement('div');
+    el.className = 'cl-sheet-overlay';
+    el.hidden = true;
+    el.innerHTML = `
+      <div class="cl-sheet" role="dialog" aria-modal="true" aria-labelledby="clSheetTitle" tabindex="-1">
+        <div class="cl-sheet-grab" aria-hidden="true"></div>
+        <div class="cl-sheet-head"></div>
+        <div class="cl-sheet-body"></div>
+      </div>`;
+    document.body.appendChild(el);
+    // Tap outside the sheet to dismiss.
+    el.addEventListener('click', (e) => { if(e.target === el) closeClientSheet(); });
+    el.addEventListener('click', (e) => {
+      if(e.target.closest('[data-sheet-close]')){ closeClientSheet(); return; }
+      const btn = e.target.closest('[data-sheet-act]');
+      if(!btn) return;
+      const id = clSheetClientId;
+      closeClientSheet(false); // the action opens its own dialog, so don't steal focus back
+      runClientAction(btn.dataset.sheetAct, id);
+    });
+    document.addEventListener('keydown', (e) => {
+      if(el.hidden) return;
+      if(e.key === 'Escape'){ e.preventDefault(); closeClientSheet(); return; }
+      if(e.key !== 'Tab') return;
+      // Keep Tab inside the sheet while it is open.
+      const items = [...el.querySelectorAll('button')];
+      if(!items.length) return;
+      const first = items[0], last = items[items.length - 1];
+      if(e.shiftKey && (document.activeElement === first || document.activeElement === el.querySelector('.cl-sheet'))){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    });
+    clSheetEl = el;
+    return el;
+  }
+
+  function openClientSheet(id, mode, trigger){
+    const c = state.clients.find(x => x.id === id);
+    if(!c) return;
+    const el = ensureClientSheet();
+    const b = clBalanceText(c);
+    clSheetClientId = id;
+    clSheetReturnFocus = trigger || null;
+
+    el.querySelector('.cl-sheet-head').innerHTML = `
+      ${clAvatarHtml(c.name)}
+      <div class="cl-id">
+        <h3 class="cl-name" id="clSheetTitle">${escapeHtml(c.name)}</h3>
+        <div class="cl-sheet-status ${b.kind}">${b.kind === 'settled' ? 'All settled' : b.label + ' ' + b.usd + ' (' + b.lbp + ')'}</div>
+      </div>
+      <button type="button" class="ic-btn" data-sheet-close aria-label="Close">${CL_ICONS.close}</button>`;
+
+    el.querySelector('.cl-sheet-body').innerHTML = clientSheetGroups(c, mode).map(g => `
+      <div class="cl-sheet-group" role="group" aria-label="${escAttr(g.label)}">
+        <div class="cl-sheet-label">${g.label}</div>
+        ${g.items.map(it => `
+          <button type="button" class="cl-act${it.danger ? ' danger' : ''}" data-sheet-act="${it.act}">
+            <span class="cl-act-ico">${it.icon}</span>
+            <span class="cl-act-text"><span class="cl-act-title">${it.title}</span><span class="cl-act-desc">${it.desc}</span></span>
+          </button>`).join('')}
+      </div>`).join('');
+
+    clSheetPrevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    el.hidden = false;
+    el.querySelector('.cl-sheet-body').scrollTop = 0;
+    const firstAct = el.querySelector('.cl-act');
+    (firstAct || el.querySelector('.cl-sheet')).focus();
+  }
+
+  function closeClientSheet(restoreFocus){
+    if(!clSheetEl || clSheetEl.hidden) return;
+    clSheetEl.hidden = true;
+    document.body.style.overflow = clSheetPrevOverflow;
+    const back = clSheetReturnFocus;
+    clSheetReturnFocus = null;
+    if(restoreFocus !== false && back && document.contains(back)) back.focus();
+  }
+
+  // One click handler for everything inside the list (cards, rows, empty states).
+  function onClientListClick(e){
+    const t = e.target.closest('[data-act]');
+    if(!t) return;
+    const host = t.closest('[data-id]');
+    const id = host ? host.dataset.id : null;
+    switch(t.dataset.act){
+      case 'menu':   if(id) openClientSheet(id, 'all', t); break;
+      case 'pay':    if(id) openClientSheet(id, 'payment', t); break;
+      case 'remind': if(id) sendPaymentReminder(id); break;
+      case 'settle': if(id) markClientPaid(id); break;
+      case 'adjust': if(id) adjustClientBalance(id); break;
+      case 'add':    addClient(); break;
+      case 'reset':  resetClientFilters(); break;
     }
   }
 
@@ -5773,15 +6947,16 @@
       if(isPrevMonth(d)){ pPrevMonth += s.profitUsd; rPrevMonth += s.revenueUsd; }
     });
 
-    $('#profitToday').textContent = fmtUsd(pToday);
-    $('#revToday').textContent = 'rev ' + fmtUsd(rToday);
-    $('#tipToday').textContent = 'tips ' + fmtUsd(tToday);
-    $('#profitMonth').textContent = fmtUsd(pMonth);
-    $('#revMonth').textContent = 'rev ' + fmtUsd(rMonth);
-    $('#tipMonth').textContent = 'tips ' + fmtUsd(tMonth);
-    $('#profitYear').textContent = fmtUsd(pYear);
-    $('#revYear').textContent = 'rev ' + fmtUsd(rYear);
-    $('#tipYear').textContent = 'tips ' + fmtUsd(tYear);
+    const setKpi = (suffix, p, r, t) => {
+      const el = $('#profit' + suffix);
+      el.textContent = fmtUsd(p);
+      el.classList.toggle('neg', p < -0.004);
+      $('#rev' + suffix).textContent = 'Revenue ' + fmtUsd(r);
+      $('#tip' + suffix).textContent = 'Tips ' + fmtUsd(t);
+    };
+    setKpi('Today', pToday, rToday, tToday);
+    setKpi('Month', pMonth, rMonth, tMonth);
+    setKpi('Year', pYear, rYear, tYear);
 
     renderMonthComparison(pMonth, rMonth, pPrevMonth, rPrevMonth);
     renderReportsOutstanding();
@@ -5793,7 +6968,7 @@
     const historyEl = $('#salesHistory');
     const noSalesHint = $('#noSalesHint');
     const offlineNotice = $('#salesOfflineNotice');
-    if(offlineNotice) offlineNotice.style.display = state.salesShowingOfflineCache ? 'block' : 'none';
+    if(offlineNotice) offlineNotice.style.display = state.salesShowingOfflineCache ? 'flex' : 'none';
     const recent = [...state.sales].sort((a,b) => b.date - a.date).slice(0, 15);
     $('#salesHistoryToggleLabel').textContent = 'Old invoices' + (state.sales.length ? ' (' + state.sales.length + ')' : '');
     if(recent.length === 0){
@@ -5808,21 +6983,25 @@
 
   // ---------- This month vs last month ----------
   function trendHtml(current, previous, label){
-    let arrow, cls, pctText;
+    let icon = '', cls, pctText;
     if(previous <= 0.004){
-      if(current <= 0.004){ arrow = '·'; cls = 'trend-flat'; pctText = 'no change'; }
-      else { arrow = '▲'; cls = 'trend-up'; pctText = 'new'; }
+      if(current <= 0.004){ cls = 'trend-flat'; pctText = 'No change'; }
+      else { icon = RP_ICONS.up; cls = 'trend-up'; pctText = 'New'; }
     } else {
       const pct = ((current - previous) / Math.abs(previous)) * 100;
-      if(Math.abs(pct) < 0.5){ arrow = '·'; cls = 'trend-flat'; pctText = '0%'; }
-      else { arrow = pct > 0 ? '▲' : '▼'; cls = pct > 0 ? 'trend-up' : 'trend-down'; pctText = (pct > 0 ? '+' : '') + pct.toFixed(0) + '%'; }
+      if(Math.abs(pct) < 0.5){ cls = 'trend-flat'; pctText = '0%'; }
+      else { icon = pct > 0 ? RP_ICONS.up : RP_ICONS.down; cls = pct > 0 ? 'trend-up' : 'trend-down'; pctText = (pct > 0 ? '+' : '') + pct.toFixed(0) + '%'; }
     }
-    return `<div class="trend-pill">${label} vs last month<br><b>${fmtUsd(current)}</b> <span class="${cls}">${arrow} ${pctText}</span></div>`;
+    return `<div class="trend-pill">
+      <div class="trend-label">${label} vs last month</div>
+      <div class="trend-main"><b>${fmtUsd(current)}</b></div>
+      <div class="trend-foot"><span class="trend-badge ${cls}">${icon}${pctText}</span><span class="trend-prev">from ${fmtUsd(previous)}</span></div>
+    </div>`;
   }
   function renderMonthComparison(pMonth, rMonth, pPrevMonth, rPrevMonth){
     const el = $('#momCompareRow');
     if(!el) return;
-    el.innerHTML = trendHtml(pMonth, pPrevMonth, '💰 Profit') + trendHtml(rMonth, rPrevMonth, '📈 Revenue');
+    el.innerHTML = trendHtml(pMonth, pPrevMonth, 'Profit') + trendHtml(rMonth, rPrevMonth, 'Revenue');
   }
 
   // ---------- Outstanding balances ----------
@@ -5831,8 +7010,8 @@
     const listEl = $('#topDebtorsList');
     if(!summaryEl || !listEl) return;
     if(state.clients.length === 0){
-      summaryEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No clients yet.</div>';
-      listEl.innerHTML = '';
+      summaryEl.innerHTML = '';
+      listEl.innerHTML = '<div class="rp-empty">No clients yet.</div>';
       return;
     }
     const owedTotal = state.clients.reduce((s, c) => s + (c.balanceUsd > 0 ? c.balanceUsd : 0), 0);
@@ -5844,12 +7023,13 @@
     `;
     const debtors = state.clients.filter(c => c.balanceUsd > 0.004).sort((a, b) => b.balanceUsd - a.balanceUsd).slice(0, 5);
     if(debtors.length === 0){
-      listEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No one currently owes you.</div>';
+      listEl.innerHTML = '<div class="rp-empty">No one currently owes you.</div>';
       return;
     }
-    listEl.innerHTML = '<div class="top-perf-label">🔝 Top debtors</div>' + debtors.map(c => `
+    listEl.innerHTML = '<div class="top-perf-label">Top debtors</div>' + debtors.map(c => `
       <div class="debtor-row">
-        <span class="top-name">${escapeHtml(c.name)}</span>
+        <span class="rp-avatar" aria-hidden="true">${escapeHtml((c.name || '?').trim().charAt(0).toUpperCase())}</span>
+        <span class="top-name" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</span>
         <span class="top-value">${fmtUsd(c.balanceUsd)}</span>
       </div>`).join('');
   }
@@ -5890,11 +7070,17 @@
     });
     const topClients = [...clientMap.values()].sort((a, b) => b.profit - a.profit).slice(0, 5);
     if(topClients.length === 0){
-      clientsEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No sales in this period yet.</div>';
+      clientsEl.innerHTML = '<div class="rp-empty">No sales in this period yet.</div>';
     } else {
+      const maxProfit = Math.max(...topClients.map(c => Math.abs(c.profit)), 0.01);
       clientsEl.innerHTML = topClients.map((c, i) => `
         <div class="top-row">
-          <span><span class="top-rank">${i+1}</span><span class="top-name">${escapeHtml(c.name)}</span><br><span class="top-sub" style="margin-left:28px;">${c.count} invoice${c.count===1?'':'s'} · rev ${fmtUsd(c.revenue)}</span></span>
+          <span class="top-rank">${i+1}</span>
+          <div class="top-main">
+            <span class="top-name" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</span>
+            <span class="top-sub">${c.count} invoice${c.count===1?'':'s'}, revenue ${fmtUsd(c.revenue)}</span>
+            <div class="top-bar" aria-hidden="true"><i style="width:${Math.max(3, Math.round(Math.abs(c.profit) / maxProfit * 100))}%"></i></div>
+          </div>
           <span class="top-value">${fmtUsd(c.profit)}</span>
         </div>`).join('');
     }
@@ -5918,11 +7104,17 @@
     const topProducts = [...productMap.values()].sort((a, b) => b.revenue - a.revenue).slice(0, 5);
     if(hintEl) hintEl.style.display = anyItemized ? 'none' : 'block';
     if(topProducts.length === 0){
-      productsEl.innerHTML = '<div class="empty-hint" style="border:none; padding:8px;">No itemized sales in this period yet.</div>';
+      productsEl.innerHTML = '<div class="rp-empty">No itemized sales in this period yet.</div>';
     } else {
+      const maxRevenue = Math.max(...topProducts.map(p => Math.abs(p.revenue)), 0.01);
       productsEl.innerHTML = topProducts.map((p, i) => `
         <div class="top-row">
-          <span><span class="top-rank">${i+1}</span><span class="top-name">${escapeHtml(p.name)}</span><br><span class="top-sub" style="margin-left:28px;">${p.qty} sold</span></span>
+          <span class="top-rank">${i+1}</span>
+          <div class="top-main">
+            <span class="top-name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
+            <span class="top-sub">${p.qty} sold</span>
+            <div class="top-bar" aria-hidden="true"><i style="width:${Math.max(3, Math.round(Math.abs(p.revenue) / maxRevenue * 100))}%"></i></div>
+          </div>
           <span class="top-value">${fmtUsd(p.revenue)}</span>
         </div>`).join('');
     }
@@ -5932,7 +7124,10 @@
     topPeriodChipsEl.querySelectorAll('.cat-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         topPerformersPeriod = chip.dataset.period;
-        topPeriodChipsEl.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c === chip));
+        topPeriodChipsEl.querySelectorAll('.cat-chip').forEach(c => {
+          c.classList.toggle('active', c === chip);
+          c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
+        });
         renderTopPerformers();
       });
     });
@@ -5974,15 +7169,57 @@
     } else if(mode === 'years'){
       calYearsBlockStart = calViewYear - (calViewYear % 12);
     }
-    $all('#calModeChips .cat-chip').forEach(c => c.classList.toggle('active', c.dataset.calmode === mode));
+    $all('#calModeChips .cat-chip').forEach(c => {
+      const on = c.dataset.calmode === mode;
+      c.classList.toggle('active', on);
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     renderCalendar();
+  }
+
+  const CAL_WEEK_START = 1; // first column of the month view: 0 = Sunday, 1 = Monday
+  const WEEKDAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  // Profit shown inside a calendar cell. Both forms are rendered and CSS picks one:
+  // the full form suits wide cells, the short form (no $, no cents) suits narrow ones.
+  function calAmtHtml(amt){
+    const neg = amt < 0;
+    const abs = Math.abs(amt);
+    const r = Math.round(abs);
+    const sign = neg ? '−' : '';
+    const full = r < 1000 ? fmtUsd(abs) : '$' + r.toLocaleString('en-US');
+    let short;
+    if(r < 1000) short = String(r);
+    else if(r < 10000) short = (r / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    else if(r < 1000000) short = Math.round(r / 1000) + 'k';
+    else short = (r / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    return `<span class="cal-day-amt ${neg ? 'neg' : 'pos'}"><span class="amt-full">${sign}${full}</span><span class="amt-short">${sign}${short}</span></span>`;
+  }
+
+  // One tappable cell. Shade deepens with the size of the day's / month's / year's profit.
+  function makeCalCell({ top, amt, aria, today, maxAbs, onClick }){
+    const cell = document.createElement('button');
+    cell.type = 'button';
+    const hasSales = amt !== undefined && Math.abs(amt) > 0.004;
+    cell.className = 'cal-cell' + (today ? ' today' : '') + (hasSales ? ' has-sales ' + (amt >= 0 ? 'pos' : 'neg') : '');
+    if(hasSales && maxAbs > 0) cell.style.setProperty('--heat', Math.min(1, Math.abs(amt) / maxAbs).toFixed(2));
+    if(today) cell.setAttribute('aria-current', 'date');
+    cell.setAttribute('aria-label', aria + (hasSales ? ', profit ' + fmtUsd(amt) : ', no sales'));
+    cell.innerHTML = `<span class="cal-day-num">${top}</span>` + (hasSales ? calAmtHtml(amt) : '');
+    cell.addEventListener('click', onClick);
+    return cell;
   }
 
   function renderCalendar(){
     const gridEl = $('#calGrid');
     const listEl = $('#calDayList');
     const hintEl = $('#calHint');
+    const weekEl = $('#calWeekdays');
     if(!gridEl) return;
+    if(weekEl && !weekEl.childElementCount){
+      weekEl.innerHTML = Array.from({ length: 7 }, (_, i) => `<span>${WEEKDAYS_SHORT[(CAL_WEEK_START + i) % 7]}</span>`).join('');
+    }
+    if(weekEl) weekEl.style.display = calViewMode === 'month' ? '' : 'none';
     if(calViewMode === 'day'){
       gridEl.style.display = 'none';
       listEl.style.display = 'block';
@@ -5993,9 +7230,9 @@
       listEl.style.display = 'none';
       if(hintEl){
         hintEl.style.display = 'block';
-        hintEl.textContent = calViewMode === 'years' ? 'Tap a year to view it.'
-          : calViewMode === 'year' ? 'Tap a month to view it.'
-          : 'Tap a day to view it.';
+        hintEl.textContent = calViewMode === 'years' ? 'Select a year to open it.'
+          : calViewMode === 'year' ? 'Select a month to open it.'
+          : 'Select a day to see its invoices.';
       }
       gridEl.classList.toggle('year-grid', calViewMode === 'year' || calViewMode === 'years');
       if(calViewMode === 'years') renderCalendarYears();
@@ -6022,24 +7259,29 @@
         perDay[d.getDate()] = (perDay[d.getDate()] || 0) + s.profitUsd;
       }
     });
+    const maxAbs = Math.max(0, ...Object.values(perDay).map(v => Math.abs(v)));
 
     gridEl.innerHTML = '';
+    // Blank cells so day 1 lands under the right weekday.
+    const lead = (new Date(calViewYear, calViewMonth, 1).getDay() - CAL_WEEK_START + 7) % 7;
+    for(let i = 0; i < lead; i++){
+      const gap = document.createElement('div');
+      gap.className = 'cal-cell empty';
+      gap.setAttribute('aria-hidden', 'true');
+      gridEl.appendChild(gap);
+    }
     let monthTotal = 0;
     for(let day = 1; day <= daysInMonth; day++){
       const amt = perDay[day];
       if(amt !== undefined) monthTotal += amt;
-      const cell = document.createElement('div');
-      cell.className = 'cal-cell' + (isCurrentMonth && day === todayReal.getDate() ? ' today' : '');
-      let html = `<div class="cal-day-num">${day}</div>`;
-      if(amt !== undefined && Math.abs(amt) > 0.004){
-        html += `<div class="cal-day-amt ${amt >= 0 ? 'pos' : 'neg'}">${amt >= 0 ? '' : '−'}${fmtUsd(Math.abs(amt))}</div>`;
-      }
-      cell.innerHTML = html;
-      cell.addEventListener('click', () => {
-        calViewDay = day;
-        setCalMode('day');
-      });
-      gridEl.appendChild(cell);
+      gridEl.appendChild(makeCalCell({
+        top: day,
+        amt,
+        aria: MONTH_NAMES[calViewMonth] + ' ' + day,
+        today: isCurrentMonth && day === todayReal.getDate(),
+        maxAbs,
+        onClick: () => { calViewDay = day; setCalMode('day'); }
+      }));
     }
     totalEl.textContent = fmtUsd(monthTotal);
   }
@@ -6058,6 +7300,7 @@
         perMonth[d.getMonth()] = (perMonth[d.getMonth()] || 0) + s.profitUsd;
       }
     });
+    const maxAbs = Math.max(0, ...Object.values(perMonth).map(v => Math.abs(v)));
 
     const todayReal = new Date();
     gridEl.innerHTML = '';
@@ -6065,18 +7308,14 @@
     for(let m = 0; m <= 11; m++){
       const amt = perMonth[m];
       if(amt !== undefined) yearTotal += amt;
-      const cell = document.createElement('div');
-      cell.className = 'cal-cell' + (todayReal.getFullYear() === calViewYear && todayReal.getMonth() === m ? ' today' : '');
-      let html = `<div class="cal-day-num">${MONTH_NAMES_SHORT[m]}</div>`;
-      if(amt !== undefined && Math.abs(amt) > 0.004){
-        html += `<div class="cal-day-amt ${amt >= 0 ? 'pos' : 'neg'}">${amt >= 0 ? '' : '−'}${fmtUsd(Math.abs(amt))}</div>`;
-      }
-      cell.innerHTML = html;
-      cell.addEventListener('click', () => {
-        calViewMonth = m;
-        setCalMode('month');
-      });
-      gridEl.appendChild(cell);
+      gridEl.appendChild(makeCalCell({
+        top: MONTH_NAMES_SHORT[m],
+        amt,
+        aria: MONTH_NAMES[m] + ' ' + calViewYear,
+        today: todayReal.getFullYear() === calViewYear && todayReal.getMonth() === m,
+        maxAbs,
+        onClick: () => { calViewMonth = m; setCalMode('month'); }
+      }));
     }
     totalEl.textContent = fmtUsd(yearTotal);
   }
@@ -6097,6 +7336,7 @@
         perYear[y] = (perYear[y] || 0) + s.profitUsd;
       }
     });
+    const maxAbs = Math.max(0, ...Object.values(perYear).map(v => Math.abs(v)));
 
     const todayReal = new Date();
     gridEl.innerHTML = '';
@@ -6104,18 +7344,14 @@
     for(let y = startYear; y <= endYear; y++){
       const amt = perYear[y];
       if(amt !== undefined) blockTotal += amt;
-      const cell = document.createElement('div');
-      cell.className = 'cal-cell' + (todayReal.getFullYear() === y ? ' today' : '');
-      let html = `<div class="cal-day-num">${y}</div>`;
-      if(amt !== undefined && Math.abs(amt) > 0.004){
-        html += `<div class="cal-day-amt ${amt >= 0 ? 'pos' : 'neg'}">${amt >= 0 ? '' : '−'}${fmtUsd(Math.abs(amt))}</div>`;
-      }
-      cell.innerHTML = html;
-      cell.addEventListener('click', () => {
-        calViewYear = y;
-        setCalMode('year');
-      });
-      gridEl.appendChild(cell);
+      gridEl.appendChild(makeCalCell({
+        top: y,
+        amt,
+        aria: String(y),
+        today: todayReal.getFullYear() === y,
+        maxAbs,
+        onClick: () => { calViewYear = y; setCalMode('year'); }
+      }));
     }
     totalEl.textContent = fmtUsd(blockTotal);
   }
@@ -6139,7 +7375,7 @@
 
     listEl.innerHTML = '';
     if(sales.length === 0){
-      listEl.innerHTML = '<div class="empty-hint">No completed sales this day.</div>';
+      listEl.innerHTML = '<div class="rp-empty">No completed sales this day.</div>';
     } else {
       sales
         .slice()
@@ -6186,21 +7422,33 @@
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
     const status = getSaleStatus(s);
+    const statusText = SALE_STATUS_LABEL[status].replace(/^\S+\s+/, ''); // drop the emoji, the pill has its own dot
     const rowLang = getRowLang(s);
     const row = document.createElement('div');
     row.className = 'history-item';
     row.innerHTML = `
-      <div class="h-left">${dateStr} · ${escapeHtml(s.customerName)}<br><span class="sale-status-pill ${status}">${SALE_STATUS_LABEL[status]}</span>${s.tipUsd > 0.004 ? '<span class="sale-status-pill tip">💸 tip ' + fmtUsd(s.tipUsd) + '</span>' : ''}</div>
-      <div class="h-right">rev ${fmtUsd(s.revenueUsd)}<br>profit <b>${fmtUsd(s.profitUsd)}</b></div>
-      <div class="h-lang" role="group" aria-label="Invoice language">
-        <button type="button" class="mini-btn h-lang-btn${rowLang === 'en' ? ' active' : ''}" data-lang="en">English</button>
-        <button type="button" class="mini-btn h-lang-btn${rowLang === 'ar' ? ' active' : ''}" data-lang="ar">العربية</button>
+      <div class="h-left">
+        <div class="h-title">${escapeHtml(s.customerName)}</div>
+        <div class="h-date">${dateStr}</div>
+        <span class="sale-status-pill ${status}">${statusText}</span>${s.tipUsd > 0.004 ? '<span class="sale-status-pill tip">Tip ' + fmtUsd(s.tipUsd) + '</span>' : ''}
       </div>
-      <div class="h-actions">
-        <button class="mini-btn" data-action="print">🖨️ Print</button>
-        <button class="mini-btn" data-action="whatsapp">💬 WhatsApp</button>
-        <button class="mini-btn" data-action="edit">✏️ Edit</button>
-        <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
+      <div class="h-right">
+        <div class="h-amt${s.profitUsd < -0.004 ? ' neg' : ''}"><span class="h-amt-label">Profit</span>${fmtUsd(s.profitUsd)}</div>
+        <div class="h-sub">Revenue ${fmtUsd(s.revenueUsd)}</div>
+      </div>
+      <div class="h-foot">
+        <div class="h-lang" role="group" aria-label="Invoice language">
+          <button type="button" class="mini-btn h-lang-btn${rowLang === 'en' ? ' active' : ''}" data-lang="en">English</button>
+          <button type="button" class="mini-btn h-lang-btn${rowLang === 'ar' ? ' active' : ''}" data-lang="ar">العربية</button>
+        </div>
+        <div class="h-manage">
+          <button type="button" class="mini-btn icon-only" data-action="edit" aria-label="Edit invoice" title="Edit">${RP_ICONS.edit}</button>
+          <button type="button" class="mini-btn icon-only danger" data-action="delete" aria-label="Delete invoice" title="Delete">${RP_ICONS.trash}</button>
+        </div>
+        <div class="h-send">
+          <button type="button" class="mini-btn" data-action="print">${RP_ICONS.print}Print</button>
+          <button type="button" class="mini-btn" data-action="whatsapp">${RP_ICONS.chat}WhatsApp</button>
+        </div>
       </div>`;
     row.querySelectorAll('.h-lang-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -7011,7 +8259,7 @@
     else if(clientFilter) matches = matches.filter(s => s.clientId === clientFilter);
     if(clientFilter){
       const clientLabel = clientFilter === '__walkin' ? 'Walk-in (no account)' : (state.clients.find(c => c.id === clientFilter) || {}).name || '';
-      label += ' · ' + clientLabel;
+      label += ', ' + clientLabel;
     }
 
     const filteredProfit = matches.reduce((sum, s) => sum + s.profitUsd, 0);
@@ -7019,7 +8267,8 @@
 
     $('#searchResultLabel').textContent = label;
     $('#searchResultProfit').textContent = fmtUsd(filteredProfit);
-    $('#searchResultMeta').textContent = `rev ${fmtUsd(filteredRevenue)} · ${matches.length} invoice${matches.length===1?'':'s'}`;
+    $('#searchResultProfit').classList.toggle('neg', filteredProfit < -0.004);
+    $('#searchResultMeta').textContent = `Revenue ${fmtUsd(filteredRevenue)}, ${matches.length} invoice${matches.length===1?'':'s'}`;
     const listEl = $('#searchResultList');
     listEl.innerHTML = '';
     [...matches].sort((a,b) => b.date - a.date).forEach(s => renderSaleRow(listEl, s));
@@ -7115,16 +8364,17 @@
       });
     });
 
-    $('#searchProductResultLabel').textContent = label + ' · ' + typed;
+    $('#searchProductResultLabel').textContent = label + ', ' + typed;
     $('#searchProductResultProfit').textContent = fmtUsd(profit);
-    $('#searchProductResultMeta').textContent = `${qty} sold · rev ${fmtUsd(revenue)} · ${matchingSales.length} invoice${matchingSales.length===1?'':'s'}`;
+    $('#searchProductResultProfit').classList.toggle('neg', profit < -0.004);
+    $('#searchProductResultMeta').textContent = `${qty} sold, revenue ${fmtUsd(revenue)}, ${matchingSales.length} invoice${matchingSales.length===1?'':'s'}`;
 
     const listEl = $('#searchProductResultList');
     listEl.innerHTML = '';
     if(matchingSales.length === 0){
       listEl.innerHTML = anyItemizedEver
-        ? '<div class="empty-hint" style="border:none; padding:8px;">No sales of this product in that period.</div>'
-        : '<div class="empty-hint" style="border:none; padding:8px;">No itemized sales yet — this only counts invoices made after per-product tracking was added.</div>';
+        ? '<div class="rp-empty">No sales of this product in that period.</div>'
+        : '<div class="rp-empty">No itemized sales yet. This only counts invoices made after per-product tracking was added.</div>';
     } else {
       [...matchingSales].sort((a,b) => b.date - a.date).forEach(s => renderSaleRow(listEl, s));
     }
@@ -7199,8 +8449,7 @@
     cvfSaveTimer = setTimeout(saveCustomVoucherFields, 400);
   }
 
-  const msgGroupsOpen = new Set();   // which template groups are expanded
-  let msgGroupsInit = false;
+  const msgGroupsOpen = new Set();   // which template groups are expanded (all start closed)
   function renderMessageTemplateFields(){
     const lang = msgTemplateEditLang;
     $all('#msgTemplateLangBtns button').forEach(b => {
@@ -7213,7 +8462,6 @@
     const wrap = $('#msgTemplateFields');
     wrap.innerHTML = '';
     wrap.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    if(!msgGroupsInit){ msgGroupsInit = true; msgGroupsOpen.add(MESSAGE_FIELD_GROUPS[0].title); }
     MESSAGE_FIELD_GROUPS.forEach(group => {
       const details = document.createElement('details');
       details.className = 'tpl-group';
@@ -7962,10 +9210,31 @@
   // ---------- Wire up ----------
   const addRootCategory = () => {
     const input = $('#newCategoryName');
-    addCategory(input.value, null);
+    const status = $('#catalogAddStatus');
+    const name = input.value.trim();
+    if(!name){ input.focus(); return; }
+    addCategory(name, null);
     input.value = '';
+    // The new card lands at the end of the list, which may be off screen,
+    // so confirm it here. The form stays open for adding several in a row.
+    status.textContent = 'Added “' + name + '”.';
+    input.focus();
   };
   $('#addCategoryBtn').addEventListener('click', addRootCategory);
+  $('#catalogNewToggle').addEventListener('click', () => setCatalogAddPanel($('#catalogAddPanel').hidden, true));
+  $('#newCategoryName').addEventListener('input', () => { $('#catalogAddStatus').textContent = ''; });
+  $('#newCategoryName').addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){ setCatalogAddPanel(false); $('#catalogNewToggle').focus(); }
+  });
+  $('#catalogSearchClear').addEventListener('click', () => {
+    const input = $('#catalogSearch');
+    input.value = '';
+    renderCategories();
+    input.focus();
+  });
+  $('#catalogSearch').addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && e.target.value){ e.target.value = ''; renderCategories(); }
+  });
   $('#invoiceDiscountBtn').addEventListener('click', editInvoiceDiscount);
   $('#newCategoryName').addEventListener('keydown', (e) => { if(e.key === 'Enter') addRootCategory(); });
   $('#editRateBtn').addEventListener('click', editRate);
@@ -8008,16 +9277,23 @@
   }));
   $('#addClientTopBtn').addEventListener('click', addClient);
   $('#clientSearch').addEventListener('input', renderClientList);
+  $('#clientSearch').addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && e.target.value){ e.target.value = ''; renderClientList(); }
+  });
+  $('#clientSearchClear').addEventListener('click', () => {
+    const input = $('#clientSearch');
+    input.value = '';
+    renderClientList();
+    input.focus();
+  });
+  $('#clientList').addEventListener('click', onClientListClick);
   $('#clientSort').addEventListener('change', (e) => setClientView({ sort: e.target.value }));
   $all('.view-toggle button').forEach(b => b.addEventListener('click', () => setClientView({ view: b.dataset.view })));
   $('#clientFilterChips').addEventListener('click', (e) => {
     const chip = e.target.closest('[data-filter]');
     if(chip) setClientView({ filter: chip.dataset.filter });
   });
-  $('#clientResetBtn').addEventListener('click', () => {
-    $('#clientSearch').value = '';
-    setClientView({ filter: 'all' });
-  });
+  $('#clientResetBtn').addEventListener('click', resetClientFilters);
   $('#copyOwedBtn').addEventListener('click', copyOwedList);
   $('#clientSelect').addEventListener('change', () => {
     const client = getSelectedClient();
@@ -8050,13 +9326,15 @@
     $('#customerDetailsChev').classList.toggle('open');
   });
   $('#balanceLogToggle').addEventListener('click', () => {
-    $('#balanceLogBody').classList.toggle('collapsed');
+    const collapsed = $('#balanceLogBody').classList.toggle('collapsed');
     $('#balanceLogChev').classList.toggle('open');
+    $('#balanceLogToggle').setAttribute('aria-expanded', collapsed ? 'false' : 'true');
   });
 
   $('#salesHistoryToggle').addEventListener('click', () => {
-    $('#salesHistoryBody').classList.toggle('collapsed');
+    const collapsed = $('#salesHistoryBody').classList.toggle('collapsed');
     $('#salesHistoryChev').classList.toggle('open');
+    $('#salesHistoryToggle').setAttribute('aria-expanded', collapsed ? 'false' : 'true');
   });
   $('#amountReceived').addEventListener('input', (e) => {
     e.target.dataset.userEdited = 'true';
