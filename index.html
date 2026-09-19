@@ -59,76 +59,116 @@
   @media (min-width:1400px){
     .app{ max-width:1180px; }
   }
+  /* ==========================================================
+     Header, rate / balance cards and tab bar
+     ========================================================== */
   header.top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:4px 2px 18px;
-    margin-bottom:6px;
-    gap:12px;
-    flex-wrap:wrap;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:2px 0 16px;
   }
-  header.top h1{
-    font-size:25px;
-    letter-spacing:-0.02em;
+  .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .brand-mark{
+    width:42px; height:42px; flex:none; border-radius:13px;
+    display:grid; place-items:center; color:#fff;
+    background:linear-gradient(135deg,#6366F1 0%,#4338CA 100%);
+    box-shadow:0 6px 14px rgba(79,70,229,0.28);
   }
-  @media (min-width:1024px){
-    header.top h1{ font-size:29px; }
-  }
+  .brand-mark svg{ width:22px; height:22px; }
+  .brand-text{ min-width:0; }
+  header.top h1{ font-size:20px; line-height:1.15; letter-spacing:-0.02em; }
   header.top .tag{
-    font-size:13px;
-    color:var(--ink-soft);
-    letter-spacing:0.2px;
-    margin-top:3px;
-    font-weight:500;
+    font-size:12.5px; color:var(--ink-soft); margin-top:3px; font-weight:500;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  @media (min-width:1024px){ header.top h1{ font-size:24px; } header.top .tag{ font-size:13.5px; } }
+
+  .ghost-btn{
+    flex:none; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    height:40px; min-width:40px; padding:0 11px;
+    background:var(--paper-card); color:var(--ink);
+    border:1px solid var(--line-strong); border-radius:12px;
+    font:600 13.5px/1 'Inter',sans-serif; cursor:pointer;
+    transition:background .12s ease, border-color .12s ease;
+  }
+  .ghost-btn svg{ width:18px; height:18px; }
+  .ghost-btn span{ display:none; }
+  .ghost-btn:active{ background:var(--bg); }
+  @media (min-width:480px){ .ghost-btn span{ display:inline; } .ghost-btn{ padding:0 14px; } }
+  body.impersonating .ghost-btn span{ display:inline; }
+  @media (hover:hover){ .ghost-btn:hover{ background:var(--bg); border-color:#CDD0DE; } }
+
+  /* Rate + balance: stacked on phones, side by side from tablet up */
+  .top-stats{ display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:14px; }
+  @media (min-width:700px){ .top-stats{ grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; } }
+
+  .stat-card{
+    container-type:inline-size; container-name:stat;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:16px; box-shadow:var(--shadow);
+    padding:14px 16px 15px; min-width:0;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .stat-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .stat-title{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .stat-icon{
+    width:32px; height:32px; flex:none; border-radius:10px;
+    display:grid; place-items:center;
+  }
+  .stat-icon svg{ width:17px; height:17px; }
+  .stat-icon.tone-indigo{ background:var(--cedar-soft); color:var(--cedar); }
+  .stat-icon.tone-amber{ background:var(--brass-soft); color:var(--brass); }
+  .stat-label{
+    font-size:13.5px; font-weight:600; color:var(--ink-soft);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .stat-actions{ display:flex; gap:6px; flex:none; }
+  .stat-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    height:36px; min-width:36px; padding:0 10px;
+    background:var(--bg); color:var(--ink);
+    border:1px solid var(--line-strong); border-radius:11px;
+    font:600 13px/1 'Inter',sans-serif; cursor:pointer;
+    transition:background .12s ease, border-color .12s ease, transform .08s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .stat-btn svg{ width:16px; height:16px; flex:none; }
+  .stat-btn span{ display:none; }
+  .stat-btn:active{ background:var(--line); transform:scale(.97); }
+  .stat-btn:disabled{ opacity:.6; cursor:default; }
+  .stat-btn:focus-visible, .ghost-btn:focus-visible, .tab:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+  @media (hover:hover){ .stat-btn:not(:disabled):hover{ background:var(--paper-card); border-color:#CDD0DE; } }
+  .stat-btn.is-loading svg{ animation:statspin .8s linear infinite; }
+  @keyframes statspin{ to{ transform:rotate(360deg); } }
+  /* Roomy card: show the button labels too (icon-only when the card is narrow) */
+  @container stat (min-width:360px){
+    .stat-btn{ padding:0 12px; }
+    .stat-btn span{ display:inline; }
   }
 
-  /* Top stat bars (rate + balance) — stack on phone, sit side by side from tablet up */
-  .top-stats{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:10px;
-    margin-bottom:8px;
+  .stat-main{ display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 10px; min-width:0; }
+  .stat-value{
+    font-size:30px; line-height:1.1; font-weight:800; letter-spacing:-0.025em;
+    color:var(--ink); font-variant-numeric:tabular-nums; overflow-wrap:anywhere;
   }
-  @media (min-width:700px){
-    .top-stats{ grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px; }
-    .top-stats .rate-bar{ margin-bottom:0; height:100%; }
+  #rateDisplay{ color:var(--cedar); }
+  .stat-value.is-neg{ color:var(--danger); }
+  .stat-unit{ font-size:14px; font-weight:700; color:var(--ink-faint); letter-spacing:.02em; }
+  .stat-sub{ font-size:14px; font-weight:600; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .stat-meta{
+    display:flex; align-items:center; flex-wrap:wrap; gap:4px 8px;
+    font-size:12.5px; color:var(--ink-faint); font-weight:500; min-height:20px;
   }
+  .stat-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:11.5px; font-weight:700; letter-spacing:.02em;
+    padding:3px 8px; border-radius:999px;
+    background:var(--bg); color:var(--ink-soft);
+  }
+  .stat-badge:empty{ display:none; }
+  .stat-badge::before{ content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stat-badge.live{ background:var(--success-soft); color:var(--success); }
+  .stat-badge.manual{ background:var(--brass-soft); color:var(--brass); }
 
-  /* Rate bar */
-  .rate-bar{
-    background:var(--paper-card);
-    border:1px solid var(--line);
-    box-shadow:var(--shadow);
-    border-radius:var(--radius);
-    padding:14px 16px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    margin-bottom:10px;
-  }
-  .rate-bar .rate-label{
-    font-size:13.5px;
-    color:var(--ink-soft);
-    font-weight:600;
-  }
-  .rate-bar .rate-value{
-    font-family:'Inter', sans-serif;
-    font-size:22.5px;
-    font-weight:800;
-    letter-spacing:-0.02em;
-    color:var(--cedar);
-    margin-top:2px;
-  }
-  .rate-bar .rate-meta{
-    font-size:12.5px;
-    color:var(--ink-faint);
-    margin-top:2px;
-  }
-  .balance-bar{ margin-bottom:18px; }
-  .balance-bar .rate-value{ color:var(--brass); }
-  .rate-actions{ display:flex; gap:6px; }
   .icon-btn{
     background:var(--bg);
     border:1px solid var(--line-strong);
@@ -143,41 +183,40 @@
   }
   .icon-btn:active{ background:var(--line); }
 
-  /* Tabs */
+  /* Tab bar — icon above label on phones (all tabs fit without scrolling),
+     icon beside label from tablet up. Falls back to smooth horizontal
+     scrolling if there are ever more tabs than fit. */
   .tabs{
-    display:flex;
-    gap:4px;
-    background:var(--paper-card);
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:4px;
-    margin-bottom:18px;
-    overflow-x:auto;
-    box-shadow:var(--shadow);
+    display:flex; gap:2px;
+    background:var(--paper-card); border:1px solid var(--line);
+    border-radius:18px; padding:5px; margin-bottom:18px;
+    overflow-x:auto; box-shadow:var(--shadow);
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;
   }
+  .tabs::-webkit-scrollbar{ display:none; }
   .tab{
-    flex:1;
-    text-align:center;
-    padding:9px 6px;
-    font-size:14px;
-    font-weight:600;
-    color:var(--ink-soft);
-    cursor:pointer;
-    border-radius:999px;
-    background:none;
-    border:none;
-    font-family:'Inter', sans-serif;
-    white-space:nowrap;
+    flex:1 0 auto; min-width:52px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    padding:9px 4px 8px;
+    font:600 11.5px/1.1 'Inter',sans-serif; letter-spacing:.01em; white-space:nowrap;
+    color:var(--ink-soft); background:none; border:none; border-radius:13px;
+    cursor:pointer; scroll-snap-align:center; -webkit-tap-highlight-color:transparent;
     transition:background .12s ease, color .12s ease;
   }
+  .tab svg{ width:20px; height:20px; flex:none; }
   .tab.active{
-    color:#fff;
-    background:var(--cedar);
-    box-shadow:0 4px 10px rgba(79,70,229,0.28);
+    color:#fff; background:var(--cedar);
+    box-shadow:0 3px 8px rgba(79,70,229,0.28);
   }
+  @media (hover:hover){ .tab:not(.active):hover{ background:var(--bg); color:var(--ink); } }
   @media (min-width:700px){
-    .tabs{ overflow-x:visible; padding:5px; }
-    .tab{ padding:11px 8px; font-size:14.5px; }
+    .tabs{ border-radius:999px; gap:4px; padding:5px; overflow-x:visible; }
+    .tab{ flex:1; flex-direction:row; gap:8px; padding:11px 12px; font-size:14.5px; border-radius:999px; }
+    .tab svg{ width:18px; height:18px; }
+  }
+  .brand-mark svg, .stat-icon svg, .stat-btn svg, .ghost-btn svg, .tab svg{
+    fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
   }
 
   .section{ display:none; }
@@ -2864,47 +2903,62 @@
 <div class="app">
 
   <header class="top">
-    <div>
-      <h1>🏪 TDA Business</h1>
-      <div class="tag">catalog &middot; rate &middot; invoices &middot; balance</div>
-      <div class="guest-badge" id="guestBadge" style="display:none;">Guest mode — data saved on this device</div>
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 9l1.6-5h14.8L21 9"/><path d="M4 9v11h16V9"/><path d="M9.5 20v-5.5h5V20"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/></svg></div>
+      <div class="brand-text">
+        <h1>TDA Business</h1>
+        <div class="tag">catalog &middot; rate &middot; invoices &middot; balance</div>
+        <div class="guest-badge" id="guestBadge" style="display:none;">Guest mode — data saved on this device</div>
+      </div>
     </div>
-    <button class="icon-btn" id="signOutBtn" style="align-self:flex-start;">🚪 sign out</button>
+    <button class="ghost-btn" id="signOutBtn" type="button" aria-label="Sign out" title="Sign out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg><span id="signOutLabel">Sign out</span></button>
   </header>
 
   <div class="top-stats">
-    <div class="rate-bar">
-      <div>
-        <div class="rate-label">💱 1 USD equals</div>
-        <div class="rate-value" id="rateDisplay">—</div>
-        <div class="rate-meta" id="rateMeta"></div>
+    <div class="stat-card">
+      <div class="stat-head">
+        <div class="stat-title">
+          <span class="stat-icon tone-indigo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8 3-4 4 4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
+          <span class="stat-label">1 USD equals</span>
+        </div>
+        <div class="stat-actions">
+          <button class="stat-btn" id="editRateBtn" type="button" aria-label="Edit rate" title="Edit rate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Edit</span></button>
+          <button class="stat-btn" id="refreshRateBtn" type="button" aria-label="Refresh live rate" title="Refresh live rate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15 6.7L21 16"/><path d="M16 16h5v5"/></svg><span>Refresh</span></button>
+        </div>
       </div>
-      <div class="rate-actions">
-        <button class="icon-btn" id="editRateBtn">✏️ edit</button>
-        <button class="icon-btn" id="refreshRateBtn">🔄 refresh</button>
+      <div class="stat-main">
+        <span class="stat-value" id="rateDisplay">—</span>
+        <span class="stat-unit">LBP</span>
       </div>
+      <div class="stat-meta"><span class="stat-badge" id="rateBadge"></span><span id="rateMeta"></span></div>
     </div>
 
-    <div class="rate-bar balance-bar">
-      <div>
-        <div class="rate-label">🏦 Business balance</div>
-        <div class="rate-value" id="balanceDisplay">$0.00</div>
-        <div class="rate-meta" id="balanceMeta"></div>
+    <div class="stat-card">
+      <div class="stat-head">
+        <div class="stat-title">
+          <span class="stat-icon tone-amber" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+          <span class="stat-label">Business balance</span>
+        </div>
+        <div class="stat-actions">
+          <button class="stat-btn" id="addFundsBtn" type="button" aria-label="Add funds" title="Add funds"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add</span></button>
+          <button class="stat-btn" id="withdrawFundsBtn" type="button" aria-label="Withdraw funds" title="Withdraw funds"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg><span>Withdraw</span></button>
+        </div>
       </div>
-      <div class="rate-actions">
-        <button class="icon-btn" id="addFundsBtn">➕ add</button>
-        <button class="icon-btn" id="withdrawFundsBtn">➖ withdraw</button>
+      <div class="stat-main">
+        <span class="stat-value" id="balanceDisplay">$0.00</span>
+        <span class="stat-sub" id="balanceLbp"></span>
       </div>
+      <div class="stat-meta"><span id="balanceMeta"></span></div>
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" data-tab="invoice">🧾 Invoice</button>
-    <button class="tab" data-tab="catalog">📦 Catalog</button>
-    <button class="tab" data-tab="clients">👥 Clients</button>
-    <button class="tab" data-tab="reports">📊 Reports</button>
-    <button class="tab" data-tab="settings">⚙️ Settings</button>
-    <button class="tab" data-tab="admin" id="adminTabBtn" style="display:none;">🛡️ Admin</button>
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab active" data-tab="invoice" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 9h8M8 13h8"/></svg><span>Invoice</span></button>
+    <button class="tab" data-tab="catalog" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7.5 4.3 9 5.2"/><path d="M21 8v8a2 2 0 0 1-1 1.7l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.7l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg><span>Catalog</span></button>
+    <button class="tab" data-tab="clients" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg><span>Clients</span></button>
+    <button class="tab" data-tab="reports" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 17v-6M13 17V7M18 17v-3"/></svg><span>Reports</span></button>
+    <button class="tab" data-tab="settings" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M17 6h3"/><circle cx="15" cy="6" r="2"/><path d="M4 12h3M11 12h9"/><circle cx="9" cy="12" r="2"/><path d="M4 18h11M19 18h1"/><circle cx="17" cy="18" r="2"/></svg><span>Settings</span></button>
+    <button class="tab" data-tab="admin" id="adminTabBtn" role="tab" aria-selected="false" style="display:none;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Admin</span></button>
   </div>
 
   <!-- INVOICE TAB -->
@@ -3450,6 +3504,10 @@
               </div>
             </div>
             <div class="settings-hint">Printed invoices only. The logo isn't included in the WhatsApp or text version.</div>
+            <div class="settings-hint" id="slimInfo"></div>
+            <div class="sc-actions">
+              <button class="btn ghost small" id="slimInvoicesBtn" type="button" style="display:none">Shrink saved invoices</button>
+            </div>
           </div>
         </div>
 
@@ -3735,7 +3793,9 @@
     if(!on) return;
     document.getElementById('impBarText').textContent = 'Viewing as ' + (sessionStorage.getItem(IMP_EMAIL_KEY) || 'a user') + '. Changes are saved to their account.';
     document.getElementById('impBarExit').addEventListener('click', exitImpersonation);
-    document.getElementById('signOutBtn').textContent = '↩ return to admin';
+    document.getElementById('signOutLabel').textContent = 'Return to admin';
+    document.getElementById('signOutBtn').title = 'Return to admin';
+    document.getElementById('signOutBtn').setAttribute('aria-label', 'Return to admin');
   }
   // Exposed so the main app script (a separate, non-module <script> block)
   // can call other Worker routes too, like /api/admin/users.
@@ -4421,27 +4481,40 @@
   // ---------- Storage ----------
   async function loadAll(){
     let loadError = null;
-    try{
-      const c = await window.storage.get('catalog');
-      if(c && c.value){
-        const parsed = JSON.parse(c.value);
-        state.categories = parsed.categories || [];
-        state.products = parsed.products || [];
-      }
-    }catch(e){ loadError = e; }
-    try{
-      const r = await window.storage.get('rate');
-      if(r && r.value){ state.rate = JSON.parse(r.value); }
-    }catch(e){ loadError = e; }
-    try{
-      const cl = await window.storage.get('clients');
-      if(cl && cl.value){ state.clients = JSON.parse(cl.value); }
-    }catch(e){ loadError = e; }
-    try{
-      state.sales = await loadAllSales();
-      state.salesShowingOfflineCache = false;
-    }catch(e){
-      loadError = e;
+    // Every request below is independent, so fire them all at once instead of
+    // waiting for each round-trip to the server before starting the next.
+    // (Previously: ~9 requests back-to-back, THEN the invoice list.)
+    const settle = (p) => p.then(value => ({ value }), error => ({ error }));
+    const KEYS = ['catalog','rate','clients','balance','balanceLog','customVoucherFields','invoiceSettings','clientViewPrefs'];
+    const pending = {};
+    KEYS.forEach(k => { pending[k] = settle(window.storage.get(k)); });
+    const salesPending = settle(loadAllSales());
+    const got = {};
+    for(const k of KEYS){ got[k] = await pending[k]; }
+
+    // Same error behaviour as before: a failed request OR a bad JSON payload
+    // sets loadError (except the optional view prefs, which are swallowed).
+    const apply = (k, optional, fn, fnEmpty) => {
+      const r = got[k];
+      if(r.error){ if(!optional) loadError = r.error; return; }
+      try{
+        const v = r.value;
+        if(v && v.value){ fn(v.value); }
+        else if(fnEmpty){ fnEmpty(); }
+      }catch(e){ if(!optional) loadError = e; }
+    };
+
+    apply('catalog', false, (raw) => {
+      const parsed = JSON.parse(raw);
+      state.categories = parsed.categories || [];
+      state.products = parsed.products || [];
+    });
+    apply('rate', false, (raw) => { state.rate = JSON.parse(raw); });
+    apply('clients', false, (raw) => { state.clients = JSON.parse(raw); });
+
+    const salesResult = await salesPending;
+    if(salesResult.error){
+      loadError = salesResult.error;
       // Don't let a failed/ambiguous fetch blank out invoices you already
       // had — fall back to the last clean copy saved on this device and
       // flag it, so the UI can say clearly "this may be out of date"
@@ -4451,48 +4524,37 @@
         state.sales = backup;
         state.salesShowingOfflineCache = true;
       }
+    } else {
+      state.sales = salesResult.value;
+      state.salesShowingOfflineCache = false;
     }
-    try{
-      const b = await window.storage.get('balance');
-      if(b && b.value){ state.balance = JSON.parse(b.value); }
-    }catch(e){ loadError = e; }
-    try{
-      const bl = await window.storage.get('balanceLog');
-      if(bl && bl.value){ state.balanceLog = JSON.parse(bl.value); }
-    }catch(e){ loadError = e; }
-    try{
-      const cvf = await window.storage.get('customVoucherFields');
-      if(cvf && cvf.value){ state.customVoucherFields = migrateCustomVoucherFields(JSON.parse(cvf.value)); }
-    }catch(e){ loadError = e; }
-    try{
-      const inv = await window.storage.get('invoiceSettings');
-      if(inv && inv.value){
-        const parsed = JSON.parse(inv.value);
-        state.paymentMethods = parsed.paymentMethods || [];
-        state.invoiceLang = parsed.lang === 'ar' ? 'ar' : 'en';
-        if(parsed.invoiceSettings){
-          state.invoiceSettings = Object.assign({}, state.invoiceSettings, parsed.invoiceSettings);
-        }
-        if(parsed.messageTemplates){
-          state.messageTemplates = {
-            en: Object.assign({}, state.messageTemplates.en, parsed.messageTemplates.en),
-            ar: Object.assign({}, state.messageTemplates.ar, parsed.messageTemplates.ar)
-          };
-        }
-      } else {
-        // First run: seed with the example payment method so there's something to edit.
-        state.paymentMethods = [{ id: uid(), label: 'Whish', value: '70817032', enabled: true }];
+
+    apply('balance', false, (raw) => { state.balance = JSON.parse(raw); });
+    apply('balanceLog', false, (raw) => { state.balanceLog = JSON.parse(raw); });
+    apply('customVoucherFields', false, (raw) => { state.customVoucherFields = migrateCustomVoucherFields(JSON.parse(raw)); });
+    apply('invoiceSettings', false, (raw) => {
+      const parsed = JSON.parse(raw);
+      state.paymentMethods = parsed.paymentMethods || [];
+      state.invoiceLang = parsed.lang === 'ar' ? 'ar' : 'en';
+      if(parsed.invoiceSettings){
+        state.invoiceSettings = Object.assign({}, state.invoiceSettings, parsed.invoiceSettings);
       }
-    }catch(e){ loadError = e; }
-    try{
-      const cv = await window.storage.get('clientViewPrefs');
-      if(cv && cv.value){
-        const p = JSON.parse(cv.value);
-        if(p && CLIENT_SORT_KEYS.includes(p.sort)) state.clientView.sort = p.sort;
-        if(p && CLIENT_FILTERS.some(f => f.key === p.filter)) state.clientView.filter = p.filter;
-        if(p && (p.view === 'cards' || p.view === 'list')) state.clientView.view = p.view;
+      if(parsed.messageTemplates){
+        state.messageTemplates = {
+          en: Object.assign({}, state.messageTemplates.en, parsed.messageTemplates.en),
+          ar: Object.assign({}, state.messageTemplates.ar, parsed.messageTemplates.ar)
+        };
       }
-    }catch(e){ /* saved view choices are optional */ }
+    }, () => {
+      // First run: seed with the example payment method so there's something to edit.
+      state.paymentMethods = [{ id: uid(), label: 'Whish', value: '70817032', enabled: true }];
+    });
+    apply('clientViewPrefs', true, (raw) => {
+      const p = JSON.parse(raw);
+      if(p && CLIENT_SORT_KEYS.includes(p.sort)) state.clientView.sort = p.sort;
+      if(p && CLIENT_FILTERS.some(f => f.key === p.filter)) state.clientView.filter = p.filter;
+      if(p && (p.view === 'cards' || p.view === 'list')) state.clientView.view = p.view;
+    });
     if(loadError){ alertBanner('Could not load your data: ' + loadError.message); }
 
     renderCategories();
@@ -4568,10 +4630,17 @@
     }catch(e){ return null; }
   }
 
+  // Once the server has confirmed the one-time migration is finished, remember
+  // that on this device so every later load skips the extra round-trip.
+  function salesMigratedFlagKey(){ return SALES_MIGRATION_KEY + ':' + (window.guestMode ? 'guest' : (window.authToken || 'unknown')); }
+  function salesMigratedLocally(){ try{ return localStorage.getItem(salesMigratedFlagKey()) === '1'; }catch(e){ return false; } }
+  function markSalesMigratedLocally(){ try{ localStorage.setItem(salesMigratedFlagKey(), '1'); }catch(e){} }
+
   async function migrateSalesIfNeeded(){
+    if(salesMigratedLocally()) return;
     try{
       const done = await window.storage.get(SALES_MIGRATION_KEY);
-      if(done && done.value) return;
+      if(done && done.value){ markSalesMigratedLocally(); return; }
     }catch(e){ /* if we can't tell, fall through and try anyway below */ }
 
     let old;
@@ -4587,7 +4656,7 @@
 
     if(!old || !old.value){
       // Genuinely nothing to migrate — safe to mark done.
-      try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); }
+      try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); markSalesMigratedLocally(); }
       catch(e){ console.error(e); }
       return;
     }
@@ -4624,7 +4693,7 @@
     }
 
     if(allOk){
-      try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); }
+      try{ await window.storage.set(SALES_MIGRATION_KEY, 'true'); markSalesMigratedLocally(); }
       catch(e){ console.error(e); }
     }
     // If something failed partway through, deliberately leave the "done"
@@ -4703,8 +4772,61 @@
     return sales;
   }
 
+  // The printable snapshot of each invoice used to embed the logo as a base64
+  // image — in BOTH languages — so a single ~500 KB logo meant >1 MB per
+  // invoice, every invoice downloaded on every load. Now the logo is stored
+  // as a small placeholder and filled back in from Settings at print time.
+  const LOGO_TOKEN = '{{LOGO}}';
+  const LOGO_IMG_RE = /(<img class="pr-logo" src=")data:[^"]*(")/g;
+  function stripLogoFromHtml(html){
+    return typeof html === 'string' ? html.replace(LOGO_IMG_RE, '$1' + LOGO_TOKEN + '$2') : html;
+  }
+  function fillLogoInHtml(html){
+    if(typeof html !== 'string' || html.indexOf(LOGO_TOKEN) === -1) return html;
+    const logo = state.invoiceSettings && state.invoiceSettings.logo;
+    if(logo) return html.split(LOGO_TOKEN).join(logo);
+    return html.replace(/<img class="pr-logo" src="\{\{LOGO\}\}" alt="logo">/g, '');
+  }
+  function slimSaleForStorage(rec){
+    const sh = rec && rec.snapshotHtml;
+    if(!sh) return rec;
+    let changed = false, out;
+    if(typeof sh === 'string'){
+      out = stripLogoFromHtml(sh);
+      changed = out !== sh;
+    } else if(typeof sh === 'object'){
+      out = {};
+      Object.keys(sh).forEach(k => { out[k] = stripLogoFromHtml(sh[k]); if(out[k] !== sh[k]) changed = true; });
+    }
+    return changed ? Object.assign({}, rec, { snapshotHtml: out }) : rec;
+  }
+  function computeSlimStats(){
+    let count = 0, bytes = 0;
+    state.sales.forEach(sale => {
+      const sh = sale.snapshotHtml;
+      const parts = !sh ? [] : (typeof sh === 'string' ? [sh] : Object.keys(sh).map(k => sh[k]));
+      let saved = 0;
+      parts.forEach(h => { if(typeof h === 'string') saved += h.length - stripLogoFromHtml(h).length; });
+      if(saved > 0){ count++; bytes += saved; }
+    });
+    return { count, bytes };
+  }
+  function updateSlimInfo(){
+    const el = document.getElementById('slimInfo');
+    const btn = document.getElementById('slimInvoicesBtn');
+    if(!el || !btn) return;
+    const st = computeSlimStats();
+    if(st.count){
+      el.textContent = st.count + ' saved invoice' + (st.count === 1 ? '' : 's') + ' still carry a copy of your logo (about ' + (st.bytes / 1048576).toFixed(1) + ' MB in total). Shrinking them makes the app load much faster.';
+      btn.style.display = '';
+    } else {
+      el.textContent = 'Saved invoices are lean — no duplicate logo copies.';
+      btn.style.display = 'none';
+    }
+  }
+
   async function saveSaleRecord(record){
-    try{ await window.storage.set(SALES_PREFIX + record.id, JSON.stringify(record)); }
+    try{ await window.storage.set(SALES_PREFIX + record.id, JSON.stringify(slimSaleForStorage(record))); }
     catch(e){ console.error(e); alertBanner('Could not save invoice: ' + e.message); }
   }
 
@@ -4739,24 +4861,28 @@
   }
 
   // ---------- Rate ----------
+  function fmtStatWhen(t){
+    return new Date(t).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+  }
   function renderRate(){
-    $('#rateDisplay').textContent = fmtLbp(state.rate.value);
-    let meta = '';
+    $('#rateDisplay').textContent = fmtLbp(state.rate.value).replace(/\s*LBP$/, '');
+    let badge = 'Default', badgeCls = 'stat-badge', meta = 'Tap refresh or edit';
     if(state.rate.source === 'api' && state.rate.updatedAt){
-      meta = 'live rate · ' + new Date(state.rate.updatedAt).toLocaleString();
+      badge = 'Live rate'; badgeCls += ' live'; meta = fmtStatWhen(state.rate.updatedAt);
     } else if(state.rate.source === 'manual' && state.rate.updatedAt){
-      meta = 'set manually · ' + new Date(state.rate.updatedAt).toLocaleString();
-    } else {
-      meta = 'default rate — tap refresh or edit';
+      badge = 'Set manually'; badgeCls += ' manual'; meta = fmtStatWhen(state.rate.updatedAt);
     }
+    const badgeEl = $('#rateBadge');
+    badgeEl.textContent = badge;
+    badgeEl.className = badgeCls;
     $('#rateMeta').textContent = meta;
     $('#rateUsedLine').textContent = '1 USD = ' + fmtLbp(state.rate.value);
   }
 
   async function refreshRate(){
     const btn = $('#refreshRateBtn');
-    const original = btn.textContent;
-    btn.textContent = '...';
+    btn.classList.add('is-loading');
+    btn.disabled = true;
     try{
       const res = await fetch('https://open.er-api.com/v6/latest/USD');
       const data = await res.json();
@@ -4770,7 +4896,8 @@
     }catch(e){
       alertBanner("Couldn't fetch a live rate right now. You can enter it manually with 'edit'.");
     }
-    btn.textContent = original;
+    btn.classList.remove('is-loading');
+    btn.disabled = false;
   }
 
   async function editRate(){
@@ -4794,10 +4921,12 @@
 
   // ---------- Business balance ----------
   function renderBalance(){
-    $('#balanceDisplay').textContent = fmtUsd(state.balance.value) + '  (' + fmtLbp(state.balance.value * state.rate.value) + ')';
+    $('#balanceDisplay').textContent = fmtUsd(state.balance.value);
+    $('#balanceDisplay').classList.toggle('is-neg', state.balance.value < 0);
+    $('#balanceLbp').textContent = '≈ ' + fmtLbp(state.balance.value * state.rate.value);
     $('#balanceMeta').textContent = state.balance.updatedAt
-      ? 'last updated ' + new Date(state.balance.updatedAt).toLocaleString()
-      : 'cash the business actually has on hand';
+      ? 'Updated ' + fmtStatWhen(state.balance.updatedAt)
+      : 'Cash the business actually has on hand';
   }
 
   // Applies a cash movement to the business balance (positive = cash in,
@@ -8320,6 +8449,10 @@
   // the saved totals/items (with translated labels) rather than pulled from
   // an exact snapshot.
   function getSaleSnapshot(s, field, lang, fallbackFn){
+    const out = getSaleSnapshotRaw(s, field, lang, fallbackFn);
+    return field === 'snapshotHtml' ? fillLogoInHtml(out) : out;
+  }
+  function getSaleSnapshotRaw(s, field, lang, fallbackFn){
     const snap = s[field];
     if(snap && typeof snap === 'object' && !Array.isArray(snap)){
       return snap[lang] || snap.en || snap.ar || fallbackFn(s, lang);
@@ -9040,6 +9173,7 @@
   // ---------- Settings (header/footer/logo/printer) ----------
   function renderSettingsTab(){
     const s = state.invoiceSettings;
+    updateSlimInfo();
     $('#setHeaderTitle').value = s.headerTitle || '';
     $('#setHeaderSubtitle').value = s.headerSubtitle || '';
     $('#setAddress').value = s.address || '';
@@ -9781,8 +9915,9 @@
   $all('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       flushSettingsSave();
-      $all('.tab').forEach(t => t.classList.remove('active'));
+      $all('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
       tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
       if(tab.scrollIntoView) tab.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
       $all('.section').forEach(s => s.classList.remove('active'));
       $('#tab-' + tab.dataset.tab).classList.add('active');
@@ -10108,6 +10243,10 @@
         <div class="modal-field">
           <label class="field-label" for="adPwInput">New password (at least 6 characters)</label>
           <input type="text" id="adPwInput" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button type="button" class="btn ghost small" id="adPwGen">Generate</button>
+            <button type="button" class="btn ghost small" id="adPwCopy">Copy</button>
+          </div>
         </div>
         <div class="modal-error" id="adPwError"></div>
         <div class="modal-actions">
@@ -10117,6 +10256,19 @@
       </form>`;
     modalOverlay.classList.add('show');
     $('#adPwBack').addEventListener('click', () => adOpenSheet(adKey(u)));
+    $('#adPwGen').addEventListener('click', () => {
+      // 12 chars, no look-alikes (0/O, 1/l/I), so it is easy to read out or type.
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+      const buf = new Uint32Array(12);
+      crypto.getRandomValues(buf);
+      $('#adPwInput').value = Array.from(buf, n => chars[n % chars.length]).join('');
+    });
+    $('#adPwCopy').addEventListener('click', async () => {
+      const v = $('#adPwInput').value;
+      if(!v){ alertBanner('Nothing to copy yet.'); return; }
+      try{ await navigator.clipboard.writeText(v); alertBanner('Copied.'); }
+      catch(e){ const i = $('#adPwInput'); i.select(); alertBanner('Press and hold to copy.'); }
+    });
     $('#adPwForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const pw = $('#adPwInput').value;
@@ -10360,6 +10512,31 @@
   updateSearchInputsVisibility();
   updateSearchProductInputsVisibility();
   attachThousandsFormatting($('#amountReceived'));
+
+  $('#slimInvoicesBtn').addEventListener('click', async () => {
+    const st = computeSlimStats();
+    if(!st.count){ updateSlimInfo(); return; }
+    const ok = await confirmModal('This removes the duplicate copy of your logo stored inside ' + st.count + ' saved invoice' + (st.count === 1 ? '' : 's') + ' (about ' + (st.bytes / 1048576).toFixed(1) + ' MB). Amounts, items and dates are not touched. Reprinted old invoices will show your current logo. Continue?');
+    if(!ok) return;
+    const btn = $('#slimInvoicesBtn');
+    btn.disabled = true;
+    let done = 0, failed = 0;
+    for(const sale of state.sales){
+      const slim = slimSaleForStorage(sale);
+      if(slim === sale) continue;
+      btn.textContent = 'Shrinking… ' + done + '/' + st.count;
+      try{
+        await window.storage.set(SALES_PREFIX + sale.id, JSON.stringify(slim));
+        sale.snapshotHtml = slim.snapshotHtml;
+        done++;
+      }catch(e){ failed++; console.error('Could not shrink invoice ' + sale.id + ':', e); }
+    }
+    btn.disabled = false;
+    btn.textContent = 'Shrink saved invoices';
+    if(!failed) saveSalesBackupCache(state.sales);
+    updateSlimInfo();
+    alertBanner(failed ? ('Shrunk ' + done + ' invoices; ' + failed + ' failed — try again.') : ('Done — shrunk ' + done + ' invoices.'));
+  });
 
   window.addEventListener('firebase-ready', () => {
     loadAll().then(() => {
