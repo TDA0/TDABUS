@@ -183,15 +183,55 @@
   .section{ display:none; }
   .section.active{ display:block; }
 
+  /* Catalog tab header */
+  .catalog-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-bottom:0; flex-wrap:wrap;
+  }
+  .catalog-head-text{ min-width:0; flex:1 1 200px; }
+  .catalog-head h2{ font-size:21px; }
+  .catalog-head .catalog-subtitle{
+    font-size:12.5px; color:var(--ink-soft); font-weight:500;
+    margin-top:3px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+
+  /* Sticky toolbar: search + "add top-level category" always stay reachable
+     at the top, so adding a category never requires scrolling the list. */
+  .catalog-toolbar{
+    position:sticky; top:0; z-index:20;
+    display:flex; flex-direction:column; gap:12px;
+    background:var(--bg);
+    padding:8px 0 14px;
+    margin:0 0 4px;
+  }
+  .catalog-toolbar-card{
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--paper-card); box-shadow:var(--shadow);
+    padding:14px;
+  }
+  .catalog-toolbar .search-box{ margin-bottom:0; }
+  .catalog-add-label{
+    font-size:12px; font-weight:700; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:0.4px;
+    margin:12px 0 6px;
+    display:block;
+  }
+  .catalog-toolbar .add-category{ margin-top:0; }
+  @media (min-width:640px){
+    .catalog-toolbar-card{ padding:16px; }
+  }
+
   /* Reflow lists/cards into columns once there's room, without touching JS */
   @media (min-width:900px){
-    #categoryList{ display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start; }
+    #categoryList{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
     #categoryList .category{ margin-bottom:0; }
-    #tab-settings.active{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
-    #tab-settings .settings-card{ margin-bottom:0; }
   }
   @media (min-width:1300px){
     #categoryList{ grid-template-columns:1fr 1fr 1fr; }
+  }
+  @media (min-width:1700px){
+    #categoryList{ grid-template-columns:repeat(4, 1fr); }
   }
 
   /* Category card */
@@ -202,18 +242,22 @@
     background:var(--paper-card);
     box-shadow:var(--shadow);
     overflow:hidden;
+    transition:box-shadow .15s ease;
   }
+  .category:hover{ box-shadow:0 8px 22px rgba(23,25,35,0.1); }
   .category-head{
     display:flex;
     align-items:center;
     justify-content:space-between;
     flex-wrap:wrap;
-    padding:13px 15px;
+    padding:14px 16px;
     background:none;
     cursor:pointer;
     gap:6px 8px;
+    transition:background .12s ease;
   }
-  .category-head-left{ display:flex; align-items:center; gap:9px; min-width:0; flex:1 1 100%; }
+  .category-head:hover{ background:var(--bg); }
+  .category-head-left{ display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 100%; }
   .category-head-left h3{
     overflow:hidden;
     text-overflow:ellipsis;
@@ -222,7 +266,7 @@
     min-width:0;
   }
   .cat-thumb{
-    width:30px; height:30px; border-radius:8px; object-fit:cover; flex-shrink:0;
+    width:32px; height:32px; border-radius:9px; object-fit:cover; flex-shrink:0;
     border:1px solid var(--line);
   }
   .cat-chev{
@@ -234,9 +278,12 @@
   }
   .cat-chev.open{ transform:rotate(180deg); }
   .category-head h3{ font-size:17px; font-weight:700; }
-  .category-head .count{ font-size:13px; color:var(--ink-faint); font-weight:500; white-space:nowrap; }
+  .category-head .count{
+    font-size:12px; font-weight:700; color:var(--ink-soft); white-space:nowrap;
+    background:var(--bg); border-radius:999px; padding:4px 10px;
+  }
   .category-head-right{ display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:auto; }
-  .category-body{ padding:2px 15px 14px; }
+  .category-body{ padding:4px 16px 16px; border-top:1px dashed var(--line); }
   .category-body.collapsed{ display:none; }
   .cat-section-label{
     font-size:12px;
@@ -244,7 +291,7 @@
     color:var(--ink-faint);
     text-transform:uppercase;
     letter-spacing:0.4px;
-    margin:10px 0 4px;
+    margin:12px 0 6px;
   }
   .add-product-toggle{
     background:var(--cedar-soft);
@@ -254,20 +301,25 @@
     font-family:'Inter', sans-serif;
     font-size:14px;
     font-weight:700;
-    padding:9px 12px;
+    padding:10px 12px;
     width:100%;
     cursor:pointer;
-    margin-top:8px;
+    margin-top:10px;
+    transition:background .12s ease;
   }
+  .add-product-toggle:hover{ background:#E3E6FF; }
 
   .product-row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:10px 0;
+    padding:10px 6px;
     border-bottom:1px solid var(--line);
+    border-radius:var(--radius-sm);
     gap:8px;
+    transition:background .12s ease;
   }
+  .product-row:hover{ background:var(--bg); }
   .product-row:last-child{ border-bottom:none; }
   .product-row-left{ display:flex; align-items:center; gap:10px; min-width:0; }
   .product-thumb{
@@ -277,6 +329,9 @@
   .product-name{ font-size:16px; font-weight:600; }
   .product-prices{ font-size:13.5px; color:var(--ink-soft); margin-top:2px; }
   .product-actions{ display:flex; gap:4px; flex-shrink:0; }
+  .product-row .product-actions .mini-btn{ background:#fff; border-color:var(--line); }
+  .product-row .product-actions .mini-btn:hover{ background:var(--bg); border-color:var(--line-strong); }
+  .product-row .product-actions .mini-btn.danger:hover{ background:#FDEDED; }
   .mini-btn{
     background:var(--bg);
     border:1px solid transparent;
@@ -298,6 +353,13 @@
     border-top:1px dashed var(--line-strong);
   }
   .add-row-inline{ display:flex; gap:6px; }
+  .category-body .add-row{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    padding:12px;
+    margin-top:10px;
+  }
   input, select{
     font-family:'Inter', sans-serif;
     font-size:16px;
@@ -335,11 +397,25 @@
   .btn.small{ padding:8px 10px; font-size:13.5px; border-radius:8px; }
   .status-btns{ display:flex; gap:6px; }
   .status-btns button{ flex:1; }
+  .status-btns button:disabled{ opacity:.4; cursor:not-allowed; }
+  .walkin-hint{
+    display:flex; align-items:center; justify-content:space-between; gap:8px 10px; flex-wrap:wrap;
+    margin-top:8px; padding:9px 12px; font-size:13px; line-height:1.4;
+    color:var(--ink-soft); background:var(--brass-soft); border-radius:var(--radius-sm);
+  }
+  .walkin-hint .mini-btn{ background:#fff; border-color:var(--line-strong); color:var(--ink); }
 
   .add-category{
     display:flex;
     gap:6px;
     margin-top:4px;
+  }
+  .category-body .add-category{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    padding:9px;
+    margin-top:12px;
   }
 
   .empty-hint{
@@ -738,93 +814,220 @@
   .clients-summary{
     display:grid;
     grid-template-columns:repeat(3, 1fr);
-    gap:8px;
-    margin-bottom:14px;
+    gap:10px;
+    margin-bottom:16px;
   }
   .client-stat{
+    position:relative;
     border:1px solid var(--line);
     border-radius:var(--radius);
     background:var(--paper-card);
     box-shadow:var(--shadow);
-    padding:12px 8px;
+    padding:14px 8px 13px;
     text-align:center;
+    overflow:hidden;
   }
+  .client-stat::before{
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background:var(--cedar); opacity:.55;
+  }
+  .client-stat.owed::before{ background:var(--burgundy); opacity:.7; }
+  .client-stat.credit::before{ background:var(--success); opacity:.7; }
   .client-stat .cs-label{
     font-size:11px; color:var(--ink-soft); font-weight:700;
-    text-transform:uppercase; letter-spacing:0.3px;
+    text-transform:uppercase; letter-spacing:0.4px;
   }
   .client-stat .cs-value{
-    font-family:'Inter', sans-serif; font-size:17px; font-weight:800;
-    letter-spacing:-0.02em; margin-top:5px; color:var(--ink);
+    font-family:'Inter', sans-serif; font-size:18px; font-weight:800;
+    letter-spacing:-0.02em; margin-top:6px; color:var(--ink);
   }
   .client-stat.owed .cs-value{ color:var(--burgundy); }
   .client-stat.credit .cs-value{ color:var(--success); }
   @media (min-width:700px){
-    .client-stat{ padding:16px 10px; }
-    .client-stat .cs-value{ font-size:20px; }
+    .client-stat{ padding:18px 10px 16px; }
+    .client-stat .cs-value{ font-size:22px; }
+  }
+  @media (max-width:359px){
+    .clients-summary{ gap:7px; }
+    .client-stat{ padding:11px 5px 10px; }
+    .client-stat .cs-label{ font-size:9.5px; }
+    .client-stat .cs-value{ font-size:15px; }
   }
 
   .client-grid{
     display:grid;
     grid-template-columns:1fr;
-    gap:10px;
+    gap:12px;
     margin-bottom:16px;
   }
-  @media (min-width:700px){
-    .client-grid{ grid-template-columns:1fr 1fr; gap:12px; }
+  @media (min-width:640px){
+    .client-grid{ grid-template-columns:1fr 1fr; gap:14px; }
   }
-  @media (min-width:1200px){
+  @media (min-width:1024px){
     .client-grid{ grid-template-columns:1fr 1fr 1fr; }
+  }
+  @media (min-width:1400px){
+    .client-grid{ grid-template-columns:repeat(4, 1fr); }
   }
 
   .client-card{
     display:flex;
     flex-direction:column;
-    gap:10px;
-    padding:14px 15px;
+    gap:12px;
+    padding:16px 17px;
     border:1px solid var(--line);
     border-radius:var(--radius);
     background:var(--paper-card);
     box-shadow:var(--shadow);
-    transition:box-shadow .15s ease, transform .1s ease;
+    transition:box-shadow .18s ease, transform .12s ease, border-color .15s ease;
   }
-  .client-card:hover{ box-shadow:0 6px 20px rgba(23,25,35,0.1); }
-  .client-card-top{ display:flex; align-items:center; gap:11px; min-width:0; }
+  .client-card:hover{
+    box-shadow:0 10px 26px rgba(23,25,35,0.12);
+    transform:translateY(-2px);
+  }
+  .client-card-top{ display:flex; align-items:center; gap:12px; min-width:0; }
   .client-avatar{
-    width:42px; height:42px; border-radius:50%;
+    width:44px; height:44px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    color:#fff; font-weight:800; font-size:14.5px; letter-spacing:0.2px;
+    color:#fff; font-weight:800; font-size:15px; letter-spacing:0.2px;
     flex-shrink:0;
-    box-shadow:0 2px 6px rgba(23,25,35,0.15);
+    box-shadow:0 0 0 3px #fff, 0 0 0 4.5px var(--line), 0 3px 8px rgba(23,25,35,0.18);
   }
   .client-card-info{ min-width:0; flex:1; }
   .client-name{
-    font-size:16px; font-weight:700;
+    font-size:16.5px; font-weight:700;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .client-phone{
     font-size:12.5px; color:var(--ink-soft); margin-top:2px;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
-  .client-balance-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .client-balance-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding-top:1px; }
   .client-balance-pill{
     display:inline-flex; align-items:center; gap:5px;
     font-size:12.5px; font-weight:700;
-    padding:6px 11px; border-radius:999px;
+    padding:6px 12px; border-radius:999px;
     white-space:nowrap;
   }
   .client-balance-pill.owes{ background:#FDEDED; color:var(--burgundy); }
   .client-balance-pill.credit{ background:var(--success-soft); color:var(--success); }
   .client-balance-pill.settled{ background:var(--bg); color:var(--ink-faint); }
-  .client-balance-sub{ font-size:12px; color:var(--ink-faint); white-space:nowrap; }
-  .client-actions{ display:flex; flex-wrap:wrap; gap:6px; padding-top:8px; border-top:1px dashed var(--line-strong); }
-  .client-actions .mini-btn{ flex:1 1 auto; text-align:center; }
+  .client-balance-sub{ font-size:12px; color:var(--ink-faint); white-space:nowrap; font-weight:600; }
+  .client-actions{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:7px;
+    padding-top:10px;
+    border-top:1px dashed var(--line-strong);
+  }
+  .client-actions .mini-btn{
+    text-align:center;
+    padding:8px 6px;
+    border:1px solid var(--line);
+    background:#fff;
+    transition:background .12s ease, border-color .12s ease;
+  }
+  .client-actions .mini-btn:hover{ border-color:var(--line-strong); background:var(--bg); }
+  .client-actions .mini-btn.danger{ border-color:#F6CBCB; }
+  @media (min-width:460px){
+    .client-actions{ grid-template-columns:repeat(3, 1fr); }
+  }
 
   .add-client-card{
     border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-card);
     box-shadow:var(--shadow); padding:16px; margin-top:4px;
   }
   .add-client-card h3{ font-size:16px; margin-bottom:12px; }
+
+
+  /* Clients toolbar: add button, search, sort, filters, view toggle */
+  .clients-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-bottom:16px; flex-wrap:wrap;
+  }
+  .clients-head-text{ min-width:0; flex:1 1 200px; }
+  .clients-head h2{ font-size:21px; }
+  .clients-head .clients-subtitle{
+    font-size:12.5px; color:var(--ink-soft); font-weight:500;
+    margin-top:3px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .clients-head .btn{ flex-shrink:0; }
+  .clients-toolbar{
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--paper-card); box-shadow:var(--shadow);
+    padding:14px; margin-bottom:16px;
+    display:flex; flex-direction:column; gap:11px;
+  }
+  .clients-toolbar-row{ display:flex; gap:8px; align-items:stretch; }
+  .clients-toolbar-row select{ flex:1; min-width:0; }
+  .view-toggle{
+    display:flex; flex-shrink:0;
+    border:1.5px solid var(--line-strong); border-radius:var(--radius-sm); overflow:hidden;
+    background:var(--bg);
+  }
+  .view-toggle button{
+    border:none; background:transparent; color:var(--ink-soft);
+    font-family:inherit; font-size:14px; font-weight:600;
+    padding:0 13px; cursor:pointer; white-space:nowrap;
+    transition:background .12s ease, color .12s ease;
+  }
+  .view-toggle button + button{ border-left:1.5px solid var(--line-strong); }
+  .view-toggle button.active{ background:var(--cedar); color:#fff; }
+  .cl-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .cl-chip{
+    font-family:inherit; font-size:13.5px; font-weight:600;
+    padding:6px 13px; border-radius:999px; cursor:pointer;
+    border:1.5px solid var(--line-strong); background:#fff; color:var(--ink-soft);
+    transition:background .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .cl-chip:hover{ border-color:var(--cedar); color:var(--cedar); }
+  .cl-chip .n{ margin-left:6px; font-weight:700; opacity:.65; }
+  .cl-chip.active{ background:var(--cedar); border-color:var(--cedar); color:#fff; }
+  .cl-chip.active .n{ opacity:.85; }
+  .clients-count-row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px; flex-wrap:wrap; font-size:13px; color:var(--ink-soft);
+  }
+  .clients-count-row .count-actions{ display:flex; gap:6px; flex-wrap:wrap; }
+  .client-meta{
+    font-size:12px; color:var(--ink-faint); margin-top:2px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .client-card.owes{ border-left:3px solid var(--burgundy); }
+  .client-card.credit{ border-left:3px solid var(--success); }
+  .client-card.just-added{ animation:clientFlash 1.8s ease-out 1; }
+  @keyframes clientFlash{
+    0%{ box-shadow:0 0 0 4px var(--cedar-soft); border-color:var(--cedar); }
+    100%{ box-shadow:var(--shadow); }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .client-card{ transition:none; }
+    .client-card:hover{ transform:none; }
+    .client-card.just-added{ animation:none; border-color:var(--cedar); }
+  }
+  /* Compact list layout: one row per client, tap a row to reveal its buttons */
+  .client-grid.compact{ grid-template-columns:1fr; gap:8px; }
+  .client-card.compact{
+    flex-direction:row; flex-wrap:wrap; align-items:center;
+    gap:8px 12px; padding:11px 15px; cursor:pointer;
+  }
+  .client-card.compact:hover{ transform:none; box-shadow:0 4px 14px rgba(23,25,35,0.09); }
+  .client-card.compact .client-card-top{ flex:1 1 200px; }
+  .client-card.compact .client-avatar{ width:36px; height:36px; font-size:13px; }
+  .client-card.compact .client-balance-row{ flex:0 0 auto; flex-wrap:nowrap; padding-top:0; }
+  .client-card.compact .client-actions{ display:none; flex:1 0 100%; cursor:default; }
+  .client-card.compact.open .client-actions{ display:grid; }
+  .client-chev{ color:var(--ink-faint); font-size:13px; transition:transform .15s ease; }
+  .client-card.compact.open .client-chev{ transform:rotate(180deg); }
+
+  @media (max-width:359px){
+    .clients-toolbar-row{ flex-wrap:wrap; }
+    .clients-toolbar-row select{ flex:1 1 100%; }
+    .view-toggle{ flex:1 1 100%; }
+    .view-toggle button{ flex:1; padding:9px 4px; }
+  }
 
   /* Reports tab */
   .report-grid{
@@ -868,6 +1071,9 @@
   .history-item .h-right b{ color:var(--success); }
   .history-item{ align-items:center; }
   .history-item .h-actions{ display:flex; gap:4px; flex-wrap:wrap; flex-shrink:0; margin-left:8px; }
+  .history-item .h-lang{ display:flex; gap:4px; flex-basis:100%; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line-strong); }
+  .history-item .h-lang-btn{ background:#fff; border-color:var(--line); }
+  .history-item .h-lang-btn.active{ background:var(--cedar); border-color:var(--cedar); color:#fff; }
   @media (max-width:479px){
     .history-item .h-actions{ flex-basis:100%; justify-content:flex-end; margin-left:0; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line-strong); }
   }
@@ -1189,6 +1395,197 @@
   .printer-status.connected{ color:var(--success); }
   .printer-status.disconnected{ color:var(--ink-faint); }
 
+
+  /* ===== Settings tab (modern layout) ===== */
+  .visually-hidden{
+    position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  }
+  .settings-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    gap:10px 16px; flex-wrap:wrap; margin-bottom:10px;
+  }
+  .settings-head h2{ font-size:24px; }
+  .settings-head p{ margin:4px 0 0; font-size:14px; color:var(--ink-soft); line-height:1.45; }
+  .autosave-pill{
+    display:inline-flex; align-items:center; gap:6px; flex-shrink:0;
+    font-size:12.5px; font-weight:600; color:var(--success);
+    background:var(--success-soft); border-radius:999px; padding:6px 12px;
+  }
+  .autosave-pill svg{ width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
+  .settings-nav{
+    position:sticky; top:0; z-index:20;
+    display:flex; gap:6px; overflow-x:auto; scrollbar-width:none;
+    margin:0 -2px 8px; padding:8px 2px 10px;
+    background:linear-gradient(to bottom, var(--bg) 78%, rgba(244,245,250,0));
+  }
+  .settings-nav::-webkit-scrollbar{ display:none; }
+  .settings-nav button{
+    flex:0 0 auto; font-family:inherit; font-size:13.5px; font-weight:600;
+    color:var(--ink-soft); background:var(--paper-card);
+    border:1px solid var(--line-strong); border-radius:999px;
+    padding:7px 14px; cursor:pointer; white-space:nowrap;
+    transition:background .12s ease, color .12s ease, border-color .12s ease;
+  }
+  .settings-nav button:hover{ color:var(--cedar); border-color:var(--cedar); }
+  .settings-nav button:active{ background:var(--cedar-soft); }
+
+  /* Cards flow in one column on phones and tablets, two columns on desktop.
+     display:contents lets the "order" values below keep the phone order
+     (logo, header, messages, voucher fields, printer) regardless of column. */
+  .settings-layout{ display:flex; flex-direction:column; gap:16px; }
+  .settings-col{ display:contents; }
+  #sc-logo{ order:1; } #sc-header{ order:2; } #sc-messages{ order:3; }
+  #sc-voucher{ order:4; } #sc-printer{ order:5; }
+  @media (min-width:900px){
+    .settings-layout{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; align-items:start; }
+    .settings-col{ display:flex; flex-direction:column; gap:18px; min-width:0; }
+  }
+  @media (min-width:1300px){
+    .settings-layout{ gap:22px; }
+    .settings-col{ gap:22px; }
+  }
+
+  #tab-settings .settings-card{
+    container-type:inline-size; container-name:sc;
+    padding:0; margin:0; min-width:0;
+    border-radius:16px; scroll-margin-top:70px;
+  }
+  .sc-head{ display:flex; align-items:flex-start; gap:14px; padding:18px 20px 16px; }
+  .sc-icon{
+    width:40px; height:40px; border-radius:12px; flex-shrink:0;
+    display:grid; place-items:center;
+  }
+  .sc-icon svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .tone-indigo{ background:var(--cedar-soft); color:var(--cedar); }
+  .tone-amber{ background:var(--brass-soft); color:var(--brass); }
+  .tone-green{ background:var(--success-soft); color:var(--success); }
+  .tone-slate{ background:#EDEFF5; color:#4B5468; }
+  .sc-head-text{ min-width:0; }
+  #tab-settings .sc-head h3{ font-size:16.5px; margin:0; }
+  .sc-head p{ margin:3px 0 0; font-size:13.5px; color:var(--ink-soft); line-height:1.45; }
+  .sc-body{ padding:18px 20px 20px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:16px; }
+  @media (max-width:420px){
+    .sc-head{ padding:16px 16px 14px; gap:12px; }
+    .sc-body{ padding:16px; }
+  }
+
+  #tab-settings .field-label{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:6px; }
+  #tab-settings .field-label .opt{ font-weight:500; color:var(--ink-faint); margin-left:6px; }
+  #tab-settings .sc-field{ margin:0; min-width:0; }
+  .sc-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+  @container sc (min-width:520px){
+    .sc-grid{ grid-template-columns:1fr 1fr; }
+    .sc-grid .span-2{ grid-column:1 / -1; }
+  }
+  #tab-settings textarea.preview-box{
+    font-family:'Inter', sans-serif; font-size:16px; line-height:1.5;
+    background:#fff; border:1.5px solid var(--line-strong);
+    padding:10px 12px; margin:0; max-height:none; min-height:64px; white-space:pre-wrap;
+  }
+  #tab-settings textarea.preview-box:focus{ border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  #tab-settings .settings-hint{ margin:0; font-size:13px; }
+
+  /* Buttons with icons */
+  .sc-actions{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  #tab-settings .btn{ display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+  #tab-settings .btn svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  #tab-settings .btn.full{ display:flex; }
+  #tab-settings label.btn{ cursor:pointer; }
+  .visually-hidden:focus-visible + label.btn{ outline:2px solid var(--cedar); outline-offset:2px; }
+  #tab-settings button:focus-visible, .settings-nav button:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
+
+  /* Logo */
+  .logo-row{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  #tab-settings .logo-preview{
+    width:88px; height:88px; border-radius:16px; margin:0;
+    color:var(--ink-faint); background:var(--bg);
+  }
+  .logo-actions{ display:flex; flex-direction:column; gap:8px; align-items:flex-start; min-width:0; }
+  .logo-actions .sc-actions{ gap:8px; }
+
+  /* Segmented controls (JS still toggles the "ghost" class to mark the active choice) */
+  #tab-settings .seg{
+    display:flex; gap:4px; padding:4px; background:var(--bg);
+    border:1px solid var(--line); border-radius:12px;
+  }
+  #tab-settings .seg button{
+    flex:1 1 0; min-width:0; margin:0; box-shadow:none;
+    background:transparent; border:1.5px solid transparent; color:var(--ink-soft);
+    padding:9px 10px; font-size:14px; font-weight:600; line-height:1.25;
+    border-radius:9px; white-space:normal; text-align:center;
+  }
+  #tab-settings .seg button:not(.ghost){
+    background:#fff; color:var(--cedar); border-color:var(--line-strong);
+    box-shadow:0 1px 3px rgba(23,25,35,0.10);
+  }
+  #tab-settings .seg button:active{ transform:scale(0.98); }
+  @container sc (max-width:340px){
+    #tab-settings .seg.stack{ flex-direction:column; }
+  }
+  .sc-row{ display:flex; align-items:center; justify-content:space-between; gap:10px 14px; flex-wrap:wrap; }
+  .sc-row .seg{ min-width:200px; flex:0 1 260px; }
+
+  /* Printer */
+  .sc-note{
+    background:var(--bg); border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; font-size:13px; line-height:1.55; color:var(--ink-soft);
+  }
+  .sc-note b{ color:var(--ink); }
+  .sc-note + .sc-note{ margin-top:-6px; }
+  #tab-settings .printer-status{
+    display:inline-flex; align-items:center; gap:8px; margin:0;
+    padding:7px 13px; border-radius:999px; font-size:13px; font-weight:600;
+    background:var(--bg); color:var(--ink-faint);
+  }
+  #tab-settings .printer-status::before{ content:''; width:8px; height:8px; border-radius:50%; background:currentColor; }
+  #tab-settings .printer-status.connected{ background:var(--success-soft); color:var(--success); }
+
+  /* Message templates: collapsible groups */
+  #msgTemplateFields{ display:flex; flex-direction:column; gap:10px; }
+  .tpl-group{ border:1px solid var(--line-strong); border-radius:12px; background:#fff; overflow:hidden; }
+  .tpl-group > summary{
+    list-style:none; cursor:pointer; user-select:none;
+    display:flex; align-items:center; gap:10px; padding:13px 14px;
+    font-size:14.5px; font-weight:700; color:var(--ink);
+  }
+  .tpl-group > summary::-webkit-details-marker{ display:none; }
+  .tpl-group > summary:focus-visible{ outline:2px solid var(--cedar); outline-offset:-2px; }
+  .tpl-title{ flex:1; min-width:0; }
+  .tpl-meta{ font-size:12px; font-weight:600; color:var(--ink-faint); white-space:nowrap; }
+  .tpl-meta.edited{ color:var(--cedar); background:var(--cedar-soft); border-radius:999px; padding:3px 9px; }
+  .tpl-chev{ color:var(--ink-faint); font-size:13px; transition:transform .15s ease; }
+  .tpl-group[open] > summary{ border-bottom:1px solid var(--line); background:#FAFAFD; }
+  .tpl-group[open] .tpl-chev{ transform:rotate(180deg); }
+  .tpl-body{ display:grid; grid-template-columns:1fr; gap:12px; padding:14px; }
+  .tpl-field{ display:block; margin:0; min-width:0; }
+  .tpl-label{ display:block; font-size:12.5px; font-weight:500; color:var(--ink-soft); margin-bottom:5px; line-height:1.35; }
+  @container sc (min-width:600px){
+    .tpl-body{ grid-template-columns:1fr 1fr; }
+    .tpl-field.long{ grid-column:1 / -1; }
+  }
+
+  /* Custom voucher fields */
+  #tab-settings .cvf-row{
+    display:grid; grid-template-columns:1fr auto; gap:8px;
+    padding:10px; margin:0 0 10px; border:1px solid var(--line); border-radius:12px; background:var(--bg);
+  }
+  #tab-settings .cvf-row input{ grid-column:1; min-width:0; }
+  #tab-settings .cvf-row .cvf-remove{ grid-column:2; grid-row:1 / span 2; align-self:stretch; padding:0 12px; border-radius:9px; }
+  @container sc (min-width:520px){
+    #tab-settings .cvf-row{ grid-template-columns:1fr 1fr auto; }
+    #tab-settings .cvf-row .cvf-remove{ grid-row:auto; grid-column:3; }
+    #tab-settings .cvf-row input{ grid-column:auto; }
+  }
+  #tab-settings .voucher-fields-empty{
+    font-style:normal; text-align:center; padding:18px 14px; margin:0 0 10px;
+    border:1.5px dashed var(--line-strong); border-radius:12px; background:var(--bg);
+  }
+  @media (prefers-reduced-motion:reduce){
+    #tab-settings *, .settings-nav button{ transition:none !important; }
+  }
+
   /* Print-only receipt (hidden on screen, shown when printing) */
   #printArea{ display:none; }
   @media print{
@@ -1442,6 +1839,10 @@
           <button type="button" class="btn small ghost" data-status="partial">🕓 Partial</button>
           <button type="button" class="btn small ghost" data-status="unpaid">❌ Not paid</button>
         </div>
+        <div class="walkin-hint" id="walkInPayHint" style="display:none;">
+          <span>Walk-in customers must pay in full. To leave a balance, choose a client first.</span>
+          <button type="button" class="mini-btn" id="walkInPickClientBtn">👤 Choose client</button>
+        </div>
         <div class="checkbox-row" style="margin-top:8px;">
           <input type="checkbox" id="showPaymentStatusChk" checked>
           <label for="showPaymentStatusChk">👁️ Show payment status on invoice</label>
@@ -1550,44 +1951,80 @@
 
   <!-- CATALOG TAB -->
   <section class="section" id="tab-catalog">
-    <div class="search-box">
-      <span class="field-label">🔍 Search catalog</span>
-      <input type="text" id="catalogSearch" placeholder="Search categories or products...">
-    </div>
-    <div id="categoryList"></div>
+    <div class="catalog-toolbar">
+      <div class="catalog-head">
+        <div class="catalog-head-text">
+          <h2>📦 Catalog</h2>
+          <div class="catalog-subtitle">Categories, subcategories &amp; products</div>
+        </div>
+      </div>
 
-    <div class="add-category">
-      <input type="text" id="newCategoryName" placeholder="New category name">
-      <button class="btn" id="addCategoryBtn">➕ Add</button>
+      <div class="catalog-toolbar-card">
+        <div class="search-box">
+          <span class="field-label">🔍 Search catalog</span>
+          <input type="text" id="catalogSearch" placeholder="Search categories or products...">
+        </div>
+        <span class="catalog-add-label">➕ New top-level category</span>
+        <div class="add-category">
+          <input type="text" id="newCategoryName" placeholder="New category name">
+          <button class="btn" id="addCategoryBtn">➕ Add</button>
+        </div>
+      </div>
     </div>
+
+    <div id="categoryList"></div>
   </section>
 
   <!-- CLIENTS TAB -->
   <section class="section" id="tab-clients">
+    <div class="clients-head">
+      <div class="clients-head-text">
+        <h2>👥 Clients</h2>
+        <div class="clients-subtitle">Balances, reminders &amp; payment history</div>
+      </div>
+      <button type="button" class="btn" id="addClientTopBtn">➕ Add client</button>
+    </div>
+
     <div class="clients-summary" id="clientsSummary"></div>
 
-    <div class="search-box">
-      <span class="field-label">🔍 Search clients</span>
-      <input type="text" id="clientSearch" placeholder="Search by name or phone...">
+    <div class="clients-toolbar" id="clientsToolbar">
+      <input type="text" id="clientSearch" placeholder="🔍 Search by name or phone..." aria-label="Search clients">
+      <div class="clients-toolbar-row">
+        <select id="clientSort" aria-label="Sort clients">
+          <optgroup label="By name">
+            <option value="name-asc">Name: A → Z</option>
+            <option value="name-desc">Name: Z → A</option>
+          </optgroup>
+          <optgroup label="By balance">
+            <option value="owed-asc">Least owed → most owed</option>
+            <option value="owed-desc">Most owed → least owed</option>
+          </optgroup>
+          <optgroup label="By date added">
+            <option value="newest">Newest added first</option>
+            <option value="oldest">Oldest added first</option>
+          </optgroup>
+          <optgroup label="By activity">
+            <option value="recent">Latest purchase first</option>
+            <option value="stale">Oldest purchase first</option>
+            <option value="buyers">Biggest buyers first</option>
+          </optgroup>
+        </select>
+        <div class="view-toggle" role="group" aria-label="List layout">
+          <button type="button" data-view="cards" title="Cards">▦ Cards</button>
+          <button type="button" data-view="list" title="Compact list">☰ List</button>
+        </div>
+      </div>
+      <div class="cl-chips" id="clientFilterChips"></div>
+      <div class="clients-count-row">
+        <span id="clientCount"></span>
+        <span class="count-actions">
+          <button type="button" class="mini-btn" id="clientResetBtn" style="display:none;">✖ Clear filters</button>
+          <button type="button" class="mini-btn" id="copyOwedBtn">📋 Copy owed list</button>
+        </span>
+      </div>
     </div>
 
     <div class="client-grid" id="clientList"></div>
-
-    <div class="add-client-card">
-      <h3>➕ Add a new client</h3>
-      <div class="add-row" style="border-top:none; padding-top:0; margin-top:0;">
-        <input type="text" id="newClientName" placeholder="Client name">
-        <input type="tel" id="newClientPhone" placeholder="Mobile number (e.g. +961 71 234567)">
-        <div class="add-row-inline">
-          <input type="text" inputmode="decimal" id="newClientBalance" placeholder="Starting balance (+they owe you, −you owe them)" style="flex:1;">
-          <select id="newClientBalanceCurrency" style="flex:0 0 80px;">
-            <option value="USD">USD</option>
-            <option value="LBP">LBP</option>
-          </select>
-        </div>
-        <button class="btn full" id="addClientBtn">➕ Add client</button>
-      </div>
-    </div>
   </section>
 
   <!-- REPORTS TAB -->
@@ -1745,78 +2182,158 @@
 
   <!-- SETTINGS TAB -->
   <section class="section" id="tab-settings">
-    <div class="settings-card">
-      <h3>🖼️ Logo</h3>
-      <div class="logo-preview-row">
-        <div class="logo-preview" id="logoPreview"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg></div>
-        <div style="flex:1;">
-          <input type="file" id="logoInput" accept="image/*">
-          <div class="settings-hint">Shown at the top of the printed invoice. Not included in the WhatsApp/text version.</div>
+    <div class="settings-head">
+      <div>
+        <h2>Settings</h2>
+        <p>Your invoice details, message texts and printer.</p>
+      </div>
+      <span class="autosave-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Changes save automatically</span>
+    </div>
+
+    <nav class="settings-nav" id="settingsNav" aria-label="Settings sections">
+      <button type="button" data-target="sc-logo">Logo</button>
+      <button type="button" data-target="sc-header">Invoice text</button>
+      <button type="button" data-target="sc-messages">Messages</button>
+      <button type="button" data-target="sc-voucher">Voucher fields</button>
+      <button type="button" data-target="sc-printer">Printer</button>
+    </nav>
+
+    <div class="settings-layout">
+      <div class="settings-col">
+
+        <div class="settings-card" id="sc-logo">
+          <div class="sc-head">
+            <span class="sc-icon tone-indigo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
+            <div class="sc-head-text">
+              <h3>Logo</h3>
+              <p>Shown at the top of printed invoices.</p>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="logo-row">
+              <div class="logo-preview" id="logoPreview"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg></div>
+              <div class="logo-actions">
+                <div class="sc-actions">
+                  <input type="file" id="logoInput" accept="image/*" class="visually-hidden">
+                  <label for="logoInput" class="btn small"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>Upload logo</label>
+                  <button class="btn ghost small" id="removeLogoBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Remove</button>
+                </div>
+                <div class="settings-hint">PNG or JPG under about 900 KB.</div>
+              </div>
+            </div>
+            <div class="settings-hint">Printed invoices only. The logo isn't included in the WhatsApp or text version.</div>
+          </div>
         </div>
-      </div>
-      <button class="btn ghost small" id="removeLogoBtn" type="button">🗑️ Remove logo</button>
-    </div>
 
-    <div class="settings-card">
-      <h3>📝 Invoice header &amp; footer</h3>
-      <div class="modal-field">
-        <span class="field-label">🏷️ Business name (header)</span>
-        <input type="text" id="setHeaderTitle" placeholder="e.g. TDA Business">
-      </div>
-      <div class="modal-field">
-        <span class="field-label">✨ Header subtitle / tagline</span>
-        <input type="text" id="setHeaderSubtitle" placeholder="e.g. Trusted digital goods & top-ups">
-      </div>
-      <div class="modal-field">
-        <span class="field-label">📍 Address / location (optional)</span>
-        <input type="text" id="setAddress" placeholder="e.g. Beirut, Lebanon">
-      </div>
-      <div class="modal-field">
-        <span class="field-label">📞 Phone / contact (optional)</span>
-        <input type="text" id="setPhone" placeholder="e.g. +961 71 234567">
-      </div>
-      <div class="modal-field" style="margin-bottom:0;">
-        <span class="field-label">🙏 Footer note (thank-you message, terms, etc.)</span>
-        <textarea id="setFooterNote" rows="3" class="preview-box" style="max-height:none; margin-bottom:0;" placeholder="e.g. Thank you for your business! All sales final."></textarea>
-      </div>
-    </div>
+        <div class="settings-card" id="sc-header">
+          <div class="sc-head">
+            <span class="sc-icon tone-amber"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg></span>
+            <div class="sc-head-text">
+              <h3>Invoice header &amp; footer</h3>
+              <p>Your business details, printed on every invoice.</p>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-grid">
+              <div class="modal-field sc-field">
+                <span class="field-label">Business name</span>
+                <input type="text" id="setHeaderTitle" placeholder="e.g. TDA Business">
+              </div>
+              <div class="modal-field sc-field">
+                <span class="field-label">Tagline<span class="opt">Shown under the name</span></span>
+                <input type="text" id="setHeaderSubtitle" placeholder="e.g. Trusted digital goods &amp; top-ups">
+              </div>
+              <div class="modal-field sc-field">
+                <span class="field-label">Address<span class="opt">Optional</span></span>
+                <input type="text" id="setAddress" placeholder="e.g. Beirut, Lebanon">
+              </div>
+              <div class="modal-field sc-field">
+                <span class="field-label">Phone / contact<span class="opt">Optional</span></span>
+                <input type="text" id="setPhone" placeholder="e.g. +961 71 234567">
+              </div>
+              <div class="modal-field sc-field span-2">
+                <span class="field-label">Footer note<span class="opt">Thank-you message, terms, etc.</span></span>
+                <textarea id="setFooterNote" rows="3" class="preview-box" placeholder="e.g. Thank you for your business! All sales final."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="settings-card">
-      <h3>💬 Message templates</h3>
-      <div class="settings-hint">The WhatsApp reminder, partial-payment, full-payment, receipt thank-you texts, the small connector words/labels used across the invoice (like "or" between USD and LBP), and the quick-add field names for voucher details (redeem code, expiry date, etc.). Edit each language separately — blank fields fall back to the default text.</div>
-      <div class="paper-btns" id="msgTemplateLangBtns" style="margin:10px 0 14px;">
-        <button type="button" class="btn small ghost" data-lang="en">English</button>
-        <button type="button" class="btn small ghost" data-lang="ar">العربية</button>
-      </div>
-      <div id="msgTemplateFields"></div>
-      <button class="btn ghost small" id="resetMsgTemplatesBtn" type="button" style="margin-top:4px;">↺ Reset this language to default</button>
+        <div class="settings-card" id="sc-voucher">
+          <div class="sc-head">
+            <span class="sc-icon tone-amber"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
+            <div class="sc-head-text">
+              <h3>Custom voucher fields</h3>
+              <p>Extra quick-add chips for voucher details, like “Mobile number”. Give each an English and an Arabic name so it shows in the invoice language.</p>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div id="customVoucherFieldsWrap"></div>
+            <div class="sc-actions">
+              <button class="btn ghost small" id="addCustomVoucherFieldBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add custom field</button>
+            </div>
+          </div>
+        </div>
 
-      <div style="margin-top:18px; padding-top:14px; border-top:1px dashed var(--line-strong);">
-        <span class="field-label" style="display:block; margin-bottom:4px;">🎟️ Custom voucher quick-add fields</span>
-        <div class="settings-hint" style="margin-top:0; margin-bottom:10px;">Extra quick-add fields you've typed while adding voucher details (e.g. "Mobile number"), plus any you add here. Give each one an English and an Arabic name so the chip shows in whichever language the invoice is in.</div>
-        <div id="customVoucherFieldsWrap"></div>
-        <button class="btn ghost small" id="addCustomVoucherFieldBtn" type="button">+ Add custom field</button>
       </div>
-    </div>
+      <div class="settings-col">
 
-    <div class="settings-card">
-      <h3>🖨️ Printer</h3>
-      <span class="field-label">📏 Paper width</span>
-      <div class="paper-btns" id="paperWidthBtns" style="margin-bottom:12px;">
-        <button type="button" class="btn small ghost" data-width="58">58mm</button>
-        <button type="button" class="btn small ghost" data-width="80">80mm</button>
+        <div class="settings-card" id="sc-messages">
+          <div class="sc-head">
+            <span class="sc-icon tone-green"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <div class="sc-head-text">
+              <h3>Message templates</h3>
+              <p>WhatsApp texts and the wording used on invoices. Edit each language separately — blank fields use the default text.</p>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-row">
+              <span class="field-label" style="margin:0;">Language</span>
+              <div class="seg paper-btns" id="msgTemplateLangBtns" role="group" aria-label="Template language">
+                <button type="button" class="btn small ghost" data-lang="en">English</button>
+                <button type="button" class="btn small ghost" data-lang="ar">العربية</button>
+              </div>
+            </div>
+            <div id="msgTemplateFields"></div>
+            <div class="sc-actions">
+              <button class="btn ghost small" id="resetMsgTemplatesBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset this language to default</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-card" id="sc-printer">
+          <div class="sc-head">
+            <span class="sc-icon tone-slate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span>
+            <div class="sc-head-text">
+              <h3>Printer</h3>
+              <p>Paper size and how this app connects to your receipt printer.</p>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-field">
+              <span class="field-label">Paper width</span>
+              <div class="seg paper-btns" id="paperWidthBtns" role="group" aria-label="Paper width">
+                <button type="button" class="btn small ghost" data-width="58">58 mm</button>
+                <button type="button" class="btn small ghost" data-width="80">80 mm</button>
+              </div>
+            </div>
+            <div class="sc-field">
+              <span class="field-label">Connection</span>
+              <div class="seg stack paper-btns" id="printerConnBtns" role="group" aria-label="Printer connection">
+                <button type="button" class="btn small ghost" data-conn="system">System / WiFi (print dialog)</button>
+                <button type="button" class="btn small ghost" data-conn="bluetooth">Bluetooth (direct)</button>
+              </div>
+            </div>
+            <div class="sc-note"><b>System / WiFi</b> uses your phone or computer's normal print dialog — pick any WiFi-connected or Bluetooth-paired printer already set up on your device.</div>
+            <div class="sc-note"><b>Bluetooth (direct)</b> connects straight from this app to a nearby thermal receipt printer and skips the print dialog. It works with BLE thermal printers (common on newer 58mm/80mm models) using Chrome on Android or desktop — older printers that only support classic Bluetooth (SPP) can't be reached this way; use System print for those instead.</div>
+            <div class="sc-actions">
+              <button class="btn" id="btConnectBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></svg>Connect Bluetooth printer</button>
+              <div class="printer-status disconnected" id="printerStatus">Not connected</div>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <span class="field-label">🔌 Connection</span>
-      <div class="paper-btns" id="printerConnBtns" style="margin-bottom:6px;">
-        <button type="button" class="btn small ghost" data-conn="system">System / WiFi (print dialog)</button>
-        <button type="button" class="btn small ghost" data-conn="bluetooth">Bluetooth (direct)</button>
-      </div>
-      <div class="settings-hint">
-        <b>System / WiFi</b> uses your phone or computer's normal print dialog — pick any WiFi-connected or Bluetooth-paired printer already set up on your device.<br>
-        <b>Bluetooth (direct)</b> connects straight from this app to a nearby thermal receipt printer and skips the print dialog. It works with BLE thermal printers (common on newer 58mm/80mm models) using Chrome on Android or desktop — older printers that only support classic Bluetooth (SPP) can't be reached this way; use System print for those instead.
-      </div>
-      <button class="btn full" id="btConnectBtn" type="button" style="margin-top:10px;">🔗 Connect Bluetooth printer</button>
-      <div class="printer-status disconnected" id="printerStatus">Not connected</div>
     </div>
   </section>
 
@@ -2093,6 +2610,7 @@
     lines: [],
     invoiceDiscount: { mode: 'none', value: 0 },
     clients: [],
+    clientView: { sort: 'name-asc', filter: 'all', view: 'cards' },
     sales: [],
     salesShowingOfflineCache: false,
     balance: { value: 0, updatedAt: null },
@@ -2649,6 +3167,15 @@
         state.paymentMethods = [{ id: uid(), label: 'Whish', value: '70817032', enabled: true }];
       }
     }catch(e){ loadError = e; }
+    try{
+      const cv = await window.storage.get('clientViewPrefs');
+      if(cv && cv.value){
+        const p = JSON.parse(cv.value);
+        if(p && CLIENT_SORT_KEYS.includes(p.sort)) state.clientView.sort = p.sort;
+        if(p && CLIENT_FILTERS.some(f => f.key === p.filter)) state.clientView.filter = p.filter;
+        if(p && (p.view === 'cards' || p.view === 'list')) state.clientView.view = p.view;
+      }
+    }catch(e){ /* saved view choices are optional */ }
     if(loadError){ alertBanner('Could not load your data: ' + loadError.message); }
 
     renderCategories();
@@ -3115,6 +3642,7 @@
   // ---------- Catalog ----------
   const collapsedState = {};
   const addFormOpenState = {};
+  const addSubFormOpenState = {};
   let catalogSearchQuery = '';
 
   function childCategories(parentId){
@@ -3200,6 +3728,7 @@
       <div class="category-head-right">
         <span class="count">${countLabel}</span>
         <button class="mini-btn" data-action="rename" type="button">✏️ Edit</button>
+        <button class="mini-btn danger" data-action="delete" type="button">🗑️ Delete</button>
       </div>`;
     head.addEventListener('click', () => {
       if(catalogSearchQuery) return;
@@ -3208,48 +3737,14 @@
       renderCategories();
     });
     head.querySelector('[data-action="rename"]').addEventListener('click', (e) => { e.stopPropagation(); editCategory(cat.id); });
+    head.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteCategory(cat.id); });
 
     const body = document.createElement('div');
     body.className = 'category-body' + (isCollapsed ? ' collapsed' : '');
 
-    if(products.length){
-      const label = document.createElement('div');
-      label.className = 'cat-section-label';
-      label.textContent = '🛍️ Products';
-      body.appendChild(label);
-    }
-
-    products.forEach(p => {
-      const row = document.createElement('div');
-      row.className = 'product-row';
-      const margin = p.priceUsd - (p.costUsd||0);
-      row.innerHTML = `
-        <div class="product-row-left">
-          ${p.image ? `<img class="product-thumb" src="${p.image}" alt="">` : ''}
-          <div style="min-width:0;">
-            <div class="product-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
-            <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) + (p.costMode === 'flat' ? ' (cost flat)' : '') : ''}</div>
-          </div>
-        </div>
-        <div class="product-actions">
-          <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
-          <button class="mini-btn danger" data-action="delete" data-id="${p.id}">🗑️ delete</button>
-        </div>`;
-      row.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
-      row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
-      body.appendChild(row);
-    });
-    if(!products.length && !query){
-      const emptyHint = document.createElement('div');
-      emptyHint.className = 'product-prices';
-      emptyHint.style.padding = '4px 0 2px';
-      emptyHint.textContent = 'No products in this category yet.';
-      body.appendChild(emptyHint);
-    }
-
     // Add a product directly inside this category (works at any depth).
-    // Tucked behind a toggle button so the default view stays a clean list
-    // of products, not a form.
+    // Placed first, right under the header, so opening a category never
+    // requires scrolling past its products to reach the add-product form.
     const addToggleBtn = document.createElement('button');
     addToggleBtn.type = 'button';
     addToggleBtn.className = 'add-product-toggle';
@@ -3311,28 +3806,75 @@
       body.appendChild(addRow);
     }
 
-    // Add a subcategory nested inside this category.
-    const addSubRow = document.createElement('div');
-    addSubRow.className = 'add-category';
-    addSubRow.innerHTML = `
-      <input type="text" placeholder="New subcategory name" class="new-subcat-name">
-      <button class="btn small" type="button">➕ Add</button>
-    `;
-    const subNameInput = addSubRow.querySelector('.new-subcat-name');
-    const doAddSub = () => { addCategory(subNameInput.value, cat.id); subNameInput.value = ''; };
-    addSubRow.querySelector('button').addEventListener('click', doAddSub);
-    subNameInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') doAddSub(); });
-    body.appendChild(addSubRow);
+    // Add a subcategory nested inside this category. Same toggle-button
+    // pattern as "Add product" — collapsed by default, tap to reveal —
+    // and placed at the top so it never requires scrolling to reach.
+    const addSubToggleBtn = document.createElement('button');
+    addSubToggleBtn.type = 'button';
+    addSubToggleBtn.className = 'add-product-toggle';
+    const addSubFormOpen = !!addSubFormOpenState[cat.id];
+    addSubToggleBtn.textContent = addSubFormOpen ? '➖ Hide add subcategory form' : '➕ Add subcategory';
+    addSubToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      addSubFormOpenState[cat.id] = !addSubFormOpenState[cat.id];
+      renderCategories();
+    });
+    body.appendChild(addSubToggleBtn);
+
+    if(addSubFormOpen){
+      const addSubRow = document.createElement('div');
+      addSubRow.className = 'add-category';
+      addSubRow.innerHTML = `
+        <input type="text" placeholder="New subcategory name" class="new-subcat-name">
+        <button class="btn small" type="button">➕ Add</button>
+      `;
+      const subNameInput = addSubRow.querySelector('.new-subcat-name');
+      const doAddSub = () => {
+        addCategory(subNameInput.value, cat.id);
+        addSubFormOpenState[cat.id] = false;
+      };
+      addSubRow.querySelector('button').addEventListener('click', doAddSub);
+      subNameInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') doAddSub(); });
+      body.appendChild(addSubRow);
+    }
+
+    if(products.length){
+      const label = document.createElement('div');
+      label.className = 'cat-section-label';
+      label.textContent = '🛍️ Products';
+      body.appendChild(label);
+    }
+
+    products.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'product-row';
+      const margin = p.priceUsd - (p.costUsd||0);
+      row.innerHTML = `
+        <div class="product-row-left">
+          ${p.image ? `<img class="product-thumb" src="${p.image}" alt="">` : ''}
+          <div style="min-width:0;">
+            <div class="product-name">${escapeHtml(p.name)}${p.type === 'voucher' ? '<span class="voucher-badge">details</span>' : ''}</div>
+            <div class="product-prices">${fmtUsd(p.priceUsd)} / ${fmtLbp(p.priceUsd * state.rate.value)}${p.costUsd ? ' · margin ' + fmtUsd(margin) + (p.costMode === 'flat' ? ' (cost flat)' : '') : ''}</div>
+          </div>
+        </div>
+        <div class="product-actions">
+          <button class="mini-btn" data-action="edit" data-id="${p.id}">✏️ edit</button>
+          <button class="mini-btn danger" data-action="delete" data-id="${p.id}">🗑️ delete</button>
+        </div>`;
+      row.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
+      row.querySelector('[data-action="delete"]').addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
+      body.appendChild(row);
+    });
+    if(!products.length && !query){
+      const emptyHint = document.createElement('div');
+      emptyHint.className = 'product-prices';
+      emptyHint.style.padding = '4px 0 2px';
+      emptyHint.textContent = 'No products in this category yet.';
+      body.appendChild(emptyHint);
+    }
 
     // Nested subcategories render recursively underneath.
     subcats.forEach(sub => body.appendChild(buildCategoryNode(sub, depth + 1, query)));
-
-    const delCatBtn = document.createElement('button');
-    delCatBtn.className = 'mini-btn danger';
-    delCatBtn.style.marginTop = '8px';
-    delCatBtn.textContent = '🗑️ delete category';
-    delCatBtn.addEventListener('click', () => deleteCategory(cat.id));
-    body.appendChild(delCatBtn);
 
     wrap.appendChild(head);
     wrap.appendChild(body);
@@ -3507,38 +4049,129 @@
     `;
   }
 
+  // ----- Clients list: sort / filter / layout -----
+  const CLIENT_SORT_KEYS = ['name-asc','name-desc','owed-asc','owed-desc','newest','oldest','recent','stale','buyers'];
+  const CLIENT_FILTERS = [
+    { key:'all',     label:'All',        test: () => true },
+    { key:'owes',    label:'Owe me',     test: c => c.balanceUsd > 0 },
+    { key:'credit',  label:'I owe them', test: c => c.balanceUsd < 0 },
+    { key:'settled', label:'Settled',    test: c => c.balanceUsd === 0 },
+    { key:'nophone', label:'No phone',   test: c => !(c.phone || '').trim() }
+  ];
+  const openClientIds = new Set();   // compact-list rows the user has expanded
+  let pendingClientHighlight = null; // id of a just-added client to scroll to
+
+  function computeClientStats(){
+    const map = new Map();
+    state.sales.forEach(sale => {
+      if(!sale.clientId) return;
+      const cur = map.get(sale.clientId) || { count: 0, last: 0, total: 0 };
+      cur.count++;
+      if((sale.date || 0) > cur.last) cur.last = sale.date;
+      cur.total += Number(sale.revenueUsd) || 0;
+      map.set(sale.clientId, cur);
+    });
+    return map;
+  }
+
+  function clientComparator(sortKey, stats, order){
+    const byName = (a, b) => (a.name || '').localeCompare(b.name || '', undefined, { sensitivity:'base', numeric:true });
+    const st = c => stats.get(c.id) || { count: 0, last: 0, total: 0 };
+    switch(sortKey){
+      case 'name-desc': return (a, b) => byName(b, a);
+      case 'owed-asc':  return (a, b) => (a.balanceUsd - b.balanceUsd) || byName(a, b);
+      case 'owed-desc': return (a, b) => (b.balanceUsd - a.balanceUsd) || byName(a, b);
+      case 'newest':    return (a, b) => order.get(b.id) - order.get(a.id);
+      case 'oldest':    return (a, b) => order.get(a.id) - order.get(b.id);
+      case 'recent':    // clients who never bought go last
+        return (a, b) => { const x = st(a).last, y = st(b).last; if(!x && !y) return byName(a, b); if(!x) return 1; if(!y) return -1; return y - x; };
+      case 'stale':
+        return (a, b) => { const x = st(a).last, y = st(b).last; if(!x && !y) return byName(a, b); if(!x) return 1; if(!y) return -1; return x - y; };
+      case 'buyers':    return (a, b) => (st(b).total - st(a).total) || byName(a, b);
+      default:          return byName;
+    }
+  }
+
+  function fmtClientDate(ts){
+    return new Date(ts).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+
+  async function saveClientView(){
+    try{ await window.storage.set('clientViewPrefs', JSON.stringify(state.clientView)); }
+    catch(e){ console.error(e); }
+  }
+  function setClientView(patch){
+    Object.assign(state.clientView, patch);
+    saveClientView();
+    renderClientList();
+  }
+
   function renderClientList(){
     const list = $('#clientList');
     renderClientsSummary();
 
+    const toolbar = $('#clientsToolbar');
+    if(toolbar) toolbar.style.display = state.clients.length ? '' : 'none';
+
     if(state.clients.length === 0){
-      list.innerHTML = '<div class="empty-hint">No clients yet. Add one below to start tracking balances they owe you.</div>';
+      list.className = 'client-grid';
+      list.innerHTML = '<div class="empty-hint">No clients yet. Tap “➕ Add client” at the top to start tracking balances they owe you.</div>';
       return;
     }
 
+    const view = state.clientView;
+    const compact = view.view === 'list';
+    list.className = 'client-grid' + (compact ? ' compact' : '');
+
+    // Keep the controls in sync with the saved choices.
+    $('#clientSort').value = view.sort;
+    $all('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === view.view));
+    $('#clientFilterChips').innerHTML = CLIENT_FILTERS.map(f => {
+      const n = state.clients.filter(f.test).length;
+      return `<button type="button" class="cl-chip${view.filter === f.key ? ' active' : ''}" data-filter="${f.key}" aria-pressed="${view.filter === f.key}">${f.label}<span class="n">${n}</span></button>`;
+    }).join('');
+
     const searchEl = $('#clientSearch');
     const term = searchEl ? searchEl.value.trim().toLowerCase() : '';
-    const filtered = term
-      ? state.clients.filter(c => c.name.toLowerCase().includes(term) || (c.phone || '').toLowerCase().includes(term))
-      : state.clients;
+    const activeFilter = CLIENT_FILTERS.find(f => f.key === view.filter) || CLIENT_FILTERS[0];
+    const stats = computeClientStats();
+    const order = new Map(state.clients.map((c, i) => [c.id, i]));
 
-    if(filtered.length === 0){
-      list.innerHTML = '<div class="empty-hint">No clients match your search.</div>';
+    const shown = state.clients
+      .filter(c => activeFilter.test(c) && (!term || c.name.toLowerCase().includes(term) || (c.phone || '').toLowerCase().includes(term)))
+      .sort(clientComparator(view.sort, stats, order));
+
+    const filtersActive = !!term || view.filter !== 'all';
+    $('#clientCount').textContent = filtersActive
+      ? `Showing ${shown.length} of ${state.clients.length} clients`
+      : `${state.clients.length} client${state.clients.length === 1 ? '' : 's'}`;
+    $('#clientResetBtn').style.display = filtersActive ? '' : 'none';
+
+    if(shown.length === 0){
+      list.className = 'client-grid';
+      list.innerHTML = '<div class="empty-hint">No clients match your search or filter.</div>';
       return;
     }
 
     list.innerHTML = '';
-    filtered.forEach(c => {
+    shown.forEach(c => {
       const card = document.createElement('div');
-      card.className = 'client-card';
       const owes = c.balanceUsd > 0;
       const credit = c.balanceUsd < 0;
+      const st = stats.get(c.id);
+      const meta = st
+        ? `🛒 ${st.count} sale${st.count === 1 ? '' : 's'} · last ${fmtClientDate(st.last)}`
+        : 'No purchases yet';
+      card.className = 'client-card ' + (owes ? 'owes' : credit ? 'credit' : 'settled')
+        + (compact ? ' compact' : '') + (compact && openClientIds.has(c.id) ? ' open' : '');
+      card.dataset.id = c.id;
       card.innerHTML = `
-        <div class="client-card-top">
+        <div class="client-card-top"${compact ? ` role="button" tabindex="0" aria-expanded="${openClientIds.has(c.id)}"` : ''}>
           <div class="client-avatar" style="background:${avatarColor(c.name)}">${getInitials(c.name)}</div>
           <div class="client-card-info">
             <div class="client-name">${escapeHtml(c.name)}</div>
             ${c.phone ? '<div class="client-phone">📱 ' + escapeHtml(c.phone) + '</div>' : ''}
+            <div class="client-meta">${meta}</div>
           </div>
         </div>
         <div class="client-balance-row">
@@ -3546,6 +4179,7 @@
             ${owes ? '⬆ Owes ' + fmtUsd(c.balanceUsd) : credit ? '⬇ You owe ' + fmtUsd(-c.balanceUsd) : '✓ Settled up'}
           </span>
           ${c.balanceUsd !== 0 ? '<span class="client-balance-sub">' + fmtLbp(Math.abs(c.balanceUsd) * state.rate.value) + '</span>' : ''}
+          ${compact ? '<span class="client-chev" aria-hidden="true">▾</span>' : ''}
         </div>
         <div class="client-actions">
           ${owes ? '<button class="mini-btn" data-action="remind">🔔 Remind</button>' : ''}
@@ -3557,6 +4191,17 @@
           <button class="mini-btn" data-action="edit">✏️ Edit</button>
           <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
         </div>`;
+      if(compact){
+        const toggle = () => {
+          const open = card.classList.toggle('open');
+          if(open) openClientIds.add(c.id); else openClientIds.delete(c.id);
+          card.querySelector('.client-card-top').setAttribute('aria-expanded', open);
+        };
+        card.addEventListener('click', (e) => { if(!e.target.closest('.client-actions')) toggle(); });
+        card.querySelector('.client-card-top').addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+        });
+      }
       if(owes){
         card.querySelector('[data-action="remind"]').addEventListener('click', () => sendPaymentReminder(c.id));
         card.querySelector('[data-action="partial"]').addEventListener('click', () => sendPartialPayment(c.id));
@@ -3571,6 +4216,40 @@
       card.querySelector('[data-action="delete"]').addEventListener('click', () => deleteClient(c.id));
       list.appendChild(card);
     });
+
+    if(pendingClientHighlight){
+      const el = list.querySelector('[data-id="' + pendingClientHighlight + '"]');
+      pendingClientHighlight = null;
+      if(el){
+        el.classList.add('just-added');
+        el.scrollIntoView({ block:'center', behavior:'smooth' });
+      }
+    }
+  }
+
+  // Copies everyone who owes money (biggest first) so it can be pasted anywhere.
+  async function copyOwedList(){
+    const owing = state.clients.filter(c => c.balanceUsd > 0).sort((a, b) => b.balanceUsd - a.balanceUsd);
+    if(owing.length === 0){ alertBanner('Nobody owes you right now.'); return; }
+    const total = owing.reduce((sum, c) => sum + c.balanceUsd, 0);
+    const lines = ['Clients who owe me', ''];
+    owing.forEach((c, i) => {
+      lines.push((i + 1) + '. ' + c.name + (c.phone ? ' (' + c.phone + ')' : '') + ' — ' + fmtUsd(c.balanceUsd) + ' / ' + fmtLbp(c.balanceUsd * state.rate.value));
+    });
+    lines.push('', 'Total: ' + fmtUsd(total) + ' / ' + fmtLbp(total * state.rate.value));
+    const text = lines.join('\n');
+    let ok = false;
+    try{ await navigator.clipboard.writeText(text); ok = true; }catch(e){}
+    if(!ok){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      try{ ok = document.execCommand('copy'); }catch(e){}
+      ta.remove();
+    }
+    alertBanner(ok ? 'Owed list copied.' : 'Could not copy — your browser blocked it.');
   }
 
   function buildReminderText(client, lang){
@@ -3781,23 +4460,45 @@
     await showMessagePreviewModal('Thank-you message — ' + c.name, text, c.phone);
   }
 
-  function addClient(){
-    const nameInput = $('#newClientName');
-    const phoneInput = $('#newClientPhone');
-    const balInput = $('#newClientBalance');
-    const balCurrency = $('#newClientBalanceCurrency');
-    const name = nameInput.value.trim();
-    if(!name){ alertBanner('Enter a client name.'); return; }
-    const balRaw = parseFormattedNumber(balInput.value);
-    const bal = isNaN(balRaw) ? 0 : moneyToUsd(balRaw, balCurrency.value);
-    state.clients.push({ id: uid(), name, phone: phoneInput.value.trim(), balanceUsd: bal });
-    nameInput.value = '';
-    phoneInput.value = '';
-    balInput.value = '';
-    balCurrency.value = 'USD';
+  async function addClient(){
+    const result = await promptModalValidated(
+      'Add a new client',
+      [
+        { id:'name', label:'Client name', placeholder:'Client name' },
+        { id:'phone', label:'Mobile number (for WhatsApp)', type:'tel', placeholder:'e.g. +961 71 234567' },
+        { id:'balance', label:'Starting balance (optional)', type:'money', placeholder:'0' },
+        { id:'direction', label:'Who owes who?', type:'select', value:'theyOwe', options:[
+          { value:'theyOwe', label:'They owe me' },
+          { value:'iOwe', label:'I owe them' }
+        ] }
+      ],
+      (v) => {
+        if(!v.name.trim()) return 'Enter a client name.';
+        if(v.balance !== '' && isNaN(parseFloat(v.balance))) return 'Enter a valid balance.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const name = result.name.trim();
+    const dup = state.clients.some(c => c.name.trim().toLowerCase() === name.toLowerCase());
+    if(dup){
+      const ok = await confirmModal('You already have a client named "' + name + '". Add another one anyway?');
+      if(!ok) return;
+    }
+    const raw = result.balance === '' ? 0 : parseFloat(result.balance);
+    let bal = Math.abs(raw);
+    if(result.direction === 'iOwe' || raw < 0) bal = -bal;
+    const client = { id: uid(), name, phone: result.phone.trim(), balanceUsd: bal };
+    state.clients.push(client);
+    // Make sure the new client is actually visible in the list.
+    $('#clientSearch').value = '';
+    state.clientView.filter = 'all';
+    pendingClientHighlight = client.id;
     saveClients();
+    saveClientView();
     renderClientList();
     renderClientSelect();
+    alertBanner('Added ' + name + '.');
   }
 
   async function editClient(id){
@@ -4692,6 +5393,8 @@
     updateCartBar(nums);
 
     if(!state.paymentStatus) state.paymentStatus = 'paid';
+    // A walk-in has no account to hold a balance, so they always pay in full.
+    if(!nums.client) state.paymentStatus = 'paid';
     const receivedInput = $('#amountReceived');
     const receivedCurrency = $('#amountReceivedCurrency').value;
     if(state.paymentStatus === 'paid'){
@@ -4709,16 +5412,26 @@
   }
 
   function setPaymentStatus(status){
+    if(status !== 'paid' && !getSelectedClient()){
+      alertBanner('Walk-in customers must pay in full. Choose a client to leave a balance.');
+      return;
+    }
     state.paymentStatus = status;
     $('#amountReceived').dataset.userEdited = 'true';
     renderInvoice();
   }
 
   function updateStatusButtonsUI(){
+    const walkIn = !getSelectedClient();
     $all('#paymentStatusBtns button').forEach(b => {
       if(b.dataset.status === state.paymentStatus) b.classList.remove('ghost');
       else b.classList.add('ghost');
+      const locked = walkIn && b.dataset.status !== 'paid';
+      b.disabled = locked;
+      b.title = locked ? 'Walk-in customers must pay in full' : '';
     });
+    const hint = $('#walkInPayHint');
+    if(hint) hint.style.display = walkIn ? '' : 'none';
   }
 
   function setOverpaymentMode(mode){
@@ -4779,10 +5492,11 @@
     return `${n})`;
   }
 
-  function buildInvoiceText(withEmojis){
+  function buildInvoiceText(withEmojis, lang){
     if(withEmojis === undefined) withEmojis = true; // default on: this text is mainly used for the WhatsApp preview
+    lang = lang || state.invoiceLang;
     const em = (e) => withEmojis ? (e + ' ') : '';
-    const t = getT(state.invoiceLang);
+    const t = getT(lang);
     const s = state.invoiceSettings;
     const customer = $('#customerName').value.trim();
     const now = getInvoiceDateTime();
@@ -4806,10 +5520,10 @@
       lineNo++;
       const amt = computeLineAmounts(p, line);
       const lineTotal = amt.total;
-      lines.push(`${itemMarker(lineNo)} ${productDisplayName(p)} ${fmtUsd(p.priceUsd)} ×${line.qty}`);
+      lines.push(`${itemMarker(lineNo)} ${productDisplayName(p, lang)} ${fmtUsd(p.priceUsd)} ×${line.qty}`);
       if(line.note.trim()) lines.push(`   ${em('📝')}${t.note}: ${line.note.trim()}`);
       if(getLineDiscount(line)){
-        lines.push(`   ${em('🏷️')}${discountSummaryText(line, state.invoiceLang)} ~${fmtUsd(amt.original)}~`);
+        lines.push(`   ${em('🏷️')}${discountSummaryText(line, lang)} ~${fmtUsd(amt.original)}~`);
       }
       lines.push(`   ${fmtUsd(lineTotal)} ${t.orWord} ${fmtLbp(lineTotal * state.rate.value)}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
@@ -4920,9 +5634,12 @@
       items: nums.items,
       // Full snapshot of the invoice as it looked when finalized, so it can be
       // reprinted or re-sent later even if products/prices change afterward.
-      snapshotText: buildInvoiceText(),
-      snapshotHtml: buildPrintReceiptHtml(),
-      snapshotThermal: buildThermalReceiptSegments(),
+      // Captured in BOTH languages (not just the one active when the sale was
+      // made) so old invoices can be pulled up in English or Arabic later —
+      // each is keyed by lang code, e.g. snapshotText.en / snapshotText.ar.
+      snapshotText: { en: buildInvoiceText(true, 'en'), ar: buildInvoiceText(true, 'ar') },
+      snapshotHtml: { en: buildPrintReceiptHtml('en'), ar: buildPrintReceiptHtml('ar') },
+      snapshotThermal: { en: buildThermalReceiptSegments('en'), ar: buildThermalReceiptSegments('ar') },
       snapshotPhone: (nums.client && nums.client.phone) ? nums.client.phone : ''
     };
     state.sales.push(record);
@@ -5469,19 +6186,30 @@
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
     const status = getSaleStatus(s);
+    const rowLang = getRowLang(s);
     const row = document.createElement('div');
     row.className = 'history-item';
     row.innerHTML = `
       <div class="h-left">${dateStr} · ${escapeHtml(s.customerName)}<br><span class="sale-status-pill ${status}">${SALE_STATUS_LABEL[status]}</span>${s.tipUsd > 0.004 ? '<span class="sale-status-pill tip">💸 tip ' + fmtUsd(s.tipUsd) + '</span>' : ''}</div>
       <div class="h-right">rev ${fmtUsd(s.revenueUsd)}<br>profit <b>${fmtUsd(s.profitUsd)}</b></div>
+      <div class="h-lang" role="group" aria-label="Invoice language">
+        <button type="button" class="mini-btn h-lang-btn${rowLang === 'en' ? ' active' : ''}" data-lang="en">English</button>
+        <button type="button" class="mini-btn h-lang-btn${rowLang === 'ar' ? ' active' : ''}" data-lang="ar">العربية</button>
+      </div>
       <div class="h-actions">
         <button class="mini-btn" data-action="print">🖨️ Print</button>
         <button class="mini-btn" data-action="whatsapp">💬 WhatsApp</button>
         <button class="mini-btn" data-action="edit">✏️ Edit</button>
         <button class="mini-btn danger" data-action="delete">🗑️ Delete</button>
       </div>`;
-    row.querySelector('[data-action="print"]').addEventListener('click', () => printOldInvoice(s.id));
-    row.querySelector('[data-action="whatsapp"]').addEventListener('click', () => whatsappOldInvoice(s.id));
+    row.querySelectorAll('.h-lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        historyRowLang[s.id] = btn.dataset.lang;
+        row.querySelectorAll('.h-lang-btn').forEach(b => b.classList.toggle('active', b === btn));
+      });
+    });
+    row.querySelector('[data-action="print"]').addEventListener('click', () => printOldInvoice(s.id, getRowLang(s)));
+    row.querySelector('[data-action="whatsapp"]').addEventListener('click', () => whatsappOldInvoice(s.id, getRowLang(s)));
     row.querySelector('[data-action="edit"]').addEventListener('click', () => editSale(s.id));
     row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteSale(s.id));
     container.appendChild(row);
@@ -5497,23 +6225,24 @@
   // products" reporting), so we rebuild a proper itemized receipt from
   // that. Only the very oldest sales (no `items` either) fall back to a
   // totals-only summary.
-  function buildFallbackReceiptHtml(s){
+  function buildFallbackReceiptHtml(s, lang){
+    lang = lang || state.invoiceLang;
     const set = state.invoiceSettings;
-    const t = getT(state.invoiceLang);
+    const t = getT(lang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
     let html = '';
     if(set.logo) html += `<img class="pr-logo" src="${set.logo}" alt="logo">`;
     html += `<div class="pr-center">`;
-    html += `<div class="pr-eyebrow">Invoice</div>`;
+    html += `<div class="pr-eyebrow">${escapeHtml(t.invoice.replace(/\*/g, ''))}</div>`;
     html += `<div class="pr-title">${escapeHtml(set.headerTitle || 'Invoice')}</div>`;
     if(set.headerSubtitle) html += `<div class="pr-sub">${escapeHtml(set.headerSubtitle)}</div>`;
     if(set.address) html += `<div class="pr-sub">${escapeHtml(set.address)}</div>`;
     if(set.phone) html += `<div class="pr-sub">${escapeHtml(set.phone)}</div>`;
     html += `<div class="pr-meta">${dateStr}</div>`;
     html += `</div><div class="pr-hr solid"></div>`;
-    html += `<div class="pr-row"><span>Customer</span><b>${escapeHtml(s.customerName)}</b></div><div class="pr-hr"></div>`;
+    html += `<div class="pr-row"><span>${t.customer}</span><b>${escapeHtml(s.customerName)}</b></div><div class="pr-hr"></div>`;
 
     if(s.items && s.items.length){
       let tableRows = '';
@@ -5523,34 +6252,35 @@
       });
       html += `<table class="pr-items-table"><thead><tr><th class="pr-col-name">${t.itemCol}</th><th class="pr-col-qty">${t.qtyCol}</th><th class="pr-col-price">${t.priceCol}</th><th class="pr-col-total">${t.totalCol}</th></tr></thead><tbody>${tableRows}</tbody></table>`;
     } else {
-      html += `<div class="pr-row"><span>Amount</span><span>${fmtUsd(s.revenueUsd)} (${fmtLbp(s.revenueUsd * rate)})</span></div>`;
+      html += `<div class="pr-row"><span>${t.itemsSubtotal}</span><span>${fmtUsd(s.revenueUsd)} (${fmtLbp(s.revenueUsd * rate)})</span></div>`;
     }
 
     html += `<div class="pr-hr"></div>`;
     if(s.prevBalanceApplied) html += `<div class="pr-row"><span>${t.previousBalance}</span><span>${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})</span></div>`;
     const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
     html += `<div class="pr-row pr-grand"><span>${t.totalDue}:</span><span>${fmtUsd(grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}</span></div>`;
-    html += `<div class="pr-row"><span>Payment status</span><b>${printStatusLabel(getSaleStatus(s), t)}</b></div>`;
-    html += `<div class="pr-row"><span>Amount received</span><span>${fmtUsd(s.amountReceived)}</span></div>`;
+    html += `<div class="pr-row"><span>${t.paymentStatus}</span><b>${printStatusLabel(getSaleStatus(s), t)}</b></div>`;
+    html += `<div class="pr-row"><span>${t.received}</span><span>${fmtUsd(s.amountReceived)}</span></div>`;
     const remaining = s.newBalance || 0;
-    if(remaining > 0.004) html += `<div class="pr-row"><span>Remaining balance</span><span>${fmtUsd(remaining)}</span></div>`;
-    else if(remaining < -0.004) html += `<div class="pr-row"><span>Credit on account</span><span>${fmtUsd(-remaining)}</span></div>`;
-    if(s.tipUsd > 0.004) html += `<div class="pr-row"><span>Tip</span><span>${fmtUsd(s.tipUsd)}</span></div>`;
+    if(remaining > 0.004) html += `<div class="pr-row"><span>${t.remainingBalance}</span><span>${fmtUsd(remaining)}</span></div>`;
+    else if(remaining < -0.004) html += `<div class="pr-row"><span>${t.creditOnAccount}</span><span>${fmtUsd(-remaining)}</span></div>`;
+    if(s.tipUsd > 0.004) html += `<div class="pr-row"><span>${t.tipReceived}</span><span>${fmtUsd(s.tipUsd)}</span></div>`;
     html += `<div class="pr-hr"></div><div class="pr-row"><span>${t.rate}</span><span>1 USD = ${fmtLbp(rate)}</span></div>`;
     if(!s.items || !s.items.length) html += `<div class="pr-hr"></div><div class="pr-footer">Reconstructed summary — itemized details were not saved for this older invoice.</div>`;
     if(set.footerNote) html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(set.footerNote)}</div>`;
-    return html;
+    return `<div dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${html}</div>`;
   }
 
-  function buildFallbackReceiptText(s){
-    const t = getT(state.invoiceLang);
+  function buildFallbackReceiptText(s, lang){
+    lang = lang || state.invoiceLang;
+    const t = getT(lang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
     const lines = [];
-    lines.push('🧾 ' + (state.invoiceSettings.headerTitle || 'Invoice'));
+    lines.push('🧾 ' + (state.invoiceSettings.headerTitle || t.invoice));
     lines.push('📅 ' + dateStr);
-    lines.push('👤 Customer: ' + s.customerName);
+    lines.push('👤 ' + t.customer + ': ' + s.customerName);
     lines.push('');
     if(s.items && s.items.length){
       s.items.forEach((it, i) => {
@@ -5561,13 +6291,14 @@
     }
     if(s.prevBalanceApplied) lines.push(`📌 ${t.previousBalance}: ${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})`);
     const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
-    lines.push(`*💰 ${t.totalDue}: ${fmtUsd(grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}*`);
-    lines.push(SALE_STATUS_LABEL[getSaleStatus(s)]);
-    lines.push('💳 Received: ' + fmtUsd(s.amountReceived));
+    lines.push(`*💰 ${t.totalDue}: ${fmtUsd(grandTotal).replace('$', '')} ${t.usdWord} ${t.orWord} ${fmtLbp(grandTotal * rate)}*`);
+    const statusEmojiMap = { paid: '✅', partial: '🕓', unpaid: '❌', credit: '📌' };
+    lines.push(statusEmojiMap[getSaleStatus(s)] + ' ' + printStatusLabel(getSaleStatus(s), t));
+    lines.push('💳 ' + t.received + ': ' + fmtUsd(s.amountReceived));
     const remaining = s.newBalance || 0;
-    if(remaining > 0.004) lines.push('⚠️ Remaining balance: ' + fmtUsd(remaining));
-    else if(remaining < -0.004) lines.push('🟢 Credit on account: ' + fmtUsd(-remaining));
-    if(s.tipUsd > 0.004) lines.push('🙏 Tip: ' + fmtUsd(s.tipUsd));
+    if(remaining > 0.004) lines.push('⚠️ ' + t.remainingBalance + ': ' + fmtUsd(remaining));
+    else if(remaining < -0.004) lines.push('🟢 ' + t.creditOnAccount + ': ' + fmtUsd(-remaining));
+    if(s.tipUsd > 0.004) lines.push('🙏 ' + t.tipReceived + ': ' + fmtUsd(s.tipUsd));
     lines.push('');
     lines.push(`💱 ${t.rate}: 1 USD = ${fmtLbp(rate)}`);
     if(state.invoiceSettings.footerNote){
@@ -5585,9 +6316,10 @@
   // Bluetooth reprints of sales that predate the snapshotThermal field —
   // same centered header, item columns (when available), and "$X USD or Y
   // LBP" total as a live invoice would print today.
-  function buildThermalSegmentsFromSale(s){
+  function buildThermalSegmentsFromSale(s, lang){
+    lang = lang || state.invoiceLang;
     const set = state.invoiceSettings;
-    const t = getT(state.invoiceLang);
+    const t = getT(lang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
@@ -5638,7 +6370,7 @@
         seg(fmtLbp(it.revenueUsd * rate), { align:'right' });
       });
     } else {
-      twoCol('Amount', fmtUsd(s.revenueUsd));
+      twoCol(t.itemsSubtotal, fmtUsd(s.revenueUsd));
       seg(fmtLbp(s.revenueUsd * rate), { align:'right' });
     }
 
@@ -5648,7 +6380,7 @@
     seg(`${t.totalDue}: ${fmtUsd(grandTotal).replace('$', '')} USD ${t.orWord} ${fmtLbp(grandTotal * rate)}`, { bold:true });
 
     seg(hr('-'));
-    twoCol('Payment status', printStatusLabel(getSaleStatus(s), t));
+    twoCol(t.paymentStatus, printStatusLabel(getSaleStatus(s), t));
     twoCol(t.received, fmtUsd(s.amountReceived));
     const remaining = s.newBalance || 0;
     if(remaining > 0.004) twoCol(t.remainingBalance, fmtUsd(remaining));
@@ -5675,25 +6407,53 @@
     return segments;
   }
 
-  async function printOldInvoice(id){
+  // Old invoices finalized after this update carry a snapshot per language
+  // (snapshotHtml.en / .ar, etc). Sales finalized before that carry a single
+  // flat snapshot in whatever language was active at the time — since that
+  // language isn't recorded, it's treated as English (the app's default) and
+  // only reused when English is requested; Arabic falls back to
+  // buildFallback*() so it's still fully readable, just reconstructed from
+  // the saved totals/items (with translated labels) rather than pulled from
+  // an exact snapshot.
+  function getSaleSnapshot(s, field, lang, fallbackFn){
+    const snap = s[field];
+    if(snap && typeof snap === 'object' && !Array.isArray(snap)){
+      return snap[lang] || snap.en || snap.ar || fallbackFn(s, lang);
+    }
+    if(snap && lang === 'en') return snap;
+    return fallbackFn(s, lang);
+  }
+
+  // Remembers which language each history row is currently showing (EN/AR
+  // toggle), so re-rendering the list (search/filter) doesn't reset it.
+  // Defaults to the app's current invoice language.
+  const historyRowLang = {};
+  function getRowLang(s){
+    return historyRowLang[s.id] || state.invoiceLang;
+  }
+
+  async function printOldInvoice(id, lang){
     const s = state.sales.find(x => x.id === id);
     if(!s) return;
-    const html = s.snapshotHtml || buildFallbackReceiptHtml(s);
+    lang = lang || getRowLang(s);
+    const html = getSaleSnapshot(s, 'snapshotHtml', lang, buildFallbackReceiptHtml);
     if(state.invoiceSettings.printerConnection === 'bluetooth' && btCharacteristic){
-      const segments = s.snapshotThermal || buildThermalSegmentsFromSale(s);
+      const segments = getSaleSnapshot(s, 'snapshotThermal', lang, buildThermalSegmentsFromSale);
       const ok = await printToBluetoothPrinter(segments);
       if(ok) alertBanner('Sent to printer.');
       return;
     }
     applyPrintPageStyle();
     $('#printArea').innerHTML = html;
+    $('#printArea').dir = lang === 'ar' ? 'rtl' : 'ltr';
     window.print();
   }
 
-  function whatsappOldInvoice(id){
+  function whatsappOldInvoice(id, lang){
     const s = state.sales.find(x => x.id === id);
     if(!s) return;
-    const text = s.snapshotText || buildFallbackReceiptText(s);
+    lang = lang || getRowLang(s);
+    const text = getSaleSnapshot(s, 'snapshotText', lang, buildFallbackReceiptText);
     let phoneDigits = (s.snapshotPhone || '').replace(/[^0-9]/g, '');
     if(!phoneDigits && s.clientId){
       const client = state.clients.find(c => c.id === s.clientId);
@@ -6128,6 +6888,7 @@
       else if(itemsState.some(it => isNaN(it.costUsd) || it.costUsd < 0)) err = 'Enter a valid cost amount for every item.';
       else if(isNaN(parseFloat(fieldVals.received))) err = 'Enter a valid received amount.';
       else if(isNaN(parseFloat(fieldVals.tip)) || parseFloat(fieldVals.tip) < 0) err = 'Enter a valid tip amount.';
+      else if(!s.clientId && parseFloat(fieldVals.received) < itemsState.reduce((sum, it) => sum + it.revenueUsd, 0) - 0.004) err = 'Walk-in sales can\'t be left unpaid. The amount received must cover the full total.';
 
       if(err){ alertBanner(err); continue; }
       break;
@@ -6163,10 +6924,11 @@
 
     // The original snapshot (if any) was captured at finalize time and would
     // now be out of sync with the edited totals above — rebuild the
-    // printable/WhatsApp snapshot, now properly itemized, from the updated record.
-    s.snapshotHtml = buildFallbackReceiptHtml(s);
-    s.snapshotText = buildFallbackReceiptText(s);
-    s.snapshotThermal = buildThermalSegmentsFromSale(s);
+    // printable/WhatsApp snapshot, now properly itemized, from the updated
+    // record, in both languages so it can still be viewed in either later.
+    s.snapshotHtml = { en: buildFallbackReceiptHtml(s, 'en'), ar: buildFallbackReceiptHtml(s, 'ar') };
+    s.snapshotText = { en: buildFallbackReceiptText(s, 'en'), ar: buildFallbackReceiptText(s, 'ar') };
+    s.snapshotThermal = { en: buildThermalSegmentsFromSale(s, 'en'), ar: buildThermalSegmentsFromSale(s, 'ar') };
 
     // net effect on balance = (change in cash received) − (change in cost of goods)
     const netDelta = (s.amountReceived - oldAmountReceived) - (s.costUsd - oldCostUsd);
@@ -6379,8 +7141,16 @@
     $('#setFooterNote').value = s.footerNote || '';
     const preview = $('#logoPreview');
     preview.innerHTML = s.logo ? `<img src="${s.logo}" alt="logo">` : '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg>';
-    $all('#paperWidthBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.width !== String(s.paperWidth)));
-    $all('#printerConnBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.conn !== s.printerConnection));
+    $all('#paperWidthBtns button').forEach(b => {
+      const on = b.dataset.width === String(s.paperWidth);
+      b.classList.toggle('ghost', !on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    $all('#printerConnBtns button').forEach(b => {
+      const on = b.dataset.conn === s.printerConnection;
+      b.classList.toggle('ghost', !on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     renderMessageTemplateFields();
     renderCustomVoucherFieldsList();
     updateBtStatusUI();
@@ -6429,30 +7199,59 @@
     cvfSaveTimer = setTimeout(saveCustomVoucherFields, 400);
   }
 
+  const msgGroupsOpen = new Set();   // which template groups are expanded
+  let msgGroupsInit = false;
   function renderMessageTemplateFields(){
     const lang = msgTemplateEditLang;
-    $all('#msgTemplateLangBtns button').forEach(b => b.classList.toggle('ghost', b.dataset.lang !== lang));
+    $all('#msgTemplateLangBtns button').forEach(b => {
+      const on = b.dataset.lang === lang;
+      b.classList.toggle('ghost', !on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     const defaults = I18N[lang] || I18N.en;
     const overrides = (state.messageTemplates && state.messageTemplates[lang]) || {};
     const wrap = $('#msgTemplateFields');
     wrap.innerHTML = '';
     wrap.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    if(!msgGroupsInit){ msgGroupsInit = true; msgGroupsOpen.add(MESSAGE_FIELD_GROUPS[0].title); }
     MESSAGE_FIELD_GROUPS.forEach(group => {
-      const groupEl = document.createElement('div');
-      groupEl.style.marginTop = '14px';
-      const heading = document.createElement('div');
-      heading.className = 'field-label';
-      heading.style.marginBottom = '6px';
-      heading.textContent = group.title;
-      groupEl.appendChild(heading);
+      const details = document.createElement('details');
+      details.className = 'tpl-group';
+      details.open = msgGroupsOpen.has(group.title);
+      details.addEventListener('toggle', () => {
+        if(details.open) msgGroupsOpen.add(group.title); else msgGroupsOpen.delete(group.title);
+      });
+
+      const summary = document.createElement('summary');
+      const title = document.createElement('span');
+      title.className = 'tpl-title';
+      title.textContent = group.title;
+      const meta = document.createElement('span');
+      meta.className = 'tpl-meta';
+      const chev = document.createElement('span');
+      chev.className = 'tpl-chev';
+      chev.setAttribute('aria-hidden', 'true');
+      chev.textContent = '▾';
+      summary.append(title, meta, chev);
+      details.appendChild(summary);
+
+      // "3 fields" normally, "2 of 5 customized" once any default is overridden.
+      const updateMeta = () => {
+        const saved = (state.messageTemplates && state.messageTemplates[lang]) || {};
+        const edited = group.keys.filter(f => (saved[f.key] || '').trim() !== '').length;
+        meta.textContent = edited
+          ? edited + ' of ' + group.keys.length + ' customized'
+          : group.keys.length + (group.keys.length === 1 ? ' field' : ' fields');
+        meta.classList.toggle('edited', edited > 0);
+      };
+
+      const body = document.createElement('div');
+      body.className = 'tpl-body';
       group.keys.forEach(f => {
-        const field = document.createElement('div');
-        field.className = 'modal-field';
+        const field = document.createElement('label');
+        field.className = 'tpl-field' + (f.short ? '' : ' long');
         const label = document.createElement('span');
-        label.className = 'field-label';
-        label.style.fontWeight = '400';
-        label.style.fontSize = '12.5px';
-        label.style.color = 'var(--ink-faint)';
+        label.className = 'tpl-label';
         label.textContent = f.label;
         const el = document.createElement(f.short ? 'input' : 'textarea');
         if(f.short){
@@ -6460,9 +7259,7 @@
         } else {
           el.rows = 2;
           el.className = 'preview-box';
-          el.style.maxHeight = 'none';
         }
-        el.style.marginBottom = '0';
         el.placeholder = defaults[f.key] || '';
         el.value = overrides[f.key] || '';
         el.dataset.key = f.key;
@@ -6470,14 +7267,17 @@
         el.addEventListener('input', () => {
           if(!state.messageTemplates[lang]) state.messageTemplates[lang] = {};
           state.messageTemplates[lang][f.key] = el.value;
+          updateMeta();
           scheduleSaveSettings();
         });
         el.addEventListener('blur', flushSettingsSave);
         field.appendChild(label);
         field.appendChild(el);
-        groupEl.appendChild(field);
+        body.appendChild(field);
       });
-      wrap.appendChild(groupEl);
+      details.appendChild(body);
+      updateMeta();
+      wrap.appendChild(details);
     });
   }
 
@@ -6568,8 +7368,8 @@
     const last = rows[rows.length - 1];
     if(last) last.focus();
   });
-  $('#resetMsgTemplatesBtn').addEventListener('click', () => {
-    const ok = confirm('Reset all ' + (msgTemplateEditLang === 'ar' ? 'Arabic' : 'English') + ' message templates to the default text?');
+  $('#resetMsgTemplatesBtn').addEventListener('click', async () => {
+    const ok = await confirmModal('Reset all ' + (msgTemplateEditLang === 'ar' ? 'Arabic' : 'English') + ' message templates to the default text?');
     if(!ok) return;
     state.messageTemplates[msgTemplateEditLang] = {};
     renderMessageTemplateFields();
@@ -6784,9 +7584,10 @@
   // buildInvoiceText(). Returns an array of {text, align, bold} segments —
   // one per printed line — so printToBluetoothPrinter can apply real
   // ESC/POS centering/bold rather than faking it with spaces alone.
-  function buildThermalReceiptSegments(){
+  function buildThermalReceiptSegments(lang){
+    lang = lang || state.invoiceLang;
     const s = state.invoiceSettings;
-    const t = getT(state.invoiceLang);
+    const t = getT(lang);
     const nums = computeInvoiceNumbers();
     const customer = $('#customerName').value.trim();
     const now = getInvoiceDateTime();
@@ -6847,9 +7648,9 @@
       lineNo++;
       const amt = computeLineAmounts(p, line);
       const lineTotal = amt.total;
-      tableRow([`${lineNo}. ${productDisplayName(p, state.invoiceLang)}`, `x${line.qty}`, fmtUsd(p.priceUsd), fmtUsd(lineTotal)]);
+      tableRow([`${lineNo}. ${productDisplayName(p, lang)}`, `x${line.qty}`, fmtUsd(p.priceUsd), fmtUsd(lineTotal)]);
       seg(fmtLbp(lineTotal * state.rate.value), { align:'right' });
-      if(getLineDiscount(line)) seg(`  ${discountSummaryText(line)} (was ${fmtUsd(amt.original)})`);
+      if(getLineDiscount(line)) seg(`  ${discountSummaryText(line, lang)} (was ${fmtUsd(amt.original)})`);
       if(line.note.trim()) seg(`  ${t.note}: ${line.note.trim()}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
         const units = voucherDisplayUnits(line);
@@ -6910,9 +7711,10 @@
   }
 
   // ---------- Print (system dialog or direct Bluetooth) ----------
-  function buildPrintReceiptHtml(){
+  function buildPrintReceiptHtml(lang){
+    lang = lang || state.invoiceLang;
     const s = state.invoiceSettings;
-    const t = getT(state.invoiceLang);
+    const t = getT(lang);
     const nums = computeInvoiceNumbers();
     const customer = $('#customerName').value.trim();
     const now = getInvoiceDateTime();
@@ -6940,13 +7742,13 @@
       const amt = computeLineAmounts(p, line);
       const lineTotal = amt.total;
       tableRows += `<tr>`;
-      tableRows += `<td class="pr-col-name">${lineNo}. ${escapeHtml(productDisplayName(p, state.invoiceLang))}</td>`;
+      tableRows += `<td class="pr-col-name">${lineNo}. ${escapeHtml(productDisplayName(p, lang))}</td>`;
       tableRows += `<td class="pr-col-qty">×${line.qty}</td>`;
       tableRows += `<td class="pr-col-price">${fmtUsd(p.priceUsd)}</td>`;
       tableRows += `<td class="pr-col-total">${fmtUsd(lineTotal)}<div class="pr-col-total-lbp">${fmtLbp(lineTotal * state.rate.value)}</div></td>`;
       tableRows += `</tr>`;
       const subLines = [];
-      if(getLineDiscount(line)) subLines.push({ text: `${escapeHtml(discountSummaryText(line))} (was ${fmtUsd(amt.original)})` });
+      if(getLineDiscount(line)) subLines.push({ text: `${escapeHtml(discountSummaryText(line, lang))} (was ${fmtUsd(amt.original)})` });
       if(line.note.trim()) subLines.push({ text: `${t.note}: ${escapeHtml(line.note.trim())}` });
       if(subLines.length){
         tableRows += `<tr class="pr-item-subrow"><td colspan="4">${subLines.map(x => `<div class="pr-item-sub${x.cls ? ' ' + x.cls : ''}">${x.text}</div>`).join('')}</td></tr>`;
@@ -7003,7 +7805,7 @@
     // Thank-you line: also included in the WhatsApp/copy text, see buildInvoiceText().
     html += `<div class="pr-hr"></div><div class="pr-thankyou">${escapeHtml(t.thankYouPrint)}</div>`;
 
-    return html;
+    return `<div dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${html}</div>`;
   }
 
   function applyPrintPageStyle(){
@@ -7079,6 +7881,7 @@
       tab.classList.add('active');
       $all('.section').forEach(s => s.classList.remove('active'));
       $('#tab-' + tab.dataset.tab).classList.add('active');
+      if(tab.dataset.tab === 'clients') renderClientList();
       if(tab.dataset.tab === 'reports') renderReports();
       if(tab.dataset.tab === 'settings') renderSettingsTab();
       if(tab.dataset.tab === 'admin') renderAdminTab();
@@ -7197,14 +8000,40 @@
   $all('#invoiceLangBtns button').forEach(btn => {
     btn.addEventListener('click', () => setInvoiceLang(btn.dataset.lang));
   });
-  $('#addClientBtn').addEventListener('click', addClient);
+  $all('#settingsNav button').forEach(btn => btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.target);
+    if(!target) return;
+    const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+  }));
+  $('#addClientTopBtn').addEventListener('click', addClient);
   $('#clientSearch').addEventListener('input', renderClientList);
+  $('#clientSort').addEventListener('change', (e) => setClientView({ sort: e.target.value }));
+  $all('.view-toggle button').forEach(b => b.addEventListener('click', () => setClientView({ view: b.dataset.view })));
+  $('#clientFilterChips').addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-filter]');
+    if(chip) setClientView({ filter: chip.dataset.filter });
+  });
+  $('#clientResetBtn').addEventListener('click', () => {
+    $('#clientSearch').value = '';
+    setClientView({ filter: 'all' });
+  });
+  $('#copyOwedBtn').addEventListener('click', copyOwedList);
   $('#clientSelect').addEventListener('change', () => {
     const client = getSelectedClient();
     if(client) $('#customerName').value = client.name;
+    const lostBalance = !client && state.paymentStatus && state.paymentStatus !== 'paid';
     $('#amountReceived').dataset.userEdited = 'false';
     state.finalizedThisInvoice = false;
     renderInvoice();
+    if(lostBalance) alertBanner('Walk-in customers must pay in full, so this invoice is now set to Paid.');
+  });
+  $('#walkInPickClientBtn').addEventListener('click', () => {
+    $('#customerDetailsBody').classList.remove('collapsed');
+    $('#customerDetailsChev').classList.add('open');
+    const sel = $('#clientSelect');
+    sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    sel.focus();
   });
   $('#includeBalanceChk').addEventListener('change', () => {
     $('#amountReceived').dataset.userEdited = 'false';
@@ -7264,7 +8093,6 @@
   updateSearchInputsVisibility();
   updateSearchProductInputsVisibility();
   attachThousandsFormatting($('#amountReceived'));
-  attachThousandsFormatting($('#newClientBalance'));
 
   window.addEventListener('firebase-ready', () => {
     loadAll().then(() => {
