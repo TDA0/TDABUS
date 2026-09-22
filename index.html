@@ -9,11 +9,11 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   :root{
-    --bg:#F4F5FA;
+    --bg:#F3F4FA;
     --paper-card:#FFFFFF;
-    --ink:#171923;
-    --ink-soft:#6B7080;
-    --ink-faint:#9AA0AF;
+    --ink:#14151F;
+    --ink-soft:#666B7D;
+    --ink-faint:#98A0B3;
     --cedar:#4F46E5;
     --cedar-dark:#4338CA;
     --cedar-soft:#EEF0FF;
@@ -22,17 +22,22 @@
     --burgundy:#DC2626;
     --success:#059669;
     --success-soft:#E7F7F1;
-    --line:#EAEBF2;
-    --line-strong:#DEE0EA;
+    --line:#EBECF3;
+    --line-strong:#DCDFEA;
     --danger:#DC2626;
     --radius:14px;
     --radius-sm:9px;
-    --shadow:0 1px 2px rgba(23,25,35,0.04), 0 6px 20px rgba(23,25,35,0.06);
+    --shadow-xs:0 1px 2px rgba(20,21,31,0.05);
+    --shadow:0 1px 2px rgba(20,21,31,0.04), 0 8px 24px -6px rgba(20,21,31,0.08);
+    --shadow-lg:0 4px 8px rgba(20,21,31,0.04), 0 20px 40px -12px rgba(20,21,31,0.14);
+    --shadow-cedar:0 8px 20px -6px rgba(79,70,229,0.35);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:var(--bg);
+    background:
+      radial-gradient(1100px 480px at 50% -140px, rgba(79,70,229,0.07), transparent 62%),
+      var(--bg);
     color:var(--ink);
     font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing:antialiased;
@@ -229,52 +234,72 @@
 
   .catalog-head{
     display:flex; align-items:flex-end; justify-content:space-between;
-    flex-wrap:wrap; gap:8px 16px; margin:0 0 6px;
+    flex-wrap:wrap; gap:10px 16px; margin:0 0 18px;
   }
-  .catalog-head-text{ min-width:0; flex:1 1 220px; }
-  .catalog-head h2{ font-size:24px; }
+  .catalog-head-text{ min-width:0; flex:1 1 220px; display:flex; align-items:center; gap:12px; }
+  .catalog-head-icon{
+    flex:none; width:40px; height:40px; display:grid; place-items:center;
+    border-radius:12px; color:#fff;
+    background:linear-gradient(135deg,#6366F1 0%,#4338CA 100%);
+    box-shadow:var(--shadow-cedar);
+  }
+  .catalog-head-icon svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .catalog-head h2{ font-size:23px; }
   .catalog-subtitle{
-    margin:4px 0 0; font-size:13.5px; line-height:1.4;
+    margin:3px 0 0; font-size:13.5px; line-height:1.4;
     color:var(--ink-soft); font-weight:500;
+  }
+  @media (min-width:1024px){
+    .catalog-head{ margin-bottom:22px; }
+    .catalog-head-icon{ width:46px; height:46px; border-radius:14px; }
+    .catalog-head-icon svg{ width:22px; height:22px; }
+    .catalog-head h2{ font-size:27px; }
+    .catalog-subtitle{ font-size:14.5px; }
   }
 
   /* Sticky toolbar: search and "New category" stay one tap away while the
      list scrolls. The add form opens inside it, so it never needs scrolling to. */
   .catalog-toolbar{
     position:sticky; top:0; z-index:20;
-    padding:8px 0 14px;
+    padding:8px 0 16px;
     background:linear-gradient(to bottom, var(--bg) 82%, rgba(244,245,250,0));
   }
   .catalog-toolbar-card{
     background:var(--paper-card);
     border:1px solid var(--line);
-    border-radius:var(--radius);
+    border-radius:16px;
     box-shadow:var(--shadow);
+    transition:box-shadow .15s ease, border-color .15s ease;
   }
-  .catalog-bar{ display:flex; align-items:center; gap:8px; padding:8px; }
+  .catalog-bar{ display:flex; align-items:center; gap:10px; padding:9px; }
   .catalog-search{ position:relative; flex:1 1 auto; min-width:0; }
   .catalog-search > svg{
-    position:absolute; left:13px; top:50%; width:18px; height:18px; margin-top:-9px;
+    position:absolute; left:14px; top:50%; width:18px; height:18px; margin-top:-9px;
     stroke:var(--ink-faint); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
-    pointer-events:none;
+    pointer-events:none; transition:stroke .15s ease;
   }
   .catalog-search input{
-    height:44px; padding:0 38px 0 40px;
-    background:var(--bg); border-color:transparent; border-radius:10px;
+    height:44px; padding:0 38px 0 42px;
+    background:var(--bg); border-color:transparent; border-radius:11px;
+    font-weight:500; transition:background .15s ease, border-color .15s ease, box-shadow .15s ease;
   }
-  .catalog-search input:focus{ background:#fff; border-color:var(--cedar); }
+  .catalog-search input:focus{ background:#fff; border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  .catalog-search input:focus + .catalog-search-clear{ color:var(--cedar); }
+  .catalog-search:focus-within > svg{ stroke:var(--cedar); }
   .catalog-search input:placeholder-shown{ padding-right:12px; }
   .catalog-search-clear{
     position:absolute; right:5px; top:50%; width:34px; height:34px; margin-top:-17px;
     display:grid; place-items:center; padding:0;
-    border:0; border-radius:8px; background:none; color:var(--ink-soft); cursor:pointer;
+    border:0; border-radius:9px; background:none; color:var(--ink-soft); cursor:pointer;
+    transition:background .12s ease, color .12s ease;
   }
   .catalog-search-clear[hidden]{ display:none; }
   .catalog-search-clear svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; }
+  @media (hover:hover){ .catalog-search-clear:hover{ background:var(--line); color:var(--ink); } }
 
   .catalog-new-btn{
     display:inline-flex; align-items:center; justify-content:center; gap:7px;
-    height:44px; padding:0 14px; border-radius:10px; flex:0 0 auto;
+    height:44px; padding:0 14px; border-radius:11px; flex:0 0 auto;
   }
   .catalog-new-btn svg{
     width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.4;
@@ -288,7 +313,8 @@
     .catalog-new-btn .lbl-short{ display:none; }
   }
 
-  .catalog-add-panel{ padding:12px 12px 14px; border-top:1px solid var(--line); }
+  .catalog-add-panel{ padding:14px 14px 16px; border-top:1px solid var(--line); animation:catFadeIn .16s ease; }
+  @keyframes catFadeIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
   .catalog-add-status{ margin:8px 0 0; min-height:0; font-size:13px; font-weight:600; color:var(--success); }
   .catalog-add-status:empty{ display:none; }
   .fld-cap{ display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:var(--ink-soft); }
@@ -298,6 +324,10 @@
   .add-category input{ flex:1 1 auto; min-width:0; }
   .add-category .btn{ flex:0 0 auto; padding:0 18px; }
   .catalog-add-panel .add-category{ max-width:520px; }
+  @media (min-width:1024px){
+    .catalog-bar{ padding:10px; }
+    .catalog-search input, .catalog-new-btn{ height:46px; }
+  }
 
   /* Category list: cards are dealt into independent columns (see
      renderCategories), so opening one card only pushes down the cards
@@ -308,56 +338,64 @@
 
   .catalog-empty{
     flex:1 1 100%;
-    text-align:center; padding:44px 20px;
+    text-align:center; padding:52px 20px;
     background:var(--paper-card);
     border:1.5px dashed var(--line-strong);
-    border-radius:var(--radius);
+    border-radius:18px;
   }
   .catalog-empty-icon{
-    width:48px; height:48px; margin:0 auto 14px;
+    width:56px; height:56px; margin:0 auto 16px;
     display:grid; place-items:center;
-    border-radius:14px; background:var(--cedar-soft); color:var(--cedar);
+    border-radius:16px; color:#fff;
+    background:linear-gradient(135deg,#6366F1 0%,#4338CA 100%);
+    box-shadow:var(--shadow-cedar);
   }
-  .catalog-empty-icon svg{ width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
-  .catalog-empty h3{ font-size:17px; }
-  .catalog-empty p{ margin:6px auto 18px; max-width:36ch; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
-  .catalog-empty .btn{ display:inline-flex; align-items:center; justify-content:center; gap:7px; height:44px; padding:0 18px; }
+  .catalog-empty-icon svg{ width:26px; height:26px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  .catalog-empty h3{ font-size:18px; }
+  .catalog-empty p{ margin:7px auto 20px; max-width:36ch; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .catalog-empty .btn{ display:inline-flex; align-items:center; justify-content:center; gap:7px; height:44px; padding:0 20px; }
   .catalog-empty .btn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  @media (min-width:1024px){ .catalog-empty{ padding:64px 20px; } }
 
   /* Category card */
   .category{
     min-width:0;
     background:var(--paper-card);
     border:1px solid var(--line);
-    border-radius:var(--radius);
+    border-radius:16px;
     box-shadow:var(--shadow);
+    transition:box-shadow .15s ease, border-color .15s ease, transform .1s ease;
   }
-  .category.is-open{ border-color:var(--line-strong); }
-  .category-head{ display:flex; align-items:center; gap:2px; padding:6px 8px 6px 6px; }
+  .category.is-open{ border-color:var(--line-strong); box-shadow:var(--shadow-lg); }
+  @media (hover:hover){
+    .category:not(.is-sub):hover{ border-color:var(--line-strong); box-shadow:var(--shadow-lg); }
+  }
+  .category-head{ display:flex; align-items:center; gap:2px; padding:7px 8px 7px 7px; }
   .category-title{
     flex:1 1 auto; min-width:0; margin:0;
     font-size:inherit; font-weight:inherit; letter-spacing:normal;
   }
   .category-toggle{
     width:100%; display:flex; align-items:center; gap:12px;
-    padding:8px; border:0; border-radius:10px; background:none;
+    padding:8px; border:0; border-radius:11px; background:none;
     color:inherit; font:inherit; text-align:left; cursor:pointer;
     -webkit-tap-highlight-color:transparent;
     transition:background .12s ease;
   }
   .category-toggle:active{ background:var(--bg); }
   @media (hover:hover){ .category-toggle:hover{ background:var(--bg); } }
-  .cat-chev{ flex:0 0 auto; display:grid; place-items:center; color:var(--ink-soft); transition:transform .15s ease; }
+  .cat-chev{ flex:0 0 auto; display:grid; place-items:center; color:var(--ink-soft); transition:transform .18s ease; }
   .cat-chev svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
   .category-toggle[aria-expanded="true"] .cat-chev{ transform:rotate(180deg); }
   .cat-tile{
-    flex:0 0 auto; width:40px; height:40px;
+    flex:0 0 auto; width:42px; height:42px;
     display:grid; place-items:center; overflow:hidden;
-    border-radius:11px; font-size:16px; font-weight:800;
-    background:hsl(var(--h, 239) 85% 95%);
+    border-radius:12px; font-size:16px; font-weight:800;
+    background:linear-gradient(155deg, hsl(var(--h, 239) 88% 96%), hsl(var(--h, 239) 82% 91%));
     color:hsl(var(--h, 239) 55% 38%);
+    box-shadow:inset 0 0 0 1px hsl(var(--h, 239) 55% 88%);
   }
-  .cat-tile.has-img{ border:1px solid var(--line); background:var(--bg); }
+  .cat-tile.has-img{ border:1px solid var(--line); background:var(--bg); box-shadow:none; }
   .cat-tile img{ width:100%; height:100%; object-fit:cover; display:block; }
   .cat-info{ min-width:0; flex:1 1 auto; }
   .cat-name{
@@ -365,7 +403,7 @@
     letter-spacing:-0.01em; color:var(--ink); overflow-wrap:anywhere;
   }
   .cat-meta{ display:block; margin-top:2px; font-size:12.5px; font-weight:500; color:var(--ink-soft); }
-  .category-actions{ display:flex; flex:0 0 auto; }
+  .category-actions{ display:flex; flex:0 0 auto; gap:1px; }
 
   .ic-btn{
     width:36px; height:36px; display:inline-grid; place-items:center; padding:0;
@@ -383,7 +421,7 @@
   }
   @media (pointer:coarse){ .ic-btn{ width:40px; height:40px; } }
 
-  .category-body{ padding:0 14px 14px; border-top:1px solid var(--line); }
+  .category-body{ padding:0 14px 15px; border-top:1px solid var(--line); }
   .category-body.collapsed{ display:none; }
 
   .cat-actions-row{
@@ -392,22 +430,24 @@
   }
   .soft-btn{
     display:inline-flex; align-items:center; justify-content:center; gap:6px;
-    min-height:42px; padding:8px 8px; border:0; border-radius:10px;
+    min-height:42px; padding:8px 8px; border:1px solid transparent; border-radius:11px;
     background:var(--cedar-soft); color:var(--cedar);
     font:700 13.5px/1.2 'Inter', sans-serif; cursor:pointer;
     -webkit-tap-highlight-color:transparent;
-    transition:background .12s ease, color .12s ease;
+    transition:background .12s ease, color .12s ease, transform .08s ease;
   }
+  .soft-btn:active{ transform:scale(.98); }
   .soft-btn svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
   @media (hover:hover){ .soft-btn:hover{ background:#E3E6FF; } }
-  .soft-btn[aria-expanded="true"]{ background:var(--cedar); color:#fff; }
+  .soft-btn[aria-expanded="true"]{ background:var(--cedar); color:#fff; box-shadow:var(--shadow-cedar); }
   @media (hover:hover){ .soft-btn[aria-expanded="true"]:hover{ background:var(--cedar-dark); } }
 
   /* Inline add forms */
   .cat-form{
     display:flex; flex-direction:column; gap:12px;
-    margin-top:10px; padding:12px;
-    background:var(--bg); border:1px solid var(--line); border-radius:12px;
+    margin-top:10px; padding:13px;
+    background:var(--bg); border:1px solid var(--line); border-radius:13px;
+    animation:catFadeIn .16s ease;
   }
   .cat-form .fld{ display:flex; flex-direction:column; gap:6px; min-width:0; }
   .cat-form .fld-cap{ margin:0; }
@@ -425,20 +465,23 @@
   /* Sections inside a category */
   .cat-section{ margin-top:18px; }
   .cat-section-label{
-    display:flex; align-items:center; gap:8px; margin:0 0 2px;
-    font-size:13px; font-weight:700; color:var(--ink-soft);
+    display:flex; align-items:center; gap:8px; margin:0 0 4px;
+    font-size:12.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--ink-faint);
   }
   .cat-count{
     min-width:22px; padding:1px 7px; border-radius:999px; text-align:center;
     background:var(--bg); color:var(--ink-soft); font-size:12px; font-weight:700;
+    text-transform:none; letter-spacing:normal;
   }
   .cat-empty-note{ margin:14px 2px 2px; font-size:13.5px; color:var(--ink-soft); }
 
   .prod-list{ display:flex; flex-direction:column; }
   .product-row{
     display:flex; align-items:center; gap:12px;
-    padding:10px 0; border-bottom:1px solid var(--line);
+    padding:10px 4px; margin:0 -4px; border-bottom:1px solid var(--line);
+    border-radius:10px; transition:background .12s ease;
   }
+  @media (hover:hover){ .product-row:hover{ background:var(--bg); } }
   .product-row:last-child{ border-bottom:0; padding-bottom:2px; }
   .prod-tile{
     flex:0 0 auto; width:40px; height:40px;
@@ -460,10 +503,15 @@
     background:var(--success-soft); color:#047857; font-size:12px; font-weight:700;
   }
   .prod-margin.neg{ background:#FDEDED; color:#B91C1C; }
+  .prod-barcode{
+    font-family:'SFMono-Regular', ui-monospace, 'Courier New', monospace;
+    font-size:11.5px; letter-spacing:.01em; color:var(--ink-faint);
+  }
 
   /* Subcategories nest inside their parent as quieter cards */
   .subcat-list{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
-  .category.is-sub{ background:#FAFAFD; border-radius:12px; box-shadow:none; }
+  .category.is-sub{ background:#FAFAFD; border:1px solid var(--line); border-radius:12px; box-shadow:none; }
+  .category.is-sub.is-open{ box-shadow:none; border-color:var(--line-strong); }
   .category.is-sub .category-head{ padding:4px 6px 4px 4px; }
   .category.is-sub .cat-tile{ width:34px; height:34px; border-radius:9px; font-size:14px; }
   .category.is-sub .cat-name{ font-size:15px; }
@@ -475,6 +523,13 @@
     .cat-tile{ width:36px; height:36px; }
     .ic-btn{ width:36px; height:36px; }
     .category-body{ padding:0 12px 12px; }
+  }
+
+  /* Roomy screens: a touch more breathing room in every card */
+  @media (min-width:1024px){
+    .cat-tile{ width:44px; height:44px; }
+    .cat-name{ font-size:16.5px; }
+    .category-body{ padding:0 16px 16px; }
   }
 
   #tab-catalog button:focus-visible,
@@ -526,19 +581,23 @@
     padding:11px 14px;
     border-radius:var(--radius-sm);
     border:1.5px solid var(--cedar);
-    background:var(--cedar);
+    background:linear-gradient(180deg, #5B52EB, var(--cedar));
     color:#fff;
     cursor:pointer;
     white-space:nowrap;
-    transition:transform .08s ease, background .12s ease;
+    box-shadow:0 1px 0 rgba(255,255,255,0.15) inset, 0 4px 10px -4px rgba(79,70,229,0.4);
+    transition:transform .08s ease, background .12s ease, box-shadow .12s ease;
   }
-  .btn:active{ background:var(--cedar-dark); transform:scale(0.98); }
+  .btn:active{ background:var(--cedar-dark); transform:scale(0.98); box-shadow:none; }
+  @media (hover:hover){ .btn:not(.ghost):not(:disabled):hover{ box-shadow:0 1px 0 rgba(255,255,255,0.15) inset, 0 6px 16px -4px rgba(79,70,229,0.5); } }
   .btn.ghost{
     background:none;
     border:1.5px solid var(--line-strong);
     color:var(--ink);
+    box-shadow:none;
   }
   .btn.ghost:active{ background:var(--line); }
+  @media (hover:hover){ .btn.ghost:hover{ border-color:#CDD0DE; background:var(--bg); } }
   .btn.full{ width:100%; }
   .btn.small{ padding:8px 10px; font-size:13.5px; border-radius:8px; }
 
@@ -587,12 +646,13 @@
   #tab-invoice input[type="checkbox"]:focus-visible,
   .cart-bar-btn:focus-visible{ outline:2px solid var(--cedar); outline-offset:2px; }
 
-  .inv-head{ margin:0 0 14px; }
+  .inv-head{ margin:0 0 18px; }
   .inv-head h2{ font-size:24px; }
   .inv-subtitle{
-    margin:4px 0 0; font-size:13.5px; line-height:1.4;
+    margin:5px 0 0; font-size:13.5px; line-height:1.4;
     color:var(--ink-soft); font-weight:500;
   }
+  @media (min-width:1024px){ .inv-head h2{ font-size:27px; } .inv-subtitle{ font-size:14.5px; } }
 
   .inv-layout{
     display:grid; grid-template-columns:minmax(0, 1fr);
@@ -627,9 +687,10 @@
   }
   .inv-search input{
     height:48px; padding:0 42px 0 42px; border-radius:12px;
-    border-color:var(--line); box-shadow:var(--shadow);
+    border-color:var(--line); box-shadow:var(--shadow); transition:border-color .12s ease, box-shadow .12s ease;
   }
   .inv-search input:focus{ border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  @media (hover:hover){ .inv-search input:hover{ border-color:var(--line-strong); } }
   .inv-search input:placeholder-shown{ padding-right:12px; }
   .inv-search-clear{
     position:absolute; right:6px; top:50%; width:36px; height:36px; margin-top:-18px;
@@ -638,6 +699,57 @@
   }
   .inv-search-clear[hidden]{ display:none; }
   .inv-search-clear svg{ width:16px; height:16px; stroke-width:2.2; }
+
+  .inv-find-row{ display:flex; gap:8px; align-items:stretch; }
+  .inv-find-row .inv-search{ flex:1 1 auto; min-width:0; }
+  .inv-scan-btn{
+    flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    height:48px; padding:0 14px; min-width:48px;
+    background:var(--paper-card); color:var(--cedar);
+    border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+    font:700 13.5px/1 'Inter', sans-serif; cursor:pointer; white-space:nowrap;
+    transition:background .12s ease, border-color .12s ease, transform .08s ease;
+  }
+  .inv-scan-btn svg{ width:19px; height:19px; stroke-width:2; }
+  .inv-scan-btn span{ display:none; }
+  @media (min-width:420px){ .inv-scan-btn span{ display:inline; } }
+  .inv-scan-btn:active{ background:var(--cedar-soft); border-color:var(--cedar); transform:scale(0.97); }
+  @media (hover:hover){ .inv-scan-btn:hover{ background:var(--cedar-soft); border-color:var(--cedar); } }
+
+  /* ---------- Barcode scanner overlay ---------- */
+  .scan-overlay{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(10,10,16,0.86); backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .scan-box{
+    width:100%; max-width:420px; background:#0E0F16; border-radius:18px; overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,0.5); display:flex; flex-direction:column;
+  }
+  .scan-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 16px; color:#fff; font:700 15px/1 'Inter', sans-serif;
+  }
+  .scan-close{
+    width:32px; height:32px; display:grid; place-items:center; padding:0;
+    background:rgba(255,255,255,0.1); border:0; border-radius:9px; color:#fff; cursor:pointer;
+  }
+  .scan-close svg{ width:16px; height:16px; stroke-width:2.4; }
+  .scan-video{
+    width:100%; aspect-ratio:1/1; object-fit:cover; background:#000; display:block;
+  }
+  .scan-viewport{ position:relative; }
+  .scan-frame{
+    position:absolute; inset:0; pointer-events:none;
+  }
+  .scan-frame::before{
+    content:''; position:absolute; left:12%; right:12%; top:38%; height:24%;
+    border:2.5px solid #fff; border-radius:12px; box-shadow:0 0 0 999px rgba(0,0,0,0.45);
+  }
+  .scan-hint{
+    padding:14px 16px 18px; text-align:center; color:#C7C9D6;
+    font-size:13px; line-height:1.4;
+  }
 
   #tab-invoice .cat-chips{
     display:flex; gap:6px; margin-top:10px; padding:2px 1px 2px;
@@ -674,15 +786,15 @@
     position:relative;
     display:flex; flex-direction:column; justify-content:space-between; gap:10px;
     min-width:0; min-height:88px; padding:12px;
-    background:var(--paper-card); border:1px solid var(--line); border-radius:12px;
-    box-shadow:0 1px 2px rgba(23,25,35,0.04);
+    background:var(--paper-card); border:1px solid var(--line); border-radius:13px;
+    box-shadow:var(--shadow-xs);
     cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
-    transition:border-color .12s ease, background .12s ease, box-shadow .12s ease, transform .06s ease;
+    transition:border-color .14s ease, background .14s ease, box-shadow .14s ease, transform .1s ease;
   }
   @media (hover:hover){
-    .pick-row:hover{ border-color:var(--cedar); box-shadow:0 6px 16px rgba(79,70,229,0.12); }
+    .pick-row:hover{ border-color:var(--cedar); box-shadow:0 10px 22px -8px rgba(79,70,229,0.22); transform:translateY(-1px); }
   }
-  .pick-row:active{ transform:scale(0.98); background:var(--cedar-soft); border-color:var(--cedar); }
+  .pick-row:active{ transform:scale(0.98) translateY(0); background:var(--cedar-soft); border-color:var(--cedar); }
   .pick-row.in-cart{ border-color:#C9CDFB; background:#F8F8FF; }
   .pick-row.just-added{ background:var(--success-soft); border-color:var(--success); }
   .pick-row-left{ display:flex; align-items:flex-start; gap:10px; min-width:0; padding-right:28px; }
@@ -743,7 +855,7 @@
   .inv-receipt{
     margin-bottom:14px; overflow:hidden;
     background:var(--paper-card); border:1px solid var(--line);
-    border-radius:var(--radius); box-shadow:var(--shadow);
+    border-radius:16px; box-shadow:var(--shadow);
   }
   #lineItems{ padding:0 16px; }
   #lineItems:empty{ display:none; }
@@ -874,14 +986,16 @@
   .inv-discount-btn:active{ background:var(--cedar-soft); border-color:var(--cedar); }
   @media (hover:hover){ .inv-discount-btn:hover{ background:var(--cedar-soft); border-color:var(--cedar); } }
   .totals-row.grand{
-    align-items:flex-end; margin-top:12px; padding:14px 0 0;
-    border-top:1px solid var(--line);
+    align-items:flex-end; margin-top:14px; padding:16px;
+    margin-left:-16px; margin-right:-16px; width:calc(100% + 32px);
+    border-top:none; background:linear-gradient(135deg, var(--cedar-soft), #F8F8FF);
+    border-radius:12px;
   }
   .grand-label{ padding-bottom:5px; font-size:15px; font-weight:700; color:var(--ink-soft); }
   .grand-amts{ min-width:0; text-align:right; }
   .grand-usd{
     display:block; font-size:clamp(28px, 8vw, 34px); font-weight:800;
-    letter-spacing:-0.03em; line-height:1.05; color:var(--ink); overflow-wrap:anywhere;
+    letter-spacing:-0.03em; line-height:1.05; color:var(--cedar-dark); overflow-wrap:anywhere;
   }
   .grand-lbp{ display:block; margin-top:5px; font-size:14px; font-weight:600; color:var(--ink-soft); overflow-wrap:anywhere; }
 
@@ -983,8 +1097,8 @@
 
   /* ---------- Send / print ---------- */
   .inv-send{
-    padding:16px; background:var(--paper-card); border:1px solid var(--line);
-    border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:18px; background:var(--paper-card); border:1px solid var(--line);
+    border-radius:16px; box-shadow:var(--shadow);
   }
   .inv-send-head{
     display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
@@ -993,11 +1107,13 @@
   .inv-send-head h3{ font-size:17px; }
   .inv-send-head .status-btns{ grid-auto-columns:minmax(72px, auto); }
   #tab-invoice .preview-box{
-    min-height:180px; max-height:300px; margin:0 0 10px; padding:14px;
-    background:#FAFAFD; border:1px solid var(--line-strong); border-radius:12px;
-    font-size:13.5px; line-height:1.6;
+    min-height:180px; max-height:300px; margin:0 0 10px; padding:16px;
+    background:#FCFCFE; border:1px solid var(--line-strong); border-radius:12px;
+    font-family:'SFMono-Regular', ui-monospace, 'Courier New', monospace;
+    font-size:13px; line-height:1.65; box-shadow:inset 0 1px 3px rgba(20,21,31,0.03);
+    transition:border-color .12s ease, box-shadow .12s ease;
   }
-  #tab-invoice .preview-box:focus{ border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  #tab-invoice .preview-box:focus{ border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft), inset 0 1px 3px rgba(20,21,31,0.03); }
   .inv-regen{
     display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 10px 0 6px;
     background:none; border:0; border-radius:9px; cursor:pointer;
@@ -2509,13 +2625,15 @@
   /* Print-only receipt (hidden on screen, shown when printing) */
   #printArea{ display:none; }
   #reportPrintArea{ display:none; }
+  #labelPrintArea{ display:none; }
   @media print{
-    /* #printArea / #reportPrintArea live inside #appRoot (not directly under
-       <body>), so hiding "everything under body except them" also hid their
-       own parent — which hid them too, producing a blank printout/PDF.
-       Hide appRoot's siblings, then hide appRoot's *other* children instead. */
+    /* #printArea / #reportPrintArea / #labelPrintArea live inside #appRoot
+       (not directly under <body>), so hiding "everything under body except
+       them" also hid their own parent — which hid them too, producing a
+       blank printout/PDF. Hide appRoot's siblings, then hide appRoot's
+       *other* children instead. */
     body > *:not(#appRoot){ display:none !important; }
-    #appRoot > *:not(#printArea):not(#reportPrintArea){ display:none !important; }
+    #appRoot > *:not(#printArea):not(#reportPrintArea):not(#labelPrintArea){ display:none !important; }
     #printArea{
       display:block !important;
       font-family:'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
@@ -2594,7 +2712,43 @@
        2) body's screen-only 40px bottom padding adds a blank trailing page
           after the last sheet. Drop it while a report is what's being printed. */
     #printArea:empty{ display:none !important; }
+    #reportPrintArea:empty{ display:none !important; }
+    #labelPrintArea:empty{ display:none !important; }
     body:has(#reportPrintArea:not(:empty)){ padding-bottom:0 !important; }
+
+    /* Barcode label sheet — a grid of cut-out (or roll-fed) labels, sized
+       and columned by whatever the person picked in the Print labels modal
+       (set as CSS custom properties on .label-sheet at print time). */
+    #labelPrintArea{
+      display:block !important;
+      background:#fff;
+      color:#000;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+    }
+    #labelPrintArea .label-sheet{
+      display:grid;
+      grid-template-columns:repeat(var(--label-cols, 1), var(--label-w, 50mm));
+      gap:2mm;
+    }
+    #labelPrintArea .label-cell{
+      width:var(--label-w, 50mm);
+      height:var(--label-h, 30mm);
+      box-sizing:border-box;
+      padding:1.5mm 2mm;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      overflow:hidden;
+      page-break-inside:avoid;
+      break-inside:avoid;
+    }
+    #labelPrintArea .label-cell svg{ width:100%; height:auto; max-height:65%; }
+    #labelPrintArea .label-cell-name{ font-size:8.5pt; font-weight:700; line-height:1.15; margin-top:0.8mm; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    #labelPrintArea .label-cell-price{ font-size:8pt; font-weight:600; margin-top:0.4mm; }
+    #labelPrintArea .label-cell-code{ font-size:6.5pt; letter-spacing:0.4px; margin-top:0.4mm; color:#333; }
   }
 
   /* Business report content (A4 print + on-screen preview share these classes) */
@@ -2814,6 +2968,25 @@
   .print-preview-paper .pr-footer{ font-size:14px; font-weight:600; text-align:center; margin-top:12px; white-space:pre-wrap; color:#E4E4E7; }
   .print-preview-paper .pr-thankyou{ font-size:15px; text-align:center; margin-top:14px; font-weight:500; letter-spacing:0.2px; color:#E4E4E7; }
 
+  /* ---------- Print barcode labels modal (on-screen setup UI) ---------- */
+  .label-print-box{ width:min(560px, 94vw); }
+  .label-print-body{ display:flex; flex-direction:column; gap:14px; padding:2px 2px 4px; max-height:62vh; overflow-y:auto; }
+  .label-settings-grid{ display:grid; gap:10px; grid-template-columns:1fr 1fr; }
+  .label-settings-grid .fld.span2{ grid-column:1 / -1; }
+  .label-check-row{ display:flex; gap:18px; align-items:center; grid-column:1 / -1; }
+  .label-check-row label{ display:flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--ink); cursor:pointer; }
+  .label-product-search input{ width:100%; padding:9px 12px; border:1px solid var(--line-strong); border-radius:10px; font:inherit; background:var(--paper-card); color:var(--ink); }
+  .label-product-list{ display:flex; flex-direction:column; gap:4px; max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:12px; padding:6px; }
+  .label-product-row{ display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:9px; }
+  @media (hover:hover){ .label-product-row:hover{ background:var(--bg); } }
+  .label-product-name{ font-size:13.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .label-product-code{ font-size:11.5px; color:var(--ink-faint); margin-top:1px; }
+  .label-gen-link{ font-size:12px; font-weight:700; color:var(--cedar); background:none; border:none; cursor:pointer; padding:0; font-family:inherit; }
+  .label-qty{ display:flex; align-items:center; gap:6px; flex:none; }
+  .label-qty button{ width:27px; height:27px; border-radius:8px; border:1px solid var(--line-strong); background:var(--bg); color:var(--ink); font:700 15px/1 'Inter',sans-serif; cursor:pointer; }
+  .label-qty button:active{ background:var(--line); }
+  .label-qty input{ width:40px; text-align:center; border:1px solid var(--line-strong); border-radius:8px; padding:5px 0; font:inherit; background:var(--paper-card); color:var(--ink); }
+
   /* ==========================================================
      Admin tab, banned screen and "viewing as" bar
      ========================================================== */
@@ -3013,6 +3186,10 @@
     body.impersonating .inv-order{ top:60px; max-height:calc(100vh - 76px); max-height:calc(100dvh - 76px); }
   }
 </style>
+<!-- Renders barcode images for printed labels (CODE128). Loaded from CDN —
+     needs an internet connection the first time a page prints labels;
+     everything else in this app keeps working offline without it. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
 </head>
 <body>
 
@@ -3129,11 +3306,17 @@
     <div class="inv-layout">
       <div class="inv-browse">
         <div class="inv-find">
-          <div class="inv-search">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" id="productSearch" placeholder="Search products" aria-label="Search products" autocomplete="off" enterkeyhint="search">
-            <button type="button" class="inv-search-clear" id="productSearchClear" aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          <div class="inv-find-row">
+            <div class="inv-search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="productSearch" placeholder="Search or scan a barcode" aria-label="Search products" autocomplete="off" enterkeyhint="search">
+              <button type="button" class="inv-search-clear" id="productSearchClear" aria-label="Clear search" hidden>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <button type="button" class="inv-scan-btn" id="invScanBtn" aria-label="Scan a barcode">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
+              <span>Scan</span>
             </button>
           </div>
           <div class="cat-chips" id="catChips"></div>
@@ -3318,9 +3501,18 @@
   <section class="section" id="tab-catalog" aria-labelledby="catalogTitle">
     <div class="catalog-head">
       <div class="catalog-head-text">
-        <h2 id="catalogTitle">Catalog</h2>
-        <p class="catalog-subtitle" id="catalogStats">Categories, subcategories &amp; products</p>
+        <span class="catalog-head-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg>
+        </span>
+        <div>
+          <h2 id="catalogTitle">Catalog</h2>
+          <p class="catalog-subtitle" id="catalogStats">Categories, subcategories &amp; products</p>
+        </div>
       </div>
+      <button type="button" class="ghost-btn" id="printLabelsBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5v14M7 5v14M11 5v14M14 5v14M18 5v14M21 5v14"/></svg>
+        <span>Print labels</span>
+      </button>
     </div>
 
     <div class="catalog-toolbar">
@@ -3655,6 +3847,7 @@
       <button type="button" data-target="sc-messages">Messages</button>
       <button type="button" data-target="sc-voucher">Voucher fields</button>
       <button type="button" data-target="sc-printer">Printer</button>
+      <button type="button" data-target="sc-backup">Backup</button>
     </nav>
 
     <div class="settings-layout">
@@ -3796,6 +3989,32 @@
           </div>
         </div>
 
+        <div class="settings-card" id="sc-backup">
+          <div class="sc-head">
+            <span class="sc-icon tone-indigo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></span>
+            <div class="sc-head-text">
+              <h3>Data backup</h3>
+              <p>Save your catalog, clients, invoices and settings to a file, or restore them from one.</p>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-actions">
+              <button class="btn small" id="exportDataBtn" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                Export backup file
+              </button>
+              <input type="file" id="importDataInput" accept="application/json,.json" class="visually-hidden">
+              <label for="importDataInput" class="btn ghost small">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+                Import backup file
+              </label>
+            </div>
+            <div class="settings-hint">Exports everything — products, categories, clients, invoice history, rate, balance and invoice settings — as one JSON file you can keep or move to another device.</div>
+            <div class="settings-hint">Importing replaces your current catalog, clients and settings with the backup's versions. Invoices in the backup are added or updated; invoices you already have that aren't in the backup are kept.</div>
+            <div class="settings-hint" id="backupInfo"></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -3881,6 +4100,59 @@
     <div class="print-preview-actions">
       <button type="button" class="btn ghost" id="reportPreviewCancelBtn">Cancel</button>
       <button type="button" class="btn" id="reportPreviewPrintBtn">🖨️ Print / Save PDF</button>
+    </div>
+  </div>
+</div>
+
+<div id="labelPrintArea"></div>
+
+<div class="print-preview-overlay" id="labelPrintOverlay">
+  <div class="print-preview-box label-print-box">
+    <div class="print-preview-header">
+      <h3>Print barcode labels</h3>
+      <button type="button" class="icon-btn" id="labelPrintCloseBtn">✕</button>
+    </div>
+    <div class="label-print-body">
+      <div class="label-settings-grid">
+        <div class="fld span2">
+          <span class="fld-cap">Label size</span>
+          <select id="labelSizePreset">
+            <option value="40x30">40 × 30 mm — small thermal roll</option>
+            <option value="50x30">50 × 30 mm — thermal roll</option>
+            <option value="58x40">58 × 40 mm — larger thermal roll</option>
+            <option value="25x15">25 × 15 mm — mini / jewelry tag</option>
+            <option value="custom">Custom size…</option>
+          </select>
+        </div>
+        <div class="fld" id="labelCustomWRow" hidden>
+          <span class="fld-cap">Width (mm)</span>
+          <input type="number" id="labelCustomW" min="10" max="150" step="1">
+        </div>
+        <div class="fld" id="labelCustomHRow" hidden>
+          <span class="fld-cap">Height (mm)</span>
+          <input type="number" id="labelCustomH" min="10" max="150" step="1">
+        </div>
+        <div class="fld">
+          <span class="fld-cap">Labels per row</span>
+          <input type="number" id="labelCols" min="1" max="10" step="1" value="1">
+        </div>
+        <div class="fld">
+          <span class="fld-cap">&nbsp;</span>
+          <span class="fld-hint" style="margin-top:8px;">Use 1 for a single-label roll printer, or more for a sheet of stickers on a regular printer.</span>
+        </div>
+        <div class="label-check-row">
+          <label><input type="checkbox" id="labelShowName" checked> Product name</label>
+          <label><input type="checkbox" id="labelShowPrice" checked> Price</label>
+        </div>
+      </div>
+      <div class="label-product-search">
+        <input type="text" id="labelProductSearch" placeholder="Search products to add" autocomplete="off">
+      </div>
+      <div class="label-product-list" id="labelProductList"></div>
+    </div>
+    <div class="print-preview-actions">
+      <button type="button" class="btn ghost" id="labelPrintCancelBtn">Cancel</button>
+      <button type="button" class="btn" id="labelPrintGoBtn">🖨️ Print labels</button>
     </div>
   </div>
 </div>
@@ -4196,6 +4468,15 @@
       paperWidth: '80',
       printerConnection: 'system',
       showPaymentStatus: true
+    },
+    // Remembered defaults for the "Print barcode labels" modal (Catalog tab).
+    labelSettings: {
+      preset: '40x30',
+      customW: 50,
+      customH: 30,
+      cols: 1,
+      showName: true,
+      showPrice: true
     }
   };
 
@@ -4542,6 +4823,17 @@
                 </select>
               </div>`;
             }
+            if(f.type === 'barcode'){
+              return `
+              <div class="modal-field">
+                <span class="field-label">${escapeHtml(f.label)}</span>
+                <div class="add-row-inline">
+                  <input type="text" inputmode="text" id="mf_${f.id}" value="${f.value ? escapeHtml(String(f.value)) : ''}" placeholder="${f.placeholder?escapeHtml(f.placeholder):''}" style="flex:1;">
+                  <button type="button" class="btn ghost small" id="mf_${f.id}_gen" style="flex:0 0 auto;">${CAT_ICONS.wand} Generate</button>
+                  <button type="button" class="btn ghost small" id="mf_${f.id}_scan" style="flex:0 0 auto;">${CAT_ICONS.barcode} Scan</button>
+                </div>
+              </div>`;
+            }
             if(f.commas){
               const displayVal = f.value !== undefined && f.value !== null ? formatNumberString(String(f.value)) : '';
               return `
@@ -4566,6 +4858,16 @@
       modalOverlay.classList.add('show');
       fields.forEach(f => {
         if(f.type === 'money' || f.commas) attachThousandsFormatting(document.getElementById('mf_' + f.id));
+        if(f.type === 'barcode'){
+          const input = document.getElementById('mf_' + f.id);
+          const genBtn = document.getElementById('mf_' + f.id + '_gen');
+          const scanBtn = document.getElementById('mf_' + f.id + '_scan');
+          if(genBtn) genBtn.addEventListener('click', () => { input.value = generateUniqueBarcode(); });
+          if(scanBtn) scanBtn.addEventListener('click', async () => {
+            const code = await openBarcodeScanner();
+            if(code) input.value = code;
+          });
+        }
         if(f.type === 'image'){
           const fileInput = document.getElementById('mf_' + f.id + '_file');
           const removeBtn = document.getElementById('mf_' + f.id + '_remove');
@@ -4688,7 +4990,7 @@
     // waiting for each round-trip to the server before starting the next.
     // (Previously: ~9 requests back-to-back, THEN the invoice list.)
     const settle = (p) => p.then(value => ({ value }), error => ({ error }));
-    const KEYS = ['catalog','rate','clients','balance','balanceLog','customVoucherFields','invoiceSettings','clientViewPrefs'];
+    const KEYS = ['catalog','rate','clients','balance','balanceLog','customVoucherFields','invoiceSettings','clientViewPrefs','labelSettings'];
     const pending = {};
     KEYS.forEach(k => { pending[k] = settle(window.storage.get(k)); });
     const salesPending = settle(loadAllSales());
@@ -4758,6 +5060,10 @@
       if(p && CLIENT_FILTERS.some(f => f.key === p.filter)) state.clientView.filter = p.filter;
       if(p && (p.view === 'cards' || p.view === 'list')) state.clientView.view = p.view;
     });
+    apply('labelSettings', true, (raw) => {
+      const p = JSON.parse(raw);
+      if(p) state.labelSettings = Object.assign({}, state.labelSettings, p);
+    });
     if(loadError){ alertBanner('Could not load your data: ' + loadError.message); }
 
     renderCategories();
@@ -4783,6 +5089,116 @@
   async function saveClients(){
     try{ await window.storage.set('clients', JSON.stringify(state.clients)); }
     catch(e){ console.error(e); alertBanner('Could not save clients: ' + e.message); }
+  }
+
+  // ---------- Full data backup: export everything to a file, import it back ----------
+  function backupFileBaseName(){
+    const raw = (state.invoiceSettings && state.invoiceSettings.headerTitle) || 'tda-business';
+    const slug = raw.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return slug || 'tda-business';
+  }
+
+  async function exportBackupData(){
+    const btn = $('#exportDataBtn');
+    const info = $('#backupInfo');
+    if(btn) btn.disabled = true;
+    if(info) info.textContent = 'Preparing backup…';
+    try{
+      const payload = {
+        app: 'tda-business-backup',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        data: {
+          catalog: { categories: state.categories, products: state.products },
+          rate: state.rate,
+          clients: state.clients,
+          sales: state.sales,
+          balance: state.balance,
+          balanceLog: state.balanceLog,
+          customVoucherFields: state.customVoucherFields,
+          invoiceSettings: {
+            paymentMethods: state.paymentMethods,
+            lang: state.invoiceLang,
+            invoiceSettings: state.invoiceSettings,
+            messageTemplates: state.messageTemplates
+          },
+          clientViewPrefs: state.clientView
+        }
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const stamp = new Date().toISOString().slice(0, 10);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = backupFileBaseName() + '-backup-' + stamp + '.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      if(info) info.textContent = 'Backup file downloaded.';
+      else alertBanner('Backup file downloaded.');
+    }catch(e){
+      console.error(e);
+      alertBanner('Could not create the backup file: ' + e.message);
+      if(info) info.textContent = '';
+    }finally{
+      if(btn) btn.disabled = false;
+    }
+  }
+
+  async function importBackupData(file){
+    const info = $('#backupInfo');
+    if(!file) return;
+    try{
+      const text = await file.text();
+      let parsed;
+      try{ parsed = JSON.parse(text); }
+      catch(e){ throw new Error('That file isn\'t valid JSON.'); }
+      const data = (parsed && typeof parsed === 'object' && parsed.data) ? parsed.data : parsed;
+      if(!data || typeof data !== 'object') throw new Error('This doesn\'t look like a TDA Business backup file.');
+
+      const productCount = data.catalog && Array.isArray(data.catalog.products) ? data.catalog.products.length : 0;
+      const clientCount = Array.isArray(data.clients) ? data.clients.length : 0;
+      const saleCount = Array.isArray(data.sales) ? data.sales.length : 0;
+
+      const ok = await confirmModal(
+        'Import this backup? It has ' + productCount + ' product' + (productCount === 1 ? '' : 's') + ', ' +
+        clientCount + ' client' + (clientCount === 1 ? '' : 's') + ' and ' + saleCount + ' invoice' + (saleCount === 1 ? '' : 's') +
+        '. Your catalog, clients and settings will be replaced with the backup\'s versions. Invoices in the backup are added or updated; any invoices you have that aren\'t in the backup are kept.'
+      );
+      if(!ok) return;
+
+      if(info) info.textContent = 'Importing…';
+
+      if(data.catalog){
+        await window.storage.set('catalog', JSON.stringify({ categories: data.catalog.categories || [], products: data.catalog.products || [] }));
+      }
+      if(data.rate) await window.storage.set('rate', JSON.stringify(data.rate));
+      if(data.clients) await window.storage.set('clients', JSON.stringify(data.clients));
+      if(data.balance) await window.storage.set('balance', JSON.stringify(data.balance));
+      if(data.balanceLog) await window.storage.set('balanceLog', JSON.stringify(data.balanceLog));
+      if(data.customVoucherFields) await window.storage.set('customVoucherFields', JSON.stringify(data.customVoucherFields));
+      if(data.invoiceSettings) await window.storage.set('invoiceSettings', JSON.stringify(data.invoiceSettings));
+      if(data.clientViewPrefs) await window.storage.set('clientViewPrefs', JSON.stringify(data.clientViewPrefs));
+
+      let failedSales = 0;
+      if(Array.isArray(data.sales)){
+        for(const sale of data.sales){
+          if(!sale || !sale.id) continue;
+          try{ await window.storage.set(SALES_PREFIX + sale.id, JSON.stringify(sale)); }
+          catch(e){ failedSales++; console.error('Could not import invoice ' + sale.id + ':', e); }
+        }
+      }
+
+      if(info) info.textContent = failedSales
+        ? ('Import mostly complete — ' + failedSales + ' invoice(s) failed to save. Reloading…')
+        : 'Import complete. Reloading…';
+      setTimeout(() => location.reload(), 900);
+    }catch(e){
+      console.error(e);
+      alertBanner('Could not import that file: ' + e.message);
+      if(info) info.textContent = '';
+    }
   }
   // ---------- Invoices ("sales") — stored one-per-key, not as one big blob ----------
   // Older versions stored the ENTIRE invoice history as a single JSON blob under
@@ -5333,7 +5749,7 @@
   // to decide whether a category stays visible while searching.
   function categoryOrDescendantsMatch(cat, query){
     if(cat.name.toLowerCase().includes(query)) return true;
-    if(state.products.some(p => p.categoryId === cat.id && p.name.toLowerCase().includes(query))) return true;
+    if(state.products.some(p => p.categoryId === cat.id && productMatchesQuery(p, query))) return true;
     return childCategories(cat.id).some(sub => categoryOrDescendantsMatch(sub, query));
   }
 
@@ -5344,7 +5760,10 @@
     plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
     folderPlus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10v6M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>',
     box: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>',
-    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>'
+    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+    barcode: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5v14M7 5v14M11 5v14M14 5v14M18 5v14M21 5v14"/></svg>',
+    tag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.6 2H4a2 2 0 0 0-2 2v8.6a2 2 0 0 0 .6 1.4l9 9a2 2 0 0 0 2.8 0l7.6-7.6a2 2 0 0 0 0-2.8l-9-9A2 2 0 0 0 12.6 2Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
+    wand: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1Z"/><path d="M3 21 15 9"/><path d="m19 12 .7 1.6L21.3 14l-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7Z"/></svg>'
   };
   // A small, deliberate palette for category tiles that have no photo.
   const CAT_TILE_HUES = [239, 172, 32, 340, 262, 199];
@@ -5465,6 +5884,7 @@
     const marginPill = p.costUsd
       ? `<span class="prod-margin${margin < 0 ? ' neg' : ''}">Margin ${fmtUsd(margin)}${p.costMode === 'flat' ? ' (flat cost)' : ''}</span>`
       : '';
+    const barcodePill = p.barcode ? `<span class="prod-barcode">#${escapeHtml(p.barcode)}</span>` : '';
     row.innerHTML = `
       <span class="prod-tile">${p.image ? `<img src="${p.image}" alt="">` : CAT_ICONS.box}</span>
       <div class="product-info">
@@ -5473,16 +5893,25 @@
           <span class="prod-usd">${fmtUsd(p.priceUsd)}</span>
           <span class="prod-lbp">${fmtLbp(p.priceUsd * state.rate.value)}</span>
           ${marginPill}
+          ${barcodePill}
         </div>
       </div>
       <div class="product-actions">
+        <button type="button" class="ic-btn" data-action="scan" title="${p.barcode ? 'Rescan barcode' : 'Scan barcode'}">${CAT_ICONS.barcode}</button>
+        <button type="button" class="ic-btn" data-action="labels" title="Print barcode labels">${CAT_ICONS.tag}</button>
         <button type="button" class="ic-btn" data-action="edit" title="Edit product">${CAT_ICONS.edit}</button>
         <button type="button" class="ic-btn danger" data-action="delete" title="Delete product">${CAT_ICONS.trash}</button>
       </div>`;
+    const scanBtn = row.querySelector('[data-action="scan"]');
+    const labelsBtn = row.querySelector('[data-action="labels"]');
     const editBtn = row.querySelector('[data-action="edit"]');
     const delBtn = row.querySelector('[data-action="delete"]');
+    scanBtn.setAttribute('aria-label', (p.barcode ? 'Rescan barcode for ' : 'Scan barcode for ') + p.name);
+    labelsBtn.setAttribute('aria-label', 'Print barcode labels for ' + p.name);
     editBtn.setAttribute('aria-label', 'Edit product ' + p.name);
     delBtn.setAttribute('aria-label', 'Delete product ' + p.name);
+    scanBtn.addEventListener('click', (e) => { e.stopPropagation(); scanProductBarcode(p.id); });
+    labelsBtn.addEventListener('click', (e) => { e.stopPropagation(); openLabelPrintModal(p.id); });
     editBtn.addEventListener('click', (e) => { e.stopPropagation(); editProduct(p.id); });
     delBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(p.id); });
     return row;
@@ -5491,7 +5920,7 @@
   function buildCategoryNode(cat, depth, query){
     query = query || '';
     const catNameMatches = query && cat.name.toLowerCase().includes(query);
-    const products = state.products.filter(p => p.categoryId === cat.id && (!query || catNameMatches || p.name.toLowerCase().includes(query)));
+    const products = state.products.filter(p => p.categoryId === cat.id && (!query || catNameMatches || productMatchesQuery(p, query)));
     const subcats = childCategories(cat.id).filter(sub => !query || catNameMatches || categoryOrDescendantsMatch(sub, query));
     const isSub = depth > 0;
 
@@ -5611,6 +6040,14 @@
             <option value="flat">Cost × 1 (flat)</option>
           </select>
         </div>
+        <div class="fld">
+          <span class="fld-cap">Barcode / SKU <small>optional — scan, generate or type</small></span>
+          <div class="add-row-inline">
+            <input type="text" inputmode="text" class="new-prod-barcode" placeholder="e.g. 8901030826501" aria-label="Barcode or SKU (optional)" autocomplete="off" style="flex:1;">
+            <button type="button" class="btn ghost small" data-role="gen-barcode" style="flex:0 0 auto;">${CAT_ICONS.wand} Generate</button>
+            <button type="button" class="btn ghost small" data-role="scan-barcode" style="flex:0 0 auto;">${CAT_ICONS.barcode} Scan</button>
+          </div>
+        </div>
         <label class="voucher-toggle-row">
           <input type="checkbox" class="new-prod-voucher">
           <span>This item has extra details <small>Login info, codes, links, etc. Filled in per sale, with fields you choose.</small></span>
@@ -5621,6 +6058,15 @@
         </div>`;
       attachThousandsFormatting(form.querySelector('.new-prod-price'));
       attachThousandsFormatting(form.querySelector('.new-prod-cost'));
+      form.querySelector('[data-role="scan-barcode"]').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const code = await openBarcodeScanner();
+        if(code) form.querySelector('.new-prod-barcode').value = code;
+      });
+      form.querySelector('[data-role="gen-barcode"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        form.querySelector('.new-prod-barcode').value = generateUniqueBarcode();
+      });
       const submitProduct = () => {
         const ok = addProduct(
           cat.id,
@@ -5631,7 +6077,8 @@
           form.querySelector('.new-prod-cost-mode').value,
           form.querySelector('.new-prod-cost-currency').value,
           form.querySelector('.new-prod-voucher').checked,
-          form.querySelector('.new-prod-name-ar').value
+          form.querySelector('.new-prod-name-ar').value,
+          form.querySelector('.new-prod-barcode').value
         );
         // The list re-rendered with the form still open and empty, ready for the next product.
         if(ok) focusInCategory(cat.id, '.new-prod-name');
@@ -5721,6 +6168,312 @@
     return d.innerHTML;
   }
 
+  // ---------- Barcode scanning ----------
+  // Looks a product up by its stored barcode/SKU (case- and space-insensitive,
+  // so a scanner that adds a trailing newline or the person retyping it with
+  // different casing still matches).
+  function normalizeBarcode(s){ return (s || '').toString().trim().toLowerCase(); }
+  function findProductByBarcode(code){
+    const norm = normalizeBarcode(code);
+    if(!norm) return null;
+    return state.products.find(p => p.barcode && normalizeBarcode(p.barcode) === norm) || null;
+  }
+  // Used everywhere a product is filtered by the search box, so scanning (or
+  // typing) a barcode finds the item the same way typing its name would.
+  function productMatchesQuery(p, query){
+    if(!query) return true;
+    if(p.name.toLowerCase().includes(query)) return true;
+    return !!(p.barcode && normalizeBarcode(p.barcode).includes(query));
+  }
+
+  function barcodeScanSupported(){
+    return typeof window.BarcodeDetector !== 'undefined' && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  }
+
+  // Opens a camera overlay and resolves with the scanned code, or null if the
+  // person cancels, the camera can't be used, or this browser can't scan at
+  // all. A handheld/Bluetooth barcode scanner doesn't need this — it types
+  // straight into whichever text field is focused, like a keyboard.
+  async function openBarcodeScanner(){
+    if(!barcodeScanSupported()){
+      alertBanner('Camera scanning isn\'t supported in this browser. You can still type a code here, or scan with a handheld barcode scanner — it types into the field like a keyboard.');
+      return null;
+    }
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'scan-overlay';
+      overlay.innerHTML = `
+        <div class="scan-box">
+          <div class="scan-head">
+            <span>Scan a barcode</span>
+            <button type="button" class="scan-close" aria-label="Close scanner">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="scan-viewport">
+            <video class="scan-video" playsinline muted></video>
+            <div class="scan-frame"></div>
+          </div>
+          <div class="scan-hint">Line the barcode up inside the frame</div>
+        </div>`;
+      document.body.appendChild(overlay);
+      const video = overlay.querySelector('.scan-video');
+      const closeBtn = overlay.querySelector('.scan-close');
+      let stream = null, raf = null, done = false;
+      const cleanup = (value) => {
+        if(done) return;
+        done = true;
+        if(raf) cancelAnimationFrame(raf);
+        if(stream) stream.getTracks().forEach(t => t.stop());
+        overlay.remove();
+        resolve(value || null);
+      };
+      closeBtn.addEventListener('click', () => cleanup(null));
+      overlay.addEventListener('click', (e) => { if(e.target === overlay) cleanup(null); });
+
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(s => {
+          if(done){ s.getTracks().forEach(t => t.stop()); return; }
+          stream = s;
+          video.srcObject = s;
+          video.play().catch(() => {});
+          let detector;
+          try{ detector = new window.BarcodeDetector(); }
+          catch(e){ alertBanner('Could not start the barcode scanner: ' + e.message); cleanup(null); return; }
+          const scanFrame = async () => {
+            if(done) return;
+            try{
+              const codes = await detector.detect(video);
+              if(codes && codes.length){ cleanup(codes[0].rawValue); return; }
+            }catch(e){ /* keep trying next frame */ }
+            raf = requestAnimationFrame(scanFrame);
+          };
+          raf = requestAnimationFrame(scanFrame);
+        })
+        .catch(e => {
+          alertBanner('Could not access the camera: ' + (e.message || 'permission denied.'));
+          cleanup(null);
+        });
+    });
+  }
+
+  // Scans and saves a barcode straight onto an existing product (from its
+  // row in the Catalog tab), so items that already exist can be tagged
+  // without retyping the whole product.
+  async function scanProductBarcode(id){
+    const p = state.products.find(x => x.id === id);
+    if(!p) return;
+    const code = await openBarcodeScanner();
+    if(!code) return;
+    const dupe = findProductByBarcode(code);
+    if(dupe && dupe.id !== id){
+      const ok = await confirmModal('"' + dupe.name + '" already uses this barcode. Move it to "' + p.name + '" instead?');
+      if(!ok) return;
+      dupe.barcode = null;
+    }
+    p.barcode = code;
+    saveCatalog();
+    renderCategories();
+    renderCatalogPicker();
+    alertBanner('Barcode saved for ' + p.name + '.');
+  }
+
+  // ---------- Auto-generated barcodes ----------
+  // Computes the EAN-13 check digit for a 12-digit prefix.
+  function ean13CheckDigit(d12){
+    let sum = 0;
+    for(let i = 0; i < 12; i++){
+      const d = parseInt(d12[i], 10);
+      sum += (i % 2 === 0) ? d : d * 3;
+    }
+    return String((10 - (sum % 10)) % 10);
+  }
+  // Generates a fresh, unused barcode for products added or edited manually
+  // without scanning one. Uses the "20"–"29" EAN-13 prefix range, which GS1
+  // reserves for internal / in-store use and never assigns to real retail
+  // products — so a generated code can't collide with a manufacturer's
+  // genuine barcode, only with another code this app has already generated
+  // (checked below).
+  function generateUniqueBarcode(){
+    let code, guard = 0;
+    do{
+      let d12 = '2' + String(Math.floor(Math.random() * 10));
+      for(let i = 0; i < 10; i++) d12 += Math.floor(Math.random() * 10);
+      code = d12 + ean13CheckDigit(d12);
+      guard++;
+    } while(findProductByBarcode(code) && guard < 50);
+    return code;
+  }
+
+  // ---------- Print barcode labels ----------
+  // Presets are common thermal label-roll sizes; "custom" lets the person
+  // type any width/height for a printer or sticker sheet not listed here.
+  const LABEL_PRESETS = { '40x30':{w:40,h:30}, '50x30':{w:50,h:30}, '58x40':{w:58,h:40}, '25x15':{w:25,h:15} };
+  // productId -> number of labels queued, reset each time the modal opens.
+  let labelQueue = {};
+
+  async function saveLabelSettings(){
+    try{ await window.storage.set('labelSettings', JSON.stringify(state.labelSettings)); }
+    catch(e){ /* not critical — worst case the defaults don't stick between sessions */ }
+  }
+
+  function currentLabelSize(){
+    const s = state.labelSettings;
+    if(s.preset === 'custom'){
+      return { w: Math.max(10, Number(s.customW) || 50), h: Math.max(10, Number(s.customH) || 30) };
+    }
+    return LABEL_PRESETS[s.preset] || LABEL_PRESETS['40x30'];
+  }
+
+  function updateLabelSizeRowsUI(){
+    const isCustom = $('#labelSizePreset').value === 'custom';
+    $('#labelCustomWRow').hidden = !isCustom;
+    $('#labelCustomHRow').hidden = !isCustom;
+  }
+
+  // Opens the label modal. Pass a productId to pre-load it with one label
+  // for that product (used by the tag icon on a product row); omit it to
+  // open empty, for picking several products at once from the Catalog header.
+  function openLabelPrintModal(presetProductId){
+    labelQueue = {};
+    if(presetProductId) labelQueue[presetProductId] = 1;
+    const s = state.labelSettings;
+    $('#labelSizePreset').value = LABEL_PRESETS[s.preset] ? s.preset : (s.preset === 'custom' ? 'custom' : '40x30');
+    $('#labelCustomW').value = s.customW;
+    $('#labelCustomH').value = s.customH;
+    $('#labelCols').value = s.cols;
+    $('#labelShowName').checked = !!s.showName;
+    $('#labelShowPrice').checked = !!s.showPrice;
+    updateLabelSizeRowsUI();
+    $('#labelProductSearch').value = '';
+    renderLabelProductList();
+    $('#labelPrintOverlay').classList.add('show');
+  }
+  function closeLabelPrintModal(){
+    $('#labelPrintOverlay').classList.remove('show');
+  }
+
+  function renderLabelProductList(){
+    const list = $('#labelProductList');
+    const q = ($('#labelProductSearch').value || '').trim().toLowerCase();
+    const products = state.products.filter(p => !q || p.name.toLowerCase().includes(q) || (p.barcode && normalizeBarcode(p.barcode).includes(q)));
+    if(!products.length){
+      list.innerHTML = '<p class="cat-empty-note">No products match.</p>';
+      return;
+    }
+    list.innerHTML = '';
+    products.forEach(p => {
+      const qty = labelQueue[p.id] || 0;
+      const row = document.createElement('div');
+      row.className = 'label-product-row';
+      row.innerHTML = `
+        <div style="flex:1; min-width:0;">
+          <div class="label-product-name">${escapeHtml(p.name)}</div>
+          <div class="label-product-code">${p.barcode ? '#' + escapeHtml(p.barcode) : '<button type="button" class="label-gen-link" data-role="gen">Generate barcode</button>'}</div>
+        </div>
+        <div class="label-qty">
+          <button type="button" data-role="dec" aria-label="Fewer labels for ${escapeHtml(p.name)}">−</button>
+          <input type="number" min="0" step="1" value="${qty}" aria-label="Number of labels for ${escapeHtml(p.name)}">
+          <button type="button" data-role="inc" aria-label="More labels for ${escapeHtml(p.name)}">+</button>
+        </div>`;
+      const genBtn = row.querySelector('[data-role="gen"]');
+      if(genBtn) genBtn.addEventListener('click', () => {
+        p.barcode = generateUniqueBarcode();
+        saveCatalog();
+        renderLabelProductList();
+        renderCategories();
+        renderCatalogPicker();
+      });
+      const input = row.querySelector('input');
+      const setQty = (n) => {
+        n = Math.max(0, Math.min(500, Math.round(n) || 0));
+        if(n) labelQueue[p.id] = n; else delete labelQueue[p.id];
+        input.value = n;
+      };
+      row.querySelector('[data-role="dec"]').addEventListener('click', () => setQty((labelQueue[p.id] || 0) - 1));
+      row.querySelector('[data-role="inc"]').addEventListener('click', () => setQty((labelQueue[p.id] || 0) + 1));
+      input.addEventListener('change', () => setQty(parseInt(input.value, 10)));
+      list.appendChild(row);
+    });
+  }
+
+  // Sets an @page size that matches the chosen label width × columns, so a
+  // continuous-feed label/roll printer (set to that width in its own driver)
+  // prints without extra margin, while a regular printer just gets a normal
+  // page. Reuses the same <style> tag as the receipt/report print paths —
+  // only one of the three ever runs right before a print.
+  function applyLabelPrintPageStyle(size, cols){
+    let styleTag = document.getElementById('printPageStyle');
+    if(!styleTag){
+      styleTag = document.createElement('style');
+      styleTag.id = 'printPageStyle';
+      document.head.appendChild(styleTag);
+    }
+    const gap = 2;
+    const pageWidth = Math.round((size.w * cols) + (gap * (cols - 1)) + 8);
+    styleTag.textContent = `@page{ size:${pageWidth}mm auto; margin:4mm; }`;
+  }
+
+  async function printLabels(){
+    const entries = Object.entries(labelQueue).filter(([, n]) => n > 0);
+    if(!entries.length){ alertBanner('Add at least one label to print.'); return; }
+    const items = [];
+    for(const [id, n] of entries){
+      const p = state.products.find(x => x.id === id);
+      if(!p) continue;
+      if(!p.barcode){ alertBanner('"' + p.name + '" has no barcode yet — generate or scan one first.'); return; }
+      for(let i = 0; i < n; i++) items.push(p);
+    }
+    if(!items.length){ alertBanner('Add at least one label to print.'); return; }
+    if(typeof window.JsBarcode === 'undefined'){
+      alertBanner('The barcode library could not load — check your internet connection and try again.');
+      return;
+    }
+
+    // Remember these choices as the default for next time.
+    const s = state.labelSettings;
+    s.preset = $('#labelSizePreset').value;
+    s.customW = Number($('#labelCustomW').value) || s.customW;
+    s.customH = Number($('#labelCustomH').value) || s.customH;
+    s.cols = Math.max(1, Math.min(10, parseInt($('#labelCols').value, 10) || 1));
+    s.showName = $('#labelShowName').checked;
+    s.showPrice = $('#labelShowPrice').checked;
+    saveLabelSettings();
+
+    const size = currentLabelSize();
+    applyLabelPrintPageStyle(size, s.cols);
+    // A previously printed receipt or report can be left sitting in their
+    // print areas — clear them so old content can't end up on this printout.
+    $('#printArea').innerHTML = '';
+    $('#reportPrintArea').innerHTML = '';
+    const area = $('#labelPrintArea');
+    area.innerHTML = `<div class="label-sheet" style="--label-cols:${s.cols}; --label-w:${size.w}mm; --label-h:${size.h}mm;"></div>`;
+    const sheet = area.querySelector('.label-sheet');
+    items.forEach(p => {
+      const svgId = 'lbl_' + uid();
+      sheet.insertAdjacentHTML('beforeend', `
+        <div class="label-cell">
+          <svg id="${svgId}"></svg>
+          ${s.showName ? `<div class="label-cell-name">${escapeHtml(p.name)}</div>` : ''}
+          ${s.showPrice ? `<div class="label-cell-price">${fmtUsd(p.priceUsd)}</div>` : ''}
+          <div class="label-cell-code">${escapeHtml(p.barcode)}</div>
+        </div>`);
+      try{
+        window.JsBarcode('#' + svgId, p.barcode, { format:'CODE128', displayValue:false, margin:0, height:46, width:2 });
+      }catch(e){ /* leave that one label's barcode blank rather than fail the whole batch */ }
+    });
+    closeLabelPrintModal();
+    window.print();
+  }
+
+  $('#printLabelsBtn').addEventListener('click', () => openLabelPrintModal());
+  $('#labelPrintCloseBtn').addEventListener('click', closeLabelPrintModal);
+  $('#labelPrintCancelBtn').addEventListener('click', closeLabelPrintModal);
+  $('#labelPrintOverlay').addEventListener('click', (e) => { if(e.target === $('#labelPrintOverlay')) closeLabelPrintModal(); });
+  $('#labelSizePreset').addEventListener('change', updateLabelSizeRowsUI);
+  $('#labelProductSearch').addEventListener('input', renderLabelProductList);
+  $('#labelPrintGoBtn').addEventListener('click', printLabels);
+
   // parentId is optional — omit it (or pass null/undefined) for a top-level
   // category, or pass another category's id to create it as a subcategory.
   function addCategory(name, parentId){
@@ -5767,9 +6520,10 @@
     renderCatalogPicker();
   }
 
-  function addProduct(catId, name, priceRaw, currency, costRaw, costMode, costCurrency, isVoucher, nameAr){
+  function addProduct(catId, name, priceRaw, currency, costRaw, costMode, costCurrency, isVoucher, nameAr, barcode){
     name = (name||'').trim();
     nameAr = (nameAr||'').trim();
+    barcode = (barcode||'').trim();
     const price = parseFormattedNumber(priceRaw);
     if(!name || isNaN(price) || price <= 0){ alertBanner('Enter a product name and a valid sell price.'); return false; }
     const priceUsd = currency === 'LBP' ? price / state.rate.value : price;
@@ -5779,7 +6533,11 @@
       costUsd = costCurrency === 'LBP' ? costParsed / state.rate.value : costParsed;
     }
     costMode = costMode === 'flat' ? 'flat' : 'perUnit';
-    state.products.push({ id: uid(), name, nameAr, categoryId: catId, priceUsd, costUsd, costMode, type: isVoucher ? 'voucher' : 'product', image: null });
+    if(barcode){
+      const dupe = findProductByBarcode(barcode);
+      if(dupe) alertBanner('Note: "' + dupe.name + '" already uses this barcode — added anyway.');
+    }
+    state.products.push({ id: uid(), name, nameAr, categoryId: catId, priceUsd, costUsd, costMode, type: isVoucher ? 'voucher' : 'product', image: null, barcode: barcode || null });
     saveCatalog();
     renderCategories();
     renderCatalogPicker();
@@ -5802,6 +6560,7 @@
         { id:'name', label:'Product name', value:p.name },
         { id:'image', label:'🖼️ Product image (optional)', type:'image', value:p.image || null },
         { id:'nameAr', label:'🇱🇧 Arabic name (optional, shown when Arabic is selected)', value:p.nameAr || '' },
+        { id:'barcode', label:'Barcode / SKU (optional)', type:'barcode', value:p.barcode || '' },
         { id:'price', label:'Sell price', type:'money', value:p.priceUsd.toFixed(2) },
         { id:'cost', label:'Cost price (0 if unknown)', type:'money', value:(p.costUsd||0).toFixed(2) },
         { id:'costMode', label:'Cost applies', type:'select', value:p.costMode==='flat'?'flat':'perUnit', options:[
@@ -5825,6 +6584,12 @@
     p.name = result.name.trim();
     p.image = result.image || null;
     p.nameAr = result.nameAr.trim();
+    const newBarcode = result.barcode.trim();
+    if(newBarcode){
+      const dupe = findProductByBarcode(newBarcode);
+      if(dupe && dupe.id !== p.id) alertBanner('Note: "' + dupe.name + '" already uses this barcode — saved anyway.');
+    }
+    p.barcode = newBarcode || null;
     p.priceUsd = parseFloat(result.price);
     p.costUsd = parseFloat(result.cost);
     p.costMode = result.costMode === 'flat' ? 'flat' : 'perUnit';
@@ -6376,6 +7141,7 @@
       + `<div class="pr-hr"></div>`
       + `<div class="pr-footer" style="text-align:left; white-space:pre-wrap;">${escapeHtml(text)}</div>`;
     $('#printArea').innerHTML = html;
+    $('#labelPrintArea').innerHTML = '';
     window.print();
   }
 
@@ -6708,7 +7474,7 @@
     // chip — that's what people expect when they start typing.
     const categoriesToShow = query ? state.categories : (activeCatalogCategory ? state.categories.filter(c => c.id === activeCatalogCategory) : state.categories);
     categoriesToShow.forEach(cat => {
-      const products = state.products.filter(p => p.categoryId === cat.id && p.name.toLowerCase().includes(query));
+      const products = state.products.filter(p => p.categoryId === cat.id && productMatchesQuery(p, query));
       if(products.length === 0) return;
       any = true;
       if(!activeCatalogCategory || query){
@@ -8686,6 +9452,7 @@
     applyPrintPageStyle();
     $('#printArea').innerHTML = html;
     $('#printArea').dir = lang === 'ar' ? 'rtl' : 'ltr';
+    $('#labelPrintArea').innerHTML = '';
     window.print();
   }
 
@@ -9618,8 +10385,10 @@
     if(!confirmed) return;
     applyReportPrintPageStyle();
     // A previously printed receipt is left sitting in #printArea; clear it so
-    // it can't end up on (or push content around in) the report.
+    // it can't end up on (or push content around in) the report. Same for a
+    // previously printed label sheet.
     $('#printArea').innerHTML = '';
+    $('#labelPrintArea').innerHTML = '';
     const area = $('#reportPrintArea');
     area.innerHTML = html;
     // Briefly render off-screen at the exact print width so real layout
@@ -10477,6 +11246,7 @@
     }
     applyPrintPageStyle();
     $('#printArea').innerHTML = receiptHtml;
+    $('#labelPrintArea').innerHTML = '';
     window.print();
     finalizeSaleIfNeeded();
   }
@@ -10951,6 +11721,40 @@
     renderCatalogPicker();
     box.focus();
   });
+  // A handheld/Bluetooth barcode scanner just types into whatever's focused,
+  // then sends Enter — so if what it typed is an exact barcode (or exact
+  // name) match, add that product straight to the order instead of leaving
+  // the person to find and tap it in the filtered list.
+  $('#productSearch').addEventListener('keydown', (e) => {
+    if(e.key !== 'Enter') return;
+    const box = $('#productSearch');
+    const typed = box.value.trim();
+    if(!typed) return;
+    const byBarcode = findProductByBarcode(typed);
+    const match = byBarcode || state.products.find(p => p.name.toLowerCase() === typed.toLowerCase());
+    if(match){
+      e.preventDefault();
+      addLine(match.id);
+      box.value = '';
+      renderCatalogPicker();
+      box.focus();
+    }
+  });
+  $('#invScanBtn').addEventListener('click', async () => {
+    const code = await openBarcodeScanner();
+    if(!code) return;
+    const match = findProductByBarcode(code);
+    const box = $('#productSearch');
+    if(match){
+      addLine(match.id);
+      alertBanner('Added: ' + match.name);
+      box.value = '';
+    } else {
+      box.value = code;
+      alertBanner('No product with that barcode yet — showing closest matches.');
+    }
+    renderCatalogPicker();
+  });
   $('#catalogSearch').addEventListener('input', renderCategories);
   $('#customerName').addEventListener('input', renderPreviewOnly);
   $('#invoiceDateInput').addEventListener('change', renderPreviewOnly);
@@ -11087,6 +11891,13 @@
   initReportExportDefaults();
   updateReportExportInputsVisibility();
   attachThousandsFormatting($('#amountReceived'));
+
+  $('#exportDataBtn').addEventListener('click', exportBackupData);
+  $('#importDataInput').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    importBackupData(file);
+    e.target.value = '';
+  });
 
   $('#slimInvoicesBtn').addEventListener('click', async () => {
     const st = computeSlimStats();
