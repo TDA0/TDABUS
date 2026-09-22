@@ -6796,7 +6796,8 @@
       ? `<button type="button" class="cl-btn soft" data-act="remind">${CL_ICONS.bell}Remind</button>
          <button type="button" class="cl-btn solid" data-act="pay">Record payment</button>`
       : b.kind === 'credit'
-        ? `<button type="button" class="cl-btn soft" data-act="settle">${CL_ICONS.check}Mark as settled</button>`
+        ? `<button type="button" class="cl-btn soft" data-act="paySome">${CL_ICONS.banknote}Pay them</button>
+           <button type="button" class="cl-btn solid" data-act="settle">${CL_ICONS.check}Mark as settled</button>`
         : `<button type="button" class="cl-btn soft" data-act="adjust">${CL_ICONS.sliders}Adjust balance</button>`;
     return `
       <article class="cl-card ${b.kind}" data-id="${escAttr(c.id)}">
@@ -6950,7 +6951,8 @@
       groups.push({ label:'Record a payment', items:pay });
     } else if(kind === 'credit'){
       groups.push({ label:'Settle up', items:[
-        { act:'settle', icon:I.check, title:'Mark as settled', desc:'Confirm that you paid them what you owe.' }
+        { act:'paySome', icon:I.banknote, title:'Pay part of what you owe', desc:'Pay them some of it now. Deducts from your business balance and keeps the rest owed.' },
+        { act:'settle', icon:I.check, title:'Mark as settled', desc:'Confirm that you paid them what you owe in full.' }
       ] });
     }
     groups.push({ label:'Manage', items:[
@@ -6968,6 +6970,7 @@
       case 'fullpayCredit': return sendFullPayment(id, false);
       case 'fullpayTip':    return sendFullPayment(id, true);
       case 'settle':        return markClientPaid(id);
+      case 'paySome':       return payClientPartial(id);
       case 'adjust':        return adjustClientBalance(id);
       case 'edit':          return editClient(id);
       case 'delete':        return deleteClient(id);
@@ -7064,8 +7067,9 @@
       case 'menu':   if(id) openClientSheet(id, 'all', t); break;
       case 'pay':    if(id) openClientSheet(id, 'payment', t); break;
       case 'remind': if(id) sendPaymentReminder(id); break;
-      case 'settle': if(id) markClientPaid(id); break;
-      case 'adjust': if(id) adjustClientBalance(id); break;
+      case 'settle':  if(id) markClientPaid(id); break;
+      case 'paySome': if(id) payClientPartial(id); break;
+      case 'adjust':  if(id) adjustClientBalance(id); break;
       case 'add':    addClient(); break;
       case 'reset':  resetClientFilters(); break;
     }
@@ -7303,6 +7307,34 @@
     renderInvoiceIfNeeded();
     const text = buildFullPaymentText(c, paid, lang, extraUsd, tipMode);
     await showMessagePreviewModal('Thank-you message — ' + c.name, text, c.phone);
+  }
+
+  // Pays a client some of the money you owe them (credit balance). Reduces
+  // what you still owe them and deducts the amount from the business's
+  // cash balance, since paying them out is cash leaving the business.
+  async function payClientPartial(clientId){
+    const c = state.clients.find(x => x.id === clientId);
+    if(!c || c.balanceUsd >= 0) return;
+    const owedUsd = -c.balanceUsd;
+    const result = await promptModalValidated(
+      'Pay ' + c.name,
+      [{ id:'amount', label:'Amount you\'re paying', type:'money', placeholder:'e.g. 20' }],
+      (v) => {
+        const val = parseFloat(v.amount);
+        if(isNaN(val) || val <= 0) return 'Enter a valid positive amount.';
+        if(val >= owedUsd - 0.004) return 'That covers the full amount — use "Mark as settled" instead.';
+        return null;
+      }
+    );
+    if(result === null) return;
+    const paid = parseFloat(result.amount);
+    c.balanceUsd += paid;
+    saveClients();
+    applyBusinessBalanceDelta(-paid, 'Paid ' + c.name);
+    renderClientList();
+    renderClientSelect();
+    renderInvoiceIfNeeded();
+    alertBanner('Paid ' + c.name + ' ' + fmtUsd(paid) + ' — ' + fmtUsd(-c.balanceUsd) + ' still owed.');
   }
 
   async function addClient(){
@@ -10055,32 +10087,41 @@
   // business (no client filter) and returns structured data instead of
   // writing straight into the DOM.
   function buildBusinessReportData(mode){
-    let matches, label;
+    let matches, label, balanceMatches;
     if(mode === 'day'){
       const val = $('#reportExportDay').value;
       if(!val){ alertBanner('Pick a day first.'); return null; }
       const [y, m, day] = val.split('-').map(Number);
-      matches = state.sales.filter(s => {
-        const d = new Date(s.date);
+      const inRange = (ts) => {
+        const d = new Date(ts);
         return d.getFullYear()===y && d.getMonth()===m-1 && d.getDate()===day;
-      });
+      };
+      matches = state.sales.filter(s => inRange(s.date));
+      balanceMatches = state.balanceLog.filter(e => inRange(e.date));
       label = new Date(y, m-1, day).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
     } else if(mode === 'month'){
       const val = $('#reportExportMonth').value;
       if(!val){ alertBanner('Pick a month first.'); return null; }
       const [y, m] = val.split('-').map(Number);
-      matches = state.sales.filter(s => {
-        const d = new Date(s.date);
+      const inRange = (ts) => {
+        const d = new Date(ts);
         return d.getFullYear()===y && d.getMonth()===m-1;
-      });
+      };
+      matches = state.sales.filter(s => inRange(s.date));
+      balanceMatches = state.balanceLog.filter(e => inRange(e.date));
       label = new Date(y, m-1, 1).toLocaleDateString('en-US', { month:'long', year:'numeric' });
     } else {
       const val = parseInt($('#reportExportYear').value);
       if(!val || val < 1970){ alertBanner('Enter a valid year.'); return null; }
-      matches = state.sales.filter(s => new Date(s.date).getFullYear() === val);
+      const inRange = (ts) => new Date(ts).getFullYear() === val;
+      matches = state.sales.filter(s => inRange(s.date));
+      balanceMatches = state.balanceLog.filter(e => inRange(e.date));
       label = String(val);
     }
     matches = [...matches].sort((a, b) => a.date - b.date);
+    balanceMatches = [...balanceMatches].sort((a, b) => a.date - b.date);
+    const cashIn = balanceMatches.reduce((sum, e) => sum + (e.delta > 0 ? e.delta : 0), 0);
+    const cashOut = balanceMatches.reduce((sum, e) => sum + (e.delta < 0 ? -e.delta : 0), 0);
     const revenue = matches.reduce((sum, s) => sum + s.revenueUsd, 0);
     const cost = matches.reduce((sum, s) => sum + (s.costUsd || 0), 0);
     const profit = matches.reduce((sum, s) => sum + s.profitUsd, 0);
@@ -10134,7 +10175,7 @@
       if(rankedDays.length) busiestDay = rankedDays[0];
     }
 
-    return { mode, label, sales: matches, revenue, cost, profit, tips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay };
+    return { mode, label, sales: matches, revenue, cost, profit, tips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay, balanceEntries: balanceMatches, cashIn, cashOut };
   }
 
   function buildBusinessReportHtml(data){
@@ -10206,6 +10247,24 @@
         html += `<tr><td>${escapeHtml(dateStr)}</td><td>${escapeHtml(sale.customerName || 'Walk-in')}</td><td class="rp2-num">${fmtUsd(sale.revenueUsd)}</td><td class="rp2-num">${fmtUsd(sale.costUsd || 0)}</td><td class="rp2-num${rowProfitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(sale.profitUsd)}</td><td class="rp2-num">${sale.tipUsd ? fmtUsd(sale.tipUsd) : '—'}</td><td class="rp2-num">${Math.round(rate).toLocaleString('en-US')}</td></tr>`;
       });
       html += `</tbody><tfoot><tr><td colspan="2">Total</td><td class="rp2-num">${fmtUsd(data.revenue)}</td><td class="rp2-num">${fmtUsd(data.cost)}</td><td class="rp2-num${profitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(data.profit)}</td><td class="rp2-num">${data.tips ? fmtUsd(data.tips) : '—'}</td><td class="rp2-num">—</td></tr></tfoot></table></div>`;
+    }
+
+    // ---- Balance changes (deposits, withdrawals, client payments in/out) ----
+    html += `<div class="rp2-section-label">Balance changes (${data.balanceEntries.length})</div>`;
+    if(data.balanceEntries.length === 0){
+      html += '<div class="rp2-empty">No balance changes in this period.</div>';
+    } else {
+      const netChange = data.cashIn - data.cashOut;
+      html += '<div class="rp2-table-wrap"><table class="rp2-table"><thead><tr><th>Date</th><th>Note</th><th class="rp2-num">Amount</th><th class="rp2-num">Balance after</th></tr></thead><tbody>';
+      data.balanceEntries.forEach(entry => {
+        const d = new Date(entry.date);
+        let dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year: data.mode === 'year' ? undefined : (data.mode === 'month' ? 'numeric' : undefined) });
+        if(data.mode === 'day') dateStr += ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+        const isOut = entry.delta < 0;
+        const amtStr = (isOut ? '-' : '+') + fmtUsd(Math.abs(entry.delta));
+        html += `<tr><td>${escapeHtml(dateStr)}</td><td>${escapeHtml(entry.note || '—')}</td><td class="rp2-num${isOut ? ' rp2-profit-neg' : ''}">${escapeHtml(amtStr)}</td><td class="rp2-num">${fmtUsd(entry.resultingBalance)}</td></tr>`;
+      });
+      html += `</tbody><tfoot><tr><td colspan="2">Cash in ${fmtUsd(data.cashIn)} · Cash out ${fmtUsd(data.cashOut)}</td><td class="rp2-num${netChange < 0 ? ' rp2-profit-neg' : ''}" colspan="2">Net ${netChange >= 0 ? '+' : '-'}${fmtUsd(Math.abs(netChange))}</td></tr></tfoot></table></div>`;
     }
 
     html += `<div class="rp2-footer"><span><b>${escapeHtml(businessName)}</b> · ${escapeHtml(periodNoun)}</span><span>Generated ${escapeHtml(generated)}</span></div>`;
