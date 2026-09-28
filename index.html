@@ -1141,6 +1141,143 @@
   @media (hover:hover){ .inv-reset:hover{ background:var(--bg); color:var(--ink); } }
   .copied-msg{ min-height:18px; margin-top:4px; text-align:center; font-size:13.5px; font-weight:600; color:var(--success); }
 
+
+  /* ---------- Client picker (invoice page) ---------- */
+  #clientSelect[hidden]{ display:none !important; }
+  .cp{ position:relative; }
+  .cp-head{ position:relative; }
+  .cp-trigger{
+    display:flex; align-items:center; gap:11px; width:100%; min-height:56px;
+    padding:8px 44px 8px 10px; text-align:left; cursor:pointer;
+    font-family:'Inter', sans-serif; color:var(--ink);
+    background:#fff; border:1.5px solid var(--line-strong); border-radius:var(--radius-sm);
+    transition:border-color .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .cp-trigger.has-clear{ padding-right:82px; }
+  .cp-trigger:focus-visible, .cp.is-open .cp-trigger{ outline:none; border-color:var(--cedar); box-shadow:0 0 0 3px var(--cedar-soft); }
+  @media (hover:hover){ .cp-trigger:hover{ border-color:#C6CADB; } }
+  .cp-avatar{
+    flex:0 0 36px; width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; color:#fff; background:var(--ink-faint);
+  }
+  .cp-avatar svg{ width:18px; height:18px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .cp-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .cp-name{ font-size:15px; font-weight:600; line-height:1.25; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cp-sub{ font-size:12.5px; color:var(--ink-soft); line-height:1.25; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cp-chev{ position:absolute; right:14px; top:50%; width:18px; height:18px; margin-top:-9px; color:var(--ink-faint); pointer-events:none; transition:transform .15s ease; }
+  .cp-chev svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .cp.is-open .cp-chev{ transform:rotate(180deg); }
+  .cp-trigger.has-clear ~ .cp-clear-sel{ display:flex; }
+  .cp-clear-sel{
+    position:absolute; right:38px; top:50%; margin-top:-14px; width:28px; height:28px;
+    display:none; align-items:center; justify-content:center; padding:0; cursor:pointer;
+    border:0; border-radius:50%; background:transparent; color:var(--ink-faint);
+  }
+  .cp-clear-sel[hidden]{ display:none !important; }
+  .cp-clear-sel svg, .cp-search-x svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; }
+  @media (hover:hover){ .cp-clear-sel:hover, .cp-search-x:hover{ background:var(--line); color:var(--ink); } }
+
+  .cp-panel{
+    margin-top:8px; background:#fff; border:1px solid var(--line-strong); border-radius:12px;
+    box-shadow:var(--shadow); overflow:hidden; animation:cpIn .14s ease;
+  }
+  .cp-panel[hidden]{ display:none; }
+  @keyframes cpIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
+  .cp-search{ position:relative; padding:10px; border-bottom:1px solid var(--line); background:#FAFAFD; }
+  .cp-search-ic{ position:absolute; left:22px; top:50%; width:17px; height:17px; margin-top:-8.5px; fill:none; stroke:var(--ink-faint); stroke-width:2.2; stroke-linecap:round; pointer-events:none; }
+  .cp-search input{ padding:10px 38px 10px 38px; min-height:44px; border-radius:10px; }
+  .cp-search-x{
+    position:absolute; right:16px; top:50%; margin-top:-13px; width:26px; height:26px; padding:0;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    border:0; border-radius:50%; background:transparent; color:var(--ink-faint);
+  }
+  .cp-search-x[hidden]{ display:none; }
+  .cp-list{ list-style:none; margin:0; padding:6px; max-height:300px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  .cp-item{
+    display:flex; align-items:center; gap:11px; padding:9px 10px; border-radius:10px; cursor:pointer;
+    min-height:54px; scroll-margin:6px;
+  }
+  .cp-item + .cp-item{ margin-top:2px; }
+  .cp-item.is-active{ background:var(--cedar-soft); }
+  .cp-item.is-selected .cp-item-name::after{
+    content:''; display:inline-block; width:14px; height:14px; margin-left:7px; vertical-align:-2px;
+    background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+  }
+  .cp-item-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .cp-item-name{ font-size:14.5px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cp-item-phone{ font-size:12.5px; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cp-item-phone.faint{ color:var(--ink-faint); }
+  .cp mark{ background:#FFF1C2; color:inherit; border-radius:3px; padding:0 1px; }
+  .cp-tag{ flex:0 0 auto; font-size:11.5px; font-weight:700; padding:3px 8px; border-radius:999px; white-space:nowrap; }
+  .cp-tag.owes{ background:var(--brass-soft); color:#B45309; }
+  .cp-tag.credit{ background:var(--success-soft); color:var(--success); }
+  .cp-empty{ padding:26px 16px 22px; text-align:center; color:var(--ink-soft); font-size:13.5px; }
+  .cp-empty b{ display:block; color:var(--ink); font-size:14.5px; margin-bottom:4px; }
+  .cp-foot{ padding:8px 14px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-faint); background:#FAFAFD; }
+
+
+  /* ---------- Cash received & change ---------- */
+  .chg-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .chg-head .inv-label{ margin:0; }
+  .chg-grid, .chg-split{ display:grid; grid-template-columns:1fr; gap:12px; }
+  @media (min-width:420px){ .chg-grid, .chg-split{ grid-template-columns:1fr 1fr; } }
+  .chg-cap{ display:block; margin:0 0 6px; font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .chg-input{ position:relative; }
+  .chg-input input{ padding-left:52px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .chg-cur{ position:absolute; left:1px; top:1px; bottom:1px; width:44px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--ink-soft); background:var(--bg); border-radius:8px 0 0 8px; border-right:1px solid var(--line); pointer-events:none; }
+  .chg-chips{ display:flex; gap:6px; margin-top:7px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+  .chg-chips::-webkit-scrollbar{ display:none; }
+  .chg-chips .chip{
+    flex:0 0 auto; font-family:'Inter', sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft);
+    background:var(--bg); border:1px solid var(--line-strong); border-radius:999px; padding:5px 11px; cursor:pointer;
+  }
+  .chg-chips .chip:active{ background:var(--line); }
+  .chg-sum{ margin-top:14px; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .chg-row{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:9px 12px; font-size:13.5px; color:var(--ink-soft); }
+  .chg-row + .chg-row{ border-top:1px solid var(--line); }
+  .chg-row b{ color:var(--ink); font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
+  .chg-row small{ display:block; margin-top:1px; font-size:11.5px; color:var(--ink-faint); font-weight:500; text-align:right; }
+  .chg-row.chg-result{ padding:12px; font-size:14px; font-weight:700; }
+  .chg-row.chg-result b{ font-size:19px; }
+  .chg-row.is-change{ background:var(--success-soft); color:var(--success); }
+  .chg-row.is-change b{ color:var(--success); }
+  .chg-row.is-short{ background:var(--brass-soft); color:#B45309; }
+  .chg-row.is-short b{ color:#B45309; }
+  .chg-row.is-exact{ background:var(--cedar-soft); color:var(--cedar-dark); }
+  .chg-row.is-exact b{ color:var(--cedar-dark); }
+  .chg-return{ margin-top:14px; }
+  .chg-return[hidden], .chg-split[hidden], .chg-modes[hidden], .chg-round[hidden], #chgModeLabel[hidden]{ display:none !important; }
+  .chg-return-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
+  .chg-return-head .chg-cap{ margin:0; }
+  .chg-round{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-faint); margin:0; }
+  .chg-round select{ width:auto; font-size:13px; padding:5px 22px 5px 8px; border-radius:8px; }
+  .chg-split{ margin-top:12px; }
+  .pay-lock-note{ margin:14px 0 4px; padding:11px 13px; border-radius:12px; background:var(--brass-soft); border:1px solid #F3D9B1; color:#92400E; font-size:13.5px; line-height:1.45; }
+  .pay-lock-note[hidden]{ display:none; }
+  .inv-actions .btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; }
+  .chg-tip{ display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; margin:0 0 12px; }
+  .chg-tip .chg-field{ flex:1 1 150px; min-width:0; }
+  .chg-hint{ font-weight:500; color:var(--ink-faint); }
+  .chg-tip-btns{ display:flex; gap:6px; padding-bottom:6px; }
+  .chg-tip-btns .chip{ font-family:'Inter', sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft); background:var(--bg); border:1px solid var(--line-strong); border-radius:999px; padding:6px 12px; cursor:pointer; white-space:nowrap; }
+  .chg-tip-btns .chip:active{ background:var(--line); }
+  .chg-tip-btns{ flex-wrap:wrap; }
+  .chg-tip-btns .chip[aria-pressed="true"]{ background:var(--cedar-soft); border-color:var(--cedar); color:var(--cedar); }
+  .chg-tip-btns .chip:disabled{ opacity:.45; cursor:not-allowed; }
+  .pay-lock-note .pln-btn{ display:inline-block; margin-top:8px; padding:6px 12px; border-radius:999px; border:1px solid #E2B36B; background:#fff; color:#92400E; font:600 12.5px 'Inter',sans-serif; cursor:pointer; }
+  .chg-after{ margin:0 0 8px; color:var(--ink); }
+  .chg-after b{ font-weight:700; }
+  .chg-give{
+    margin-top:12px; padding:13px 14px; border-radius:12px; background:var(--ink); color:#fff;
+    display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  }
+  .chg-give .cg-cap{ font-size:12.5px; font-weight:600; opacity:.75; }
+  .chg-give .cg-amt{ font-size:18px; font-weight:800; letter-spacing:-.01em; font-variant-numeric:tabular-nums; text-align:right; }
+  .chg-give .cg-amt em{ font-style:normal; opacity:.6; font-weight:600; margin:0 6px; }
+  .chg-give.is-off{ background:var(--brass-soft); color:#B45309; }
+  .chg-give.is-off .cg-cap{ opacity:1; }
+
   /* ---------- Floating order bar (phones and tablets) ---------- */
   .cart-bar{
     position:fixed; left:50%; bottom:calc(10px + env(safe-area-inset-bottom, 0px));
@@ -2193,6 +2330,7 @@
   }
   .history-item:last-child{ margin-bottom:0; }
   .history-item .h-left{ min-width:0; line-height:1.4; }
+  .inv-no-pill{ display:inline-block; margin-left:8px; padding:2px 8px; border-radius:6px; background:var(--cedar-soft); color:var(--cedar-dark); font:700 11.5px/1.5 'Inter', sans-serif; letter-spacing:.02em; font-variant-numeric:tabular-nums; vertical-align:1px; white-space:nowrap; }
   .history-item .h-title{ font-size:14.5px; font-weight:700; color:var(--ink); overflow-wrap:anywhere; }
   .history-item .h-date{ margin-top:2px; font-size:12.5px; font-weight:500; color:var(--ink-faint); }
   .history-item .h-right{ text-align:right; line-height:1.4; font-variant-numeric:tabular-nums; }
@@ -2376,6 +2514,12 @@
   .voucher-unit-head{ display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:700; color:var(--cedar-dark); margin-bottom:3px; }
   .voucher-unit-head .mini-btn{ padding:4px 9px; font-size:12.5px; }
   .voucher-unit-body{ font-size:14.5px; }
+  .vu-count{ display:inline-block; margin-left:6px; padding:1px 8px; border-radius:999px; background:var(--cedar-soft); color:var(--cedar-dark); font-size:11.5px; font-weight:700; vertical-align:1px; }
+  .vu-range{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 14px; padding:10px 12px; background:var(--cedar-soft); border-radius:10px; font-size:13.5px; color:var(--ink-soft); }
+  .vu-range b{ color:var(--ink); }
+  .vu-range input{ width:64px; padding:7px 8px; font-size:15px; text-align:center; }
+  .vu-range .vu-total{ margin-left:auto; font-weight:700; color:var(--cedar-dark); }
+  .vu-quick{ display:flex; gap:6px; flex-wrap:wrap; margin:-6px 0 14px; }
   .voucher-unit-body .vf-emph-line{
     display:inline-block; font-size:16.5px; font-weight:800; color:var(--ink);
     background:var(--brass-soft); padding:3px 8px; border-radius:7px; margin:2px 0 3px;
@@ -2395,12 +2539,12 @@
   .cvf-row input{ margin-bottom:0; flex:1; min-width:0; }
   .cvf-row .cvf-remove{ flex:0 0 auto; padding:6px 9px; font-size:12.5px; }
   .voucher-quick-add{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
-  .voucher-quick-add .chip{
+  .voucher-quick-add .chip, .vu-quick .chip{
     font-family:'Inter', sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft);
     background:var(--bg); border:1px solid var(--line-strong); border-radius:999px;
     padding:5px 11px; cursor:pointer;
   }
-  .voucher-quick-add .chip:active{ background:var(--line); }
+  .voucher-quick-add .chip:active, .vu-quick .chip:active{ background:var(--line); }
 
   /* Settings tab */
   .settings-card{
@@ -3185,6 +3329,81 @@
   @media (min-width:1024px){
     body.impersonating .inv-order{ top:60px; max-height:calc(100vh - 76px); max-height:calc(100dvh - 76px); }
   }
+
+  /* ==========================================================
+     Invoice page polish: hero total, clearer sections, tablet
+     two-pane, small-phone and notch fixes. CSS only.
+     ========================================================== */
+  #tab-invoice .inv-label{
+    font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint);
+  }
+  #tab-invoice .inv-label small{ display:block; margin-top:2px; font-size:12px; letter-spacing:0; text-transform:none; font-weight:500; }
+  .inv-head h2{ letter-spacing:-0.03em; }
+  .inv-receipt{
+    border-color:var(--line); border-radius:18px;
+    box-shadow:0 1px 2px rgba(20,21,31,.04), 0 16px 36px -16px rgba(20,21,31,.16);
+  }
+  .inv-order-head h3{ font-size:19px; }
+  .line-item{ transition:background .12s ease; }
+  .totals-card{ background:linear-gradient(to bottom, #FBFBFE, #fff); }
+  .totals-row.grand{
+    background:linear-gradient(135deg, #1B1A3F 0%, #3730A3 100%);
+    border-radius:14px; box-shadow:0 10px 24px -10px rgba(55,48,163,.55);
+  }
+  .totals-row.grand .grand-label{ color:#C7C9F5; text-transform:uppercase; letter-spacing:.08em; font-size:12px; }
+  .totals-row.grand .grand-usd{ color:#fff; }
+  .totals-row.grand .grand-lbp{ color:#B9BCF0; }
+  .status-btns{ background:#EEF0F7; }
+  .status-btns .btn{ min-height:44px; }
+  .inv-actions #copyBtn{ background:linear-gradient(135deg, var(--cedar), var(--cedar-dark)); }
+  .inv-actions .btn{ border-radius:12px; }
+  .inv-remaining{ background:#F6F7FC; border:1px solid var(--line); }
+  #tab-invoice .pay-lock-note{ border-radius:14px; }
+  #tab-invoice .preview-box{ font-size:13.5px; line-height:1.5; }
+  .pick-row{ border-radius:14px; }
+
+  /* Phones: no iOS zoom on focus, room for notches, tighter cards */
+  @media (pointer:coarse){
+    #tab-invoice input[type="text"], #tab-invoice input[type="date"], #tab-invoice input[type="time"],
+    #tab-invoice select, #tab-invoice textarea{ font-size:16px; }
+  }
+  @supports (padding:max(0px)){
+    body:has(#tab-invoice.active) .app{
+      padding-left:max(16px, env(safe-area-inset-left)); padding-right:max(16px, env(safe-area-inset-right));
+    }
+  }
+  @media (max-width:380px){
+    body:has(#tab-invoice.active) .app{ padding-left:max(12px, env(safe-area-inset-left)); padding-right:max(12px, env(safe-area-inset-right)); }
+    #lineItems{ padding:0 12px; }
+    .totals-card{ padding:14px 12px; }
+    .totals-row.grand{ margin-left:-12px; margin-right:-12px; width:calc(100% + 24px); padding:14px 12px; }
+    .status-btns .btn{ font-size:13px; padding:8px 3px; }
+    .qty-controls input{ width:44px; }
+    .inv-head h2{ font-size:22px; }
+  }
+  @media (max-height:480px) and (orientation:landscape){
+    .catalog-picker{ max-height:none; }
+  }
+
+  /* Tablets (900px+): products and receipt side by side */
+  @media (min-width:900px){
+    body:has(#tab-invoice.active) .app{ max-width:1080px; }
+    .inv-layout{ grid-template-columns:minmax(0, 1fr) 372px; gap:22px; }
+    .inv-order{
+      position:sticky; top:16px;
+      max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px);
+      overflow-y:auto; overscroll-behavior:contain; padding:1px 2px 2px 1px;
+    }
+    .inv-find{ position:sticky; top:0; z-index:20; padding:2px 0 12px; background:linear-gradient(to bottom, var(--bg) 86%, rgba(244,245,250,0)); }
+    .catalog-picker{ max-height:none; overflow:visible; padding:2px 0 24px; margin-bottom:0; -webkit-mask-image:none; mask-image:none; }
+    .cart-bar{ display:none !important; }
+    body.cart-bar-visible .app{ padding-bottom:72px; }
+  }
+  @media (min-width:1400px){
+    body:has(#tab-invoice.active) .app{ max-width:1320px; }
+    .inv-layout{ grid-template-columns:minmax(0, 1fr) 460px; gap:32px; }
+    .catalog-picker{ grid-template-columns:repeat(auto-fill, minmax(176px, 1fr)); }
+  }
 </style>
 <!-- Renders barcode images for printed labels (CODE128). Loaded from CDN —
      needs an internet connection the first time a page prints labels;
@@ -3387,6 +3606,67 @@
               </div>
             </div>
 
+            <div class="inv-sect chg" id="changeCalc" style="display:none;">
+              <div class="chg-head">
+                <span class="inv-label" id="chgLabel">Cash received &amp; change</span>
+                <button type="button" class="mini-btn" id="chgClearBtn">Clear</button>
+              </div>
+              <div class="chg-grid">
+                <div class="chg-field">
+                  <label class="chg-cap" for="chgUsd">Client gave in USD</label>
+                  <div class="chg-input"><span class="chg-cur">$</span><input type="text" inputmode="decimal" id="chgUsd" placeholder="0.00" autocomplete="off"></div>
+                  <div class="chg-chips" data-for="chgUsd"><button type="button" class="chip" data-v="5">5</button><button type="button" class="chip" data-v="10">10</button><button type="button" class="chip" data-v="20">20</button><button type="button" class="chip" data-v="50">50</button><button type="button" class="chip" data-v="100">100</button></div>
+                </div>
+                <div class="chg-field">
+                  <label class="chg-cap" for="chgLbp">Client gave in LBP</label>
+                  <div class="chg-input"><span class="chg-cur">LBP</span><input type="text" inputmode="numeric" id="chgLbp" placeholder="0" autocomplete="off"></div>
+                  <div class="chg-chips" data-for="chgLbp"><button type="button" class="chip" data-v="50000">50,000</button><button type="button" class="chip" data-v="100000">100,000</button><button type="button" class="chip" data-v="500000">500,000</button><button type="button" class="chip" data-v="1000000">1,000,000</button></div>
+                </div>
+              </div>
+              <div class="chg-sum" id="chgSum"></div>
+              <div class="chg-return" id="chgReturn" hidden>
+                <div class="chg-return-head">
+                  <span class="chg-cap" id="chgModeLabel">Return the change in</span>
+                  <label class="chg-round"><span>Round LBP to</span>
+                    <select id="chgRound" aria-label="Round LBP change to">
+                      <option value="1000">1,000</option>
+                      <option value="5000">5,000</option>
+                      <option value="10000">10,000</option>
+                      <option value="1">Exact</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="chg-tip">
+                  <div class="chg-field">
+                    <label class="chg-cap" for="chgTip">Keep as tip <span class="chg-hint">(optional)</span></label>
+                    <div class="chg-input"><span class="chg-cur">$</span><input type="text" inputmode="decimal" id="chgTip" placeholder="0.00" autocomplete="off"></div>
+                  </div>
+                  <div class="chg-tip-btns">
+                    <button type="button" class="chip" id="chgTipAll">Keep all as tip</button>
+                    <button type="button" class="chip" id="chgTipNone">No tip</button>
+                    <button type="button" class="chip" id="chgCreditAll" aria-pressed="false">I owe him the rest</button>
+                  </div>
+                </div>
+                <div class="chg-cap chg-after" id="chgAfterTip"></div>
+                <div class="status-btns chg-modes" id="chgModes" role="group" aria-labelledby="chgModeLabel">
+                  <button type="button" class="btn small" data-mode="usd" aria-pressed="true">All USD</button>
+                  <button type="button" class="btn small ghost" data-mode="lbp" aria-pressed="false">All LBP</button>
+                  <button type="button" class="btn small ghost" data-mode="both" aria-pressed="false">USD + LBP</button>
+                </div>
+                <div class="chg-split" id="chgSplit" hidden>
+                  <div class="chg-field">
+                    <label class="chg-cap" for="chgBackUsd">Give back in USD</label>
+                    <div class="chg-input"><span class="chg-cur">$</span><input type="text" inputmode="decimal" id="chgBackUsd" placeholder="0" autocomplete="off"></div>
+                  </div>
+                  <div class="chg-field">
+                    <label class="chg-cap" for="chgBackLbp">Give back in LBP</label>
+                    <div class="chg-input"><span class="chg-cur">LBP</span><input type="text" inputmode="numeric" id="chgBackLbp" placeholder="0" autocomplete="off"></div>
+                  </div>
+                </div>
+                <div class="chg-give" id="chgGive" aria-live="polite"></div>
+              </div>
+            </div>
+
             <div class="inv-sect" id="overpaymentModeBlock">
               <span class="inv-label" id="overpayLabel">If they pay more than the total</span>
               <div class="status-btns" id="overpaymentModeBtns" role="group" aria-labelledby="overpayLabel">
@@ -3409,10 +3689,36 @@
           </button>
           <div class="collapse-body collapsed" id="customerDetailsBody">
             <div class="inv-field">
-              <label class="inv-label" for="clientSelect">Client</label>
-              <select id="clientSelect">
+              <label class="inv-label" id="cpLabel" for="cpTrigger">Client</label>
+              <select id="clientSelect" hidden tabindex="-1" aria-hidden="true">
                 <option value="">Walk-in (no account)</option>
               </select>
+              <div class="cp" id="clientPicker">
+                <div class="cp-head">
+                  <button type="button" class="cp-trigger" id="cpTrigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="cpPanel">
+                    <span class="cp-avatar" id="cpAvatar" aria-hidden="true"></span>
+                    <span class="cp-main">
+                      <span class="cp-name" id="cpName">Walk-in (no account)</span>
+                      <span class="cp-sub" id="cpSub">Tap to search by name or phone</span>
+                    </span>
+                    <span class="cp-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+                  </button>
+                  <button type="button" class="cp-clear-sel" id="cpClearSel" aria-label="Remove client, use walk-in" title="Use walk-in instead" hidden>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                  </button>
+                </div>
+                <div class="cp-panel" id="cpPanel" hidden>
+                  <div class="cp-search">
+                    <svg class="cp-search-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                    <input type="text" id="cpSearch" role="combobox" aria-expanded="true" aria-controls="cpList" aria-autocomplete="list" aria-label="Search clients by name or phone number" placeholder="Search name or phone number" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">
+                    <button type="button" class="cp-search-x" id="cpSearchX" aria-label="Clear search" hidden>
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                    </button>
+                  </div>
+                  <ul class="cp-list" id="cpList" role="listbox" aria-label="Clients"></ul>
+                  <div class="cp-foot" id="cpFoot" aria-live="polite"></div>
+                </div>
+              </div>
             </div>
             <div class="inv-field">
               <label class="inv-label" for="customerName">Customer name on receipt</label>
@@ -3469,6 +3775,7 @@
             Regenerate from items
           </button>
 
+          <div class="pay-lock-note" id="payLockNote" role="alert" hidden></div>
           <div class="inv-actions">
             <button type="button" class="btn" id="copyBtn">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
@@ -3911,6 +4218,25 @@
                 <span class="field-label">Footer note<span class="opt">Thank-you message, terms, etc.</span></span>
                 <textarea id="setFooterNote" rows="3" class="preview-box" placeholder="e.g. Thank you for your business! All sales final."></textarea>
               </div>
+              <div class="modal-field sc-field span-2">
+                <span class="field-label">Arabic version<span class="opt">Used when the invoice language is Arabic. Blank fields use the text above.</span></span>
+              </div>
+              <div class="modal-field sc-field">
+                <span class="field-label">اسم النشاط<span class="opt">Business name (Arabic)</span></span>
+                <input type="text" id="setHeaderTitleAr" dir="rtl" placeholder="مثال: تي دي إيه للأعمال">
+              </div>
+              <div class="modal-field sc-field">
+                <span class="field-label">الشعار<span class="opt">Tagline (Arabic)</span></span>
+                <input type="text" id="setHeaderSubtitleAr" dir="rtl" placeholder="مثال: بطاقات رقمية وشحن موثوق">
+              </div>
+              <div class="modal-field sc-field span-2">
+                <span class="field-label">العنوان<span class="opt">Address (Arabic)</span></span>
+                <input type="text" id="setAddressAr" dir="rtl" placeholder="مثال: بيروت، لبنان">
+              </div>
+              <div class="modal-field sc-field span-2">
+                <span class="field-label">ملاحظة أسفل الفاتورة<span class="opt">Footer note (Arabic)</span></span>
+                <textarea id="setFooterNoteAr" rows="3" dir="rtl" class="preview-box" placeholder="مثال: شكراً لتعاملكم معنا!"></textarea>
+              </div>
             </div>
           </div>
         </div>
@@ -4298,15 +4624,87 @@
   // Same shape/behavior either way: get/set/delete/list. When signed in
   // normally, this hits the Worker (scoped by the bearer token); in guest
   // mode it's swapped for the local-only version above.
+  // ---- Instant-open snapshot (signed-in accounts only) ----
+  // Guests read from localStorage, which is instant. Signed-in accounts used
+  // to wait on the network (one request per saved invoice) before anything
+  // could render. Now the last known copy of the account's data is kept in
+  // IndexedDB: the app paints from it immediately and refreshes from the
+  // server in the background. Every save/delete is written through to it, so
+  // it never goes stale after your own edits.
+  const SNAP_DB = 'ledger_snapshot_db', SNAP_STORE = 'snap';
+  function snapId(){ return window.guestMode ? 'guest' : (window.authToken || 'none'); }
+  function snapDb(){
+    return new Promise((resolve, reject) => {
+      try{
+        const r = indexedDB.open(SNAP_DB, 1);
+        r.onupgradeneeded = () => r.result.createObjectStore(SNAP_STORE);
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = () => reject(r.error);
+      }catch(e){ reject(e); }
+    });
+  }
+  async function snapIdb(mode, fn){
+    const db = await snapDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(SNAP_STORE, mode);
+      const req = fn(tx.objectStore(SNAP_STORE));
+      tx.oncomplete = () => { db.close(); resolve(req && req.result); };
+      tx.onerror = tx.onabort = () => { db.close(); reject(tx.error); };
+    });
+  }
+  window.snapshot = null;       // { kv: { key: rawString }, sales: { id: saleObject } }
+  window.writeCount = 0;        // bumps on every save/delete (lets a background refresh detect edits)
+  window.readLocalSnapshot = async function(){
+    if(window.guestMode){ window.snapshot = null; return null; }
+    try{
+      const s = await snapIdb('readonly', st => st.get(snapId()));
+      if(s && s.kv && s.sales){ window.snapshot = s; return s; }
+    }catch(e){ console.error('Could not read local snapshot:', e); }
+    window.snapshot = { kv: {}, sales: {} };
+    return null;
+  };
+  let snapTimer = null;
+  function persistSnapshotNow(){
+    clearTimeout(snapTimer);
+    if(window.guestMode || !window.snapshot) return;
+    snapIdb('readwrite', st => st.put(window.snapshot, snapId())).catch(e => console.error('Could not save local snapshot:', e));
+  }
+  window.persistSnapshot = function(){ clearTimeout(snapTimer); snapTimer = setTimeout(persistSnapshotNow, 300); };
+  window.persistSnapshotNow = persistSnapshotNow;
+  function snapWrite(key, value, isDelete){
+    if(window.guestMode) return;
+    window.writeCount++;
+    if(!window.snapshot) window.snapshot = { kv: {}, sales: {} };
+    if(key.startsWith('sales:')){
+      const id = key.slice(6);
+      if(isDelete) delete window.snapshot.sales[id];
+      else { try{ window.snapshot.sales[id] = JSON.parse(value); }catch(e){ /* leave as is */ } }
+    } else {
+      if(isDelete) delete window.snapshot.kv[key]; else window.snapshot.kv[key] = value;
+    }
+    window.persistSnapshot();
+  }
+  window.addEventListener('pagehide', persistSnapshotNow);
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') persistSnapshotNow(); });
+
+  // Same shape/behavior either way: get/set/delete/list. When signed in
+  // normally, this hits the Worker (scoped by the bearer token); in guest
+  // mode it's swapped for the local-only version above.
   window.storage = {
     async get(key){
       return window.guestMode ? guestStorage.get(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key));
     },
     async set(key, value){
-      return window.guestMode ? guestStorage.set(key, value) : apiFetch('/api/kv', { method: 'PUT', body: JSON.stringify({ key, value }) });
+      if(window.guestMode) return guestStorage.set(key, value);
+      const r = await apiFetch('/api/kv', { method: 'PUT', body: JSON.stringify({ key, value }) });
+      snapWrite(key, value, false);
+      return r;
     },
     async delete(key){
-      return window.guestMode ? guestStorage.delete(key) : apiFetch('/api/kv?key=' + encodeURIComponent(key), { method: 'DELETE' });
+      if(window.guestMode) return guestStorage.delete(key);
+      const r = await apiFetch('/api/kv?key=' + encodeURIComponent(key), { method: 'DELETE' });
+      snapWrite(key, null, true);
+      return r;
     },
     async list(prefix){
       return window.guestMode ? guestStorage.list(prefix) : apiFetch('/api/kv/list' + (prefix ? '?prefix=' + encodeURIComponent(prefix) : ''));
@@ -4426,6 +4824,10 @@
       const ok = confirm('Sign out of guest mode? Your guest data stays saved on this device unless you clear your browser storage.');
       if(!ok) return;
     }
+    if(!window.guestMode){
+      try{ await snapIdb('readwrite', st => st.delete(snapId())); }catch(e){}
+    }
+    window.snapshot = null;
     window.authToken = null;
     window.guestMode = false;
     localStorage.removeItem(TOKEN_KEY);
@@ -4462,6 +4864,10 @@
       headerTitle: '',
       headerSubtitle: '',
       address: '',
+      headerTitleAr: '',
+      headerSubtitleAr: '',
+      addressAr: '',
+      footerNoteAr: '',
       phone: '',
       footerNote: 'Thank you for choosing TDA!',
       logo: null,
@@ -4501,6 +4907,7 @@
     en: {
       invoice: 'Invoice',
       customer: 'Customer',
+      invoiceNo: 'Invoice no.',
       itemsSubtotal: 'Items subtotal',
       subtotalAfterDiscount: 'Subtotal after discount',
       previousBalance: 'Previous balance',
@@ -4559,6 +4966,7 @@
     ar: {
       invoice: 'فاتورة',
       customer: 'الزبون',
+      invoiceNo: 'رقم الفاتورة',
       itemsSubtotal: 'مجموع الأصناف',
       subtotalAfterDiscount: 'المجموع بعد الخصم',
       previousBalance: 'الرصيد السابق',
@@ -4984,23 +5392,15 @@
   }
 
   // ---------- Storage ----------
-  async function loadAll(){
-    let loadError = null;
-    // Every request below is independent, so fire them all at once instead of
-    // waiting for each round-trip to the server before starting the next.
-    // (Previously: ~9 requests back-to-back, THEN the invoice list.)
-    const settle = (p) => p.then(value => ({ value }), error => ({ error }));
-    const KEYS = ['catalog','rate','clients','balance','balanceLog','customVoucherFields','invoiceSettings','clientViewPrefs','labelSettings'];
-    const pending = {};
-    KEYS.forEach(k => { pending[k] = settle(window.storage.get(k)); });
-    const salesPending = settle(loadAllSales());
-    const got = {};
-    for(const k of KEYS){ got[k] = await pending[k]; }
+  const SNAP_KEYS = ['catalog','rate','clients','balance','balanceLog','customVoucherFields','invoiceSettings','clientViewPrefs','labelSettings'];
 
-    // Same error behaviour as before: a failed request OR a bad JSON payload
-    // sets loadError (except the optional view prefs, which are swallowed).
+  // Apply loaded data to state. `got[k]` is { value: {value: raw} | null } or { error }.
+  function applyLoaded(got, salesResult, opts){
+    opts = opts || {};
+    let loadError = null;
     const apply = (k, optional, fn, fnEmpty) => {
       const r = got[k];
+      if(!r) return;
       if(r.error){ if(!optional) loadError = r.error; return; }
       try{
         const v = r.value;
@@ -5017,21 +5417,25 @@
     apply('rate', false, (raw) => { state.rate = JSON.parse(raw); });
     apply('clients', false, (raw) => { state.clients = JSON.parse(raw); });
 
-    const salesResult = await salesPending;
-    if(salesResult.error){
-      loadError = salesResult.error;
-      // Don't let a failed/ambiguous fetch blank out invoices you already
-      // had — fall back to the last clean copy saved on this device and
-      // flag it, so the UI can say clearly "this may be out of date"
-      // rather than letting a stale-looking-empty screen pass as normal.
-      const backup = loadSalesBackupCache();
-      if(backup && backup.length){
-        state.sales = backup;
-        state.salesShowingOfflineCache = true;
+    if(salesResult){
+      if(salesResult.error){
+        loadError = salesResult.error;
+        if(opts.keepSalesOnError){
+          // Cached copy is already on screen — just flag it as possibly stale.
+          state.salesShowingOfflineCache = true;
+        } else {
+          const backup = loadSalesBackupCache();
+          if(backup && backup.length){
+            state.sales = backup;
+            state.salesShowingOfflineCache = true;
+          }
+        }
+      } else {
+        state.sales = salesResult.value;
+        state.salesShowingOfflineCache = false;
+        invNoMax = null;
+        setTimeout(backfillInvoiceNumbers, 0);
       }
-    } else {
-      state.sales = salesResult.value;
-      state.salesShowingOfflineCache = false;
     }
 
     apply('balance', false, (raw) => { state.balance = JSON.parse(raw); });
@@ -5065,7 +5469,9 @@
       if(p) state.labelSettings = Object.assign({}, state.labelSettings, p);
     });
     if(loadError){ alertBanner('Could not load your data: ' + loadError.message); }
+  }
 
+  function renderEverything(){
     renderCategories();
     renderRate();
     renderBalance();
@@ -5076,6 +5482,75 @@
     renderPaymentMethods();
     updateLangButtonsUI();
     renderSettingsTab();
+  }
+
+  // Fetch everything from the server. All requests fire at once; the small
+  // settings keys and the invoice list load in parallel.
+  async function fetchFromServer(){
+    const settle = (p) => p.then(value => ({ value }), error => ({ error }));
+    const pending = {};
+    SNAP_KEYS.forEach(k => { pending[k] = settle(window.storage.get(k)); });
+    const salesPending = settle(loadAllSales());
+    const got = {};
+    for(const k of SNAP_KEYS){ got[k] = await pending[k]; }
+    const salesResult = await salesPending;
+    return { got, salesResult };
+  }
+
+  // Build the snapshot's contents from a fetch result (only if it was clean).
+  function snapshotFromFetch(got, salesResult){
+    const kv = {}, sales = {};
+    for(const k of SNAP_KEYS){
+      const r = got[k];
+      if(r.error) return null;            // incomplete — don't overwrite the good copy
+      if(r.value && r.value.value) kv[k] = r.value.value;
+    }
+    if(salesResult.error) return null;
+    salesResult.value.forEach(sl => { if(sl && sl.id) sales[sl.id] = sl; });
+    return { kv, sales };
+  }
+
+  async function loadAll(){
+    const snap = await window.readLocalSnapshot();
+
+    if(snap){
+      // ---- Instant path: paint from the last known copy right now ----
+      const got = {};
+      SNAP_KEYS.forEach(k => { got[k] = { value: snap.kv[k] ? { value: snap.kv[k] } : null }; });
+      applyLoaded(got, { value: Object.values(snap.sales) }, { fromCache: true });
+      renderEverything();
+
+      // ...then quietly bring it up to date from the server.
+      (async () => {
+        const startedAt = window.writeCount;
+        const { got: g2, salesResult } = await fetchFromServer();
+        if(window.writeCount !== startedAt) return;   // you edited something meanwhile; your edits win
+        const fresh = snapshotFromFetch(g2, salesResult);
+        if(!fresh){
+          // Offline / partial failure: keep what's on screen, flag it.
+          state.salesShowingOfflineCache = true;
+          renderReports();
+          return;
+        }
+        const changed = JSON.stringify(fresh.kv) !== JSON.stringify(snap.kv)
+                     || JSON.stringify(fresh.sales) !== JSON.stringify(snap.sales);
+        window.snapshot = fresh;
+        window.persistSnapshot();
+        if(!changed){ state.salesShowingOfflineCache = false; return; }
+        applyLoaded(g2, salesResult, {});
+        renderEverything();
+      })().catch(e => console.error('Background refresh failed:', e));
+      return;
+    }
+
+    // ---- No local copy yet (first sign-in on this device, or guest) ----
+    const { got, salesResult } = await fetchFromServer();
+    applyLoaded(got, salesResult, {});
+    if(!window.guestMode){
+      const fresh = snapshotFromFetch(got, salesResult);
+      if(fresh){ window.snapshot = fresh; window.persistSnapshot(); }
+    }
+    renderEverything();
   }
 
   async function saveCatalog(){
@@ -6623,6 +7098,7 @@
       sel.appendChild(opt);
     });
     if([...sel.options].some(o => o.value === current)) sel.value = current;
+    syncClientPicker();
   }
 
   const AVATAR_COLORS = ['#4F46E5','#D97706','#059669','#DC2626','#0891B2','#7C3AED','#DB2777','#65A30D'];
@@ -7595,6 +8071,7 @@
     $('#amountReceived').value = '';
     $('#amountReceived').dataset.userEdited = 'false';
     $('#amountReceivedCurrency').value = 'USD';
+    if(typeof resetChangeCalc === 'function') resetChangeCalc();
     setInvoiceDateTimeToNow();
     updateOverpaymentModeUI();
     renderInvoice();
@@ -7660,6 +8137,32 @@
   function voucherDisplayUnits(line){
     const units = ensureUnitVouchers(line);
     return line.voucherShared ? [units[0] || []] : units;
+  }
+
+  // Consecutive units that carry identical details are treated as one GROUP
+  // (e.g. 5 units for 71 234 567, then 10 units for 81 234 567). Storage stays
+  // one entry per unit, so nothing saved earlier changes; groups are just how
+  // the units are shown, edited and printed.
+  function voucherUnitKey(fields){
+    return JSON.stringify((fields || []).filter(f => f.label || f.value).map(f => [f.label, f.value, !!f.emph]));
+  }
+  function voucherGroups(line){
+    const units = ensureUnitVouchers(line);
+    if(line.voucherShared) return [{ start: 0, end: line.qty - 1, count: line.qty, fields: units[0] || [] }];
+    const groups = [];
+    units.forEach((fields, i) => {
+      const key = voucherUnitKey(fields);
+      const last = groups[groups.length - 1];
+      if(last && last.key === key){ last.end = i; last.count++; }
+      else groups.push({ key, start: i, end: i, count: 1, fields });
+    });
+    return groups;
+  }
+  // "Unit 3", or "Unit 1-5 (x5)" for a batch. Empty for single-quantity or shared lines.
+  function voucherGroupLabel(line, g, unitWord, dash){
+    if(line.voucherShared || line.qty <= 1) return '';
+    dash = dash || '–';
+    return g.count === 1 ? `${unitWord} ${g.start + 1}` : `${unitWord} ${g.start + 1}${dash}${g.end + 1} (×${g.count})`;
   }
 
   function setVoucherShared(productId, shared){
@@ -7749,6 +8252,9 @@
     const units = ensureUnitVouchers(line);
     if(unitIndex === undefined || unitIndex === null || unitIndex >= units.length) unitIndex = 0;
     let fields = (units[unitIndex] || []).map(f => ({ ...f }));
+    // The batch of units being edited: the whole group this unit belongs to.
+    const grp = line.voucherShared ? { start: 0, end: line.qty - 1 } : (voucherGroups(line).find(g => unitIndex >= g.start && unitIndex <= g.end) || { start: unitIndex, end: unitIndex });
+    const canRange = line.qty > 1 && !line.voucherShared;
 
     function renderFields(){
       const list = document.getElementById('voucherFieldsList');
@@ -7786,6 +8292,18 @@
         : (line.qty > 1 ? `Extra details — Unit ${unitIndex + 1} of ${line.qty}` : 'Extra details for this item');
       modalBox.innerHTML = `
         <h3>${escapeHtml(titleText)}</h3>
+        ${canRange ? `
+        <div class="vu-range" id="vuRange">
+          <span>Apply to units</span>
+          <input type="number" inputmode="numeric" id="vuFrom" min="1" max="${line.qty}" value="${grp.start + 1}" aria-label="From unit">
+          <span>to</span>
+          <input type="number" inputmode="numeric" id="vuTo" min="1" max="${line.qty}" value="${grp.end + 1}" aria-label="To unit">
+          <span class="vu-total" id="vuTotal"></span>
+        </div>
+        <div class="vu-quick">
+          <button type="button" class="chip" id="vuOne">This unit only</button>
+          <button type="button" class="chip" id="vuAll">All ${line.qty} units</button>
+        </div>` : ''}
         <div class="voucher-quick-add" id="voucherQuickAdd">
           ${getVoucherQuickFields().map(label => `<button type="button" class="chip" data-label="${escapeHtml(label)}">+ ${escapeHtml(label)}</button>`).join('')}
         </div>
@@ -7798,6 +8316,23 @@
         </div>`;
       modalOverlay.classList.add('show');
       renderFields();
+
+      if(canRange){
+        const fromEl = document.getElementById('vuFrom'), toEl = document.getElementById('vuTo'), totEl = document.getElementById('vuTotal');
+        const readRange = () => {
+          let a = parseInt(fromEl.value, 10), b = parseInt(toEl.value, 10);
+          if(isNaN(a)) a = grp.start + 1; if(isNaN(b)) b = a;
+          a = Math.min(Math.max(a, 1), line.qty); b = Math.min(Math.max(b, 1), line.qty);
+          if(b < a){ const t = a; a = b; b = t; }
+          return [a, b];
+        };
+        const showTotal = () => { const [a, b] = readRange(); totEl.textContent = (b - a + 1) + (b - a + 1 === 1 ? ' unit' : ' units'); };
+        fromEl.addEventListener('input', showTotal); toEl.addEventListener('input', showTotal);
+        document.getElementById('vuOne').addEventListener('click', () => { fromEl.value = unitIndex + 1; toEl.value = unitIndex + 1; showTotal(); });
+        document.getElementById('vuAll').addEventListener('click', () => { fromEl.value = 1; toEl.value = line.qty; showTotal(); });
+        showTotal();
+        modalBox._readRange = readRange;
+      }
 
       document.getElementById('voucherQuickAdd').querySelectorAll('.chip').forEach(chip => {
         chip.addEventListener('click', () => {
@@ -7819,13 +8354,19 @@
       document.getElementById('modalSaveBtn').addEventListener('click', () => {
         const cleaned = fields.map(f => ({ label: f.label.trim(), value: f.value.trim(), emph: !!f.emph })).filter(f => f.label || f.value);
         rememberVoucherFieldLabels(cleaned);
+        if(canRange && typeof modalBox._readRange === 'function') cleaned.__range = modalBox._readRange();
         closeModal();
         resolve(cleaned);
       });
     });
 
     if(result === null) return;
-    units[unitIndex] = result;
+    if(canRange && typeof modalBox._readRange === 'function'){
+      const [a, b] = result.__range || [grp.start + 1, grp.end + 1];
+      for(let i = a - 1; i <= b - 1; i++) units[i] = result.map(f => ({ ...f }));
+    } else {
+      units[unitIndex] = result;
+    }
     line.voucher = units;
     state.previewEdited = false;
     renderInvoice();
@@ -8247,15 +8788,15 @@
             Same details for all ${line.qty} units (not shown per unit)
           </label>
           ` : ''}
-          ${voucherDisplayUnits(line).map((unitFields, i) => `
-            <div class="voucher-unit" data-unit-idx="${i}">
+          ${voucherGroups(line).map((g) => { const unitFields = g.fields; return `
+            <div class="voucher-unit" data-unit-idx="${g.start}">
               <div class="voucher-unit-head">
-                <span>${line.voucherShared ? 'Details (all ' + line.qty + ' units)' : (line.qty > 1 ? 'Unit ' + (i + 1) : 'Details')}</span>
-                <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${i}">Edit</button>
+                <span>${line.voucherShared ? 'Details (all ' + line.qty + ' units)' : (line.qty > 1 ? (g.count === 1 ? 'Unit ' + (g.start + 1) : 'Units ' + (g.start + 1) + '–' + (g.end + 1) + ' <span class="vu-count">' + g.count + ' units</span>') : 'Details')}</span>
+                <button class="mini-btn edit-voucher-btn" type="button" data-unit-idx="${g.start}">Edit</button>
               </div>
               <div class="voucher-unit-body">${unitFields.length ? unitFields.map(f => f.emph ? `<span class="vf-emph-line">${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}</span><br>` : `${escapeHtml(f.label || 'Detail')}: <b>${escapeHtml(f.value)}</b><br>`).join('') : `<span class="v-empty">No details entered yet.</span>`}</div>
             </div>
-          `).join('')}
+          `; }).join('')}
         </div>
         ` : ''}
         <button type="button" class="line-more-toggle" aria-expanded="${isOpen}">
@@ -8407,20 +8948,56 @@
     });
   }
 
-  function getAmountReceivedUsd(){
+  // The amount typed/locked in the "Amount received now" field, before any
+  // tip added from the cash & change panel.
+  function getBaseAmountReceivedUsd(){
     const raw = parseFormattedNumber($('#amountReceived').value);
     if(isNaN(raw)) return NaN;
     return moneyToUsd(raw, $('#amountReceivedCurrency').value);
   }
+  // Tip the client leaves on top, set in the cash & change panel (USD).
+  // Walk-ins can't pay less than the total, but they can pay more as a tip.
+  state.chgTipUsd = 0;
+  // Extra the client leaves on their account (I owe him), set in the cash & change panel (USD).
+  state.chgCreditUsd = 0;
+  function getAmountReceivedUsd(){
+    const base = getBaseAmountReceivedUsd();
+    if(isNaN(base)) return NaN;
+    return base + (state.chgTipUsd || 0) + (state.chgCreditUsd || 0);
+  }
+  // Splits any overpayment into the part kept as a tip and the part left as
+  // credit on the client's account.
+  function overpaySplit(remaining){
+    const extra = -remaining;
+    if(extra <= 0.004) return { tip: 0, credit: 0 };
+    // The "rest is a tip / owed" switch only applies to Partial, where the amount is typed.
+    if(state.paymentStatus === 'partial' && state.overpaymentMode === 'tip') return { tip: extra, credit: 0 };
+    const tip = Math.min(state.chgTipUsd || 0, extra);
+    return { tip, credit: extra - tip };
+  }
 
-  function updateRemaining(){
+  function paintRemaining(){
     const nums = computeInvoiceNumbers();
     const received = getAmountReceivedUsd();
     const receivedVal = isNaN(received) ? 0 : received;
     const remaining = nums.grandTotal - receivedVal;
-    const isTip = remaining < 0 && state.overpaymentMode === 'tip';
-    $('#remainingBalance').innerHTML = (remaining > 0 ? 'owes <b>' + fmtUsd(remaining) + '</b> (' + fmtLbp(remaining * state.rate.value) + ')' : remaining < 0 ? (isTip ? 'tip <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')' : 'credit <b>' + fmtUsd(-remaining) + '</b> (' + fmtLbp(-remaining * state.rate.value) + ')') : '<b>$0.00</b> (0 LBP)');
-    $('#remainingBalance').className = remaining > 0.004 ? 'owes' : (remaining < -0.004 ? (isTip ? 'tip' : 'credit') : 'settled');
+    const sp = overpaySplit(remaining);
+    const both = (usd) => '<b>' + fmtUsd(usd) + '</b> (' + fmtLbp(usd * state.rate.value) + ')';
+    let html;
+    if(remaining > 0.004) html = 'owes ' + both(remaining);
+    else if(remaining < -0.004){
+      const bits = [];
+      if(sp.tip > 0.004) bits.push('tip ' + both(sp.tip));
+      if(sp.credit > 0.004) bits.push('credit ' + both(sp.credit));
+      html = bits.join(' · ');
+    } else html = '<b>$0.00</b> (0 LBP)';
+    $('#remainingBalance').innerHTML = html;
+    $('#remainingBalance').className = remaining > 0.004 ? 'owes' : (remaining < -0.004 ? (sp.credit > 0.004 ? 'credit' : 'tip') : 'settled');
+  }
+
+  function updateRemaining(){
+    paintRemaining();
+    if(typeof updateChangeCalc === 'function') updateChangeCalc();
   }
 
   // Keeps the sticky bottom cart bar in sync with the current invoice, so
@@ -8452,6 +9029,98 @@
     return `${n})`;
   }
 
+  // Business header/footer text in the invoice language. Arabic uses the
+  // "...Ar" setting when filled in, otherwise falls back to the main text.
+  // Invoice numbers count up from the highest saved one. The number shown on
+  // the invoice being built is the one it will be saved with.
+  // The highest number is remembered (in memory and on this device), so
+  // getting the next one never has to look through every saved invoice.
+  var invNoMax;
+  var INV_NO_KEY = 'tda-invoice-no-max';
+  function invNoFloor(){
+    try{ return parseInt(localStorage.getItem(INV_NO_KEY), 10) || 0; }catch(e){ return 0; }
+  }
+  function nextInvoiceNo(){
+    if(invNoMax == null){
+      let max = invNoFloor();
+      (state.sales || []).forEach(x => { if(x && x.invoiceNo > max) max = x.invoiceNo; });
+      invNoMax = max;
+    }
+    return invNoMax + 1;
+  }
+  function noteInvoiceNoUsed(n){
+    if(invNoMax == null) nextInvoiceNo();
+    if(n > invNoMax) invNoMax = n;
+    try{ localStorage.setItem(INV_NO_KEY, String(invNoMax)); }catch(e){}
+  }
+  // Gives every older invoice that has no number one, oldest first, once.
+  var invBackfillRunning = false;
+  async function backfillInvoiceNumbers(){
+    if(invBackfillRunning || state.salesShowingOfflineCache) return;
+    const missing = (state.sales || []).filter(x => x && !x.invoiceNo).sort((a, b) => a.date - b.date);
+    if(!missing.length) return;
+    invBackfillRunning = true;
+    try{
+      invNoMax = null;
+      let n = nextInvoiceNo() - 1;
+      missing.forEach(x => { x.invoiceNo = ++n; });
+      noteInvoiceNoUsed(n);
+      for(let i = 0; i < missing.length; i += 10){
+        await Promise.all(missing.slice(i, i + 10).map(x =>
+          window.storage.set(SALES_PREFIX + x.id, JSON.stringify(slimSaleForStorage(x))).catch(() => {})));
+      }
+      if(typeof renderReports === 'function') renderReports();
+    } finally { invBackfillRunning = false; }
+  }
+  // Older saved receipts were frozen before numbers existed; add the number when they are reprinted.
+  function addInvNoToSnapshot(sale, field, lang, snap){
+    if(!sale || !sale.invoiceNo || !snap) return snap;
+    const no = fmtInvNo(sale.invoiceNo), label = getT(lang).invoiceNo;
+    if(field === 'snapshotThermal'){
+      if(!Array.isArray(snap) || snap.some(g => g && String(g.text).includes(no))) return snap;
+      const i = snap.findIndex(g => g && /^={5,}$/.test(String(g.text)));
+      if(i < 0) return snap;
+      const w = String(snap[i].text).length, gap = Math.max(1, w - label.length - no.length);
+      const out = snap.slice();
+      out.splice(i + 1, 0, { text: label + ' '.repeat(gap) + no, align:'left', bold:false });
+      return out;
+    }
+    if(typeof snap !== 'string' || snap.includes(no)) return snap;
+    if(field === 'snapshotHtml'){
+      const mark = '<div class="pr-hr solid"></div>';
+      const i = snap.indexOf(mark);
+      if(i < 0) return snap;
+      const at = i + mark.length;
+      return snap.slice(0, at) + invNoStripHtml(getT(lang), no, '', '').replace('<div style="text-align:end"><div style="font-size:13px;font-weight:600;color:#14151F"></div></div>', '') + snap.slice(at);
+    }
+    const m = snap.match(/^.*📅.*$/m);
+    if(!m) return snap;
+    const at = m.index + m[0].length;
+    return snap.slice(0, at) + '\n🔢 ' + label + ': ' + no + snap.slice(at);
+  }
+
+  // Receipt header strip: invoice number on one side, date on the other.
+  function invNoStripHtml(t, no, dateStr, timeStr){
+    const lab = 'font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:#6B7080;font-weight:600;margin-bottom:2px';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:9px 2px;border-top:1px solid #C9CCD6;border-bottom:1px solid #C9CCD6;text-align:start">`
+      + `<div><div style="${lab}">${escapeHtml(t.invoiceNo)}</div><div style="font-size:17px;font-weight:800;letter-spacing:.5px;color:#000">${no}</div></div>`
+      + `<div style="text-align:end"><div style="font-size:13px;font-weight:600;color:#14151F">${dateStr}</div>`
+      + (timeStr ? `<div style="font-size:11.5px;color:#6B7080;margin-top:2px">${timeStr}</div>` : '') + `</div></div>`;
+  }
+  function thermalInvNoSeg(W, label, no){
+    const gap = Math.max(1, W - label.length - no.length);
+    return { text: label + ' '.repeat(gap) + no, align:'left', bold:true };
+  }
+  function fmtInvNo(n){ return n ? 'INV-' + String(n).padStart(4, '0') : ''; }
+
+  function invTxt(set, key, lang){
+    if(lang === 'ar'){
+      const v = set && set[key + 'Ar'];
+      if(v && String(v).trim()) return v;
+    }
+    return set ? set[key] : '';
+  }
+
   function buildInvoiceText(withEmojis, lang){
     if(withEmojis === undefined) withEmojis = true; // default on: this text is mainly used for the WhatsApp preview
     lang = lang || state.invoiceLang;
@@ -8464,10 +9133,11 @@
     const timeStr = now.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit', second:'2-digit' });
     const nums = computeInvoiceNumbers();
     let lines = [];
-    lines.push(em('🧾') + `*${s.headerTitle || t.invoice}*`);
-    if(s.headerSubtitle) lines.push(s.headerSubtitle);
-    if(s.address) lines.push(em('📍') + s.address);
+    lines.push(em('🧾') + `*${invTxt(s,'headerTitle',lang) || t.invoice}*`);
+    if(invTxt(s,'headerSubtitle',lang)) lines.push(invTxt(s,'headerSubtitle',lang));
+    if(invTxt(s,'address',lang)) lines.push(em('📍') + invTxt(s,'address',lang));
     if(s.phone) lines.push(em('📞') + s.phone);
+    lines.push(em('🔢') + t.invoiceNo + ': ' + `*${fmtInvNo(nextInvoiceNo())}*`);
     lines.push(em('📅') + dateStr + '   ' + timeStr);
     if(customer) lines.push(em('👤') + t.customer + ': ' + `*${customer}*`);
     lines.push('');
@@ -8487,10 +9157,11 @@
       }
       lines.push(`   ${fmtUsd(lineTotal)} ${t.orWord} ${fmtLbp(lineTotal * state.rate.value)}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
-        const units = voucherDisplayUnits(line);
-        units.forEach((unitFields, i) => {
+        voucherGroups(line).forEach((g) => {
+          const unitFields = g.fields;
           if(!unitFields.length) return;
-          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' — ' + t.unitWord + ' ' + (i + 1) : '');
+          const gl = voucherGroupLabel(line, g, t.unitWord);
+          const unitSuffix = gl ? ' — ' + gl : '';
           lines.push(`   ${em('🎟️')}${t.voucherHeader}${unitSuffix}`);
           unitFields.forEach(f => {
             if(f.label || f.value){
@@ -8522,7 +9193,11 @@
       lines.push(`${em(statusEmoji)}${t.paymentStatus}: *${statusLabel}*`);
       lines.push(`${em('💳')}${t.received}: ${fmtUsd(received)} _(${fmtLbp(received * state.rate.value)})_`);
       if(remaining > 0.004) lines.push(`${em('⚠️')}${t.remainingBalance}: *${fmtUsd(remaining)}* _(${fmtLbp(remaining * state.rate.value)})_`);
-      else if(remaining < -0.004) lines.push(state.overpaymentMode === 'tip' ? `${em('🙏')}${t.tipReceived}: ${fmtUsd(-remaining)} _(${fmtLbp(-remaining * state.rate.value)})_` : `${em('🟢')}${t.creditOnAccount}: ${fmtUsd(-remaining)} _(${fmtLbp(-remaining * state.rate.value)})_`);
+      else if(remaining < -0.004){
+        const sp = overpaySplit(remaining);
+        if(sp.tip > 0.004) lines.push(`${em('🙏')}${t.tipReceived}: ${fmtUsd(sp.tip)} _(${fmtLbp(sp.tip * state.rate.value)})_`);
+        if(sp.credit > 0.004) lines.push(`${em('🟢')}${t.creditOnAccount}: ${fmtUsd(sp.credit)} _(${fmtLbp(sp.credit * state.rate.value)})_`);
+      }
     }
 
     lines.push('');
@@ -8535,9 +9210,9 @@
       activeMethods.forEach(m => lines.push(`• ${m.label}: ${m.value}`));
     }
 
-    if(s.footerNote){
+    if(invTxt(s,'footerNote',lang)){
       lines.push('');
-      lines.push(`_${s.footerNote}_`);
+      lines.push(`_${invTxt(s,'footerNote',lang)}_`);
     }
 
     lines.push('');
@@ -8556,6 +9231,8 @@
 
   function finalizeSaleIfNeeded(){
     if(state.finalizedThisInvoice || state.lines.length === 0) return;
+    // A walk-in who hasn't paid in full is never saved.
+    if(walkInShortfall() > 0) return;
     const nums = computeInvoiceNumbers();
     const received = getAmountReceivedUsd();
     const receivedVal = isNaN(received) ? nums.grandTotal : received;
@@ -8571,13 +9248,15 @@
     // owed back to the client — so clamp the balance at 0 and record the
     // extra separately as a tip.
     let tipUsd = 0;
-    if(newBalance < -0.004 && state.overpaymentMode === 'tip'){
-      tipUsd = -newBalance;
-      newBalance = 0;
+    if(newBalance < -0.004){
+      tipUsd = overpaySplit(newBalance).tip;
+      newBalance += tipUsd;
+      if(Math.abs(newBalance) < 0.004) newBalance = 0;
     }
 
     const record = {
       id: uid(),
+      invoiceNo: nextInvoiceNo(),
       date: getInvoiceDateTime().getTime(),
       customerName: $('#customerName').value.trim() || (nums.client ? nums.client.name : 'Walk-in'),
       clientId: nums.client ? nums.client.id : null,
@@ -8603,6 +9282,7 @@
       snapshotPhone: (nums.client && nums.client.phone) ? nums.client.phone : ''
     };
     state.sales.push(record);
+    noteInvoiceNoUsed(record.invoiceNo);
     saveSaleRecord(record);
 
     if(receivedVal !== 0){
@@ -8634,6 +9314,7 @@
   }
 
   async function copyInvoice(){
+    if(blockIfWalkInShort()) return;
     const text = $('#previewBox').value;
     try{
       await navigator.clipboard.writeText(text);
@@ -8652,6 +9333,7 @@
   }
 
   function openWhatsapp(){
+    if(blockIfWalkInShort()) return;
     const text = $('#previewBox').value;
     const client = getSelectedClient();
     let phoneDigits = '';
@@ -8665,7 +9347,10 @@
 
   async function resetInvoice(){
     if(state.lines.length > 0){
-      const ok = await confirmModal('Start a new invoice? Current items will be cleared.');
+      const short = walkInShortfall();
+      const ok = await confirmModal(short > 0
+        ? 'This invoice is marked Paid but is not paid in full (' + fmtUsd(short) + ' short), so this sale will NOT be saved. Start a new invoice and discard it?'
+        : 'Start a new invoice? Current items will be cleared.');
       if(!ok) return;
     }
     // Make sure the invoice being left behind is actually recorded — otherwise
@@ -8685,6 +9370,7 @@
     $('#amountReceived').value = '';
     $('#amountReceived').dataset.userEdited = 'false';
     $('#amountReceivedCurrency').value = 'USD';
+    if(typeof resetChangeCalc === 'function') resetChangeCalc();
     setInvoiceDateTimeToNow();
     updateOverpaymentModeUI();
     renderInvoice();
@@ -8696,6 +9382,7 @@
   // never get recorded at all.
   function completeSale(){
     if(state.lines.length === 0){ alertBanner('Add items to the invoice first.'); return; }
+    if(blockIfWalkInShort()) return;
     finalizeSaleIfNeeded();
     alertBanner('Sale recorded.');
     state.lines = [];
@@ -8710,6 +9397,7 @@
     $('#amountReceived').value = '';
     $('#amountReceived').dataset.userEdited = 'false';
     $('#amountReceivedCurrency').value = 'USD';
+    if(typeof resetChangeCalc === 'function') resetChangeCalc();
     setInvoiceDateTimeToNow();
     updateOverpaymentModeUI();
     renderInvoice();
@@ -9214,7 +9902,7 @@
     row.className = 'history-item';
     row.innerHTML = `
       <div class="h-left">
-        <div class="h-title">${escapeHtml(s.customerName)}</div>
+        <div class="h-title">${escapeHtml(s.customerName)}${s.invoiceNo ? '<span class="inv-no-pill">' + fmtInvNo(s.invoiceNo) + '</span>' : ''}</div>
         <div class="h-date">${dateStr}</div>
         <span class="sale-status-pill ${status}">${statusText}</span>${s.tipUsd > 0.004 ? '<span class="sale-status-pill tip">Tip ' + fmtUsd(s.tipUsd) + '</span>' : ''}
       </div>
@@ -9270,11 +9958,11 @@
     if(set.logo) html += `<img class="pr-logo" src="${set.logo}" alt="logo">`;
     html += `<div class="pr-center">`;
     html += `<div class="pr-eyebrow">${escapeHtml(t.invoice.replace(/\*/g, ''))}</div>`;
-    html += `<div class="pr-title">${escapeHtml(set.headerTitle || 'Invoice')}</div>`;
-    if(set.headerSubtitle) html += `<div class="pr-sub">${escapeHtml(set.headerSubtitle)}</div>`;
-    if(set.address) html += `<div class="pr-sub">${escapeHtml(set.address)}</div>`;
+    html += `<div class="pr-title">${escapeHtml(invTxt(set,'headerTitle',lang) || 'Invoice')}</div>`;
+    if(invTxt(set,'headerSubtitle',lang)) html += `<div class="pr-sub">${escapeHtml(invTxt(set,'headerSubtitle',lang))}</div>`;
+    if(invTxt(set,'address',lang)) html += `<div class="pr-sub">${escapeHtml(invTxt(set,'address',lang))}</div>`;
     if(set.phone) html += `<div class="pr-sub">${escapeHtml(set.phone)}</div>`;
-    html += `<div class="pr-meta">${dateStr}</div>`;
+    html += s.invoiceNo ? invNoStripHtml(t, fmtInvNo(s.invoiceNo), dateStr, '') : `<div class="pr-meta">${dateStr}</div>`;
     html += `</div><div class="pr-hr solid"></div>`;
     html += `<div class="pr-row"><span>${t.customer}</span><b>${escapeHtml(s.customerName)}</b></div><div class="pr-hr"></div>`;
 
@@ -9301,7 +9989,7 @@
     if(s.tipUsd > 0.004) html += `<div class="pr-row"><span>${t.tipReceived}</span><span>${fmtUsd(s.tipUsd)}</span></div>`;
     html += `<div class="pr-hr"></div><div class="pr-row"><span>${t.rate}</span><span>1 USD = ${fmtLbp(rate)}</span></div>`;
     if(!s.items || !s.items.length) html += `<div class="pr-hr"></div><div class="pr-footer">Reconstructed summary — itemized details were not saved for this older invoice.</div>`;
-    if(set.footerNote) html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(set.footerNote)}</div>`;
+    if(invTxt(set,'footerNote',lang)) html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(invTxt(set,'footerNote',lang))}</div>`;
     return `<div dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${html}</div>`;
   }
 
@@ -9312,7 +10000,8 @@
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
     const lines = [];
-    lines.push('🧾 ' + (state.invoiceSettings.headerTitle || t.invoice));
+    lines.push('🧾 ' + (invTxt(state.invoiceSettings,'headerTitle',lang) || t.invoice));
+    if(s.invoiceNo) lines.push('🔢 ' + t.invoiceNo + ': ' + fmtInvNo(s.invoiceNo));
     lines.push('📅 ' + dateStr);
     lines.push('👤 ' + t.customer + ': ' + s.customerName);
     lines.push('');
@@ -9335,9 +10024,9 @@
     if(s.tipUsd > 0.004) lines.push('🙏 ' + t.tipReceived + ': ' + fmtUsd(s.tipUsd));
     lines.push('');
     lines.push(`💱 ${t.rate}: 1 USD = ${fmtLbp(rate)}`);
-    if(state.invoiceSettings.footerNote){
+    if(invTxt(state.invoiceSettings,'footerNote',lang)){
       lines.push('');
-      lines.push(state.invoiceSettings.footerNote);
+      lines.push(invTxt(state.invoiceSettings,'footerNote',lang));
     }
     if(!s.items || !s.items.length){
       lines.push('');
@@ -9386,10 +10075,11 @@
     const tableRow = (cells, opts) => { const parts = cells.map((c, i) => padCell(c, colWidths[i], colAligns[i])); seg(parts[0] + ' ' + parts[1] + ' ' + parts[2] + '  ' + parts[3], opts); };
 
     seg(t.invoice.replace(/\*/g, '').toUpperCase(), { align:'center' });
-    seg((set.headerTitle || 'Invoice').toUpperCase(), { align:'center', bold:true });
-    if(set.headerSubtitle) seg(set.headerSubtitle, { align:'center' });
-    if(set.address) seg(set.address, { align:'center' });
+    seg((invTxt(set,'headerTitle',lang) || 'Invoice').toUpperCase(), { align:'center', bold:true });
+    if(invTxt(set,'headerSubtitle',lang)) seg(invTxt(set,'headerSubtitle',lang), { align:'center' });
+    if(invTxt(set,'address',lang)) seg(invTxt(set,'address',lang), { align:'center' });
     if(set.phone) seg(set.phone, { align:'center' });
+    if(s.invoiceNo) segments.push(thermalInvNoSeg(W, t.invoiceNo, fmtInvNo(s.invoiceNo)));
     seg(`${dateStr} - ${timeStr}`, { align:'center' });
     seg(hr('='));
     twoCol(t.customer, s.customerName);
@@ -9431,9 +10121,9 @@
       activeMethods.forEach(m => twoCol(m.label, m.value));
     }
 
-    if(set.footerNote){
+    if(invTxt(set,'footerNote',lang)){
       seg(hr('-'));
-      seg(set.footerNote, { align:'center' });
+      seg(invTxt(set,'footerNote',lang), { align:'center' });
     }
 
     seg(hr('-'));
@@ -9450,7 +10140,7 @@
   // the saved totals/items (with translated labels) rather than pulled from
   // an exact snapshot.
   function getSaleSnapshot(s, field, lang, fallbackFn){
-    const out = getSaleSnapshotRaw(s, field, lang, fallbackFn);
+    const out = addInvNoToSnapshot(s, field, lang, getSaleSnapshotRaw(s, field, lang, fallbackFn));
     return field === 'snapshotHtml' ? fillLogoInHtml(out) : out;
   }
   function getSaleSnapshotRaw(s, field, lang, fallbackFn){
@@ -9533,7 +10223,7 @@
     modalBox.innerHTML = `
       <h3>📜 Invoice history</h3>
       <div class="modal-field">
-        <input type="text" id="historySearchInput" placeholder="🔍 Search name, date, amount, status...">
+        <input type="text" id="historySearchInput" placeholder="🔍 Search invoice no., name, date, amount...">
       </div>
 
       <div class="filter-panel">
@@ -9600,6 +10290,7 @@
       const client = s.clientId ? state.clients.find(c => c.id === s.clientId) : null;
       const status = getSaleStatus(s);
       const parts = [
+        s.invoiceNo ? fmtInvNo(s.invoiceNo) + ' #' + s.invoiceNo : '',
         s.customerName, dateStr,
         fmtUsd(s.revenueUsd), fmtUsd(s.profitUsd), fmtUsd(s.amountReceived),
         s.tipUsd > 0.004 ? fmtUsd(s.tipUsd) + ' tip' : '',
@@ -10578,6 +11269,10 @@
     $('#setAddress').value = s.address || '';
     $('#setPhone').value = s.phone || '';
     $('#setFooterNote').value = s.footerNote || '';
+    $('#setHeaderTitleAr').value = s.headerTitleAr || '';
+    $('#setHeaderSubtitleAr').value = s.headerSubtitleAr || '';
+    $('#setAddressAr').value = s.addressAr || '';
+    $('#setFooterNoteAr').value = s.footerNoteAr || '';
     const preview = $('#logoPreview');
     preview.innerHTML = s.logo ? `<img src="${s.logo}" alt="logo">` : '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg>';
     $all('#paperWidthBtns button').forEach(b => {
@@ -10745,8 +11440,8 @@
   // Make sure a pending debounced save is never lost: flush it whenever the
   // user leaves the settings field (blur), switches tabs inside the app,
   // switches away from the browser tab, or closes/reloads the page.
-  ['setHeaderTitle','setHeaderSubtitle','setAddress','setPhone','setFooterNote'].forEach(id => {
-    const map = { setHeaderTitle:'headerTitle', setHeaderSubtitle:'headerSubtitle', setAddress:'address', setPhone:'phone', setFooterNote:'footerNote' };
+  ['setHeaderTitle','setHeaderSubtitle','setAddress','setPhone','setFooterNote','setHeaderTitleAr','setHeaderSubtitleAr','setAddressAr','setFooterNoteAr'].forEach(id => {
+    const map = { setHeaderTitle:'headerTitle', setHeaderSubtitle:'headerSubtitle', setAddress:'address', setPhone:'phone', setFooterNote:'footerNote', setHeaderTitleAr:'headerTitleAr', setHeaderSubtitleAr:'headerSubtitleAr', setAddressAr:'addressAr', setFooterNoteAr:'footerNoteAr' };
     $('#' + id).addEventListener('input', () => {
       state.invoiceSettings[map[id]] = $('#' + id).value;
       scheduleSaveSettings();
@@ -11062,10 +11757,11 @@
 
     // ---- Header block (centered, like the preview's eyebrow/title/meta) ----
     seg(t.invoice.replace(/\*/g, '').toUpperCase(), { align:'center' });
-    seg((s.headerTitle || 'Invoice').toUpperCase(), { align:'center', bold:true });
-    if(s.headerSubtitle) seg(s.headerSubtitle, { align:'center' });
-    if(s.address) seg(s.address, { align:'center' });
+    seg((invTxt(s,'headerTitle',lang) || 'Invoice').toUpperCase(), { align:'center', bold:true });
+    if(invTxt(s,'headerSubtitle',lang)) seg(invTxt(s,'headerSubtitle',lang), { align:'center' });
+    if(invTxt(s,'address',lang)) seg(invTxt(s,'address',lang), { align:'center' });
     if(s.phone) seg(s.phone, { align:'center' });
+    segments.push(thermalInvNoSeg(W, t.invoiceNo, fmtInvNo(nextInvoiceNo())));
     seg(`${dateStr} - ${timeStr}`, { align:'center' });
     seg(hr('='));
     if(customer){
@@ -11090,10 +11786,11 @@
       if(getLineDiscount(line)) seg(`  ${discountSummaryText(line, lang)} (was ${fmtUsd(amt.original)})`);
       if(line.note.trim()) seg(`  ${t.note}: ${line.note.trim()}`);
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
-        const units = voucherDisplayUnits(line);
-        units.forEach((unitFields, i) => {
+        voucherGroups(line).forEach((g) => {
+          const unitFields = g.fields;
           if(!unitFields.length) return;
-          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' - Unit ' + (i + 1) : '');
+          const gl = voucherGroupLabel(line, g, 'Unit', '-');
+          const unitSuffix = gl ? ' - ' + gl : '';
           seg(`  ${t.voucherHeader}${unitSuffix}`);
           unitFields.forEach(f => { if(f.label || f.value) seg(`    ${f.label || 'Detail'}: ${f.value}`, { bold: !!f.emph }); });
         });
@@ -11122,7 +11819,11 @@
       twoCol('Status', statusLabel);
       twoCol(t.received, `${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})`);
       if(remaining > 0.004) twoCol(t.remainingBalance, `${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})`);
-      else if(remaining < -0.004) twoCol(state.overpaymentMode === 'tip' ? t.tipReceived : t.creditOnAccount, `${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})`);
+      else if(remaining < -0.004){
+        const sp = overpaySplit(remaining);
+        if(sp.tip > 0.004) twoCol(t.tipReceived, `${fmtUsd(sp.tip)} (${fmtLbp(sp.tip * state.rate.value)})`);
+        if(sp.credit > 0.004) twoCol(t.creditOnAccount, `${fmtUsd(sp.credit)} (${fmtLbp(sp.credit * state.rate.value)})`);
+      }
     }
 
     seg(hr('-'));
@@ -11137,9 +11838,9 @@
     }
 
     // ---- Footer / thank-you (mirrors the preview's two closing lines) ----
-    if(s.footerNote){
+    if(invTxt(s,'footerNote',lang)){
       seg(hr('-'));
-      seg(s.footerNote, { align:'center' });
+      seg(invTxt(s,'footerNote',lang), { align:'center' });
     }
     seg(hr('-'));
     seg(t.thankYouPrint, { align:'center' });
@@ -11162,11 +11863,11 @@
     if(s.logo) html += `<img class="pr-logo" src="${s.logo}" alt="logo">`;
     html += `<div class="pr-center">`;
     html += `<div class="pr-eyebrow">${escapeHtml(t.invoice.replace(/\*/g, ''))}</div>`;
-    html += `<div class="pr-title">${escapeHtml(s.headerTitle || 'Invoice')}</div>`;
-    if(s.headerSubtitle) html += `<div class="pr-sub">${escapeHtml(s.headerSubtitle)}</div>`;
-    if(s.address) html += `<div class="pr-sub">${escapeHtml(s.address)}</div>`;
+    html += `<div class="pr-title">${escapeHtml(invTxt(s,'headerTitle',lang) || 'Invoice')}</div>`;
+    if(invTxt(s,'headerSubtitle',lang)) html += `<div class="pr-sub">${escapeHtml(invTxt(s,'headerSubtitle',lang))}</div>`;
+    if(invTxt(s,'address',lang)) html += `<div class="pr-sub">${escapeHtml(invTxt(s,'address',lang))}</div>`;
     if(s.phone) html += `<div class="pr-sub">${escapeHtml(s.phone)}</div>`;
-    html += `<div class="pr-meta">${dateStr} · ${timeStr}</div>`;
+    html += invNoStripHtml(t, fmtInvNo(nextInvoiceNo()), dateStr, timeStr);
     html += `</div><div class="pr-hr solid"></div>`;
     if(customer) html += `<div class="pr-row"><span>${t.customer}</span><b>${escapeHtml(customer)}</b></div><div class="pr-hr"></div>`;
 
@@ -11191,13 +11892,14 @@
         tableRows += `<tr class="pr-item-subrow"><td colspan="4">${subLines.map(x => `<div class="pr-item-sub${x.cls ? ' ' + x.cls : ''}">${x.text}</div>`).join('')}</td></tr>`;
       }
       if(p.type === 'voucher' && line.voucher && line.voucher.length){
-        const units = voucherDisplayUnits(line);
-        units.forEach((unitFields, i) => {
+        voucherGroups(line).forEach((g) => {
+          const unitFields = g.fields;
           const vh = unitFields.filter(f => f.label || f.value).map(f => {
             const line = `${escapeHtml(f.label || 'Detail')}: ${escapeHtml(f.value)}`;
             return f.emph ? `<span style="font-weight:800; font-size:13px;">${line}</span>` : line;
           }).join('<br>');
-          const unitSuffix = line.voucherShared ? '' : (line.qty > 1 ? ' — Unit ' + (i + 1) : '');
+          const gl = voucherGroupLabel(line, g, 'Unit');
+          const unitSuffix = gl ? ' — ' + gl : '';
           if(vh) tableRows += `<tr class="pr-item-subrow"><td colspan="4"><div class="pr-voucher"><b>${t.voucherHeader}${unitSuffix}</b><br>${vh}</div></td></tr>`;
         });
       }
@@ -11224,7 +11926,11 @@
       html += `<div class="pr-row"><span>${t.paymentStatus}</span><span>${statusLabel}</span></div>`;
       html += `<div class="pr-row"><span>${t.received}</span><span>${fmtUsd(received)} (${fmtLbp(received * state.rate.value)})</span></div>`;
       if(remaining > 0.004) html += `<div class="pr-row"><span>${t.remainingBalance}</span><span>${fmtUsd(remaining)} (${fmtLbp(remaining * state.rate.value)})</span></div>`;
-      else if(remaining < -0.004) html += `<div class="pr-row"><span>${state.overpaymentMode === 'tip' ? t.tipReceived : t.creditOnAccount}</span><span>${fmtUsd(-remaining)} (${fmtLbp(-remaining * state.rate.value)})</span></div>`;
+      else if(remaining < -0.004){
+        const sp = overpaySplit(remaining);
+        if(sp.tip > 0.004) html += `<div class="pr-row"><span>${t.tipReceived}</span><span>${fmtUsd(sp.tip)} (${fmtLbp(sp.tip * state.rate.value)})</span></div>`;
+        if(sp.credit > 0.004) html += `<div class="pr-row"><span>${t.creditOnAccount}</span><span>${fmtUsd(sp.credit)} (${fmtLbp(sp.credit * state.rate.value)})</span></div>`;
+      }
     }
 
     html += `<div class="pr-hr"></div><div class="pr-row"><span>${t.rate}</span><span>1 USD = ${fmtLbp(state.rate.value)}</span></div>`;
@@ -11235,8 +11941,8 @@
       activeMethods.forEach(m => { html += `<div class="pr-row"><span>${escapeHtml(m.label)}</span><span>${escapeHtml(m.value)}</span></div>`; });
     }
 
-    if(s.footerNote){
-      html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(s.footerNote)}</div>`;
+    if(invTxt(s,'footerNote',lang)){
+      html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(invTxt(s,'footerNote',lang))}</div>`;
     }
 
     // Thank-you line: also included in the WhatsApp/copy text, see buildInvoiceText().
@@ -11294,6 +12000,7 @@
 
   async function printInvoice(){
     if(state.lines.length === 0){ alertBanner('Add items to the invoice first.'); return; }
+    if(blockIfWalkInShort()) return;
     const receiptHtml = buildPrintReceiptHtml();
     const confirmed = await showPrintPreview(receiptHtml);
     if(!confirmed) return;
@@ -11868,6 +12575,274 @@
   });
   $('#clientResetBtn').addEventListener('click', resetClientFilters);
   $('#copyOwedBtn').addEventListener('click', copyOwedList);
+
+  // ---------- Client picker: search by name or phone ----------
+  // The real <select id="clientSelect"> stays in the page as the source of
+  // truth (all existing code reads/writes it); this is a searchable front end.
+  (function(){
+    const sel = $('#clientSelect');
+    // Keep the picker in sync when other code sets sel.value directly.
+    const valDesc = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    Object.defineProperty(sel, 'value', {
+      configurable: true,
+      get(){ return valDesc.get.call(this); },
+      set(v){ valDesc.set.call(this, v); syncClientPicker(); }
+    });
+  })();
+
+  const cpEl = {
+    root: $('#clientPicker'), trigger: $('#cpTrigger'), avatar: $('#cpAvatar'), name: $('#cpName'), sub: $('#cpSub'),
+    clearSel: $('#cpClearSel'), panel: $('#cpPanel'), search: $('#cpSearch'), searchX: $('#cpSearchX'),
+    list: $('#cpList'), foot: $('#cpFoot')
+  };
+  let cpActive = -1;
+  let cpRows = [];
+
+  // Lowercase + strip accents, one output char per input char so highlight
+  // positions line up with the original text.
+  function cpNorm(str){
+    let out = '';
+    for(const ch of String(str || '')){
+      const n = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      out += n.length ? n[0] : ch;
+    }
+    return out;
+  }
+  const cpDigits = (str) => String(str || '').replace(/\D/g, '');
+
+  function cpParseQuery(raw){
+    const q = cpNorm(raw).trim();
+    const tokens = q.split(/\s+/).filter(Boolean).map(t => {
+      const d = cpDigits(t);
+      const isNum = d.length > 0 && /^[\d+()\-.]+$/.test(t);
+      return { t, d: isNum ? (d.replace(/^0+/, '') || d) : '' };
+    });
+    return { q, tokens };
+  }
+
+  function cpMatch(client, parsed){
+    const name = cpNorm(client.name);
+    const phone = cpDigits(client.phone);
+    const words = name.split(/\s+/);
+    let score = 2;
+    for(const tk of parsed.tokens){
+      const inName = name.includes(tk.t);
+      const inPhone = tk.d && phone.includes(tk.d);
+      if(!inName && !inPhone) return -1;
+      if(name.startsWith(tk.t) || (tk.d && phone.replace(/^0+/, '').startsWith(tk.d))) score = Math.min(score, 0);
+      else if(words.some(w => w.startsWith(tk.t))) score = Math.min(score, 1);
+    }
+    return score;
+  }
+
+  function cpHighlightName(text, tokens){
+    const norm = cpNorm(text);
+    const mark = new Array(text.length).fill(false);
+    const chars = Array.from(String(text));
+    // text may contain surrogate pairs; norm was built per code point, so index by code point.
+    const n = Array.from(norm);
+    tokens.forEach(tk => {
+      if(!tk.t) return;
+      const needle = Array.from(tk.t);
+      for(let i = 0; i + needle.length <= n.length; i++){
+        let ok = true;
+        for(let j = 0; j < needle.length; j++){ if(n[i + j] !== needle[j]){ ok = false; break; } }
+        if(ok){ for(let j = 0; j < needle.length; j++) mark[i + j] = true; }
+      }
+    });
+    let html = '', open = false;
+    chars.forEach((ch, i) => {
+      if(mark[i] && !open){ html += '<mark>'; open = true; }
+      if(!mark[i] && open){ html += '</mark>'; open = false; }
+      html += escapeHtml(ch);
+    });
+    if(open) html += '</mark>';
+    return html;
+  }
+
+  function cpHighlightPhone(text, tokens){
+    const chars = Array.from(String(text));
+    const idx = [];
+    let digits = '';
+    chars.forEach((ch, i) => { if(/\d/.test(ch)){ idx.push(i); digits += ch; } });
+    const mark = new Array(chars.length).fill(false);
+    tokens.forEach(tk => {
+      if(!tk.d) return;
+      const at = digits.indexOf(tk.d);
+      if(at < 0) return;
+      const from = idx[at], to = idx[at + tk.d.length - 1];
+      for(let i = from; i <= to; i++) mark[i] = true;
+    });
+    let html = '', open = false;
+    chars.forEach((ch, i) => {
+      if(mark[i] && !open){ html += '<mark>'; open = true; }
+      if(!mark[i] && open){ html += '</mark>'; open = false; }
+      html += escapeHtml(ch);
+    });
+    if(open) html += '</mark>';
+    return html;
+  }
+
+  function cpBalanceTag(c){
+    if(c.balanceUsd > 0) return `<span class="cp-tag owes">Owes ${escapeHtml(fmtUsd(c.balanceUsd))}</span>`;
+    if(c.balanceUsd < 0) return `<span class="cp-tag credit">Credit ${escapeHtml(fmtUsd(-c.balanceUsd))}</span>`;
+    return '';
+  }
+
+  const CP_WALKIN_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.9-3.6 3.9-5.4 7.5-5.4s6.6 1.8 7.5 5.4"/></svg>';
+
+  function syncClientPicker(){
+    if(!cpEl.trigger) return;
+    const id = $('#clientSelect').value;
+    const c = id ? state.clients.find(x => x.id === id) : null;
+    if(c){
+      cpEl.avatar.textContent = getInitials(c.name);
+      cpEl.avatar.style.background = avatarColor(c.name);
+      cpEl.name.textContent = c.name;
+      const phone = (c.phone || '').trim();
+      cpEl.sub.textContent = (phone || 'No phone number') + (c.balanceUsd > 0 ? '  ·  Owes ' + fmtUsd(c.balanceUsd) : c.balanceUsd < 0 ? '  ·  Credit ' + fmtUsd(-c.balanceUsd) : '');
+    } else {
+      cpEl.avatar.innerHTML = CP_WALKIN_ICON;
+      cpEl.avatar.style.background = '';
+      cpEl.name.textContent = 'Walk-in (no account)';
+      cpEl.sub.textContent = state.clients.length ? 'Tap to search by name or phone' : 'No saved clients yet';
+    }
+    cpEl.trigger.classList.toggle('has-clear', !!c);
+    cpEl.clearSel.hidden = !c;
+    if(!cpEl.panel.hidden) renderClientPicker();
+  }
+
+  function renderClientPicker(){
+    const parsed = cpParseQuery(cpEl.search.value);
+    const selectedId = $('#clientSelect').value;
+    const searching = parsed.tokens.length > 0;
+    cpEl.searchX.hidden = !cpEl.search.value;
+
+    let matches;
+    if(searching){
+      matches = state.clients
+        .map(c => ({ c, s: cpMatch(c, parsed) }))
+        .filter(x => x.s >= 0)
+        .sort((a, b) => a.s - b.s || a.c.name.localeCompare(b.c.name))
+        .map(x => x.c);
+    } else {
+      matches = state.clients.slice().sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    cpRows = [];
+    let html = '';
+    if(!searching){
+      cpRows.push('');
+      html += `<li class="cp-item" role="option" id="cpOpt0" data-id="" aria-selected="${!selectedId}">
+        <span class="cp-avatar" style="background:var(--ink-faint)">${CP_WALKIN_ICON}</span>
+        <span class="cp-item-main"><span class="cp-item-name">Walk-in (no account)</span><span class="cp-item-phone faint">Customer pays in full, nothing is saved to a client</span></span>
+      </li>`;
+    }
+    matches.forEach(c => {
+      const i = cpRows.length;
+      cpRows.push(c.id);
+      const phone = (c.phone || '').trim();
+      const nameHtml = searching ? cpHighlightName(c.name, parsed.tokens) : escapeHtml(c.name);
+      const phoneHtml = phone
+        ? `<span class="cp-item-phone">${searching ? cpHighlightPhone(phone, parsed.tokens) : escapeHtml(phone)}</span>`
+        : `<span class="cp-item-phone faint">No phone number</span>`;
+      html += `<li class="cp-item${c.id === selectedId ? ' is-selected' : ''}" role="option" id="cpOpt${i}" data-id="${escapeHtml(c.id)}" aria-selected="${c.id === selectedId}">
+        <span class="cp-avatar" style="background:${avatarColor(c.name)}">${escapeHtml(getInitials(c.name))}</span>
+        <span class="cp-item-main"><span class="cp-item-name">${nameHtml}</span>${phoneHtml}</span>
+        ${cpBalanceTag(c)}
+      </li>`;
+    });
+
+    if(searching && matches.length === 0){
+      html = `<li class="cp-empty" role="presentation"><b>No matching clients</b>Nothing found for “${escapeHtml(cpEl.search.value.trim())}”. Check the spelling or try part of the phone number.</li>`;
+    }
+    cpEl.list.innerHTML = html;
+    cpEl.foot.textContent = searching
+      ? `${matches.length} of ${state.clients.length} client${state.clients.length === 1 ? '' : 's'}`
+      : `${state.clients.length} client${state.clients.length === 1 ? '' : 's'} · type a name or phone number to search`;
+
+    // Active row: keep the current selection highlighted, or jump to the best match while typing.
+    if(searching) cpActive = cpRows.length ? 0 : -1;
+    else { const si = cpRows.indexOf(selectedId); cpActive = si >= 0 ? si : 0; }
+    cpSetActive(cpActive, !searching);
+  }
+
+  function cpSetActive(i, scroll){
+    const items = cpEl.list.querySelectorAll('.cp-item');
+    items.forEach(el => el.classList.remove('is-active'));
+    cpActive = items.length ? Math.max(0, Math.min(i, items.length - 1)) : -1;
+    if(cpActive >= 0){
+      const el = items[cpActive];
+      el.classList.add('is-active');
+      cpEl.search.setAttribute('aria-activedescendant', el.id);
+      if(scroll !== false) el.scrollIntoView({ block: 'nearest' });
+    } else {
+      cpEl.search.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function openClientPicker(){
+    if(!cpEl.panel.hidden){ cpEl.search.focus(); return; }
+    cpEl.search.value = '';
+    cpEl.panel.hidden = false;
+    cpEl.root.classList.add('is-open');
+    cpEl.trigger.setAttribute('aria-expanded', 'true');
+    renderClientPicker();
+    setTimeout(() => cpEl.search.focus({ preventScroll: true }), 0);
+    setTimeout(() => cpEl.panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 30);
+  }
+  function closeClientPicker(returnFocus){
+    if(cpEl.panel.hidden) return;
+    cpEl.panel.hidden = true;
+    cpEl.root.classList.remove('is-open');
+    cpEl.trigger.setAttribute('aria-expanded', 'false');
+    if(returnFocus) cpEl.trigger.focus();
+  }
+  function chooseClient(id){
+    const sel = $('#clientSelect');
+    closeClientPicker(true);
+    if(sel.value !== id){
+      sel.value = id;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      syncClientPicker();
+    }
+  }
+
+  cpEl.trigger.addEventListener('click', () => { cpEl.panel.hidden ? openClientPicker() : closeClientPicker(true); });
+  cpEl.trigger.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); openClientPicker(); }
+  });
+  cpEl.clearSel.addEventListener('click', () => { chooseClient(''); });
+  cpEl.search.addEventListener('input', renderClientPicker);
+  cpEl.searchX.addEventListener('click', () => { cpEl.search.value = ''; renderClientPicker(); cpEl.search.focus(); });
+  cpEl.search.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowDown'){ e.preventDefault(); cpSetActive(cpActive + 1); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); cpSetActive(cpActive - 1); }
+    else if(e.key === 'Home' && e.ctrlKey){ e.preventDefault(); cpSetActive(0); }
+    else if(e.key === 'End' && e.ctrlKey){ e.preventDefault(); cpSetActive(9999); }
+    else if(e.key === 'Enter'){
+      e.preventDefault();
+      if(cpActive >= 0 && cpRows[cpActive] !== undefined) chooseClient(cpRows[cpActive]);
+    }
+    else if(e.key === 'Escape'){ e.preventDefault(); closeClientPicker(true); }
+    else if(e.key === 'Tab'){ closeClientPicker(false); }
+  });
+  cpEl.list.addEventListener('mousemove', (e) => {
+    const li = e.target.closest('.cp-item');
+    if(!li) return;
+    const idx = Array.prototype.indexOf.call(cpEl.list.children, li);
+    if(idx !== cpActive) cpSetActive(idx, false);
+  });
+  cpEl.list.addEventListener('click', (e) => {
+    const li = e.target.closest('.cp-item');
+    if(li) chooseClient(li.dataset.id);
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if(!cpEl.panel.hidden && !cpEl.root.contains(e.target)) closeClientPicker(false);
+  });
+  syncClientPicker();
+
   $('#clientSelect').addEventListener('change', () => {
     const client = getSelectedClient();
     if(client) $('#customerName').value = client.name;
@@ -11881,9 +12856,9 @@
     $('#customerDetailsBody').classList.remove('collapsed');
     $('#customerDetailsChev').classList.add('open');
     $('#customerDetailsToggle').setAttribute('aria-expanded', 'true');
-    const sel = $('#clientSelect');
-    sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    sel.focus();
+    const trig = $('#cpTrigger');
+    trig.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    openClientPicker();
   });
   $('#includeBalanceChk').addEventListener('change', () => {
     $('#amountReceived').dataset.userEdited = 'false';
@@ -11911,11 +12886,300 @@
     $('#salesHistoryChev').classList.toggle('open');
     $('#salesHistoryToggle').setAttribute('aria-expanded', collapsed ? 'false' : 'true');
   });
+
+  // ---------- Cash received & change ----------
+  // A cashier's helper: the client hands over USD and/or LBP, this works out
+  // the change and how to hand it back (all USD, all LBP, or a mix). It never
+  // changes what is recorded for the sale: with status "Paid" the sale is
+  // booked at the invoice total, and change that goes back to the client is
+  // not income.
+  const chg = { mode: 'usd', backUsdEdited: false, creditRest: false };
+
+  function chgNum(id){
+    const v = parseFormattedNumber($('#' + id).value);
+    return isNaN(v) || v < 0 ? 0 : v;
+  }
+  function chgRoundStep(){ return parseInt($('#chgRound').value, 10) || 1; }
+  function chgRoundLbp(n){ const st = chgRoundStep(); return Math.round(n / st) * st; }
+  const chgR2 = (n) => Math.round(n * 100) / 100;
+
+  // What the client is being charged right now.
+  function chgAmountDue(nums){
+    if(state.paymentStatus === 'unpaid') return null;
+    if(state.paymentStatus === 'partial'){
+      const v = getBaseAmountReceivedUsd();
+      return isNaN(v) ? 0 : v;
+    }
+    return nums.grandTotal;
+  }
+
+  // Walk-in customers have no account to hold a balance, so they must pay the
+  // full total. Returns how much is still missing (USD), or 0.
+  function walkInShortfall(){
+    if(state.lines.length === 0) return 0;
+    // Partial / Not paid may pay less: the rest becomes a balance. Paid must cover the total.
+    if((state.paymentStatus || 'paid') !== 'paid') return 0;
+    const usd = chgNum('chgUsd'), lbp = chgNum('chgLbp');
+    if(!(usd > 0 || lbp > 0)) return 0;                 // nothing entered: treated as paid in full
+    const due = computeInvoiceNumbers().grandTotal;
+    const short = due - (usd + lbp / state.rate.value);
+    return short > 0.01 ? short : 0;
+  }
+  function walkInShortMessage(short){
+    return (getSelectedClient() ? 'Paid means the full total — ' : 'Walk-in customers must pay in full — ') + fmtUsd(short) + ' (' + fmtLbp(short * state.rate.value) + ') still to pay.';
+  }
+  // Returns true (and tells the cashier why) when sending / printing / saving must be blocked.
+  // A Partial payment that covers the whole total is really a Paid one.
+  function autoPromoteFullPartial(){
+    if(state.paymentStatus !== 'partial' || state.lines.length === 0) return false;
+    const got = getBaseAmountReceivedUsd();
+    if(isNaN(got)) return false;
+    const total = computeInvoiceNumbers().grandTotal;
+    if(total > 0 && got >= total - 0.005){
+      setPaymentStatus('paid');
+      alertBanner('Full amount received — this invoice is now Paid.');
+      return true;
+    }
+    return false;
+  }
+  function blockIfWalkInShort(){
+    autoPromoteFullPartial();
+    const short = walkInShortfall();
+    if(short > 0){ alertBanner(walkInShortMessage(short)); return true; }
+    return false;
+  }
+  function updateActionLock(){
+    const short = walkInShortfall();
+    ['copyBtn','whatsappBtn','printBtn','completeSaleBtn'].forEach(id => {
+      const b = document.getElementById(id);
+      if(!b) return;
+      b.disabled = short > 0;
+      b.title = short > 0 ? 'Payment is short — pay in full first' : '';
+    });
+    const note = document.getElementById('payLockNote');
+    if(note){
+      note.hidden = !(short > 0);
+      if(short > 0) note.innerHTML = '<b>Payment is short.</b> ' + escapeHtml(walkInShortMessage(short)) + ' Sending, printing and saving are locked until it is paid in full.'
+        + (getSelectedClient() ? '<br><button type="button" class="pln-btn" id="payShortPartialBtn">Switch to Partial (rest is owed to me)</button>' : '');
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    if(e.target.closest && e.target.closest('#payShortPartialBtn')){
+      const paidUsd = chgNum('chgUsd') + chgNum('chgLbp') / state.rate.value;
+      setPaymentStatus('partial');
+      const inp = $('#amountReceived');
+      $('#amountReceivedCurrency').value = 'USD';
+      inp.value = formatNumberString(chgR2(paidUsd).toFixed(2));
+      inp.dataset.userEdited = 'true';
+      updateRemaining();
+      renderPreviewOnly();
+    }
+  });
+
+  function updateChangeCalc(){
+    updateChangeCalcInner();
+    updateActionLock();
+  }
+
+  function updateChangeCalcInner(){
+    const box = $('#changeCalc');
+    if(!box) return;
+    const nums = computeInvoiceNumbers();
+    const due = chgAmountDue(nums);
+    const overBlock = $('#overpaymentModeBlock');
+    // The "if they pay more" choice only matters while the amount can be typed (Partial).
+    if(overBlock) overBlock.style.display = state.paymentStatus === 'partial' ? '' : 'none';
+    if(state.lines.length === 0 || due === null){
+      box.style.display = 'none';
+      setChgExtras(0, 0);
+      return;
+    }
+    box.style.display = '';
+    const rate = state.rate.value;
+    const walkIn = !nums.client;
+
+    const usd = chgNum('chgUsd'), lbp = chgNum('chgLbp');
+    const gaveUsd = usd + lbp / rate;
+    const hasInput = usd > 0 || lbp > 0;
+    const diff = gaveUsd - due;
+    const EPS = 0.01;
+
+    const row = (label, main, sub, cls) => `<div class="chg-row${cls ? ' ' + cls : ''}"><span>${label}</span><b>${main}${sub ? '<small>' + sub + '</small>' : ''}</b></div>`;
+    let sum = row(state.paymentStatus === 'partial' ? 'Amount due now' : 'Total due', fmtUsd(due), fmtLbp(due * rate));
+    if(hasInput){
+      const parts = [];
+      if(usd > 0) parts.push(fmtUsd(usd));
+      if(lbp > 0) parts.push(fmtLbp(lbp));
+      sum += row('Client gave', parts.join(' + '), (usd > 0 && lbp > 0) ? 'worth ' + fmtUsd(gaveUsd) + ' (' + fmtLbp(gaveUsd * rate) + ')' : '');
+    }
+
+    const ret = $('#chgReturn');
+    let extra = 0;
+    if(!hasInput){
+      sum += row('Change', 'Enter what the client gave', '', '');
+      ret.hidden = true;
+    } else if(diff > EPS){
+      extra = diff;
+      ret.hidden = false;
+    } else if(diff < -EPS){
+      sum += row(walkIn ? 'Still to pay (walk-ins pay in full)' : 'Still to pay', fmtUsd(-diff), fmtLbp(-diff * rate), 'chg-result is-short');
+      ret.hidden = true;
+    } else {
+      sum += row('Exact amount', 'No change', '', 'chg-result is-exact');
+      ret.hidden = true;
+    }
+
+    // Tip and credit kept out of the extra (never more than the extra itself).
+    const creditBtn = $('#chgCreditAll');
+    const canCredit = !walkIn && state.paymentStatus === 'paid';
+    if(creditBtn){
+      creditBtn.hidden = state.paymentStatus !== 'paid';
+      creditBtn.disabled = !canCredit;
+      creditBtn.title = walkIn ? 'Walk-ins have no account to hold a balance' : '';
+      creditBtn.setAttribute('aria-pressed', (chg.creditRest && canCredit) ? 'true' : 'false');
+    }
+    let tip = 0, credit = 0;
+    if(extra > 0){
+      tip = chgR2(Math.min(chgNum('chgTip'), extra));
+      const rest = Math.max(0, extra - tip);
+      credit = (chg.creditRest && canCredit) ? chgR2(rest) : 0;
+      const change = Math.max(0, rest - credit);
+      const split = tip > 0 || credit > 0;
+      sum += row('Extra received', fmtUsd(extra), fmtLbp(extra * rate), split ? '' : 'chg-result is-change');
+      if(tip > 0) sum += row('Kept as tip', fmtUsd(tip), fmtLbp(tip * rate), 'chg-result is-exact');
+      if(credit > 0) sum += row('I owe him (credit)', fmtUsd(credit), fmtLbp(credit * rate), 'chg-result is-exact');
+      let after = '';
+      if(split){
+        if(change > 0.004) after = 'Change to return: <b>' + fmtUsd(change) + '</b> (' + fmtLbp(change * rate) + ')';
+        else if(credit > 0) after = 'The rest goes on his account — nothing to return.';
+        else after = 'Everything extra is kept as a tip — nothing to return.';
+      }
+      $('#chgAfterTip').innerHTML = after;
+      $('#chgSum').innerHTML = sum;
+      renderChangeReturn(change, tip);
+    } else {
+      $('#chgSum').innerHTML = sum;
+    }
+    setChgExtras(tip, credit);
+  }
+
+  // Store the tip and refresh everything that depends on the amount received.
+  function setChgExtras(tip, credit){
+    tip = tip || 0; credit = credit || 0;
+    if(Math.abs((state.chgTipUsd || 0) - tip) < 0.0005 && Math.abs((state.chgCreditUsd || 0) - credit) < 0.0005) return;
+    state.chgTipUsd = tip;
+    state.chgCreditUsd = credit;
+    paintRemaining();
+    renderPreviewOnly();
+  }
+
+  function renderChangeReturn(change, tip){
+    const rate = state.rate.value;
+    const modes = $('#chgModes'), modeLabel = $('#chgModeLabel'), split = $('#chgSplit'), give = $('#chgGive');
+    const noChange = change <= 0.004;
+    modes.hidden = noChange; modeLabel.hidden = noChange; $('#chgRound').closest('.chg-round').hidden = noChange;
+    $all('#chgModes button').forEach(b => {
+      const on = b.dataset.mode === chg.mode;
+      b.classList.toggle('ghost', !on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    split.hidden = noChange || chg.mode !== 'both';
+    let backUsd = 0, backLbp = 0, off = '';
+
+    if(noChange){
+      // nothing to hand back
+    } else if(chg.mode === 'usd'){
+      backUsd = chgR2(change);
+    } else if(chg.mode === 'lbp'){
+      backLbp = chgRoundLbp(change * rate);
+    } else {
+      // Mixed: default to the whole dollars in USD and the rest in LBP,
+      // until the cashier types their own USD figure.
+      if(!chg.backUsdEdited) $('#chgBackUsd').value = String(Math.floor(change + 1e-9));
+      let u = chgNum('chgBackUsd');
+      if(u > change){ u = chgR2(change); off = 'That is more than the change due.'; }
+      backUsd = chgR2(u);
+      backLbp = chgRoundLbp((change - backUsd) * rate);
+      const lbpEl = $('#chgBackLbp');
+      if(document.activeElement !== lbpEl) lbpEl.value = backLbp ? formatNumberString(String(backLbp)) : '0';
+    }
+
+    const parts = [];
+    if(backUsd > 0) parts.push(`<span>${fmtUsd(backUsd)}</span>`);
+    if(backLbp > 0) parts.push(`<span>${fmtLbp(backLbp)}</span>`);
+    const amt = parts.length ? parts.join('<em>+</em>') : '<span>Nothing to return</span>';
+    give.classList.toggle('is-off', !!off);
+    give.innerHTML = off
+      ? `<span class="cg-cap">${off}</span>`
+      : `<span class="cg-cap">Give back</span><span class="cg-amt">${amt}</span>`;
+  }
+
+  function resetChangeCalc(){
+    ['chgUsd','chgLbp','chgBackUsd','chgBackLbp','chgTip'].forEach(id => { const el = $('#' + id); if(el) el.value = ''; });
+    chg.backUsdEdited = false;
+    chg.creditRest = false;
+    updateChangeCalc();
+  }
+
+  (function initChangeCalc(){
+    ['chgUsd','chgLbp','chgBackUsd','chgBackLbp','chgTip'].forEach(id => attachThousandsFormatting($('#' + id)));
+    $('#chgTip').addEventListener('input', () => { chg.backUsdEdited = false; updateChangeCalc(); });
+    $('#chgTipNone').addEventListener('click', () => { $('#chgTip').value = ''; chg.backUsdEdited = false; updateChangeCalc(); });
+    $('#chgCreditAll').addEventListener('click', () => {
+      chg.creditRest = !chg.creditRest;
+      chg.backUsdEdited = false;
+      updateChangeCalc();
+    });
+    $('#chgTipAll').addEventListener('click', () => {
+      chg.creditRest = false;
+      const due = chgAmountDue(computeInvoiceNumbers()) || 0;
+      const extra = (chgNum('chgUsd') + chgNum('chgLbp') / state.rate.value) - due;
+      $('#chgTip').value = extra > 0.004 ? formatNumberString(String(chgR2(extra))) : '';
+      chg.backUsdEdited = false;
+      updateChangeCalc();
+    });
+    $('#chgUsd').addEventListener('input', () => { chg.backUsdEdited = false; updateChangeCalc(); });
+    $('#chgLbp').addEventListener('input', () => { chg.backUsdEdited = false; updateChangeCalc(); });
+    $('#changeCalc').addEventListener('click', (e) => {
+      const chip = e.target.closest('.chg-chips .chip');
+      if(!chip) return;
+      const input = $('#' + chip.parentElement.dataset.for);
+      input.value = formatNumberString(chip.dataset.v);
+      chg.backUsdEdited = false;
+      updateChangeCalc();
+    });
+    $('#chgModes').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-mode]');
+      if(!b) return;
+      chg.mode = b.dataset.mode;
+      chg.backUsdEdited = false;
+      updateChangeCalc();
+    });
+    $('#chgBackUsd').addEventListener('input', () => { chg.backUsdEdited = true; updateChangeCalc(); });
+    // Typing the LBP part works out the USD part as the remainder.
+    $('#chgBackLbp').addEventListener('input', () => {
+      const nums = computeInvoiceNumbers();
+      const due = chgAmountDue(nums) || 0;
+      const change = (chgNum('chgUsd') + chgNum('chgLbp') / state.rate.value) - due - chgNum('chgTip');
+      if(change <= 0) return;
+      const lbpPart = chgNum('chgBackLbp');
+      const usdPart = Math.max(0, chgR2(change - lbpPart / state.rate.value));
+      $('#chgBackUsd').value = usdPart ? formatNumberString(String(usdPart)) : '0';
+      chg.backUsdEdited = true;
+      updateChangeCalc();
+    });
+    $('#chgBackLbp').addEventListener('blur', updateChangeCalc);
+    $('#chgRound').addEventListener('change', updateChangeCalc);
+    $('#chgClearBtn').addEventListener('click', () => { resetChangeCalc(); $('#chgUsd').focus(); });
+  })();
+
   $('#amountReceived').addEventListener('input', (e) => {
     e.target.dataset.userEdited = 'true';
     updateRemaining();
     renderPreviewOnly();
   });
+  $('#amountReceived').addEventListener('change', autoPromoteFullPartial);
   let amountReceivedPrevCurrency = 'USD';
   $('#amountReceivedCurrency').addEventListener('change', (e) => {
     const input = $('#amountReceived');
@@ -11929,6 +13193,7 @@
       }
       updateRemaining();
       renderPreviewOnly();
+      autoPromoteFullPartial();
     }
     amountReceivedPrevCurrency = e.target.value;
   });
