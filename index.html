@@ -2845,7 +2845,7 @@
     .rp2-watermark{ position:fixed !important; }
     table.rp2-table{ page-break-inside:auto; }
     table.rp2-table tr{ page-break-inside:avoid; break-inside:avoid; }
-    .rp2-header, .rp2-summary, .rp2-insights{ page-break-inside:avoid; break-inside:avoid; }
+    .rp2-header, .rp2-summary, .rp2-balance, .rp2-insights{ page-break-inside:avoid; break-inside:avoid; }
 
     /* Two leaks from the rest of the app were pushing report content off its
        page and wrecking the page count:
@@ -2974,6 +2974,16 @@
   .rp2-insight.is-topclient{ flex:2.2 1 0; min-width:150px; }
   .rp2-insight.is-topclient .rp2-insight-val{ white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:anywhere; line-height:1.2; }
 
+  .rp2-balance{ display:flex; align-items:stretch; gap:0; margin:0 0 12px; border:1px solid #E3E5EE; border-radius:10px; overflow:hidden; background:#fff; page-break-inside:avoid; break-inside:avoid; }
+  .rp2-bal-main{ flex:1.6 1 0; padding:10px 14px; background:linear-gradient(135deg,#B45309,#D97706 60%,#F59E0B); color:#fff; min-width:0; }
+  .rp2-bal-main.neg{ background:linear-gradient(135deg,#B91C1C,#DC2626 60%,#EF4444); }
+  .rp2-bal-main .rp2-bal-label{ color:rgba(255,255,255,0.85); }
+  .rp2-bal-val{ font-size:19px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+  .rp2-bal-sub{ margin-top:3px; font-size:9.5px; font-weight:500; color:rgba(255,255,255,0.85); overflow-wrap:anywhere; }
+  .rp2-bal-item{ flex:1 1 0; padding:10px 12px; border-left:1px solid #E3E5EE; min-width:0; }
+  .rp2-bal-label{ font-size:8.5px; text-transform:uppercase; letter-spacing:0.5px; color:#9AA0AF; font-weight:700; margin-bottom:3px; }
+  .rp2-bal-num{ font-size:12.5px; font-weight:700; color:#171923; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+  .rp2-bal-num.rp2-pos{ color:#059669; }
   .rp2-section-label{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:#3F4356; margin:18px 0 8px; display:flex; align-items:center; gap:8px; }
   .rp2-section-label::after{ content:''; flex:1; height:1px; background:#E3E5EE; }
   .rp2-count{ font-size:9.5px; font-weight:700; letter-spacing:0.2px; color:#4338CA; background:#EEF0FF; border-radius:999px; padding:1px 8px; }
@@ -3107,6 +3117,9 @@
     /* Phone-sized preview only (the printed PDF is always A4): let the
        cards stack 2-wide and the tables scroll instead of clipping. */
     .report-preview-paper .rp2-summary{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .report-preview-paper .rp2-balance{ flex-wrap:wrap; }
+    .report-preview-paper .rp2-bal-main{ flex:1 1 100%; }
+    .report-preview-paper .rp2-bal-item{ flex:1 1 40%; border-top:1px solid #E3E5EE; }
     .report-preview-paper .rp2-header{ flex-wrap:wrap; }
     .report-preview-paper .rp2-header-right{ max-width:100%; text-align:left; }
     .report-preview-paper .rp2-table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
@@ -11503,7 +11516,27 @@
 
     const accounts = computeReportAccounts(matches, endTs);
 
-    return { mode, label, accounts, sales: matches, revenue, cost, profit, tips, saleTips, laterTips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay, balanceEntries: balanceMatches, cashIn, cashOut };
+    // Business balance at the end of the period, and what it was at the start.
+    // balanceLog holds the running balance after every movement, so the
+    // closing figure is the last entry on or before the period end. A period
+    // that hasn't finished yet (today / this month / this year) uses the
+    // live balance.
+    let closingBalance;
+    if(endTs >= Date.now()){
+      closingBalance = state.balance.value;
+    } else {
+      const upTo = state.balanceLog.filter(e => e.date <= endTs);
+      if(upTo.length){
+        closingBalance = upTo.reduce((best, e) => (!best || e.date >= best.date) ? e : best, null).resultingBalance;
+      } else {
+        const later = state.balanceLog.reduce((best, e) => (!best || e.date <= best.date) ? e : best, null);
+        closingBalance = later ? later.resultingBalance - later.delta : state.balance.value;
+      }
+    }
+    const balanceNet = cashIn - cashOut;
+    const openingBalance = closingBalance - balanceNet;
+
+    return { mode, label, accounts, closingBalance, openingBalance, sales: matches, revenue, cost, profit, tips, saleTips, laterTips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay, balanceEntries: balanceMatches, cashIn, cashOut };
   }
 
   function buildBusinessReportHtml(data){
@@ -11556,6 +11589,20 @@
     html += `<div class="rp2-stat is-hero${profitNeg ? ' tone-red neg' : ' tone-green'}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.profit}</span><span class="rp2-label">Profit</span></div><div class="rp2-val${profitNeg ? ' neg' : ''}">${fmtUsd(data.profit)}</div><div class="rp2-stat-sub">Revenue minus cost</div></div>`;
     html += `<div class="rp2-stat${marginNeg ? ' tone-red neg' : ''}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.margin}</span><span class="rp2-label">Margin</span></div><div class="rp2-val${marginNeg ? ' neg' : ''}">${escapeHtml(marginText)}</div><div class="rp2-stat-sub">Profit ÷ revenue</div></div>`;
     html += '</div>';
+
+    // ---- Business balance ----
+    {
+      const net = data.cashIn - data.cashOut;
+      const closeNeg = data.closingBalance < -0.004;
+      const balAsOf = data.mode === 'day' ? 'End of day' : data.mode === 'month' ? 'End of month' : 'End of year';
+      html += '<div class="rp2-balance">';
+      html += `<div class="rp2-bal-main${closeNeg ? ' neg' : ''}"><div class="rp2-bal-label">Business balance</div><div class="rp2-bal-val">${fmtUsd(data.closingBalance)}</div><div class="rp2-bal-sub">${balAsOf} · ≈ ${escapeHtml(fmtLbp(data.closingBalance * (data.rateMax || state.rate.value)))}</div></div>`;
+      html += `<div class="rp2-bal-item"><div class="rp2-bal-label">Opening</div><div class="rp2-bal-num">${fmtUsd(data.openingBalance)}</div></div>`;
+      html += `<div class="rp2-bal-item"><div class="rp2-bal-label">Cash in</div><div class="rp2-bal-num rp2-pos">+${fmtUsd(data.cashIn)}</div></div>`;
+      html += `<div class="rp2-bal-item"><div class="rp2-bal-label">Cash out</div><div class="rp2-bal-num${data.cashOut > 0.004 ? ' rp2-profit-neg' : ''}">-${fmtUsd(data.cashOut)}</div></div>`;
+      html += `<div class="rp2-bal-item"><div class="rp2-bal-label">Net change</div><div class="rp2-bal-num${net < -0.004 ? ' rp2-profit-neg' : net > 0.004 ? ' rp2-pos' : ''}">${net >= 0 ? '+' : '-'}${fmtUsd(Math.abs(net))}</div></div>`;
+      html += '</div>';
+    }
 
     // ---- Insights ribbon ----
     html += '<div class="rp2-insights">';
