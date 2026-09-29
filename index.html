@@ -2970,6 +2970,9 @@
   .rp2-insight-label{ font-size:8.5px; text-transform:uppercase; letter-spacing:0.5px; color:#9AA0AF; font-weight:700; margin-bottom:2px; }
   .rp2-insight-val{ font-size:12px; font-weight:700; color:#171923; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
   .rp2-insight-sub{ font-size:9.5px; color:#9AA0AF; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* Top client: give the name more room and let long names wrap instead of truncating */
+  .rp2-insight.is-topclient{ flex:2.2 1 0; min-width:150px; }
+  .rp2-insight.is-topclient .rp2-insight-val{ white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:anywhere; line-height:1.2; }
 
   .rp2-section-label{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:#3F4356; margin:18px 0 8px; display:flex; align-items:center; gap:8px; }
   .rp2-section-label::after{ content:''; flex:1; height:1px; background:#E3E5EE; }
@@ -11475,7 +11478,7 @@
       html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.calendarStar}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Busiest day</div><div class="rp2-insight-val" title="${escapeHtml(bd)}">${escapeHtml(bd)}</div><div class="rp2-insight-sub">${fmtUsd(data.busiestDay.revenue)}</div></div></div>`;
     }
     if(data.topClient){
-      html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.userStar}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Top client</div><div class="rp2-insight-val" title="${escapeHtml(data.topClient.name)}">${escapeHtml(data.topClient.name)}</div><div class="rp2-insight-sub">${fmtUsd(data.topClient.profit)} profit</div></div></div>`;
+      html += `<div class="rp2-insight is-topclient"><span class="rp2-insight-icon">${RP_ICONS.userStar}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Top client</div><div class="rp2-insight-val" title="${escapeHtml(data.topClient.name)}">${escapeHtml(data.topClient.name)}</div><div class="rp2-insight-sub">${fmtUsd(data.topClient.profit)} profit</div></div></div>`;
     }
     html += '</div>';
 
