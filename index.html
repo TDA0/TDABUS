@@ -2896,38 +2896,41 @@
   }
 
   /* Business report content (A4 print + on-screen preview share these classes) */
-  .rp2-page{ position:relative; min-height:269mm; }
+  .rp2-page{ position:relative; min-height:269mm; color:#171923; }
   .rp2-watermark{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-32deg);
-    font-size:130px; font-weight:800; letter-spacing:8px; color:rgba(79,70,229,0.06);
+    font-size:130px; font-weight:800; letter-spacing:8px; color:rgba(79,70,229,0.045);
     white-space:nowrap; pointer-events:none; user-select:none; z-index:0;
   }
   .rp2-content{ position:relative; z-index:1; }
-  .rp2-topbar{ height:6px; border-radius:4px; margin-bottom:22px; background:linear-gradient(90deg,#4338CA,#6366F1 55%,#A5B4FC); }
-  .rp2-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding-bottom:18px; margin-bottom:4px; border-bottom:1.5px solid #171923; }
-  .rp2-header-left{ display:flex; align-items:center; gap:12px; min-width:0; }
-  .rp2-logo{ max-height:50px; max-width:140px; object-fit:contain; flex:none; }
-  .rp2-header-text h1{ font-size:19px; margin:0 0 3px; font-weight:800; letter-spacing:-0.01em; }
-  .rp2-header-text p{ margin:0; font-size:11.5px; color:#6B7080; }
-  .rp2-header-right{ text-align:right; flex:none; }
+  .rp2-topbar{ height:5px; border-radius:4px; margin-bottom:18px; background:linear-gradient(90deg,#3730A3,#4F46E5 45%,#818CF8 80%,#C7D2FE); }
+  .rp2-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding-bottom:16px; border-bottom:1px solid #E3E5EE; }
+  .rp2-header-left{ display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 auto; }
+  .rp2-logo{ max-height:48px; max-width:130px; object-fit:contain; flex:none; }
+  .rp2-header-text{ min-width:0; }
+  .rp2-header-text h1{ font-size:20px; line-height:1.15; margin:0 0 4px; font-weight:800; letter-spacing:-0.015em; overflow-wrap:anywhere; }
+  .rp2-header-text p{ margin:0; font-size:11px; line-height:1.4; color:#6B7080; overflow-wrap:anywhere; }
+  .rp2-header-right{ text-align:right; flex:none; max-width:52%; }
   .rp2-eyebrow{
-    display:inline-flex; align-items:center; gap:5px; font-size:9.5px; font-weight:800;
+    display:inline-flex; align-items:center; gap:5px; font-size:9px; font-weight:800;
     letter-spacing:1.2px; text-transform:uppercase; color:#4338CA; background:#EEF0FF;
-    padding:4px 10px 4px 9px; border-radius:999px; margin-bottom:7px;
+    padding:4px 10px 4px 9px; border-radius:999px; margin-bottom:6px;
   }
   .rp2-eyebrow::before{ content:''; width:5px; height:5px; border-radius:50%; background:#4F46E5; }
-  .rp2-period{ font-size:16px; font-weight:800; letter-spacing:-0.01em; }
-  .rp2-generated{ font-size:10px; color:#9AA0AF; margin-top:4px; font-weight:500; }
-  .rp2-generated + .rp2-generated{ margin-top:2px; }
+  .rp2-period{ font-size:18px; line-height:1.15; font-weight:800; letter-spacing:-0.015em; }
+  .rp2-generated{ font-size:9.5px; color:#9AA0AF; margin-top:4px; font-weight:500; }
+  .rp2-generated + .rp2-generated{ margin-top:1px; }
 
-  .rp2-summary{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin:22px 0 14px; }
+  .rp2-summary{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin:18px 0 12px; }
   .rp2-stat{
-    position:relative; border:1px solid #EAEBF2; border-radius:12px;
-    padding:13px 13px 12px; background:#FAFAFD; overflow:hidden;
+    position:relative; border:1px solid #E3E5EE; border-radius:12px;
+    padding:13px 13px 11px; background:#fff; overflow:hidden; min-width:0;
   }
   .rp2-stat::before{ content:''; position:absolute; left:0; top:0; right:0; height:3px; background:#4F46E5; }
+  .rp2-stat.tone-amber::before{ background:#F59E0B; }
+  .rp2-stat.tone-green::before{ background:#10B981; }
   .rp2-stat.neg::before{ background:#DC2626; }
-  .rp2-stat-head{ display:flex; align-items:center; gap:7px; margin-bottom:9px; }
+  .rp2-stat-head{ display:flex; align-items:center; gap:7px; margin-bottom:8px; }
   .rp2-stat-icon{
     width:22px; height:22px; flex:none; border-radius:7px; display:grid; place-items:center;
     background:#EEF0FF; color:#4F46E5;
@@ -2936,61 +2939,83 @@
   .rp2-stat.tone-amber .rp2-stat-icon{ background:#FEF3E2; color:#D97706; }
   .rp2-stat.tone-green .rp2-stat-icon{ background:#E7F7F1; color:#059669; }
   .rp2-stat.tone-red .rp2-stat-icon{ background:#FDECEC; color:#DC2626; }
-  .rp2-label{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.6px; color:#9AA0AF; font-weight:700; }
-  .rp2-val{ font-size:17px; font-weight:800; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
+  .rp2-label{ font-size:9px; text-transform:uppercase; letter-spacing:0.7px; color:#9AA0AF; font-weight:700; }
+  .rp2-val{ font-size:17px; line-height:1.15; font-weight:800; letter-spacing:-0.015em; font-variant-numeric:tabular-nums; white-space:nowrap; }
   .rp2-val.neg{ color:#DC2626; }
+  .rp2-stat-sub{ margin-top:4px; font-size:9.5px; color:#9AA0AF; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* Profit is the headline number, so it gets the filled card. */
+  .rp2-stat.is-hero{ background:linear-gradient(135deg,#3730A3,#4F46E5 60%,#6366F1); border-color:transparent; color:#fff; }
+  .rp2-stat.is-hero::before{ display:none; }
+  .rp2-stat.is-hero .rp2-label, .rp2-stat.is-hero .rp2-stat-sub{ color:rgba(255,255,255,0.78); }
+  .rp2-stat.is-hero .rp2-stat-icon{ background:rgba(255,255,255,0.2); color:#fff; }
+  .rp2-stat.is-hero .rp2-val, .rp2-stat.is-hero .rp2-val.neg{ color:#fff; }
+  .rp2-stat.is-hero.neg{ background:linear-gradient(135deg,#B91C1C,#DC2626 60%,#EF4444); }
 
   /* Insights ribbon: small at-a-glance facts derived from the period's data */
   .rp2-insights{
-    display:flex; flex-wrap:wrap; gap:0; margin:0 0 22px; border:1px solid #EAEBF2;
-    border-radius:12px; overflow:hidden; background:#fff;
+    display:flex; flex-wrap:wrap; gap:0; margin:0 0 6px; border:1px solid #E3E5EE;
+    border-radius:12px; overflow:hidden; background:#FAFAFD;
   }
   .rp2-insight{
-    flex:1 1 0; min-width:120px; padding:10px 14px; display:flex; align-items:center; gap:9px;
-    border-right:1px solid #EAEBF2;
+    flex:1 1 0; min-width:110px; padding:9px 12px; display:flex; align-items:center; gap:8px;
+    border-right:1px solid #E3E5EE;
   }
   .rp2-insight:last-child{ border-right:none; }
   .rp2-insight-icon{
     width:26px; height:26px; flex:none; border-radius:8px; display:grid; place-items:center;
-    background:#F4F5FA; color:#6B7080;
+    background:#fff; color:#6B7080; border:1px solid #E3E5EE;
   }
   .rp2-insight-icon svg{ width:14px; height:14px; }
   .rp2-insight-text{ min-width:0; }
-  .rp2-insight-label{ font-size:8.8px; text-transform:uppercase; letter-spacing:0.5px; color:#9AA0AF; font-weight:700; margin-bottom:2px; }
-  .rp2-insight-val{ font-size:12.5px; font-weight:700; color:#171923; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .rp2-insight-sub{ font-size:10px; color:#9AA0AF; font-weight:500; }
+  .rp2-insight-label{ font-size:8.5px; text-transform:uppercase; letter-spacing:0.5px; color:#9AA0AF; font-weight:700; margin-bottom:2px; }
+  .rp2-insight-val{ font-size:12px; font-weight:700; color:#171923; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
+  .rp2-insight-sub{ font-size:9.5px; color:#9AA0AF; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  .rp2-section-label{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:#6B7080; margin:20px 0 9px; display:flex; align-items:center; gap:8px; }
-  .rp2-section-label::after{ content:''; flex:1; height:1px; background:#EAEBF2; }
-  .rp2-table-wrap{ border:1px solid #EAEBF2; border-radius:12px; overflow:hidden; }
-  table.rp2-table{ width:100%; border-collapse:collapse; font-size:11.5px; }
-  table.rp2-table thead th{ text-align:left; background:#F4F5FA; border-bottom:1.5px solid #DEE0EA; padding:9px 10px; font-size:9.5px; text-transform:uppercase; letter-spacing:0.5px; color:#6B7080; font-weight:700; }
-  table.rp2-table td{ border-bottom:1px solid #EAEBF2; padding:8px 10px; vertical-align:top; }
+  .rp2-section-label{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:#3F4356; margin:18px 0 8px; display:flex; align-items:center; gap:8px; }
+  .rp2-section-label::after{ content:''; flex:1; height:1px; background:#E3E5EE; }
+  .rp2-count{ font-size:9.5px; font-weight:700; letter-spacing:0.2px; color:#4338CA; background:#EEF0FF; border-radius:999px; padding:1px 8px; }
+  .rp2-cont{ font-size:9px; font-weight:600; letter-spacing:0.3px; text-transform:none; color:#9AA0AF; }
+  .rp2-table-wrap{ border:1px solid #E3E5EE; border-radius:12px; overflow:hidden; background:#fff; }
+  table.rp2-table{ width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
+  table.rp2-table thead th{ text-align:left; background:#F4F5FA; border-bottom:1px solid #DEE0EA; padding:8px 8px; font-size:8.8px; text-transform:uppercase; letter-spacing:0.5px; color:#6B7080; font-weight:700; white-space:nowrap; }
+  table.rp2-table td{ border-bottom:1px solid #EFF0F6; padding:7px 8px; vertical-align:top; overflow-wrap:anywhere; word-break:break-word; line-height:1.35; }
   table.rp2-table tbody tr:last-child td{ border-bottom:none; }
   table.rp2-table tbody tr:nth-child(even){ background:#FAFBFD; }
-  table.rp2-table td.rp2-num, table.rp2-table th.rp2-num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  table.rp2-table td.rp2-num, table.rp2-table th.rp2-num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; overflow-wrap:normal; word-break:normal; }
   table.rp2-table td.rp2-profit-neg{ color:#DC2626; font-weight:700; }
-  table.rp2-table tfoot td{ border-top:2px solid #171923; border-bottom:none; font-weight:800; padding:10px 10px 9px; background:#F4F5FA; }
-  .rp2-empty{ text-align:center; color:#9AA0AF; padding:36px 0; font-size:13px; border:1.5px dashed #DEE0EA; border-radius:12px; }
-  .rp2-footer{ margin-top:26px; padding-top:12px; border-top:1px solid #EAEBF2; display:flex; justify-content:space-between; gap:10px; font-size:10px; color:#9AA0AF; }
+  table.rp2-table td.rp2-pos{ color:#059669; font-weight:600; }
+  table.rp2-table td.rp2-muted{ color:#9AA0AF; }
+  table.rp2-table tr.rp2-total td{ border-top:1.5px solid #171923; border-bottom:none; font-weight:800; padding:9px 8px; background:#F4F5FA; }
+  .rp2-tag{ display:inline-block; margin-left:5px; padding:0 6px; border-radius:999px; background:#FEF3E2; color:#B45309; font-size:8.8px; font-weight:700; line-height:1.6; white-space:nowrap; }
+  .rp2-empty{ text-align:center; color:#9AA0AF; padding:26px 0; font-size:12px; border:1.5px dashed #DEE0EA; border-radius:12px; }
+  .rp2-footer{ margin-top:22px; padding-top:10px; border-top:1px solid #E3E5EE; display:flex; justify-content:space-between; gap:10px; font-size:9.5px; color:#9AA0AF; }
   .rp2-footer b{ color:#6B7080; }
 
   /* Paged report (print only): paginateReportForPrint() splits the report into
-     fixed-height A4 "sheets" — one per printed page — and pins a "Page X of N"
-     footer to the bottom of each sheet. Because every sheet is an explicit
-     page (forced break after it), the number is always on the page it names. */
+     fixed-height A4 "sheets" — one per printed page — and pins a footer with
+     "Page X of N" to the bottom of each sheet. Because every sheet is an
+     explicit page (forced break after it), the number is always on the page
+     it names, and nothing can spill past the sheet. */
   .rp2-page.rp2-paged{ min-height:0; }
   .rp2-sheet{
     position:relative; z-index:1; height:267mm; /* A4 minus 2x14mm margins = 269mm, less 2mm slack */
-    break-inside:avoid; page-break-inside:avoid;
+    overflow:hidden; break-inside:avoid; page-break-inside:avoid;
   }
   .rp2-sheet:not(:last-child){ break-after:page; page-break-after:always; }
   .rp2-sheet-body{ display:flow-root; }
-  .rp2-pagenum{
-    position:absolute; left:0; right:0; bottom:0; text-align:center;
-    font-size:9.5px; font-weight:600; letter-spacing:0.04em; color:#9AA0AF;
-    padding-top:5px; border-top:1px solid #EAEBF2;
+  .rp2-runhead{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding-bottom:8px; margin-bottom:2px; border-bottom:1px solid #E3E5EE;
+    font-size:10px; color:#6B7080;
   }
+  .rp2-runhead b{ color:#171923; font-weight:800; letter-spacing:-0.01em; }
+  .rp2-runhead span:last-child{ font-weight:600; text-align:right; }
+  .rp2-pagenum{
+    position:absolute; left:0; right:0; bottom:0; display:flex; justify-content:space-between; gap:12px;
+    font-size:9px; font-weight:600; letter-spacing:0.03em; color:#9AA0AF;
+    padding-top:5px; border-top:1px solid #E3E5EE;
+  }
+  .rp2-pagenum span:last-child{ color:#6B7080; white-space:nowrap; }
 
   /* Print preview modal — on-screen rendering of the exact receipt before printing */
   .print-preview-overlay{
@@ -3071,6 +3096,13 @@
   @media (max-width:600px){
     .report-preview-scroll{ padding:10px; }
     .report-preview-paper{ width:100%; min-height:0; padding:14px 12px; }
+    /* Phone-sized preview only (the printed PDF is always A4): let the
+       cards stack 2-wide and the tables scroll instead of clipping. */
+    .report-preview-paper .rp2-summary{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .report-preview-paper .rp2-header{ flex-wrap:wrap; }
+    .report-preview-paper .rp2-header-right{ max-width:100%; text-align:left; }
+    .report-preview-paper .rp2-table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .report-preview-paper table.rp2-table{ table-layout:auto; min-width:460px; }
   }
 
   /* Reuse the receipt's print styling so the preview matches the printout —
@@ -6026,18 +6058,23 @@
   // Applies a cash movement to the business balance (positive = cash in,
   // negative = cash out) and refreshes the balance UI + log. Used whenever a
   // client payment (full or partial) actually changes the cash on hand.
-  function applyBusinessBalanceDelta(delta, note){
+  function applyBusinessBalanceDelta(delta, note, tipUsd){
     if(!delta) return;
     state.balance.value += delta;
     state.balance.updatedAt = Date.now();
     saveBalance();
-    logBalanceChange(delta, note);
+    logBalanceChange(delta, note, tipUsd);
     renderBalance();
     renderBalanceLog();
   }
 
-  function logBalanceChange(delta, note){
-    state.balanceLog.unshift({ id: uid(), date: Date.now(), delta, note, resultingBalance: state.balance.value });
+  // tipUsd (optional) = the part of this cash-in that the business keeps as a
+  // tip (e.g. a client who pays their balance later and rounds up). It is
+  // counted in the Tips totals and reports on the date it was received.
+  function logBalanceChange(delta, note, tipUsd){
+    const entry = { id: uid(), date: Date.now(), delta, note, resultingBalance: state.balance.value };
+    if(tipUsd > 0.004) entry.tipUsd = Math.round(tipUsd * 100) / 100;
+    state.balanceLog.unshift(entry);
     state.balanceLog = state.balanceLog.slice(0, 3000);
     saveBalanceLog();
   }
@@ -6109,7 +6146,7 @@
     const positive = entry.delta > 0;
     row.innerHTML = `
       <div class="h-left">
-        <div class="h-title">${escapeHtml(entry.note)}</div>
+        <div class="h-title">${escapeHtml(entry.note)}${entry.tipUsd > 0.004 ? ' <span class="sale-status-pill tip">Tip ' + fmtUsd(entry.tipUsd) + '</span>' : ''}</div>
         <div class="h-date">${dateStr}</div>
       </div>
       <div class="h-right"><div class="h-amt${positive ? '' : ' neg'}">${positive?'+':''}${fmtUsd(entry.delta)}</div></div>
@@ -6161,6 +6198,11 @@
     entry.delta = newDelta;
     entry.note = result.note.trim();
     entry.resultingBalance = state.balance.value;
+    // A tip can't be more than the cash received, and only cash-in can hold one.
+    if(entry.tipUsd){
+      const capped = newDelta > 0 ? Math.min(entry.tipUsd, newDelta) : 0;
+      if(capped > 0.004) entry.tipUsd = capped; else delete entry.tipUsd;
+    }
 
     saveBalance();
     saveBalanceLog();
@@ -7777,10 +7819,11 @@
     const note = extraUsd > 0.004
       ? (tipMode ? 'Full payment + tip — ' : 'Full payment (overpaid) — ') + c.name
       : 'Full payment — ' + c.name;
-    applyBusinessBalanceDelta(paid, note);
+    applyBusinessBalanceDelta(paid, note, tipMode ? extraUsd : 0);
     renderClientList();
     renderClientSelect();
     renderInvoiceIfNeeded();
+    if(typeof renderReports === 'function') renderReports();
     const text = buildFullPaymentText(c, paid, lang, extraUsd, tipMode);
     await showMessagePreviewModal('Thank-you message — ' + c.name, text, c.phone);
   }
@@ -9432,6 +9475,15 @@
       if(isYear(d)){ pYear += s.profitUsd; rYear += s.revenueUsd; tYear += tip; }
       if(isPrevMonth(d)){ pPrevMonth += s.profitUsd; rPrevMonth += s.revenueUsd; }
     });
+    // Tips kept when a client paid their balance later.
+    state.balanceLog.forEach(e => {
+      const tip = e.tipUsd || 0;
+      if(tip <= 0.004) return;
+      const d = new Date(e.date);
+      if(isToday(d)) tToday += tip;
+      if(isMonth(d)) tMonth += tip;
+      if(isYear(d)) tYear += tip;
+    });
 
     const setKpi = (suffix, p, r, t) => {
       const el = $('#profit' + suffix);
@@ -9959,13 +10011,26 @@
   // products" reporting), so we rebuild a proper itemized receipt from
   // that. Only the very oldest sales (no `items` either) fall back to a
   // totals-only summary.
+  // Name of a sold line in the requested language. Sales only store the name
+  // that was current at the time, so look the product up (by id, then by
+  // name) to get its Arabic name; falls back to the saved name.
+  function saleItemName(it, lang){
+    if(lang !== 'ar') return it.name;
+    let p = it.productId ? state.products.find(x => x.id === it.productId) : null;
+    if(!p && it.name){
+      const key = String(it.name).trim().toLowerCase();
+      p = state.products.find(x => (x.name || '').trim().toLowerCase() === key || (x.nameAr || '').trim().toLowerCase() === key);
+    }
+    return p ? productDisplayName(p, 'ar') : it.name;
+  }
+
   function buildFallbackReceiptHtml(s, lang){
     lang = lang || state.invoiceLang;
     const set = state.invoiceSettings;
     const t = getT(lang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
-    const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    const dateStr = d.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
     let html = '';
     if(set.logo) html += `<img class="pr-logo" src="${set.logo}" alt="logo">`;
     html += `<div class="pr-center">`;
@@ -9982,7 +10047,7 @@
       let tableRows = '';
       s.items.forEach((it, i) => {
         const unit = it.qty ? it.revenueUsd / it.qty : it.revenueUsd;
-        tableRows += `<tr><td class="pr-col-name">${i + 1}. ${escapeHtml(it.name)}</td><td class="pr-col-qty">×${it.qty}</td><td class="pr-col-price">${fmtUsd(unit)}</td><td class="pr-col-total">${fmtUsd(it.revenueUsd)}<div class="pr-col-total-lbp">${fmtLbp(it.revenueUsd * rate)}</div></td></tr>`;
+        tableRows += `<tr><td class="pr-col-name">${i + 1}. ${escapeHtml(saleItemName(it, lang))}</td><td class="pr-col-qty">×${it.qty}</td><td class="pr-col-price">${fmtUsd(unit)}</td><td class="pr-col-total">${fmtUsd(it.revenueUsd)}<div class="pr-col-total-lbp">${fmtLbp(it.revenueUsd * rate)}</div></td></tr>`;
       });
       html += `<table class="pr-items-table"><thead><tr><th class="pr-col-name">${t.itemCol}</th><th class="pr-col-qty">${t.qtyCol}</th><th class="pr-col-price">${t.priceCol}</th><th class="pr-col-total">${t.totalCol}</th></tr></thead><tbody>${tableRows}</tbody></table>`;
     } else {
@@ -10000,50 +10065,87 @@
     else if(remaining < -0.004) html += `<div class="pr-row"><span>${t.creditOnAccount}</span><span>${fmtUsd(-remaining)}</span></div>`;
     if(s.tipUsd > 0.004) html += `<div class="pr-row"><span>${t.tipReceived}</span><span>${fmtUsd(s.tipUsd)}</span></div>`;
     html += `<div class="pr-hr"></div><div class="pr-row"><span>${t.rate}</span><span>1 USD = ${fmtLbp(rate)}</span></div>`;
-    if(!s.items || !s.items.length) html += `<div class="pr-hr"></div><div class="pr-footer">Reconstructed summary — itemized details were not saved for this older invoice.</div>`;
+    if(!s.items || !s.items.length) html += `<div class="pr-hr"></div><div class="pr-footer">${lang === 'ar' ? 'ملخص معاد بناؤه — لم تُحفظ تفاصيل الأصناف لهذه الفاتورة القديمة.' : 'Reconstructed summary — itemized details were not saved for this older invoice.'}</div>`;
     if(invTxt(set,'footerNote',lang)) html += `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(invTxt(set,'footerNote',lang))}</div>`;
+    html += `<div class="pr-hr"></div><div class="pr-thankyou">${escapeHtml(t.thankYouPrint)}</div>`;
     return `<div dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${html}</div>`;
   }
 
+  // WhatsApp / copy text for an old invoice, laid out exactly like the live
+  // invoice text (buildInvoiceText) in the requested language: bold header,
+  // address and phone, numbered items with unit price and quantity, the
+  // total in "USD or LBP" form, payment status, rate, payment methods,
+  // footer note and thank-you line. Built from the saved sale, so it works
+  // for any old invoice in either language.
   function buildFallbackReceiptText(s, lang){
     lang = lang || state.invoiceLang;
     const t = getT(lang);
+    const set = state.invoiceSettings;
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
-    const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    const dateStr = d.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = d.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit', second:'2-digit' });
+    const both = (usd) => `${fmtUsd(usd)} ${t.orWord} ${fmtLbp(usd * rate)}`;
     const lines = [];
-    lines.push('🧾 ' + (invTxt(state.invoiceSettings,'headerTitle',lang) || t.invoice));
-    if(s.invoiceNo) lines.push('🔢 ' + t.invoiceNo + ': ' + fmtInvNo(s.invoiceNo));
-    lines.push('📅 ' + dateStr);
-    lines.push('👤 ' + t.customer + ': ' + s.customerName);
+    lines.push('🧾 ' + `*${invTxt(set,'headerTitle',lang) || t.invoice}*`);
+    if(invTxt(set,'headerSubtitle',lang)) lines.push(invTxt(set,'headerSubtitle',lang));
+    if(invTxt(set,'address',lang)) lines.push('📍 ' + invTxt(set,'address',lang));
+    if(set.phone) lines.push('📞 ' + set.phone);
+    if(s.invoiceNo) lines.push('🔢 ' + t.invoiceNo + ': ' + `*${fmtInvNo(s.invoiceNo)}*`);
+    lines.push('📅 ' + dateStr + '   ' + timeStr);
+    if(s.customerName) lines.push('👤 ' + t.customer + ': ' + `*${s.customerName}*`);
     lines.push('');
-    if(s.items && s.items.length){
+    lines.push('———————————');
+
+    const hasItems = !!(s.items && s.items.length);
+    if(hasItems){
       s.items.forEach((it, i) => {
-        lines.push(`${i + 1}) ${it.name} x${it.qty}`);
-        lines.push(`   ${fmtUsd(it.revenueUsd)}  (${fmtLbp(it.revenueUsd * rate)})`);
+        const unit = it.qty ? it.revenueUsd / it.qty : it.revenueUsd;
+        lines.push(`${itemMarker(i + 1)} ${saleItemName(it, lang)} ${fmtUsd(unit)} ×${it.qty}`);
+        lines.push(`   ${both(it.revenueUsd)}`);
       });
-      lines.push('');
+      lines.push('———————————');
     }
-    if(s.prevBalanceApplied) lines.push(`📌 ${t.previousBalance}: ${fmtUsd(s.prevBalanceApplied)} (${fmtLbp(s.prevBalanceApplied * rate)})`);
+    lines.push(`${t.itemsSubtotal} : ${both(s.revenueUsd)}`);
+    if(s.prevBalanceApplied) lines.push(`📌 ${t.previousBalance}: ${fmtUsd(s.prevBalanceApplied)} _(${fmtLbp(s.prevBalanceApplied * rate)})_`);
     const grandTotal = s.revenueUsd + (s.prevBalanceApplied || 0);
-    lines.push(`*💰 ${t.totalDue}: ${fmtUsd(grandTotal).replace('$', '')} ${t.usdWord} ${t.orWord} ${fmtLbp(grandTotal * rate)}*`);
-    const statusEmojiMap = { paid: '✅', partial: '🕓', unpaid: '❌', credit: '📌' };
-    lines.push(statusEmojiMap[getSaleStatus(s)] + ' ' + printStatusLabel(getSaleStatus(s), t));
-    lines.push('💳 ' + t.received + ': ' + fmtUsd(s.amountReceived));
-    const remaining = s.newBalance || 0;
-    if(remaining > 0.004) lines.push('⚠️ ' + t.remainingBalance + ': ' + fmtUsd(remaining));
-    else if(remaining < -0.004) lines.push('🟢 ' + t.creditOnAccount + ': ' + fmtUsd(-remaining));
-    if(s.tipUsd > 0.004) lines.push('🙏 ' + t.tipReceived + ': ' + fmtUsd(s.tipUsd));
     lines.push('');
-    lines.push(`💱 ${t.rate}: 1 USD = ${fmtLbp(rate)}`);
-    if(invTxt(state.invoiceSettings,'footerNote',lang)){
+    lines.push(`*💰 ${t.totalDue.toUpperCase()}: ${fmtUsd(grandTotal).replace('$', '')} ${t.usdWord} ${t.orWord} ${fmtLbp(grandTotal * rate)}*`);
+
+    const status = getSaleStatus(s);
+    const remaining = s.newBalance || 0;
+    if(set.showPaymentStatus !== false){
+      const label = status === 'unpaid' ? t.notPaid : status === 'partial' ? t.partial : t.paid;
+      const emoji = status === 'unpaid' ? '❌' : status === 'partial' ? '🕓' : '✅';
       lines.push('');
-      lines.push(invTxt(state.invoiceSettings,'footerNote',lang));
+      lines.push(`${emoji} ${t.paymentStatus}: *${label}*`);
+      lines.push(`💳 ${t.received}: ${fmtUsd(s.amountReceived)} _(${fmtLbp(s.amountReceived * rate)})_`);
+      if(remaining > 0.004) lines.push(`⚠️ ${t.remainingBalance}: *${fmtUsd(remaining)}* _(${fmtLbp(remaining * rate)})_`);
+      if(s.tipUsd > 0.004) lines.push(`🙏 ${t.tipReceived}: ${fmtUsd(s.tipUsd)} _(${fmtLbp(s.tipUsd * rate)})_`);
+      if(remaining < -0.004) lines.push(`🟢 ${t.creditOnAccount}: ${fmtUsd(-remaining)} _(${fmtLbp(-remaining * rate)})_`);
     }
-    if(!s.items || !s.items.length){
+
+    lines.push('');
+    lines.push(`💱 ${t.rate}: 1 ${t.usdWord} = ${fmtLbp(rate)}`);
+
+    const activeMethods = state.paymentMethods.filter(m => m.enabled);
+    if(activeMethods.length > 0){
       lines.push('');
-      lines.push('(Reconstructed summary — itemized details were not saved for this older invoice.)');
+      lines.push(`*📱 ${t.paymentMethods}:*`);
+      activeMethods.forEach(m => lines.push(`• ${m.label}: ${m.value}`));
     }
+    if(invTxt(set,'footerNote',lang)){
+      lines.push('');
+      lines.push(`_${invTxt(set,'footerNote',lang)}_`);
+    }
+    if(!hasItems){
+      lines.push('');
+      lines.push(lang === 'ar'
+        ? '(ملخص معاد بناؤه — لم تُحفظ تفاصيل الأصناف لهذه الفاتورة القديمة.)'
+        : '(Reconstructed summary — itemized details were not saved for this older invoice.)');
+    }
+    lines.push('');
+    lines.push('🙏 ' + t.thankYouPrint);
     return lines.join('\n');
   }
 
@@ -10057,8 +10159,8 @@
     const t = getT(lang);
     const rate = s.rateUsed || state.rate.value;
     const d = new Date(s.date);
-    const dateStr = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
-    const timeStr = d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', second:'2-digit' });
+    const dateStr = d.toLocaleDateString(t.dateLocale, { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = d.toLocaleTimeString(t.dateLocale, { hour:'numeric', minute:'2-digit', second:'2-digit' });
     const W = set.paperWidth === '58' ? 32 : 48;
 
     const segments = [];
@@ -10102,7 +10204,7 @@
       seg(hr('-'));
       s.items.forEach((it, i) => {
         const unit = it.qty ? it.revenueUsd / it.qty : it.revenueUsd;
-        tableRow([`${i + 1}. ${it.name}`, `x${it.qty}`, fmtUsd(unit), fmtUsd(it.revenueUsd)]);
+        tableRow([`${i + 1}. ${saleItemName(it, lang)}`, `x${it.qty}`, fmtUsd(unit), fmtUsd(it.revenueUsd)]);
         seg(fmtLbp(it.revenueUsd * rate), { align:'right' });
       });
     } else {
@@ -10138,29 +10240,140 @@
       seg(invTxt(set,'footerNote',lang), { align:'center' });
     }
 
+    if(!s.items || !s.items.length){
+      seg(hr('-'));
+      seg(lang === 'ar' ? 'ملخص معاد بناؤه - لم تُحفظ تفاصيل الأصناف لهذه الفاتورة القديمة.' : 'Reconstructed summary - itemized details were not saved for this older invoice.', { align:'center' });
+    }
     seg(hr('-'));
-    seg(s.items && s.items.length ? t.thankYouPrint : 'Reconstructed summary - itemized details were not saved for this older invoice.', { align:'center' });
+    seg(t.thankYouPrint, { align:'center' });
     return segments;
   }
 
   // Old invoices finalized after this update carry a snapshot per language
   // (snapshotHtml.en / .ar, etc). Sales finalized before that carry a single
-  // flat snapshot in whatever language was active at the time — since that
-  // language isn't recorded, it's treated as English (the app's default) and
-  // only reused when English is requested; Arabic falls back to
-  // buildFallback*() so it's still fully readable, just reconstructed from
-  // the saved totals/items (with translated labels) rather than pulled from
-  // an exact snapshot.
+  // flat snapshot in whatever language was active at the time — that language
+  // isn't recorded, so it's detected from the labels in the snapshot itself
+  // and reused only for that language; the other language is rebuilt by
+  // buildFallback*() from the saved totals/items (translated labels, and
+  // Arabic product names looked up from the catalog).
+  // Old snapshots have the business header (name, subtitle, address, phone)
+  // and the footer (footer note + thank-you line) frozen in whatever language
+  // and wording they had when saved. This re-applies them in the requested
+  // language from the current invoice settings (the Arabic fields when filled
+  // in, otherwise the main text), so an old invoice shows the English or the
+  // Arabic header/footer to match the language chosen for it. Works on the
+  // printed receipt, the WhatsApp text and the thermal printout.
+  function refreshSnapshotHeaderFooter(field, lang, snap){
+    if(!snap) return snap;
+    const set = state.invoiceSettings, t = getT(lang);
+    const title = invTxt(set, 'headerTitle', lang), sub = invTxt(set, 'headerSubtitle', lang);
+    const addr = invTxt(set, 'address', lang), foot = invTxt(set, 'footerNote', lang);
+    const isNote = (x) => /Reconstructed summary|ملخص معاد/.test(String(x || ''));
+
+    if(field === 'snapshotHtml'){
+      if(typeof snap !== 'string') return snap;
+      let h = snap;
+      h = h.replace(/<div class="pr-eyebrow">[^<]*<\/div>/, () => `<div class="pr-eyebrow">${escapeHtml(t.invoice.replace(/\*/g, ''))}</div>`);
+      const subs = [sub, addr, set.phone].filter(Boolean).map(v => `<div class="pr-sub">${escapeHtml(v)}</div>`).join('');
+      h = h.replace(/<div class="pr-title">[^<]*<\/div>(?:<div class="pr-sub">[^<]*<\/div>)*/, () => `<div class="pr-title">${escapeHtml(title || 'Invoice')}</div>${subs}`);
+      h = h.replace(/<div class="pr-hr"><\/div><div class="pr-footer">([^<]*)<\/div>/g, (m, txt) => isNote(txt) ? m : '');
+      h = h.replace(/<div class="pr-hr"><\/div><div class="pr-thankyou">[^<]*<\/div>/g, '');
+      const tail = (foot ? `<div class="pr-hr"></div><div class="pr-footer">${escapeHtml(foot)}</div>` : '')
+        + `<div class="pr-hr"></div><div class="pr-thankyou">${escapeHtml(t.thankYouPrint)}</div>`;
+      if(/^<div dir=/.test(h) && /<\/div>\s*$/.test(h)) return h.replace(/<\/div>\s*$/, () => tail + '</div>');
+      return h + tail;
+    }
+
+    if(field === 'snapshotText'){
+      if(typeof snap !== 'string') return snap;
+      const L = snap.split('\n');
+      const iStart = L.findIndex(x => /^(🔢|📅)/.test(x));
+      if(iStart <= 0) return snap; // unfamiliar layout — leave it alone
+      const head = ['🧾 ' + `*${title || t.invoice}*`];
+      if(sub) head.push(sub);
+      if(addr) head.push('📍 ' + addr);
+      if(set.phone) head.push('📞 ' + set.phone);
+      const rest = L.slice(iStart);
+      const trim = () => { while(rest.length && rest[rest.length - 1].trim() === '') rest.pop(); };
+      trim();
+      if(rest.length && /^🙏/.test(rest[rest.length - 1])) rest.pop(); // thank-you (a tip line is never last)
+      trim();
+      let note = null;
+      if(rest.length && isNote(rest[rest.length - 1])){ note = rest.pop(); trim(); }
+      if(rest.length && /^_.*_$/.test(rest[rest.length - 1]) && rest[rest.length - 1].indexOf('_(') !== 0){ rest.pop(); trim(); }
+      if(foot){ rest.push(''); rest.push(`_${foot}_`); }
+      if(note){ rest.push(''); rest.push(note); }
+      rest.push('');
+      rest.push('🙏 ' + t.thankYouPrint);
+      return head.concat(rest).join('\n');
+    }
+
+    if(field === 'snapshotThermal'){
+      if(!Array.isArray(snap)) return snap;
+      const segs = snap.slice();
+      const isEq = (g) => g && /^={5,}$/.test(String(g.text));
+      const isDash = (g) => g && /^-{5,}$/.test(String(g.text));
+      const iEq = segs.findIndex(isEq);
+      if(iEq <= 0) return snap;
+      const W = String(segs[iEq].text).length;
+      const mk = (text, opts) => Object.assign({ text: text, align:'left', bold:false }, opts || {});
+      // Header: everything before the invoice-number/date lines is rebuilt.
+      let iKeep = segs.findIndex((g, i) => i < iEq && /INV-\d/.test(String(g && g.text)));
+      if(iKeep < 0) iKeep = iEq - 1;
+      const head = [mk(t.invoice.replace(/\*/g, '').toUpperCase(), { align:'center' }),
+                    mk((title || 'Invoice').toUpperCase(), { align:'center', bold:true })];
+      if(sub) head.push(mk(sub, { align:'center' }));
+      if(addr) head.push(mk(addr, { align:'center' }));
+      if(set.phone) head.push(mk(set.phone, { align:'center' }));
+      const body = segs.slice(iKeep);
+      // Footer: peel off the closing thank-you (or reconstructed note) and footer note.
+      let note = null;
+      if(body.length >= 2 && (isDash(body[body.length - 2]) || isEq(body[body.length - 2]))){
+        const last = body.pop(); body.pop();
+        if(isNote(last.text)) note = last;
+      }
+      const n = body.length;
+      if(n >= 2 && body[n - 1] && body[n - 1].align === 'center' && isDash(body[n - 2])){ body.pop(); body.pop(); }
+      if(foot){ body.push(mk('-'.repeat(W))); body.push(mk(foot, { align:'center' })); }
+      if(note){ body.push(mk('-'.repeat(W))); body.push(note); }
+      body.push(mk('-'.repeat(W)));
+      body.push(mk(t.thankYouPrint, { align:'center' }));
+      return head.concat(body);
+    }
+    return snap;
+  }
   function getSaleSnapshot(s, field, lang, fallbackFn){
-    const out = addInvNoToSnapshot(s, field, lang, getSaleSnapshotRaw(s, field, lang, fallbackFn));
+    const out = addInvNoToSnapshot(s, field, lang, refreshSnapshotHeaderFooter(field, lang, getSaleSnapshotRaw(s, field, lang, fallbackFn)));
     return field === 'snapshotHtml' ? fillLogoInHtml(out) : out;
+  }
+  // Works out which language an old single-language snapshot was written in
+  // by counting which language's invoice labels ("Customer" / "الزبون", ...)
+  // it contains. Handles HTML, WhatsApp text, and thermal segment arrays.
+  function detectSnapshotLang(snap){
+    let text = '';
+    if(typeof snap === 'string') text = snap;
+    else if(Array.isArray(snap)) text = snap.map(x => (x && x.text) || '').join('\n');
+    if(!text) return 'en';
+    const en = getT('en'), ar = getT('ar');
+    let enHits = 0, arHits = 0;
+    ['customer','totalDue','received','itemCol','paymentStatus','rate'].forEach(k => {
+      const e = String(en[k] || '').replace(/\*/g, '').trim();
+      const a = String(ar[k] || '').replace(/\*/g, '').trim();
+      if(e && text.toLowerCase().indexOf(e.toLowerCase()) !== -1) enHits++;
+      if(a && text.indexOf(a) !== -1) arHits++;
+    });
+    return arHits > enHits ? 'ar' : 'en';
   }
   function getSaleSnapshotRaw(s, field, lang, fallbackFn){
     const snap = s[field];
+    // Per-language snapshots: use exactly the language asked for. If that one
+    // is missing, rebuild it — never hand back the other language's copy.
     if(snap && typeof snap === 'object' && !Array.isArray(snap)){
-      return snap[lang] || snap.en || snap.ar || fallbackFn(s, lang);
+      return snap[lang] || fallbackFn(s, lang);
     }
-    if(snap && lang === 'en') return snap;
+    // Older single snapshot: reuse it only when it really is in the requested
+    // language; otherwise rebuild that language from the saved sale.
+    if(snap && detectSnapshotLang(snap) === lang) return snap;
     return fallbackFn(s, lang);
   }
 
@@ -10828,7 +11041,9 @@
     const revenue = matches.reduce((sum, s) => sum + s.revenueUsd, 0);
     const cost = matches.reduce((sum, s) => sum + (s.costUsd || 0), 0);
     const profit = matches.reduce((sum, s) => sum + s.profitUsd, 0);
-    const tips = matches.reduce((sum, s) => sum + (s.tipUsd || 0), 0);
+    const saleTips = matches.reduce((sum, s) => sum + (s.tipUsd || 0), 0);
+    const laterTips = balanceMatches.reduce((sum, e) => sum + (e.tipUsd || 0), 0);
+    const tips = saleTips + laterTips;
     // The USD→LBP rate moves over time, so each invoice keeps the rate that
     // was actually in effect when it was made (older sales fall back to the
     // current rate — see the same s.rateUsed || state.rate.value pattern
@@ -10878,7 +11093,7 @@
       if(rankedDays.length) busiestDay = rankedDays[0];
     }
 
-    return { mode, label, sales: matches, revenue, cost, profit, tips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay, balanceEntries: balanceMatches, cashIn, cashOut };
+    return { mode, label, sales: matches, revenue, cost, profit, tips, saleTips, laterTips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay, balanceEntries: balanceMatches, cashIn, cashOut };
   }
 
   function buildBusinessReportHtml(data){
@@ -10886,12 +11101,26 @@
     const generated = new Date().toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
     const periodNoun = data.mode === 'day' ? 'Daily report' : data.mode === 'month' ? 'Monthly report' : 'Yearly report';
     const businessName = s.headerTitle || 'Business report';
+    const profitNeg = data.profit < -0.004;
+    const marginNeg = data.marginPct !== null && data.marginPct < 0;
+    const marginText = data.marginPct === null ? '—' : (marginNeg ? '-' : '') + Math.abs(data.marginPct).toFixed(1) + '%';
+    const costPct = data.revenue > 0.004 ? (data.cost / data.revenue) * 100 : null;
+    const n = data.sales.length;
+    const cell = (ts) => {
+      const d = new Date(ts);
+      return data.mode === 'day'
+        ? d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })
+        : d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    };
+    const dateHead = data.mode === 'day' ? 'Time' : 'Date';
 
-    let html = '<div class="rp2-page">';
+    // The running header / page footer on printed pages 2+ read these.
+    let html = `<div class="rp2-page" data-run-left="${escapeHtml(businessName)}" data-run-right="${escapeHtml(periodNoun + ' · ' + data.label)}" data-page-left="${escapeHtml(businessName + ' · ' + periodNoun + ' · ' + data.label)}">`;
     html += '<div class="rp2-watermark">TDA</div>';
     html += '<div class="rp2-content">';
     html += '<div class="rp2-topbar"></div>';
 
+    // ---- Header ----
     html += '<div class="rp2-header">';
     html += '<div class="rp2-header-left">';
     if(s.logo) html += `<img class="rp2-logo" src="${s.logo}" alt="logo">`;
@@ -10908,67 +11137,75 @@
       ? `1 USD = ${Math.round(data.rateMin).toLocaleString('en-US')} LBP`
       : `1 USD = ${Math.round(data.rateMin).toLocaleString('en-US')}–${Math.round(data.rateMax).toLocaleString('en-US')} LBP`;
     html += `<div class="rp2-generated">${escapeHtml(rateLine)}</div>`;
-    html += '</div>';
-    html += '</div>';
+    html += '</div></div>';
 
-    const profitNeg = data.profit < -0.004;
+    // ---- Headline numbers ----
     html += '<div class="rp2-summary">';
-    html += `<div class="rp2-stat"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.revenue}</span><span class="rp2-label">Revenue</span></div><div class="rp2-val">${fmtUsd(data.revenue)}</div></div>`;
-    html += `<div class="rp2-stat tone-amber"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.cost}</span><span class="rp2-label">Cost</span></div><div class="rp2-val">${fmtUsd(data.cost)}</div></div>`;
-    html += `<div class="rp2-stat${profitNeg ? ' tone-red neg' : ' tone-green'}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.profit}</span><span class="rp2-label">Profit</span></div><div class="rp2-val${profitNeg ? ' neg' : ''}">${fmtUsd(data.profit)}</div></div>`;
-    const marginText = data.marginPct === null ? '—' : (data.marginPct < 0 ? '-' : '') + Math.abs(data.marginPct).toFixed(1) + '%';
-    html += `<div class="rp2-stat${data.marginPct !== null && data.marginPct < 0 ? ' tone-red neg' : ''}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.margin}</span><span class="rp2-label">Margin</span></div><div class="rp2-val${data.marginPct !== null && data.marginPct < 0 ? ' neg' : ''}">${escapeHtml(marginText)}</div></div>`;
+    html += `<div class="rp2-stat"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.revenue}</span><span class="rp2-label">Revenue</span></div><div class="rp2-val">${fmtUsd(data.revenue)}</div><div class="rp2-stat-sub">${n} invoice${n === 1 ? '' : 's'}</div></div>`;
+    html += `<div class="rp2-stat tone-amber"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.cost}</span><span class="rp2-label">Cost</span></div><div class="rp2-val">${fmtUsd(data.cost)}</div><div class="rp2-stat-sub">${costPct === null ? 'of revenue' : costPct.toFixed(1) + '% of revenue'}</div></div>`;
+    html += `<div class="rp2-stat is-hero${profitNeg ? ' tone-red neg' : ' tone-green'}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.profit}</span><span class="rp2-label">Profit</span></div><div class="rp2-val${profitNeg ? ' neg' : ''}">${fmtUsd(data.profit)}</div><div class="rp2-stat-sub">Revenue minus cost</div></div>`;
+    html += `<div class="rp2-stat${marginNeg ? ' tone-red neg' : ''}"><div class="rp2-stat-head"><span class="rp2-stat-icon">${RP_ICONS.margin}</span><span class="rp2-label">Margin</span></div><div class="rp2-val${marginNeg ? ' neg' : ''}">${escapeHtml(marginText)}</div><div class="rp2-stat-sub">Profit ÷ revenue</div></div>`;
     html += '</div>';
 
     // ---- Insights ribbon ----
     html += '<div class="rp2-insights">';
-    html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.invoiceCount}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Invoices</div><div class="rp2-insight-val">${data.sales.length}</div></div></div>`;
+    html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.invoiceCount}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Invoices</div><div class="rp2-insight-val">${n}</div></div></div>`;
     html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.revenue}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Avg / invoice</div><div class="rp2-insight-val">${fmtUsd(data.avgRevenue)}</div></div></div>`;
     if(data.tips > 0.004){
-      html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.tip}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Tips</div><div class="rp2-insight-val">${fmtUsd(data.tips)}</div></div></div>`;
+      html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.tip}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Tips</div><div class="rp2-insight-val">${fmtUsd(data.tips)}</div>${data.laterTips > 0.004 ? `<div class="rp2-insight-sub">incl. ${fmtUsd(data.laterTips)} paid later</div>` : ''}</div></div>`;
     }
     if(data.busiestDay){
       const bd = data.busiestDay.date.toLocaleDateString('en-US', { month:'short', day:'numeric' });
       html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.calendarStar}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Busiest day</div><div class="rp2-insight-val" title="${escapeHtml(bd)}">${escapeHtml(bd)}</div><div class="rp2-insight-sub">${fmtUsd(data.busiestDay.revenue)}</div></div></div>`;
     }
-    if(data.topClient && data.topClient.profit > 0.004){
+    if(data.topClient){
       html += `<div class="rp2-insight"><span class="rp2-insight-icon">${RP_ICONS.userStar}</span><div class="rp2-insight-text"><div class="rp2-insight-label">Top client</div><div class="rp2-insight-val" title="${escapeHtml(data.topClient.name)}">${escapeHtml(data.topClient.name)}</div><div class="rp2-insight-sub">${fmtUsd(data.topClient.profit)} profit</div></div></div>`;
     }
     html += '</div>';
 
-    html += `<div class="rp2-section-label">Invoices (${data.sales.length})</div>`;
-    if(data.sales.length === 0){
+    // ---- Invoices ----
+    // Each table sits in a .rp2-section with fixed column widths; the totals
+    // row is the last <tr class="rp2-total"> so paginateReportForPrint() can
+    // keep it together with the final data row when a table spans pages.
+    html += '<div class="rp2-section">';
+    html += `<div class="rp2-section-label">Invoices <span class="rp2-count">${n}</span></div>`;
+    if(n === 0){
       html += '<div class="rp2-empty">No invoices in this period.</div>';
     } else {
-      html += '<div class="rp2-table-wrap"><table class="rp2-table"><thead><tr><th>Date</th><th>Customer</th><th class="rp2-num">Revenue</th><th class="rp2-num">Cost</th><th class="rp2-num">Profit</th><th class="rp2-num">Tip</th><th class="rp2-num">Rate (LBP)</th></tr></thead><tbody>';
+      html += '<div class="rp2-table-wrap"><table class="rp2-table">';
+      html += '<colgroup><col style="width:12%"><col style="width:25%"><col style="width:14%"><col style="width:13%"><col style="width:14%"><col style="width:10%"><col style="width:12%"></colgroup>';
+      html += `<thead><tr><th>${dateHead}</th><th>Customer</th><th class="rp2-num">Revenue</th><th class="rp2-num">Cost</th><th class="rp2-num">Profit</th><th class="rp2-num">Tip</th><th class="rp2-num">Rate (LBP)</th></tr></thead><tbody>`;
       data.sales.forEach(sale => {
-        const d = new Date(sale.date);
-        let dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year: data.mode === 'year' ? undefined : (data.mode === 'month' ? 'numeric' : undefined) });
-        if(data.mode === 'day') dateStr += ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
         const rate = sale.rateUsed || state.rate.value;
         const rowProfitNeg = sale.profitUsd < -0.004;
-        html += `<tr><td>${escapeHtml(dateStr)}</td><td>${escapeHtml(sale.customerName || 'Walk-in')}</td><td class="rp2-num">${fmtUsd(sale.revenueUsd)}</td><td class="rp2-num">${fmtUsd(sale.costUsd || 0)}</td><td class="rp2-num${rowProfitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(sale.profitUsd)}</td><td class="rp2-num">${sale.tipUsd ? fmtUsd(sale.tipUsd) : '—'}</td><td class="rp2-num">${Math.round(rate).toLocaleString('en-US')}</td></tr>`;
+        html += `<tr><td>${escapeHtml(cell(sale.date))}</td><td>${escapeHtml(sale.customerName || 'Walk-in')}</td><td class="rp2-num">${fmtUsd(sale.revenueUsd)}</td><td class="rp2-num">${fmtUsd(sale.costUsd || 0)}</td><td class="rp2-num${rowProfitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(sale.profitUsd)}</td><td class="rp2-num${sale.tipUsd ? '' : ' rp2-muted'}">${sale.tipUsd ? fmtUsd(sale.tipUsd) : '—'}</td><td class="rp2-num">${Math.round(rate).toLocaleString('en-US')}</td></tr>`;
       });
-      html += `</tbody><tfoot><tr><td colspan="2">Total</td><td class="rp2-num">${fmtUsd(data.revenue)}</td><td class="rp2-num">${fmtUsd(data.cost)}</td><td class="rp2-num${profitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(data.profit)}</td><td class="rp2-num">${data.tips ? fmtUsd(data.tips) : '—'}</td><td class="rp2-num">—</td></tr></tfoot></table></div>`;
+      html += `<tr class="rp2-total"><td colspan="2">Total</td><td class="rp2-num">${fmtUsd(data.revenue)}</td><td class="rp2-num">${fmtUsd(data.cost)}</td><td class="rp2-num${profitNeg ? ' rp2-profit-neg' : ''}">${fmtUsd(data.profit)}</td><td class="rp2-num">${data.saleTips > 0.004 ? fmtUsd(data.saleTips) : '—'}</td><td class="rp2-num">—</td></tr>`;
+      html += '</tbody></table></div>';
     }
+    html += '</div>';
 
     // ---- Balance changes (deposits, withdrawals, client payments in/out) ----
-    html += `<div class="rp2-section-label">Balance changes (${data.balanceEntries.length})</div>`;
-    if(data.balanceEntries.length === 0){
+    const nb = data.balanceEntries.length;
+    html += '<div class="rp2-section">';
+    html += `<div class="rp2-section-label">Balance changes <span class="rp2-count">${nb}</span></div>`;
+    if(nb === 0){
       html += '<div class="rp2-empty">No balance changes in this period.</div>';
     } else {
       const netChange = data.cashIn - data.cashOut;
-      html += '<div class="rp2-table-wrap"><table class="rp2-table"><thead><tr><th>Date</th><th>Note</th><th class="rp2-num">Amount</th><th class="rp2-num">Balance after</th></tr></thead><tbody>';
+      html += '<div class="rp2-table-wrap"><table class="rp2-table">';
+      html += '<colgroup><col style="width:13%"><col style="width:45%"><col style="width:20%"><col style="width:22%"></colgroup>';
+      html += `<thead><tr><th>${dateHead}</th><th>Note</th><th class="rp2-num">Amount</th><th class="rp2-num">Balance after</th></tr></thead><tbody>`;
       data.balanceEntries.forEach(entry => {
-        const d = new Date(entry.date);
-        let dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year: data.mode === 'year' ? undefined : (data.mode === 'month' ? 'numeric' : undefined) });
-        if(data.mode === 'day') dateStr += ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
         const isOut = entry.delta < 0;
         const amtStr = (isOut ? '-' : '+') + fmtUsd(Math.abs(entry.delta));
-        html += `<tr><td>${escapeHtml(dateStr)}</td><td>${escapeHtml(entry.note || '—')}</td><td class="rp2-num${isOut ? ' rp2-profit-neg' : ''}">${escapeHtml(amtStr)}</td><td class="rp2-num">${fmtUsd(entry.resultingBalance)}</td></tr>`;
+        const tag = entry.tipUsd > 0.004 ? `<span class="rp2-tag">incl. ${fmtUsd(entry.tipUsd)} tip</span>` : '';
+        html += `<tr><td>${escapeHtml(cell(entry.date))}</td><td>${escapeHtml(entry.note || '—')}${tag}</td><td class="rp2-num${isOut ? ' rp2-profit-neg' : ' rp2-pos'}">${escapeHtml(amtStr)}</td><td class="rp2-num">${fmtUsd(entry.resultingBalance)}</td></tr>`;
       });
-      html += `</tbody><tfoot><tr><td colspan="2">Cash in ${fmtUsd(data.cashIn)} · Cash out ${fmtUsd(data.cashOut)}</td><td class="rp2-num${netChange < 0 ? ' rp2-profit-neg' : ''}" colspan="2">Net ${netChange >= 0 ? '+' : '-'}${fmtUsd(Math.abs(netChange))}</td></tr></tfoot></table></div>`;
+      html += `<tr class="rp2-total"><td colspan="2">Cash in ${fmtUsd(data.cashIn)} · Cash out ${fmtUsd(data.cashOut)}</td><td class="rp2-num${netChange < 0 ? ' rp2-profit-neg' : ''}" colspan="2">Net ${netChange >= 0 ? '+' : '-'}${fmtUsd(Math.abs(netChange))}</td></tr>`;
+      html += '</tbody></table></div>';
     }
+    html += '</div>';
 
     html += `<div class="rp2-footer"><span><b>${escapeHtml(businessName)}</b> · ${escapeHtml(periodNoun)}</span><span>Generated ${escapeHtml(generated)}</span></div>`;
     html += '</div></div>';
@@ -11028,16 +11265,15 @@
   const REPORT_PAGENUM_BAND_MM = 9; // strip at the bottom of each sheet kept free for "Page X of N"
 
   // Splits the report into one fixed-height "sheet" per printed page and
-  // stamps each with "Page X of N".
+  // stamps each with a footer ("Page X of N").
   //
-  // The old approach positioned markers at multiples of the page height
-  // inside one long flow. But the browser breaks pages at *row* boundaries
-  // (rows never split), so every page ends a little early and the real page
-  // breaks drift away from those multiples: numbers landed on the wrong
-  // sheet, the count was too low, and a stray blank last page appeared.
-  // Here we do the pagination ourselves: rows are packed onto sheets using
-  // their real measured heights, each sheet is followed by a forced page
-  // break, and its number lives inside it — so it can't drift.
+  // The browser breaks pages at row boundaries and never knows where our page
+  // numbers should go, so we paginate ourselves: every block (header, KPI
+  // cards, insights, each table section) is placed on a sheet using its real
+  // measured height, tables are split row by row with their column header
+  // repeated on each page, and sheet N+1 starts with a slim running header.
+  // Each sheet is a fixed-height box with overflow hidden, followed by a
+  // forced page break — so nothing can spill onto another page.
   //
   // `area` must be laid out (rendered, at the final print width) when this runs.
   function paginateReportForPrint(area){
@@ -11046,94 +11282,121 @@
     if(!content) return;
 
     const capacity = (REPORT_SHEET_HEIGHT_MM - REPORT_PAGENUM_BAND_MM) * REPORT_MM_PX;
+    const runLeft = page.dataset.runLeft || '';
+    const runRight = page.dataset.runRight || '';
+    const pageLeft = page.dataset.pageLeft || '';
+    const mk = (tag, cls) => { const el = document.createElement(tag); if(cls) el.className = cls; return el; };
 
-    const table = content.querySelector('table.rp2-table');
-    const tableWrap = table ? table.closest('.rp2-table-wrap') : null;
+    const kids = Array.from(content.children);
     const footer = content.querySelector('.rp2-footer');
-    // Everything except the table and the closing footer: topbar, header,
-    // summary, insights, section label (or the "no invoices" notice).
-    const headBlocks = Array.from(content.children).filter(el => el !== tableWrap && el !== footer);
-
-    // Measure the table BEFORE moving anything out of it.
-    const rows = table ? Array.from(table.tBodies[0].rows) : [];
-    const rowH = rows.map(r => r.getBoundingClientRect().height);
-    const thead = table ? table.tHead : null;
-    const tfoot = table ? table.tFoot : null;
-    const tableW = table ? table.getBoundingClientRect().width : 0;
-    // Each sheet gets its own table, so pin the column widths (as %) to
-    // what the full table used — otherwise every page could size its
-    // columns differently.
-    const colPct = thead ? Array.from(thead.rows[0].cells).map(c => (c.getBoundingClientRect().width / tableW) * 100) : [];
-
-    const makeTable = () => {
-      const wrap = document.createElement('div');
-      wrap.className = 'rp2-table-wrap';
-      const t = document.createElement('table');
-      t.className = 'rp2-table';
-      t.style.tableLayout = 'fixed';
-      const cg = document.createElement('colgroup');
-      colPct.forEach(pct => { const col = document.createElement('col'); col.style.width = pct + '%'; cg.appendChild(col); });
-      t.appendChild(cg);
-      t.appendChild(thead.cloneNode(true));
-      const tbody = document.createElement('tbody');
-      t.appendChild(tbody);
-      wrap.appendChild(t);
-      return { wrap, table: t, tbody };
-    };
 
     const sheets = [];
+    let body = null;
+    const baseCount = () => (sheets.length > 1 ? 1 : 0); // running header on sheets 2+
     const newSheet = () => {
-      const sheet = document.createElement('div');
-      sheet.className = 'rp2-sheet';
-      const body = document.createElement('div');
-      body.className = 'rp2-sheet-body';
+      const sheet = mk('div', 'rp2-sheet');
+      body = mk('div', 'rp2-sheet-body');
       sheet.appendChild(body);
       page.appendChild(sheet); // has to be in the document so its height can be measured
       sheets.push(sheet);
-      return body;
+      if(sheets.length > 1){
+        const rh = mk('div', 'rp2-runhead');
+        rh.innerHTML = '<span><b></b></span><span></span>';
+        rh.firstChild.firstChild.textContent = runLeft;
+        rh.lastChild.textContent = runRight;
+        body.appendChild(rh);
+      }
+    };
+    const over = () => body.offsetHeight > capacity;
+
+    // Places a block that can't be split; starts a new sheet if it doesn't fit.
+    const placeBlock = (el) => {
+      body.appendChild(el);
+      if(over() && body.children.length > baseCount() + 1){
+        body.removeChild(el);
+        newSheet();
+        body.appendChild(el);
+      }
     };
 
-    if(!table){
-      const body = newSheet();
-      headBlocks.forEach(el => body.appendChild(el));
-      if(footer) body.appendChild(footer);
-    } else {
-      let next = 0; // index of the first row not placed on a sheet yet
-      let first = true;
-      while(next < rows.length){
-        const body = newSheet();
-        if(first) headBlocks.forEach(el => body.appendChild(el));
-        first = false;
-        const t = makeTable();
-        body.appendChild(t.wrap);
+    const placeSection = (sec) => {
+      const table = sec.querySelector('table.rp2-table');
+      if(!table){ placeBlock(sec); return; } // label + "nothing in this period" notice
 
-        // Estimate how many rows fit from their measured heights...
-        const room = capacity - body.offsetHeight;
-        let count = 0, used = 0;
-        while(next + count < rows.length && used + rowH[next + count] <= room){ used += rowH[next + count]; count++; }
-        if(count === 0) count = 1; // always make progress
-        for(let i = 0; i < count; i++) t.tbody.appendChild(rows[next + i]);
+      const label = sec.querySelector('.rp2-section-label');
+      const thead = table.tHead;
+      const colgroup = table.querySelector('colgroup');
+      const rows = Array.from(table.tBodies[0].rows);
+      const total = rows.length && rows[rows.length - 1].classList.contains('rp2-total') ? rows.pop() : null;
 
-        // ...the last sheet also carries the totals row and footer.
-        let isLast = next + count >= rows.length;
-        if(isLast){ t.table.appendChild(tfoot); if(footer) body.appendChild(footer); }
-
-        // ...then check against the real layout and move rows to the next
-        // sheet until it truly fits.
-        while(body.offsetHeight > capacity && t.tbody.rows.length > 1){
-          t.tbody.removeChild(t.tbody.lastElementChild);
-          if(isLast){ t.table.removeChild(tfoot); if(footer) body.removeChild(footer); isLast = false; }
-        }
-        next += t.tbody.rows.length;
+      // One row = one group, except the last data row travels with the totals
+      // row so the totals never end up alone at the top of a page.
+      const groups = rows.map(r => [r]);
+      if(total){
+        if(groups.length) groups[groups.length - 1].push(total); else groups.push([total]);
       }
-    }
+
+      const makePiece = (continued) => {
+        const el = mk('div', 'rp2-section');
+        const lab = label.cloneNode(true);
+        if(continued){
+          const c = mk('span', 'rp2-cont');
+          c.textContent = '— continued';
+          lab.insertBefore(c, null);
+        }
+        el.appendChild(lab);
+        const wrap = mk('div', 'rp2-table-wrap');
+        const t = mk('table', 'rp2-table');
+        if(colgroup) t.appendChild(colgroup.cloneNode(true));
+        t.appendChild(thead.cloneNode(true));
+        const tbody = mk('tbody');
+        t.appendChild(tbody);
+        wrap.appendChild(t);
+        el.appendChild(wrap);
+        return { el, tbody };
+      };
+
+      let gi = 0, part = 0;
+      while(gi < groups.length){
+        const piece = makePiece(part > 0);
+        body.appendChild(piece.el);
+        let placed = 0;
+        while(gi < groups.length){
+          const g = groups[gi];
+          g.forEach(r => piece.tbody.appendChild(r));
+          if(over()){ g.forEach(r => piece.tbody.removeChild(r)); break; }
+          gi++; placed++;
+        }
+        if(placed === 0){
+          if(body.children.length > baseCount() + 1){
+            // Not even label + header + one row fit here: move the whole piece to a fresh sheet.
+            body.removeChild(piece.el);
+            newSheet();
+            continue;
+          }
+          // Fresh sheet and still too tall (a single huge row) — force it so we always make progress.
+          groups[gi].forEach(r => piece.tbody.appendChild(r));
+          gi++;
+        }
+        part++;
+        if(gi < groups.length) newSheet();
+      }
+    };
+
+    newSheet();
+    kids.forEach(el => {
+      if(el === footer) return; // replaced by each page's own footer
+      if(el.classList.contains('rp2-section')) placeSection(el);
+      else placeBlock(el);
+    });
 
     content.remove();
     page.classList.add('rp2-paged');
     sheets.forEach((sheet, i) => {
-      const marker = document.createElement('div');
-      marker.className = 'rp2-pagenum';
-      marker.textContent = `Page ${i + 1} of ${sheets.length}`;
+      const marker = mk('div', 'rp2-pagenum');
+      marker.innerHTML = '<span></span><span></span>';
+      marker.firstChild.textContent = pageLeft;
+      marker.lastChild.textContent = `Page ${i + 1} of ${sheets.length}`;
       sheet.appendChild(marker);
     });
   }
