@@ -2942,7 +2942,7 @@
   .rp2-label{ font-size:9px; text-transform:uppercase; letter-spacing:0.7px; color:#9AA0AF; font-weight:700; }
   .rp2-val{ font-size:17px; line-height:1.15; font-weight:800; letter-spacing:-0.015em; font-variant-numeric:tabular-nums; white-space:nowrap; }
   .rp2-val.neg{ color:#DC2626; }
-  .rp2-stat-sub{ margin-top:4px; font-size:9.5px; color:#9AA0AF; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rp2-stat-sub{ margin-top:4px; font-size:9.5px; color:#9AA0AF; font-weight:500; white-space:normal; overflow:visible; overflow-wrap:anywhere; }
   /* Profit is the headline number, so it gets the filled card. */
   .rp2-stat.is-hero{ background:linear-gradient(135deg,#3730A3,#4F46E5 60%,#6366F1); border-color:transparent; color:#fff; }
   .rp2-stat.is-hero::before{ display:none; }
@@ -2957,7 +2957,7 @@
     border-radius:12px; overflow:hidden; background:#FAFAFD;
   }
   .rp2-insight{
-    flex:1 1 0; min-width:110px; padding:9px 12px; display:flex; align-items:center; gap:8px;
+    flex:1 1 0; min-width:110px; padding:9px 12px; display:flex; align-items:flex-start; gap:8px;
     border-right:1px solid #E3E5EE;
   }
   .rp2-insight:last-child{ border-right:none; }
@@ -2968,8 +2968,8 @@
   .rp2-insight-icon svg{ width:14px; height:14px; }
   .rp2-insight-text{ min-width:0; }
   .rp2-insight-label{ font-size:8.5px; text-transform:uppercase; letter-spacing:0.5px; color:#9AA0AF; font-weight:700; margin-bottom:2px; }
-  .rp2-insight-val{ font-size:12px; font-weight:700; color:#171923; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
-  .rp2-insight-sub{ font-size:9.5px; color:#9AA0AF; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rp2-insight-val{ font-size:12px; line-height:1.2; font-weight:700; color:#171923; white-space:normal; overflow:visible; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
+  .rp2-insight-sub{ font-size:9.5px; color:#9AA0AF; font-weight:500; white-space:normal; overflow:visible; overflow-wrap:anywhere; }
   /* Top client: give the name more room and let long names wrap instead of truncating */
   .rp2-insight.is-topclient{ flex:2.2 1 0; min-width:150px; }
   .rp2-insight.is-topclient .rp2-insight-val{ white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:anywhere; line-height:1.2; }
