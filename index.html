@@ -5179,21 +5179,54 @@
   // Wires an input so it always displays with thousands commas as the user
   // types, keeping the caret in the right place relative to the digits.
   function attachThousandsFormatting(input){
-    if(!input || input.dataset.commaFormatted) return;
-    input.dataset.commaFormatted = 'true';
-    input.addEventListener('input', () => {
-      const start = input.selectionStart === null ? input.value.length : input.selectionStart;
-      const digitsBeforeCursor = input.value.slice(0, start).replace(/[^0-9]/g, '').length;
-      input.value = formatNumberString(input.value);
-      if(digitsBeforeCursor === 0){ input.setSelectionRange(0, 0); return; }
-      let count = 0, pos = input.value.length;
-      for(let i = 0; i < input.value.length; i++){
-        if(/[0-9]/.test(input.value[i])) count++;
-        if(count === digitsBeforeCursor){ pos = i + 1; break; }
-      }
-      input.setSelectionRange(pos, pos);
-    });
+    // Formatting is handled by one delegated listener below, which covers
+    // every amount input (including ones rendered later). Kept for callers.
+    if(input) input.dataset.commaFormatted = 'true';
   }
+  // Live comma formatting that keeps the caret exactly where the user is
+  // typing: it counts the digits/dots to the RIGHT of the caret (which
+  // formatting never changes) and restores the caret from the end. So typing
+  // "1" then "." leaves the caret after the "." ready for the decimals.
+  function formatInputLive(input){
+    const val = input.value;
+    const start = input.selectionStart === null ? val.length : input.selectionStart;
+    const sigAfter = val.slice(start).replace(/[^0-9.]/g, '').length;
+    let out = formatNumberString(val);
+    if(out !== val) input.value = out;
+    let pos = out.length, c = 0;
+    while(pos > 0 && c < sigAfter){ pos--; if(/[0-9.]/.test(out[pos])) c++; }
+    try{ input.setSelectionRange(pos, pos); }catch(_){}
+  }
+  document.addEventListener('input', (e) => {
+    const el = e.target;
+    if(!el || el.tagName !== 'INPUT' || el.type !== 'text') return;
+    const im = el.getAttribute('inputmode');
+    if((im !== 'decimal' && im !== 'numeric') || el.hasAttribute('data-no-commas')) return;
+    formatInputLive(el);
+  }, true);
+  // You can type as many decimals as you like; once you finish (leave the
+  // box, press Enter, or the value is committed) an amount with decimals is
+  // rounded to 2 places, e.g. 12.3456 -> 12.35 and 5.5 -> 5.50. Whole numbers
+  // and LBP / quantity boxes are left as they are.
+  function isAmountInput(el){
+    return el && el.tagName === 'INPUT' && el.type === 'text' &&
+      el.getAttribute('inputmode') === 'decimal' &&
+      !el.hasAttribute('data-no-commas') && !el.classList.contains('es-item-qty');
+  }
+  function roundAmountInput(el){
+    if(!isAmountInput(el)) return;
+    const raw = el.value;
+    if(raw.indexOf('.') === -1) return;
+    const n = parseFloat(raw.replace(/,/g, ''));
+    if(isNaN(n)) return;
+    const rounded = formatNumberString((Math.sign(n) * Math.round(Math.abs(n) * 100 + 1e-9) / 100).toFixed(2));
+    if(rounded === raw) return;
+    el.value = rounded;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  document.addEventListener('change', (e) => roundAmountInput(e.target), true);
+  document.addEventListener('focusout', (e) => roundAmountInput(e.target), true);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Enter') roundAmountInput(e.target); }, true);
 
   // ---------- Modal (replaces prompt()/confirm(), which don't work in this sandboxed view) ----------
   const modalOverlay = $('#modalOverlay');
@@ -10738,14 +10771,14 @@
         <div class="es-item-row" style="border:1px solid var(--line-strong);border-radius:10px;padding:8px 10px;margin-bottom:8px;">
           <input type="text" class="es-item-name" data-idx="${idx}" placeholder="Item name" value="${escapeHtml(it.name)}" style="width:100%;box-sizing:border-box;margin-bottom:6px;padding:7px 9px;border:1px solid var(--line-strong);border-radius:8px;font-family:inherit;font-size:14px;">
           <div style="display:flex;gap:6px;align-items:center;">
-            <input type="number" step="any" min="0" class="es-item-qty" data-idx="${idx}" placeholder="Qty" value="${it.qty}" style="width:56px;padding:7px 4px;text-align:center;border:1px solid var(--line-strong);border-radius:8px;">
-            <input type="number" step="0.01" min="0" class="es-item-revenue" data-idx="${idx}" placeholder="Revenue $" value="${Number(it.revenueUsd).toFixed(2)}" style="flex:1;min-width:0;padding:7px 4px;border:1px solid var(--line-strong);border-radius:8px;">
-            <input type="number" step="0.01" min="0" class="es-item-cost" data-idx="${idx}" placeholder="Cost $" value="${Number(it.costUsd).toFixed(2)}" style="flex:1;min-width:0;padding:7px 4px;border:1px solid var(--line-strong);border-radius:8px;">
+            <input type="text" inputmode="decimal" autocomplete="off" class="es-item-qty" data-idx="${idx}" placeholder="Qty" value="${formatNumberString(String(it.qty))}" style="width:56px;padding:7px 4px;text-align:center;border:1px solid var(--line-strong);border-radius:8px;">
+            <input type="text" inputmode="decimal" autocomplete="off" class="es-item-revenue" data-idx="${idx}" placeholder="Revenue $" value="${formatNumberString(Number(it.revenueUsd).toFixed(2))}" style="flex:1;min-width:0;padding:7px 4px;border:1px solid var(--line-strong);border-radius:8px;">
+            <input type="text" inputmode="decimal" autocomplete="off" class="es-item-cost" data-idx="${idx}" placeholder="Cost $" value="${formatNumberString(Number(it.costUsd).toFixed(2))}" style="flex:1;min-width:0;padding:7px 4px;border:1px solid var(--line-strong);border-radius:8px;">
             <button type="button" class="mini-btn danger es-item-remove" data-idx="${idx}" style="flex:0 0 auto;padding:7px 9px;">🗑️</button>
           </div>
         </div>
       `).join('');
-      updateTotalsPreview();
+            updateTotalsPreview();
     }
 
     function updateTotalsPreview(){
@@ -10778,11 +10811,11 @@
           </div>
           <div class="modal-field">
             <span class="field-label">Amount received (USD)</span>
-            <input type="number" step="0.01" id="esReceived" value="${escapeHtml(fieldVals.received)}">
+            <input type="text" inputmode="decimal" autocomplete="off" id="esReceived" value="${escapeHtml(formatNumberString(fieldVals.received))}">
           </div>
           <div class="modal-field">
             <span class="field-label">Tip received (USD) — kept by business, separate from client balance</span>
-            <input type="number" step="0.01" min="0" id="esTip" value="${escapeHtml(fieldVals.tip)}">
+            <input type="text" inputmode="decimal" autocomplete="off" id="esTip" value="${escapeHtml(formatNumberString(fieldVals.tip))}">
           </div>
           <div id="esTotalsPreview" style="font-size:12.5px;color:var(--ink-faint);margin:-4px 0 10px;font-weight:600;"></div>
           <div class="modal-error" id="modalError"></div>
@@ -10793,15 +10826,17 @@
         </form>`;
       modalOverlay.classList.add('show');
       renderItemRows();
+      attachThousandsFormatting(document.getElementById('esReceived'));
+      attachThousandsFormatting(document.getElementById('esTip'));
 
       const listEl = document.getElementById('esItemsList');
       listEl.addEventListener('input', (e) => {
         const idx = Number(e.target.dataset.idx);
         if(isNaN(idx)) return;
         if(e.target.classList.contains('es-item-name')) itemsState[idx].name = e.target.value;
-        else if(e.target.classList.contains('es-item-qty')) itemsState[idx].qty = parseFloat(e.target.value);
-        else if(e.target.classList.contains('es-item-revenue')) itemsState[idx].revenueUsd = parseFloat(e.target.value);
-        else if(e.target.classList.contains('es-item-cost')) itemsState[idx].costUsd = parseFloat(e.target.value);
+        else if(e.target.classList.contains('es-item-qty')) itemsState[idx].qty = parseFormattedNumber(e.target.value);
+        else if(e.target.classList.contains('es-item-revenue')) itemsState[idx].revenueUsd = parseFormattedNumber(e.target.value);
+        else if(e.target.classList.contains('es-item-cost')) itemsState[idx].costUsd = parseFormattedNumber(e.target.value);
         updateTotalsPreview();
       });
       listEl.addEventListener('click', (e) => {
@@ -10826,8 +10861,8 @@
             date: document.getElementById('esDate').value,
             time: document.getElementById('esTime').value,
             customer: document.getElementById('esCustomer').value,
-            received: document.getElementById('esReceived').value,
-            tip: document.getElementById('esTip').value
+            received: document.getElementById('esReceived').value.replace(/,/g, ''),
+            tip: document.getElementById('esTip').value.replace(/,/g, '')
           });
         });
       });
