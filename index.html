@@ -2990,6 +2990,11 @@
   table.rp2-table td.rp2-muted{ color:#9AA0AF; }
   table.rp2-table tr.rp2-total td{ border-top:1.5px solid #171923; border-bottom:none; font-weight:800; padding:9px 8px; background:#F4F5FA; }
   .rp2-tag{ display:inline-block; margin-left:5px; padding:0 6px; border-radius:999px; background:#FEF3E2; color:#B45309; font-size:8.8px; font-weight:700; line-height:1.6; white-space:nowrap; }
+  .rp2-asof{ font-size:9px; font-weight:600; letter-spacing:0.3px; text-transform:none; color:#9AA0AF; }
+  .rp2-st{ display:inline-block; padding:0 7px; border-radius:999px; font-size:8.8px; font-weight:700; line-height:1.7; white-space:nowrap; }
+  .rp2-st.paid{ background:#E7F7F1; color:#047857; }
+  .rp2-st.part{ background:#FEF3E2; color:#B45309; }
+  .rp2-st.unpaid{ background:#FDECEC; color:#B91C1C; }
   .rp2-empty{ text-align:center; color:#9AA0AF; padding:26px 0; font-size:12px; border:1.5px dashed #DEE0EA; border-radius:12px; }
   .rp2-footer{ margin-top:22px; padding-top:10px; border-top:1px solid #E3E5EE; display:flex; justify-content:space-between; gap:10px; font-size:9.5px; color:#9AA0AF; }
   .rp2-footer b{ color:#6B7080; }
@@ -11321,12 +11326,94 @@
   // Mirrors the filtering in runReportSearch() above, but for the whole
   // business (no client filter) and returns structured data instead of
   // writing straight into the DOM.
+  // Who owes whom, and who has paid, for the report period.
+  // Client balances: positive = the client owes me, negative = I owe the client.
+  // For a period that hasn't ended yet the live balance is used. For a past
+  // period the balance at the end of it is rebuilt from the client's last
+  // invoice up to then (each invoice keeps the balance right after it) plus
+  // any payments logged for that client afterwards.
+  const REPORT_PAYMENT_NOTE_RE = /^(?:(?:Partial payment|Full payment(?: \+ tip| \(overpaid\))?|Balance paid(?: out)?) — |Paid )(.+)$/;
+  function computeReportAccounts(periodSales, endTs){
+    const isLive = endTs >= Date.now();
+    const key = (n) => String(n || '').trim().toLowerCase();
+    const payments = [];
+    state.balanceLog.forEach(e => {
+      const m = REPORT_PAYMENT_NOTE_RE.exec(e.note || '');
+      if(m) payments.push({ date: e.date, name: key(m[1]), net: e.delta - (e.tipUsd || 0) });
+    });
+    const periodStart = periodSales.length ? Math.min(...periodSales.map(x => x.date)) : null;
+    const asOfSales = state.sales.filter(x => x.date <= endTs);
+    const lastSaleOf = (id) => {
+      let best = null;
+      asOfSales.forEach(x => { if(x.clientId === id && (!best || x.date >= best.date)) best = x; });
+      return best;
+    };
+    const balanceOf = (c, lastSale) => {
+      if(isLive) return c.balanceUsd;
+      if(!lastSale || typeof lastSale.newBalance !== 'number') return 0;
+      let bal = lastSale.newBalance;
+      payments.forEach(p => { if(p.name === key(c.name) && p.date > lastSale.date && p.date <= endTs) bal -= p.net; });
+      return Math.abs(bal) < 0.005 ? 0 : bal;
+    };
+
+    const owedToMe = [], iOwe = [], balanceById = new Map();
+    state.clients.forEach(c => {
+      const last = lastSaleOf(c.id);
+      const bal = balanceOf(c, last);
+      balanceById.set(c.id, bal);
+      const row = { name: c.name, balance: bal, lastDate: last ? last.date : null };
+      if(bal > 0.004) owedToMe.push(row); else if(bal < -0.004) iOwe.push(row);
+    });
+    owedToMe.sort((a, b) => b.balance - a.balance);
+    iOwe.sort((a, b) => a.balance - b.balance);
+
+    // Paid / not paid yet, for every customer invoiced in this period.
+    const rows = new Map();
+    periodSales.forEach(x => {
+      const k = x.clientId || '__walkin';
+      const cur = rows.get(k) || { id: x.clientId || null, name: x.clientId ? x.customerName : 'Walk-in (no account)', invoiced: 0, received: 0, count: 0 };
+      cur.invoiced += x.revenueUsd;
+      cur.received += (x.amountReceived || 0) - (x.tipUsd || 0);
+      cur.count += 1;
+      if(x.clientId){
+        const cl = state.clients.find(c => c.id === x.clientId);
+        if(cl) cur.name = cl.name;
+      }
+      rows.set(k, cur);
+    });
+    const periodEnd = endTs;
+    const periodRows = [...rows.values()].map(r => {
+      // Later payments made inside the period on an older balance count as received too.
+      if(r.id){
+        const cl = state.clients.find(c => c.id === r.id);
+        if(cl){
+          payments.forEach(p => { if(p.name === key(cl.name) && p.net > 0 && p.date >= periodStart && p.date <= periodEnd) r.received += p.net; });
+        }
+      }
+      const bal = r.id ? (balanceById.has(r.id) ? balanceById.get(r.id) : 0) : 0;
+      r.balance = bal;
+      r.status = bal > 0.004 ? (r.received > 0.004 ? 'part' : 'unpaid') : 'paid';
+      return r;
+    });
+    const order = { unpaid: 0, part: 1, paid: 2 };
+    periodRows.sort((a, b) => order[a.status] - order[b.status] || b.balance - a.balance || a.name.localeCompare(b.name));
+
+    // Rate in effect at the end of the period (falls back to today's rate).
+    let asOfRate = state.rate.value;
+    if(!isLive){
+      const lastAny = asOfSales.reduce((best, x) => (!best || x.date >= best.date) ? x : best, null);
+      if(lastAny && lastAny.rateUsed) asOfRate = lastAny.rateUsed;
+    }
+    return { isLive, endTs, owedToMe, iOwe, periodRows, asOfRate };
+  }
+
   function buildBusinessReportData(mode){
-    let matches, label, balanceMatches;
+    let matches, label, balanceMatches, endTs;
     if(mode === 'day'){
       const val = $('#reportExportDay').value;
       if(!val){ alertBanner('Pick a day first.'); return null; }
       const [y, m, day] = val.split('-').map(Number);
+      endTs = new Date(y, m-1, day, 23, 59, 59, 999).getTime();
       const inRange = (ts) => {
         const d = new Date(ts);
         return d.getFullYear()===y && d.getMonth()===m-1 && d.getDate()===day;
@@ -11338,6 +11425,7 @@
       const val = $('#reportExportMonth').value;
       if(!val){ alertBanner('Pick a month first.'); return null; }
       const [y, m] = val.split('-').map(Number);
+      endTs = new Date(y, m, 0, 23, 59, 59, 999).getTime();
       const inRange = (ts) => {
         const d = new Date(ts);
         return d.getFullYear()===y && d.getMonth()===m-1;
@@ -11348,6 +11436,7 @@
     } else {
       const val = parseInt($('#reportExportYear').value);
       if(!val || val < 1970){ alertBanner('Enter a valid year.'); return null; }
+      endTs = new Date(val, 11, 31, 23, 59, 59, 999).getTime();
       const inRange = (ts) => new Date(ts).getFullYear() === val;
       matches = state.sales.filter(s => inRange(s.date));
       balanceMatches = state.balanceLog.filter(e => inRange(e.date));
@@ -11412,7 +11501,9 @@
       if(rankedDays.length) busiestDay = rankedDays[0];
     }
 
-    return { mode, label, sales: matches, revenue, cost, profit, tips, saleTips, laterTips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay, balanceEntries: balanceMatches, cashIn, cashOut };
+    const accounts = computeReportAccounts(matches, endTs);
+
+    return { mode, label, accounts, sales: matches, revenue, cost, profit, tips, saleTips, laterTips, rateMin, rateMax, avgRevenue, marginPct, topClient, busiestDay, balanceEntries: balanceMatches, cashIn, cashOut };
   }
 
   function buildBusinessReportHtml(data){
@@ -11525,6 +11616,56 @@
       html += '</tbody></table></div>';
     }
     html += '</div>';
+
+    // ---- Customer accounts: who paid, who owes me, who I owe ----
+    const acc = data.accounts;
+    const asOfText = acc.isLive ? 'as of today' : 'as of ' + new Date(acc.endTs).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    const fmtDay = (ts) => ts ? new Date(ts).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
+    const stLabel = { paid: 'Paid', part: 'Partly paid', unpaid: 'Not paid yet' };
+
+    html += '<div class="rp2-section">';
+    html += `<div class="rp2-section-label">Paid &amp; not paid yet <span class="rp2-count">${acc.periodRows.length}</span><span class="rp2-asof">${escapeHtml(asOfText)}</span></div>`;
+    if(acc.periodRows.length === 0){
+      html += '<div class="rp2-empty">No customers were invoiced in this period.</div>';
+    } else {
+      const nPaid = acc.periodRows.filter(r => r.status === 'paid').length;
+      const nOpen = acc.periodRows.length - nPaid;
+      const totInv = acc.periodRows.reduce((t, r) => t + r.invoiced, 0);
+      const totRec = acc.periodRows.reduce((t, r) => t + r.received, 0);
+      const totBal = acc.periodRows.reduce((t, r) => t + (r.balance > 0.004 ? r.balance : 0), 0);
+      html += '<div class="rp2-table-wrap"><table class="rp2-table">';
+      html += '<colgroup><col style="width:32%"><col style="width:16%"><col style="width:16%"><col style="width:16%"><col style="width:20%"></colgroup>';
+      html += '<thead><tr><th>Customer</th><th class="rp2-num">Invoiced</th><th class="rp2-num">Received</th><th class="rp2-num">Still owes</th><th>Status</th></tr></thead><tbody>';
+      acc.periodRows.forEach(r => {
+        const owes = r.balance > 0.004;
+        html += `<tr><td>${escapeHtml(r.name)}</td><td class="rp2-num">${fmtUsd(r.invoiced)}</td><td class="rp2-num">${fmtUsd(r.received)}</td><td class="rp2-num${owes ? ' rp2-profit-neg' : ' rp2-muted'}">${owes ? fmtUsd(r.balance) : '—'}</td><td><span class="rp2-st ${r.status}">${stLabel[r.status]}</span></td></tr>`;
+      });
+      html += `<tr class="rp2-total"><td>Total</td><td class="rp2-num">${fmtUsd(totInv)}</td><td class="rp2-num">${fmtUsd(totRec)}</td><td class="rp2-num${totBal > 0.004 ? ' rp2-profit-neg' : ''}">${totBal > 0.004 ? fmtUsd(totBal) : '—'}</td><td>${nPaid} paid · ${nOpen} open</td></tr>`;
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+
+    const accountTable = (rows, title, emptyMsg, totalLabel, negClass) => {
+      let out = '<div class="rp2-section">';
+      out += `<div class="rp2-section-label">${title} <span class="rp2-count">${rows.length}</span><span class="rp2-asof">${escapeHtml(asOfText)}</span></div>`;
+      if(rows.length === 0){
+        out += `<div class="rp2-empty">${emptyMsg}</div>`;
+      } else {
+        const tot = rows.reduce((t, r) => t + Math.abs(r.balance), 0);
+        out += '<div class="rp2-table-wrap"><table class="rp2-table">';
+        out += '<colgroup><col style="width:38%"><col style="width:20%"><col style="width:20%"><col style="width:22%"></colgroup>';
+        out += '<thead><tr><th>Customer</th><th>Last invoice</th><th class="rp2-num">Amount (USD)</th><th class="rp2-num">Amount (LBP)</th></tr></thead><tbody>';
+        rows.forEach(r => {
+          const amt = Math.abs(r.balance);
+          out += `<tr><td>${escapeHtml(r.name)}</td><td>${escapeHtml(fmtDay(r.lastDate))}</td><td class="rp2-num${negClass}">${fmtUsd(amt)}</td><td class="rp2-num rp2-muted">${fmtLbp(amt * acc.asOfRate)}</td></tr>`;
+        });
+        out += `<tr class="rp2-total"><td colspan="2">${totalLabel}</td><td class="rp2-num${negClass}">${fmtUsd(tot)}</td><td class="rp2-num">${fmtLbp(tot * acc.asOfRate)}</td></tr>`;
+        out += '</tbody></table></div>';
+      }
+      return out + '</div>';
+    };
+    html += accountTable(acc.owedToMe, 'Owed to me', 'Nobody owes you anything.', 'Total owed to me', '');
+    html += accountTable(acc.iOwe, 'I owe', 'You don\'t owe anyone anything.', 'Total I owe', '');
 
     html += `<div class="rp2-footer"><span><b>${escapeHtml(businessName)}</b> · ${escapeHtml(periodNoun)}</span><span>Generated ${escapeHtml(generated)}</span></div>`;
     html += '</div></div>';
