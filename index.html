@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TDA Business</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%234F46E5'/%3E%3Cpath d='M6 2h9l3 3v17l-3-2-3 2-3-2-3 2V2z' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='9' y1='7' x2='15' y2='7' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='9' y1='11' x2='15' y2='11' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='9' y1='15' x2='13' y2='15' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
@@ -3436,6 +3436,287 @@
     .inv-layout{ grid-template-columns:minmax(0, 1fr) 460px; gap:32px; }
     .catalog-picker{ grid-template-columns:repeat(auto-fill, minmax(176px, 1fr)); }
   }
+
+  /* ==========================================================
+     Invoice page v5 - one consolidated, fluid design system.
+     CSS only. Replaces the earlier v3/v4 passes.
+     ========================================================== */
+  html{ -webkit-text-size-adjust:100%; }
+  body{ overflow-x:clip; }
+  #tab-invoice{
+    --i-surface:#fff; --i-sunk:#F6F7FB; --i-hair:rgba(20,21,31,.08);
+    --i-ring:0 0 0 3px rgba(79,70,229,.18);
+    --i-card:0 1px 2px rgba(20,21,31,.04), 0 12px 28px -18px rgba(20,21,31,.22);
+  }
+  #tab-invoice button, #tab-invoice .pick-row{ touch-action:manipulation; }
+
+  /* ---- Title ---- */
+  .inv-head{ margin:0 0 clamp(14px,2.2vw,24px); }
+  .inv-head h2{ font-size:clamp(23px,1.3vw + 18px,31px); line-height:1.12; letter-spacing:-.035em; }
+  .inv-subtitle{ font-size:clamp(13px,.35vw + 12px,15px); max-width:62ch; }
+
+  /* ---- Search + scan ---- */
+  .inv-find-row{ display:flex; gap:8px; align-items:stretch; }
+  .inv-find-row .inv-search{ flex:1 1 auto; min-width:0; }
+  .inv-search input{
+    width:100%; height:52px; background:var(--i-surface); font-weight:500;
+    border:1px solid var(--i-hair); border-radius:14px; box-shadow:var(--i-card);
+  }
+  .inv-search input:focus{ border-color:var(--cedar); box-shadow:var(--i-ring); outline:0; }
+  .inv-scan-btn{
+    height:52px; flex:none; border-radius:14px; border:0; color:#fff;
+    background:linear-gradient(135deg,#6366F1,#4338CA);
+    box-shadow:0 10px 20px -10px rgba(67,56,202,.7);
+  }
+  .inv-scan-btn:active{ transform:scale(.96); }
+  @media (max-width:389px){ .inv-scan-btn span{ display:none; } .inv-scan-btn{ width:52px; padding:0; } }
+
+  /* ---- Category chips: single scrolling row ---- */
+  .cat-chips{
+    display:flex; gap:8px; overflow-x:auto; padding:12px 2px 4px; scrollbar-width:none;
+    -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity;
+  }
+  .cat-chips::-webkit-scrollbar{ display:none; }
+  .cat-chip{
+    scroll-snap-align:start; padding:9px 16px; background:var(--i-surface);
+    border:1px solid var(--i-hair); box-shadow:none; color:var(--ink-soft);
+  }
+  .cat-chip.active{ background:var(--ink); border-color:var(--ink); color:#fff; }
+
+  /* ---- Product grid ---- */
+  .catalog-picker{
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));
+    gap:clamp(8px,1.1vw,12px);
+  }
+  @media (max-width:519px){ .catalog-picker{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (min-width:600px) and (max-width:899px){
+    .catalog-picker{ grid-template-columns:repeat(3,minmax(0,1fr)); max-height:clamp(320px,50vh,560px); }
+  }
+  .pick-cat-label{
+    padding:16px 2px 2px; font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  .pick-row{
+    min-height:104px; padding:14px; border-radius:16px; background:var(--i-surface);
+    border:1px solid var(--i-hair); box-shadow:var(--i-card);
+  }
+  .pick-row-left{ padding-right:0; }
+  .pick-name{ font-size:clamp(13.5px,.3vw + 12.8px,15px); font-weight:600; }
+  .pick-price{ padding-right:38px; }
+  .pick-price b{ font-size:16px; letter-spacing:-.01em; color:var(--cedar-dark); }
+  .pick-plus{
+    top:auto; bottom:12px; right:12px; min-width:30px; height:30px; font-size:19px;
+    background:var(--cedar); color:#fff; box-shadow:0 6px 12px -5px rgba(79,70,229,.6);
+    transition:transform .12s ease;
+  }
+  .pick-row:active .pick-plus{ transform:scale(.88); }
+  .pick-row.in-cart{
+    background:#F5F6FF; border-color:rgba(79,70,229,.4);
+    box-shadow:inset 0 0 0 1px rgba(79,70,229,.2), var(--i-card);
+  }
+  .pick-row.in-cart .pick-plus{ background:var(--ink); font-size:13px; }
+  .pick-row.just-added{ box-shadow:0 0 0 3px rgba(5,150,105,.25); }
+
+  /* ---- Order card ---- */
+  .inv-order-head{ padding:0 2px 12px; align-items:center; }
+  .inv-order-head h3{ font-size:20px; }
+  .inv-count{
+    padding:5px 12px; border-radius:999px; background:var(--ink); color:#fff;
+    font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums;
+  }
+  .inv-count.is-empty{ background:#E7E9F3; color:var(--ink-soft); }
+  .inv-clear{ border-radius:999px; }
+  .inv-receipt{
+    background:var(--i-surface); border:1px solid var(--i-hair); border-radius:22px; overflow:hidden;
+    box-shadow:0 1px 2px rgba(20,21,31,.04), 0 24px 48px -28px rgba(20,21,31,.3);
+  }
+  #lineItems{ padding:0 clamp(14px,3vw,20px); }
+  .line-item{ padding:16px 0; border-bottom:1px solid var(--i-hair); }
+  .line-thumb{ border-radius:12px; }
+  .line-name{ font-size:clamp(15px,.3vw + 14.3px,16px); }
+  .qty-row{ flex-wrap:wrap; row-gap:8px; }
+  .qty-controls{ border:0; border-radius:999px; background:#F0F1F8; }
+  .qty-controls button{ border-radius:999px; }
+  .line-price{ margin-left:auto; }
+  .lp-usd{ font-size:clamp(16px,.4vw + 15px,18px); }
+  .inv-empty{ padding:44px 20px 48px; }
+  .inv-empty-icon{ width:60px; height:60px; border-radius:20px; background:linear-gradient(135deg,#EEF0FF,#E0E3FF); }
+
+  /* ---- Totals ---- */
+  .totals-card{ padding:clamp(14px,3vw,20px); background:var(--i-surface); border-top:1px solid var(--i-hair); }
+  .totals-row{ gap:12px; }
+  .totals-row > span:last-child, .totals-row > b{ text-align:right; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+  .totals-row.sub{ font-size:13.5px; }
+  .totals-row.grand{
+    margin:14px 0 0; width:auto; padding:18px 20px; border-radius:18px;
+    align-items:center; flex-wrap:wrap; gap:6px 12px;
+    background:linear-gradient(135deg,#3B36B8 0%,#231F66 60%,#17163F 100%);
+    box-shadow:0 18px 34px -18px rgba(55,48,163,.7);
+  }
+  .grand-amts{ margin-left:auto; text-align:right; }
+  .grand-usd{ font-size:clamp(27px,3.2vw + 14px,38px); line-height:1.05; letter-spacing:-.03em; }
+  .grand-lbp{ font-size:13px; overflow-wrap:anywhere; }
+  .inv-discount-btn{ border-radius:12px; }
+  .inv-sect{ margin-top:14px; padding:14px; background:var(--i-sunk); border:1px solid var(--i-hair); border-radius:16px; }
+  .inv-sect > .inv-label:first-child{ display:block; margin-bottom:10px; }
+  .inv-remaining{ margin-top:14px; border-radius:16px; background:var(--i-surface); border:1px dashed var(--line-strong); }
+  .status-btns{ border-radius:14px; background:#E9EBF5; }
+  .status-btns .btn{ border-radius:11px; min-height:44px; }
+  .status-btns .btn:not(.ghost){ box-shadow:0 2px 6px rgba(79,70,229,.28); }
+  #tab-invoice .money{ gap:8px; }
+  #tab-invoice .money > input{ flex:1 1 auto; min-width:0; }
+  #tab-invoice .money > select{ flex:0 0 92px; }
+  #tab-invoice .inv-field > input, #tab-invoice .inv-field-grid > input, #tab-invoice .money > input,
+  #tab-invoice .money > select, #tab-invoice .pm-add > input, #tab-invoice textarea{
+    min-height:46px; border-radius:12px; max-width:100%;
+  }
+  #tab-invoice .inv-field > input:focus, #tab-invoice .inv-field-grid > input:focus, #tab-invoice .money > input:focus,
+  #tab-invoice .money > select:focus, #tab-invoice .pm-add > input:focus, #tab-invoice textarea:focus{
+    outline:0; border-color:var(--cedar); box-shadow:var(--i-ring);
+  }
+  .chg-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .chg-tip-btns{ width:100%; }
+
+  /* ---- Details + send cards ---- */
+  .collapse-block, .inv-send{
+    background:var(--i-surface); border:1px solid var(--i-hair); border-radius:20px; box-shadow:var(--i-card);
+  }
+  .collapse-toggle{ min-height:56px; font-weight:700; }
+  .inv-send{ padding:clamp(16px,3vw,22px); }
+  .inv-send-head{ flex-wrap:wrap; gap:10px; }
+  #tab-invoice .preview-box{
+    width:100%; min-height:180px; resize:vertical; font-size:13px; line-height:1.5;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+
+  /* ---- Actions ---- */
+  .inv-actions{ gap:10px; }
+  .inv-actions .btn{ min-height:48px; border-radius:14px; white-space:normal; text-align:center; line-height:1.2; }
+  .inv-actions .btn svg{ flex:none; }
+  .inv-actions #copyBtn{
+    min-height:56px; font-size:16.5px; letter-spacing:-.01em; border-radius:16px;
+    background:linear-gradient(135deg,#6366F1,#4338CA); box-shadow:0 14px 26px -12px rgba(67,56,202,.75);
+  }
+  .inv-actions .btn.ghost{ background:var(--i-surface); border:1.5px solid var(--line-strong); color:var(--ink); }
+  .inv-actions #whatsappBtn{ color:#0F7B4F; border-color:#BFE8D6; background:#F1FBF6; }
+  .inv-actions #completeSaleBtn{ border-style:dashed; color:var(--ink-soft); }
+  .inv-reset{ border-radius:14px; }
+
+  /* ---- Floating cart bar (phones and small tablets) ---- */
+  .cart-bar{
+    width:min(calc(100% - 24px),560px); bottom:calc(12px + env(safe-area-inset-bottom,0px));
+    background:rgba(20,21,31,.95); border:1px solid rgba(255,255,255,.08); border-radius:22px;
+    -webkit-backdrop-filter:saturate(1.4) blur(8px); backdrop-filter:saturate(1.4) blur(8px);
+  }
+  .cart-bar-btn{ border-radius:16px; }
+  body.cart-bar-visible .app{ padding-bottom:calc(104px + env(safe-area-inset-bottom,0px)); }
+
+  /* ---- Breakpoints ---- */
+  @media (max-width:380px){
+    .totals-row.grand{ margin-left:0; margin-right:0; width:auto; padding:16px; }
+    .totals-card{ padding:14px; }
+  }
+  @media (max-width:340px){
+    .inv-actions{ grid-template-columns:1fr; }
+    .line-top{ flex-wrap:wrap; }
+    .line-price, .grand-amts{ width:100%; text-align:left; margin-left:0; }
+    .status-btns .btn{ font-size:12.5px; }
+  }
+  @media (min-width:600px) and (max-width:899px){
+    .inv-order{ width:100%; max-width:680px; margin-inline:auto; }
+  }
+  @media (min-width:900px){
+    .inv-order{ padding:2px 6px 8px 2px; scrollbar-width:thin; }
+    .pick-row:hover .pick-plus{ transform:scale(1.08); }
+  }
+  @media (min-width:1800px){
+    body:has(#tab-invoice.active) .app{ max-width:1520px; }
+    .inv-layout{ grid-template-columns:minmax(0,1fr) 500px; }
+  }
+  @media (orientation:landscape) and (max-height:480px){
+    .cart-bar{ position:sticky; bottom:8px; }
+    .inv-head{ margin-bottom:10px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    #tab-invoice *, .cart-bar{ transition:none !important; animation:none !important; }
+  }
+  @media print{ .cart-bar{ display:none !important; } }
+
+  /* ==========================================================
+     Order panel: clearer items, readable totals, pinned total
+     ========================================================== */
+  /* Header stays visible while the order scrolls (desktop) */
+  @media (min-width:900px){
+    .inv-order-head{
+      position:sticky; top:0; z-index:5; margin:0; padding:2px 4px 12px;
+      background:linear-gradient(to bottom,var(--bg) 82%,rgba(243,244,250,0));
+    }
+  }
+  /* Clip rounded corners without breaking sticky children */
+  .inv-receipt{ overflow:hidden; overflow:clip; }
+
+  /* Each item reads as its own row */
+  #lineItems{ padding:4px clamp(12px,3vw,18px) 0; }
+  .line-item{ margin:0 -8px; padding:14px 8px; border-radius:14px; border-bottom:0; position:relative; }
+  .line-item + .line-item::before{
+    content:''; position:absolute; top:0; left:8px; right:8px; border-top:1px solid var(--i-hair);
+  }
+  @media (hover:hover){ .line-item:hover{ background:#FAFAFE; } .line-item:hover::before, .line-item:hover + .line-item::before{ border-color:transparent; } }
+  .line-top{ align-items:center; gap:12px; }
+  .line-thumb{ width:48px; height:48px; border-radius:12px; }
+  .line-name{ font-size:clamp(15px,.3vw + 14.3px,16.5px); font-weight:700; letter-spacing:-.01em; }
+  .line-unit{ margin-top:3px; font-size:13px; color:var(--ink-faint); font-weight:500; }
+  .remove-line{ margin:0 -6px 0 0; align-self:flex-start; }
+  .qty-row{
+    margin-top:12px; padding:8px 8px 8px 8px; gap:10px 12px; align-items:center;
+    background:var(--i-sunk); border-radius:14px;
+  }
+  .qty-controls{ background:#fff; box-shadow:0 0 0 1px var(--i-hair); }
+  .qty-controls button{ background:#F0F1F8; box-shadow:none; }
+  .line-price{ padding-right:6px; }
+  .lp-usd{ font-weight:800; letter-spacing:-.02em; }
+  .lp-lbp{ font-size:12px; }
+  .line-more-toggle{ margin:6px 0 0 0; padding:6px 10px; min-height:34px; border-radius:999px; background:#F3F4FA; color:var(--ink-soft); }
+  @media (hover:hover){ .line-more-toggle:hover{ background:#E9EBF5; } }
+
+  /* Totals: aligned label/value pairs, leader line, savings in green */
+  .totals-card{ padding-top:clamp(14px,2.6vw,18px); }
+  .totals-row{ align-items:baseline; padding:5px 0; }
+  .totals-row:not(.grand):not(.sub){ font-size:15px; font-weight:600; }
+  .totals-row:not(.grand):not(.sub) b{ font-size:17px; font-weight:800; letter-spacing:-.01em; }
+  .totals-row.sub > span:first-child{ color:var(--ink-soft); }
+  #discountSummaryRow > span:last-child{ color:var(--success); font-weight:700; }
+  #prevBalanceRow > span:last-child{ color:var(--brass); font-weight:700; }
+  .inv-discount-btn{ margin:6px 0 2px; }
+
+  /* Total stays in view while scrolling a long order (desktop panel) */
+  .grand-label{ align-self:center; }
+  .grand-lbp{ display:block; margin-top:3px; opacity:.9; }
+
+  /* Balance after payment: clear result box */
+  .inv-remaining{ padding:12px 14px; background:var(--i-sunk); border:1px solid var(--i-hair); }
+  .inv-remaining .totals-row:first-child{ font-size:15px; font-weight:700; }
+
+  /* Empty state: inviting drop zone */
+  .inv-empty{ margin:14px; padding:38px 18px 40px; border:1.5px dashed var(--line-strong); border-radius:16px; background:var(--i-sunk); }
+  @media (max-width:340px){ .qty-row{ padding:8px; } .line-thumb{ width:40px; height:40px; } }
+
+  /* ==========================================================
+     Order panel shows in full: no inner scrolling at any size.
+     The page itself scrolls, so every line and total is reachable.
+     ========================================================== */
+  .inv-order, body.impersonating .inv-order{
+    position:static !important; top:auto !important;
+    max-height:none !important; height:auto !important;
+    overflow:visible !important; overscroll-behavior:auto;
+    padding:0 !important;
+  }
+  #lineItems, .inv-receipt, .totals-card{ max-height:none !important; overflow-y:visible; }
+  @media (min-width:900px){
+    .inv-order-head{ position:static; background:none; padding:2px 4px 12px; }
+  }
+  /* Grand total stays in its normal place in the flow */
+  .totals-row.grand{ position:static !important; }
 </style>
 <!-- Renders barcode images for printed labels (CODE128). Loaded from CDN —
      needs an internet connection the first time a page prints labels;
