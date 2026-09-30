@@ -9480,8 +9480,18 @@
       const mark = '<div class="pr-hr solid"></div>';
       const i = snap.indexOf(mark);
       if(i < 0) return snap;
-      const at = i + mark.length;
-      return snap.slice(0, at) + invNoStripHtml(getT(lang), no, '', '').replace('<div style="text-align:end"><div style="font-size:13px;font-weight:600;color:#14151F"></div></div>', '') + snap.slice(at);
+      // Same place as the main invoice: inside the centered header, as the
+      // number/date strip. Reuse the frozen date line if there is one.
+      const head = snap.slice(0, i);
+      const metaRe = /<div class="pr-meta">([\s\S]*?)<\/div>/;
+      const mm = head.match(metaRe);
+      if(mm){
+        const strip = invNoStripHtml(getT(lang), no, mm[1], '');
+        return head.replace(metaRe, () => strip) + snap.slice(i);
+      }
+      const close = head.lastIndexOf('</div>');
+      if(close < 0) return snap;
+      return head.slice(0, close) + invNoStripHtml(getT(lang), no, '', '') + head.slice(close) + snap.slice(i);
     }
     const m = snap.match(/^.*📅.*$/m);
     if(!m) return snap;
