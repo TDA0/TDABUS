@@ -9472,7 +9472,10 @@
       if(i < 0) return snap;
       const w = String(snap[i].text).length, gap = Math.max(1, w - label.length - no.length);
       const out = snap.slice();
-      out.splice(i + 1, 0, { text: label + ' '.repeat(gap) + no, align:'left', bold:false });
+      // Main invoice order: number line, then the centered date line, then the '=====' rule.
+      const prev = snap[i - 1];
+      const at = (prev && prev.align === 'center' && !/^[-=]{5,}$/.test(String(prev.text))) ? i - 1 : i;
+      out.splice(at, 0, { text: label + ' '.repeat(gap) + no, align:'left', bold:true });
       return out;
     }
     if(typeof snap !== 'string' || snap.includes(no)) return snap;
@@ -9495,8 +9498,8 @@
     }
     const m = snap.match(/^.*📅.*$/m);
     if(!m) return snap;
-    const at = m.index + m[0].length;
-    return snap.slice(0, at) + '\n🔢 ' + label + ': ' + no + snap.slice(at);
+    // Main invoice order: number line just above the date line.
+    return snap.slice(0, m.index) + '🔢 ' + label + ': *' + no + '*\n' + snap.slice(m.index);
   }
 
   // Receipt header strip: invoice number on one side, date on the other.
